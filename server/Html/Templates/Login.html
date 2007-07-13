@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>Log in</title>
+		<script type="text/javascript" src="{STATIC_ROOT}protaculous.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}ext-prototype-adapter.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}ext-all.js"></script>
+		<link href="{STATIC_ROOT}resources/css/ext-all.css" type="text/css" rel="stylesheet" />
+		<link href="{STATIC_ROOT}resources/css/ytheme-aero.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="{STATIC_ROOT}login.js"></script>
+		<script type="text/javascript">var gSessionID = "{SESSION_ID}";</script>
+	</head>
+	<body>
+		<p>First name: <input type="text" id="first" /></p>
+		<p>Last name: <input type="text" id="last" /></p>
+		<p>Password: <input type="password" id="password" /></p>
+		<p>Language: <select>
+			<option value="en" selected="selected">English</option>
+			<option value="es">Spanish</option>
+			<option value="fr">French</option>
+		</select>
+	</p>
+		<p><input type="button" value="Log in" id="btn_login" /></p>
+		<hr style="width: 100%" />
+		<p>Your password is passed to my server encrypted, and passed to Linden Lab's server encrypted.<br />
+		It is never stored or logged.</p>
+		<p>That said, use your own judgement before using this. If you're unsure, perhaps try an alt with a different password first?</p>
+	</body>
+</html>
