@@ -70,9 +70,8 @@ AjaxLife.Network.MessageQueue = function() {
 	// Private
 	var requesting = false;
 	var link = new Ext.data.Connection({timeout: 60000});
-	var timer = false;
+	var running = false;
 	var callbacks = {};
-	var temp_storage = new Array();
 	
 	function processqueue(queue) {
 		queue.each(function(item) {
@@ -156,9 +155,32 @@ AjaxLife.Network.MessageQueue = function() {
 		});
 	};
 	
+	function queuecallback(options, success, response)
+	{
+		if(!running) return;
+		if(success)
+		{
+			try
+			{
+				var data = Ext.util.JSON.decode(response.responseText);
+			}
+			catch(e)
+			{
+				// Meep.
+				return;
+			}
+			processqueue(data);
+		}
+		else
+		{
+			AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.EventQueueFailure"));
+		}
+		requesting = false;
+		if(running) requestqueue();
+	}
+	
 	function requestqueue() {
 		if(requesting) return;
-		
 		requesting = true;
 		link.request({
 			url: "eventqueue.kat",
@@ -166,37 +188,20 @@ AjaxLife.Network.MessageQueue = function() {
 			params: {
 				sid: gSessionID
 			},
-			callback: function(options, success, response) {
-				if(success)
-				{
-					//AjaxLife.Widgets.Ext.msg("Message Queue",response.responseText);
-					try
-					{
-						var data = Ext.util.JSON.decode(response.responseText);
-					}
-					catch(e)
-					{
-						// Meep.
-						return;
-					}
-					processqueue(data);
-				}
-				else
-				{
-					AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.EventQueueFailure"));
-				}
-				requesting = false;
-			}
+			callback: queuecallback
 		});
 	};	
 	
 	return {
 		// Public
 		init: function() {
-			timer = setInterval(requestqueue,1000);
+			//timer = setInterval(requestqueue,1000);
+			running = true;
+			requestqueue();
 		},
 		shutdown: function() {
-			clearInterval(timer);
+			//clearInterval(timer);
+			running = false;
 			link.abort();
 		},
 		RegisterCallback: function(message, callback) {

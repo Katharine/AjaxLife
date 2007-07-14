@@ -75,13 +75,33 @@ AjaxLife.Map = function() {
 		map.panOrRecenterToSLCoord(new SLPoint(position.sim, position.x, position.y));
 	};
 	
+	function teleport_dialog(show)
+	{
+		if(show)
+		{
+			if(!teleport_wait || !teleport_wait.isVisible())
+			{
+				teleport_wait = Ext.Msg.wait("",_("Map.Teleporting"));
+			}
+		}
+		else
+		{
+			if(teleport_wait && teleport_wait.isVisible())
+			{
+				teleport_wait.hide();
+				//teleport_wait.getDialog().destroy();
+				teleport_wait = false;
+			}
+		}
+	}
+	
 	function teleportTo(sim, x, y, z)
 	{
 		if(!sim) return;
 		AjaxLife.Widgets.Confirm(_("Map.Teleporting"),_("Map.TeleportConfirm",{sim: sim, x: Math.round(x), y: Math.round(y)}), function(btn) {
 			if(btn == 'yes')
 			{
-				//var wait = Ext.Msg.Wait("Waiting","Please wait while we teleport you...");
+				teleport_dialog(true);
 				AjaxLife.Network.Send("Teleport",{
 					Sim: sim,
 					X: x,
@@ -218,8 +238,14 @@ AjaxLife.Map = function() {
 			];
 			var marker_agent_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_agent.png",9,9,true));
 			marker_agent_icons = [marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img];
-			
-			position.sim = gRegion;
+			if(gRegion != "")
+			{
+				position.sim = gRegion;
+			}
+			else
+			{
+				Ext.Msg.alert("",_("Map.NoRegionGiven"));
+			}
 			position.x = gPosition.X;
 			position.y = gPosition.Y;
 			position.z = gPosition.Z;
@@ -400,6 +426,7 @@ AjaxLife.Map = function() {
 					AjaxLife.Widgets.Confirm(_("Map.Teleporting"),_("Map.HomeConfirm"), function(btn) {
 						if(btn == 'yes')
 						{
+							teleport_dialog(true);
 							AjaxLife.Network.Send("GoHome",{});
 						}
 					});
@@ -425,6 +452,10 @@ AjaxLife.Map = function() {
 						modal: false,
 						closable: false,
 						fn: function(btn) {
+							if(btn=="yes")
+							{
+								teleport_dialog(true);
+							}
 							AjaxLife.Network.Send("TeleportLureRespond",{
 								RequesterID: data.FromAgentID,
 								Accept: (btn=="yes")
@@ -439,11 +470,11 @@ AjaxLife.Map = function() {
 				if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Start)
 				{
 					Sound.play(AjaxLife.STATIC_ROOT+"sounds/teleport.wav");
-					teleport_wait = Ext.Msg.wait("","Teleporting...");
+					teleport_dialog(true);
 				}
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Finished)
 				{
-					if(teleport_wait) teleport_wait.hide();
+					teleport_dialog(false);
 					AjaxLife.Network.Send("GetPosition", {
 						callback: function(response) {
 							AjaxLife.Widgets.Ext.msg(
@@ -451,18 +482,19 @@ AjaxLife.Map = function() {
 								_("Map.TeleportSuccess", {sim: response.Sim, x: Math.round(response.Position.X), y: Math.round(response.Position.Y), z: Math.round(response.Position.Z)})
 							);
 							AjaxLife.Map.move(response.Sim, response.Position.X, response.Position.Y, response.Position.Z);
+							setTimeout('AjaxLife.Network.Send("SendAppearance",{})',1000);
 						}
 					});
 				}
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Failed)
 				{
-					if(teleport_wait) teleport_wait.hide();
-					Ext.Msg.alert(_("Map.Teleporting"),_("Map.TeleportError"));
+					teleport_dialog(false);
+					Ext.Msg.alert(_("Map.Teleportation"),_("Map.TeleportError"));
 				}
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Cancelled)
 				{
-					if(teleport_wait) teleport_wait.hide();
-					AjaxLife.Widgets.Ext.msg(_("Map.TeleportNoun"),_("Map.TeleportCancelled"));
+					teleport_dialog(false);
+					AjaxLife.Widgets.Ext.msg(_("Map.Teleportation"),_("Map.TeleportCancelled"));
 				}
 			});
 			

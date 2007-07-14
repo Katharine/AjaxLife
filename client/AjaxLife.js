@@ -42,6 +42,12 @@ AjaxLife.Strings = {};
 AjaxLife.init = function()
 {
 	Ext.BLANK_IMAGE_URL = AjaxLife.STATIC_ROOT+"images/s.gif";
+	Ext.MessageBox.buttonText = {
+		yes: _("Widgets.Yes"),
+		no: _("Widgets.No"),
+		ok: _("Widgets.OK"),
+		cancel: _("Widgets.Cancel")
+	};
 	AjaxLife.InstantMessage.init();
 	AjaxLife.Map.init();
 	AjaxLife.SpatialChat.init();

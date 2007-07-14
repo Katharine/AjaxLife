@@ -60,7 +60,8 @@ AjaxLife.Strings = {
 			TeleportSuccess: "You have successfully teleported to #{sim} (#{x}, #{y}, #{z})",
 			TeleportCancelled: "Your teleport was cancelled.",
 			TeleportError: "Your teleport was not successful. Please try again later.",
-			WindowTitle: "Map"
+			WindowTitle: "Map",
+			NoRegionGiven: "The server has failed to send the name of the sim you are in."
 			
 		},
 		Network: {
@@ -109,7 +110,9 @@ AjaxLife.Strings = {
 			Yes: "Yes",
 			No: "No",
 			Accept: "Accept",
-			Decline: "Decline"
+			Decline: "Decline",
+			OK: "OK",
+			Cancel: "Cancel"
 		}
 	},
 	es: {
