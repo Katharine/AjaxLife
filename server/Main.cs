@@ -180,14 +180,14 @@ namespace AjaxLife
             }
         }
 
-        public static Hashtable PostDecode(string qstring)
+        public static Dictionary<string,string> PostDecode(string qstring)
         {
             //simplify our task
             qstring = qstring + "&";
 
-            Hashtable outc = new Hashtable();
+            Dictionary<string, string> outc = new Dictionary<string, string>();
 
-            Regex r = new Regex(@"(?<name>[^=&]+)=(?<value>[^&]+)&", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            Regex r = new Regex(@"(?<name>[^=&]+)=(?<value>[^&]*)&", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             IEnumerator _enum = r.Matches(qstring).GetEnumerator();
             while (_enum.MoveNext() && _enum.Current != null)

@@ -65,8 +65,8 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string post = reader.ReadToEnd();
                 reader.Dispose();
-                Hashtable POST = AjaxLife.PostDecode(post);
-                Guid session = new Guid((string)POST["sid"]);
+                Dictionary<string,string> POST = AjaxLife.PostDecode(post);
+                Guid session = new Guid(POST["sid"]);
                 SecondLife client;
                 Hashtable user = new Hashtable();
                 lock (users)

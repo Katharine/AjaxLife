@@ -69,8 +69,8 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
-                Hashtable POST = AjaxLife.PostDecode(qstring);
-                Guid key = new Guid((string)POST["session"]);
+                Dictionary<string,string> POST = AjaxLife.PostDecode(qstring);
+                Guid key = new Guid(POST["session"]);
                 if (!this.users.ContainsKey(key))
                 {
                     Hashtable response = new Hashtable();
@@ -92,7 +92,7 @@ namespace AjaxLife.Html
                 {
                     client = (SecondLife)user["SecondLife"];
                 }
-                if (client.Network.Login((string)POST["first"], (string)POST["last"], (string)POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>"))
+                if (client.Network.Login(POST["first"], POST["last"], POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>"))
                 {
                     Events events = new Events();
                     lock (user)

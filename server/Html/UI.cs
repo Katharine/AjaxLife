@@ -63,7 +63,8 @@ namespace AjaxLife.Html
             {
                 SecondLife client;
                 Hashtable user;
-                Guid sessionid = new Guid(request.Query["sid"]);
+                Dictionary<string, string> POST = AjaxLife.PostDecode((new StreamReader(request.PostData)).ReadToEnd());
+                Guid sessionid = new Guid(POST["sid"]);
                 lock (users)
                 {
                     user = users[sessionid];
@@ -81,7 +82,8 @@ namespace AjaxLife.Html
                 param += "\t\t\tvar gMOTD = " + AjaxLife.StringToJSON(client.Network.LoginMessage) + ";\n";
                 param += "\t\t\tvar gSessionID = " + AjaxLife.StringToJSON(sessionid.ToString("D")) + ";\n";
                 param += "\t\t\tvar gUserName = " + AjaxLife.StringToJSON(client.Self.FirstName + " " + client.Self.LastName) + ";\n";
-                param += "\t\t\tvar gLanguageCode = " + AjaxLife.StringToJSON(request.Query["lang"]) + ";\n";
+                param += "\t\t\tvar gLanguageCode = " + AjaxLife.StringToJSON(POST.ContainsKey("lang")?POST["lang"]:"en") + ";\n";
+                param += "\t\t\tvar gAgentID = " + AjaxLife.StringToJSON(client.Network.AgentID.ToStringHyphenated()) + ";\n";
                 replacements.Add("INIT_PARAMS", param);
                 Html.Template.Parser parser = new Html.Template.Parser(replacements);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/UI.html")));

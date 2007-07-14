@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using MiniHttpd;
 using libsecondlife;
+using libsecondlife.Packets;
 using Newtonsoft.Json;
 
 namespace AjaxLife.Html
@@ -67,14 +68,14 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
-                Hashtable POST = AjaxLife.PostDecode(qstring);
+                Dictionary<string,string> POST = AjaxLife.PostDecode(qstring);
                 if (!POST.ContainsKey("sid"))
                 {
                     textwriter.WriteLine("Need an SID.");
                     textwriter.Flush();
                     return;
                 }
-                Guid guid = new Guid((string)POST["sid"]);
+                Guid guid = new Guid(POST["sid"]);
                 Hashtable user = new Hashtable();
                 lock (this.users)
                 {
@@ -91,46 +92,46 @@ namespace AjaxLife.Html
                         user["LastRequest"] = DateTime.Now;
                     }
                 }
-                string messagetype = (string)POST["MessageType"];
+                string messagetype = POST["MessageType"];
                 switch (messagetype)
                 {
                     case "SpatialChat":
-                        client.Self.Chat((string)POST["Message"], int.Parse((string)POST["Channel"]), (MainAvatar.ChatType)((byte)int.Parse((string)POST["Type"])));
+                        client.Self.Chat(POST["Message"], int.Parse(POST["Channel"]), (MainAvatar.ChatType)((byte)int.Parse(POST["Type"])));
                         goto flushwriter;
 
                     case "SimpleInstantMessage":
                         if (POST.ContainsKey("IMSessionID"))
                         {
-                            client.Self.InstantMessage(new LLUUID((string)POST["Target"]), (string)POST["Message"], new LLUUID((string)POST["IMSessionID"]));
+                            client.Self.InstantMessage(new LLUUID(POST["Target"]), POST["Message"], new LLUUID(POST["IMSessionID"]));
                         }
                         else
                         {
-                            client.Self.InstantMessage(new LLUUID((string)POST["Target"]), (string)POST["Message"]);
+                            client.Self.InstantMessage(new LLUUID(POST["Target"]), POST["Message"]);
                         }
                         goto flushwriter;
 
                     case "GenericInstantMessage":
                         client.Self.InstantMessage(
                             client.Self.FirstName + " " + client.Self.LastName, 
-                            new LLUUID((string)POST["Target"]), 
-                            (string)POST["Message"], 
-                            new LLUUID((string)POST["IMSessionID"]), 
-                            (MainAvatar.InstantMessageDialog)((byte)int.Parse((string)POST["Dialog"])), 
-                            (MainAvatar.InstantMessageOnline)int.Parse((string)POST["Online"]), 
+                            new LLUUID(POST["Target"]), 
+                            POST["Message"], 
+                            new LLUUID(POST["IMSessionID"]), 
+                            (MainAvatar.InstantMessageDialog)((byte)int.Parse(POST["Dialog"])), 
+                            (MainAvatar.InstantMessageOnline)int.Parse(POST["Online"]), 
                             client.Self.Position, 
                             client.Network.CurrentSim.ID,
                             new byte[0]);
                         goto flushwriter;
 
                     case "NameLookup":
-                        client.Avatars.RequestAvatarName(new LLUUID((string)POST["ID"]));
+                        client.Avatars.RequestAvatarName(new LLUUID(POST["ID"]));
                         goto flushwriter;
                         //case "
                 }
                 if (messagetype == "Teleport")
                 {
                     Hashtable hash = new Hashtable();
-                    if (client.Self.Teleport((string)POST["Sim"], new LLVector3(float.Parse((string)POST["X"]), float.Parse((string)POST["Y"]), float.Parse((string)POST["Z"]))))
+                    if (client.Self.Teleport(POST["Sim"], new LLVector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"]))))
                     {
                         hash.Add("Success", true);
                         hash.Add("Sim", client.Network.CurrentSim.Name);
@@ -177,52 +178,59 @@ namespace AjaxLife.Html
                                 goto flushwriter;
                             }
                         case "TeleportLureRespond":
-                            client.Self.TeleportLureRespond(new LLUUID((string)POST["RequesterID"]), bool.Parse((string)POST["Accept"]));
+                            client.Self.TeleportLureRespond(new LLUUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
                             goto flushwriter;
 
                         case "FindPeople":
                             {
                                 Hashtable hash = new Hashtable();
-                                hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.NameSort | DirectoryManager.DirFindFlags.SortAsc, (string)POST["Search"], int.Parse((string)POST["Start"])).ToStringHyphenated());
+                                hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.NameSort | DirectoryManager.DirFindFlags.SortAsc, POST["Search"], int.Parse(POST["Start"])).ToStringHyphenated());
                                 textwriter.WriteLine(JavaScriptConvert.SerializeObject(hash));
                                 goto flushwriter;
                             }
                         case "GetAgentData":
-                            client.Avatars.RequestAvatarProperties(new LLUUID((string)POST["AgentID"]));
+                            client.Avatars.RequestAvatarProperties(new LLUUID(POST["AgentID"]));
                             goto flushwriter;
 
                         case "StartAnimation":
-                            client.Self.AnimationStart(new LLUUID((string)POST["Animation"]));
+                            client.Self.AnimationStart(new LLUUID(POST["Animation"]));
                             break;
                         case "StopAnimation":
-                            client.Self.AnimationStop(new LLUUID((string)POST["Animation"]));
+                            client.Self.AnimationStop(new LLUUID(POST["Animation"]));
                             break;
                         case "SendAppearance":
                             client.Appearance.BeginAgentSendAppearance();
                             break;
                         case "GetMapItems":
                             {
-                                libsecondlife.Packets.MapItemRequestPacket req = new libsecondlife.Packets.MapItemRequestPacket();
+                                MapItemRequestPacket req = new MapItemRequestPacket();
                                 req.AgentData.AgentID = client.Network.AgentID;
                                 req.AgentData.SessionID = client.Network.SessionID;
-                                req.RequestData.RegionHandle = client.Grid.Regions[(string)POST["Region"]].RegionHandle;
-                                req.RequestData.ItemType = uint.Parse((string)POST["ItemType"]);
-                                client.Network.SendPacket((libsecondlife.Packets.Packet)req);
+                                req.RequestData.RegionHandle = client.Grid.Regions[POST["Region"]].RegionHandle;
+                                req.RequestData.ItemType = uint.Parse(POST["ItemType"]);
+                                client.Network.SendPacket((Packet)req);
                             }
                             break;
-                        case "GetSimStatus":
+                        case "GetMapBlocks":
                             {
-                                libsecondlife.Packets.MapBlockRequestPacket req = new libsecondlife.Packets.MapBlockRequestPacket();
+                                MapBlockRequestPacket req = new MapBlockRequestPacket();
                                 req.AgentData.AgentID = client.Network.AgentID;
                                 req.AgentData.SessionID = client.Network.SessionID;
                                 req.PositionData.MinX = 0;
                                 req.PositionData.MinY = 0;
                                 req.PositionData.MaxX = ushort.MaxValue;
                                 req.PositionData.MaxY = ushort.MaxValue;
-                                client.Network.SendPacket((libsecondlife.Packets.Packet)req);
+                                client.Network.SendPacket((Packet)req);
                             }
                             break;
-                             
+                        case "GetOfflineMessages":
+                            {
+                                RetrieveInstantMessagesPacket req = new RetrieveInstantMessagesPacket();
+                                req.AgentData.AgentID = client.Network.AgentID;
+                                req.AgentData.SessionID = client.Network.SessionID;
+                                client.Network.SendPacket((Packet)req);
+                            }
+                            break;
                     }
                 }
             //}

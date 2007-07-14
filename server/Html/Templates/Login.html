@@ -13,13 +13,19 @@
 		<p>First name: <input type="text" id="first" /></p>
 		<p>Last name: <input type="text" id="last" /></p>
 		<p>Password: <input type="password" id="password" /></p>
-		<p>Language: <select>
-			<option value="en" selected="selected">English</option>
-			<option value="es">Spanish</option>
-			<option value="fr">French</option>
-		</select>
-	</p>
-		<p><input type="button" value="Log in" id="btn_login" /></p>
+		<form action="main.kat" method="post" id="continue">
+			<p>
+				Language: <select>
+					<option value="en" selected="selected">English</option>
+					<option value="es">Spanish</option>
+					<option value="fr">French</option>
+				</select>
+			</p>
+			<input type="hidden" name="sid" value="{SESSION_ID}" />
+		</form>
+		<p>
+			<input type="button" value="Log in" id="btn_login" />
+		</p>
 		<hr style="width: 90%" />
 		<p>Your password is passed to my server encrypted, and passed to Linden Lab's server encrypted.<br />
 		It is never stored or logged.</p>
