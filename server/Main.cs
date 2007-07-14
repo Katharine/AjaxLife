@@ -39,19 +39,37 @@ namespace AjaxLife
 {
     class AjaxLife
     {
-        public const string STATIC_ROOT = "/ajaxlife/";
+        private static string StaticRoot = "/ajaxlife/";
+        public static string STATIC_ROOT { get { return StaticRoot; } }
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
         static void Main(string[] args)
         {
-            new AjaxLife();
+            new AjaxLife(args);
         }
 
         public Dictionary<Guid, Hashtable> Users;
 
-        public AjaxLife()
+        public AjaxLife(string[] arg)
         {
+            CommandLineArgs args = new CommandLineArgs(arg);
+            if (args["root"] != null)
+            {
+                StaticRoot = args["root"];
+            }
             Users = new Dictionary<Guid, Hashtable>();
-            HttpWebServer webserver = new HttpWebServer(8080);
+            HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
+            try
+            {
+                if (args["private"] != null && bool.Parse(args["private"]))
+                {
+                    webserver.LocalAddress = System.Net.IPAddress.Loopback;
+                    Console.WriteLine("Using private mode.");
+                }
+            }
+            catch
+            {
+                //
+            }
             VirtualDirectory root = new VirtualDirectory();
             webserver.Root = root;
             root.AddFile("index.html");
@@ -68,7 +86,7 @@ namespace AjaxLife
             System.Timers.Timer timer = new System.Timers.Timer(5000);
             timer.AutoReset = true;
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timecheck);
-            // Starting this timer is very important - but it's broken, and probably fundamentally flawed.
+            // Starting this timer is very important - but it seems broken, and probably fundamentally flawed.
             timer.Start();
             string reason = Console.ReadLine();
             timer.Stop();
