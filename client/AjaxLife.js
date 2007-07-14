@@ -31,7 +31,7 @@ if(!window.AjaxLife)
 	window.AjaxLife = {};
 }
 // Stick up a loading notice.
-AjaxLife.PageWait = Ext.Msg.wait("Loading subsystems. Please wait...<br /><br />If this dialog hangs for over a minute, clear the cache and try again. Then report the problem on <a href='http://blog.katharineberry.co.uk/2007/07/02/ajaxlife/'>my blog</a>.","AjaxLife");
+AjaxLife.PageWait = Ext.Msg.wait("Loading subsystems. Please wait...<br />This shouldn't take more than a few seconds.","AjaxLife");
 
 // A couple of namespaces.
 AjaxLife.Widgets = {};
@@ -61,6 +61,7 @@ AjaxLife.init = function()
 		AjaxLife.PageWait = false;
 		AjaxLife.Network.init();
 		Ext.Msg.alert(_("AjaxLife.MOTD"),gMOTD);
+		AjaxLife.Network.Send("GetOfflineMessages",{});
 	}, 3000);
 }
 

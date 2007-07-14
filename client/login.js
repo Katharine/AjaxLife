@@ -47,7 +47,7 @@ Ext.onReady(function() {
 						var response = Ext.util.JSON.decode(response.responseText);
 						if(response.success)
 						{
-							location.href = "main.kat?sid="+escape(gSessionID)+"&lang="+$('lang').getValue();
+							$('continue').submit();
 						}
 						else
 						{

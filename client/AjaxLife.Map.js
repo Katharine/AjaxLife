@@ -515,6 +515,7 @@ AjaxLife.Map = function() {
 							ForSale: [],
 							Classifieds: []
 						};
+						rlh[sims[i].X+"-"+sims[i].Y] = sims[i].Name;
 						//sims[i].AgentMarker = false;
 					}
 					if(sims[i].Access == AjaxLife.Constants.Map.SimAccess.Down)
@@ -537,7 +538,7 @@ AjaxLife.Map = function() {
 					//AjaxLife.Network.Send('GetMapItems',{ItemType: AjaxLife.Constants.Map.Item.AgentLocations, Region: i}); // Don't bother with this until we're slightly more advanced - it'll choke the MG.
 				}
 			});
-			AjaxLife.Network.Send('GetSimStatus', {}); 
+			AjaxLife.Network.Send('GetMapBlocks', {}); 
 			
 			// Map items...
 			
@@ -547,7 +548,7 @@ AjaxLife.Map = function() {
 					if(items.Items.length > 0)
 					{
 						var first = true;
-						var querystring = '';
+						//var querystring = '';
 						var sim = '';
 						items.Items.each(function(item) {
 							sim = getRegionName(item.X/256,item.Y/256);
@@ -558,7 +559,7 @@ AjaxLife.Map = function() {
 								first = false;
 							}
 							if(item.X % 256 == 0 && item.Y % 256 == 0) return;
-							querystring += '&agent%5B%5D='+item.X+','+item.Y;
+							//querystring += '&agent%5B%5D='+item.X+','+item.Y;
 							//if(Prototype.Browser.WebKit)
 							//{
 							var marker = new Marker(marker_agent_icons, new XYPoint(item.X / 256.0, item.Y / 256.0));
