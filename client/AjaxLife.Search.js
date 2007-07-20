@@ -30,19 +30,56 @@ AjaxLife.Search = function() {
 	var search_box = false;
 	var results_list = false;
 	
+	function performlookup()
+	{
+		results_list.clear();
+		//results_list.add("",_("Search.Searching"));
+		var search = search_box.dom.value;
+		AjaxLife.Network.Send("FindPeople", {
+			Search: search,
+			Start: 0
+		});
+	}
+	
 	return {
 		// Public
 		init: function() {
 			search_win = new Ext.BasicDialog("dlg_search", {
-				width: '150px',
-				height: '300px',
+				width: '300px',
+				height: '400px',
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: "Search"
+				title: _("Search.WindowTitle")
 			});
-			var div_search = Ext.get(document.createElement('div'));
-			div_search.dom.setAttribute('id','search_div_search');
+			people_tab = search_win.getTabs().addTab("search_tab_people",_("Search.People"));
+			people_tab.activate();
+			var div_people_search = Ext.get(document.createElement('div'));
+			div_people_search.dom.setAttribute('id','search_div_people_search');
+			search_box = Ext.get(document.createElement('input'));
+			search_box.setStyle({width: '98%'});
+			search_box.dom.setAttribute('id','search_box_seach');
+			search_box.dom.setAttribute('type','text');
+			div_people_search.dom.appendChild(search_box.dom);
+			people_tab.bodyEl.dom.appendChild(div_people_search.dom);
+			var delay = new Ext.util.DelayedTask(performlookup);
+			search_box.on('keydown', function() {
+				delay.delay(750);
+			});
+			results_list = new AjaxLife.Widgets.SelectList('search_list_results', people_tab.bodyEl.dom, {
+				width: '99%',
+				callback: function(key) {
+					AjaxLife.Widgets.Ext.msg("Debug",key);
+					new AjaxLife.Profile(key);
+				}
+			});
+			AjaxLife.Network.MessageQueue.RegisterCallback('DirPeopleReply', function(data) {
+				data.Results.each(function(item) {
+					AjaxLife.NameCache.Add(item.AgentID,item.FirstName+" "+item.LastName);
+					results_list.add(item.AgentID,item.FirstName+" "+item.LastName);
+				});
+				results_list.sort();
+			});
 		},
 		open: function(opener) {
 			if(opener)

@@ -246,9 +246,12 @@ AjaxLife.InstantMessage = function() {
 				width: '99%',
 				callback: function(key) {
 					AjaxLife.NameCache.Find(key, function(name) {
-						createTab(key, name, AjaxLife.Utils.UUID.Combine(gSessionID,key));
+						createTab(key, name, AjaxLife.Utils.UUID.Combine(gAgentID,key));
 					});
 				}
+			});
+			var sortdelay = new Ext.util.DelayedTask(function() {
+				friendlist.sort();
 			});
 			AjaxLife.Friends.AddCallback(function (agentid, name, online) {
 				if(online)
@@ -259,6 +262,7 @@ AjaxLife.InstantMessage = function() {
 				{
 					friendlist.remove(agentid);
 				}
+				sortdelay.delay(200);
 			});
 			dialog.body.setStyle({overflow: 'hidden'});
 			width = 700;
@@ -338,19 +342,17 @@ AjaxLife.InstantMessage = function() {
 		toggle: function(opener) {
 			if(!dialog.isVisible())
 			{
-				if(opener)
-				{
-					dialog.show(opener);
-				}
-				else
-				{
-					dialog.show();
-				}
+				this.open(opener);
 			}
 			else
 			{
-				dialog.hide();
+				this.close();
 			}
+		},
+		start: function(id) {
+			AjaxLife.NameCache.Find(id, function(name) {
+				createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
+			});
 		}
 	};
 }();

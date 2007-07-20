@@ -3,14 +3,14 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Katharine Berry nor the names of any contributors
- *       may be used to endorse or promote products derived from this software
- *       without specific prior written permission.
+ *	   * Redistributions of source code must retain the above copyright
+ *		 notice, this list of conditions and the following disclaimer.
+ *	   * Redistributions in binary form must reproduce the above copyright
+ *		 notice, this list of conditions and the following disclaimer in the
+ *		 documentation and/or other materials provided with the distribution.
+ *	   * Neither the name of Katharine Berry nor the names of any contributors
+ *		 may be used to endorse or promote products derived from this software
+ *		 without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY KATHARINE BERRY ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -101,6 +101,8 @@ AjaxLife.Strings = {
 			IMTooltip: "Communicate with distant people",
 			MapButton: "Map",
 			MapTooltip: "Show the grid map",
+			SearchButton: "Search",
+			SearchTooltip: "",
 			LogoutButton: "Log out",
 			LogoutTitle: "Log out",
 			LogoutPrompt: "Are you sure you want to log out?",
@@ -113,8 +115,36 @@ AjaxLife.Strings = {
 			Decline: "Decline",
 			OK: "OK",
 			Cancel: "Cancel"
+		},
+		Search: {
+			WindowTitle: "Search",
+			Searching: "Searching...",
+			People: "People"
+		},
+		Profile: {
+			WindowTitle: "Profile - #{name}",
+			Loading: "Loading...",
+			JoinDate: "Joined: #{date}",
+			Account: "Account:<br />#{type}",
+			PaymentInfoOnFile: "Payment info on file",
+			PaymentInfoUsed: "Payment info used",
+			LindenAccount: "Linden Lab Employee",
+			NoPaymentInfo: "No payment info",
+			Picks: "Picks",
+			Interests: "Interests",
+			SecondLife: "2nd Life",
+			FirstLife: "1st Life",
+			Groups: "Groups",
+			About: "About",
+			Name: "Name: #{name}",
+			Online: "Online",
+			Offline: "Offline",
+			Partner: "Partner:<br />#{partner}",
+			None: "None",
+			IMButton: "Instant Message"
 		}
 	},
+	// Translated by Mariel Voyunicef
 	es: {
 		Friends: {
 			OnlineNotification: "#{name} se ha #{status}.",
@@ -201,7 +231,8 @@ AjaxLife.Strings = {
 			Decline: "Declinar"
 		}
 	},
-		 fr: {
+	// Translated by Mariel Voyunicef
+	fr: {
 		Friends: {
 			OnlineNotification: "#{name} vient de se #{status}.",
 			Online: "connecter",
@@ -285,6 +316,317 @@ AjaxLife.Strings = {
 			No: "Non",
 			Accept: "Accepter",
 			Decline: "Décliner"
+		}
+	},
+	// Translated by Nexii Malthus.
+	de: {
+		Friends: {
+			OnlineNotification: "#{name} ist #{status}.",
+			Online: "online",
+			Offline: "offline"
+		},
+		InstantMessage: {
+			Typing: "#{name} ist am schreiben...",
+			OnlineFriends: "Online Freunde",
+			Send: "Sende",
+			WindowTitle: "Sofortige Nachrichten"
+		},
+		AjaxLife: {
+			Precaching: "Lade Pufferspeicher...",
+			MOTD: "Nachricht des Tages"
+		},
+		Map: {
+			TeleportConfirm: "Sind Sie sicher das Sie zu #{sim} (#{x}, #{y}) teleportien wollen?",
+			RegionLabel: "Region:",
+			PositionLabel: "Position:",
+			TeleportNoun: "Teleportation",
+			TeleportVerb: "teleportieren",
+			Teleporting: "teleportiere",
+			FocusYou: "Fokus auf dich",
+			Clear: "Freie",
+			FocusTarget: "Fokus auf Ziel",
+			HomeButton: "Geh Heim",
+			HomeConfirm: "Sind Sie sicher das Sie nachhause wollen?",
+			TeleportRequest: "#{name} hat dich ein Teleport angeboten:<br /><br />#{message}",
+			TeleportRequestTitle: "Teleport Angebot",
+			Teleportation: "Teleportation",
+			TeleportSuccess: "Sie haben erfolglicherweise zu #{sim} (#{x}, #{y}, #{z}) teleportiert.",
+			TeleportCancelled: "Ihr teleportation war beendet.",
+			TeleportError: "Ihr teleport war unglücklicherweise erfolglos. Bitte versuche nächstes mal.",
+			WindowTitle: "Karte",
+			NoRegionGiven: "Die region war erfolglos den namen zu geben."
+			
+		},
+		Network: {
+			LoggingOut: "Second Life loggt heraus...",
+			LogoutError: "Konnte nicht aus Second Life heraus loggen wegen eines Kommunikation Fehler.",
+			LogoutSuccess: "Sie waren aus Second Life herausgeloggt.",
+			LogoutForced: "Sie waren aus Second Life herausgeloggt:<br /><br />#{reason}",
+			UnhandledMessage: "Unhandled message",
+			EventQueueFailure: "The event queue could not be updated.",
+			GenericSendError: "Ein Fehler trat auf am senden der Dateien.",
+			InventoryReceive: "#{name} gab dich #{item}",
+			Error: "Fehler",
+			Disconnected: "Ausgeloggt"
+		},
+		StatusBar: {
+			Money: "Geld",
+			LindenDollarSymbol: "L$",
+			Loading: " laden..."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " schautet:",
+			SecondPersonShout: " schautest:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: " flüstert:",
+			SecondPersonWhisper: " flüstert:",
+			You: "Du",
+			Say: "Sage",
+			Whisper: "Flüstere",
+			Shout: "Schaute",
+			WindowTitle: "Lokaler Chat"
+		},
+		Toolbar: {
+			ChatButton: "Chat",
+			ChatTooltip: "Spreche zu Leute die nah sind",
+			IMButton: "Sofortige Nachrichten",
+			IMTooltip: "Kommuniziere mit Leute die weit weg sind",
+			MapButton: "Karte",
+			MapTooltip: "Zeige die Große Karte",
+			SearchButton: "Suche",
+			SearchTooltip: "",
+			LogoutButton: "Logge aus",
+			LogoutTitle: "Logge aus",
+			LogoutPrompt: "Sind Sie sicher das sie ausloggen wollen?",
+			LogoutTooltip: "Logge aus"
+		},
+		Widgets: {
+			Yes: "Ja",
+			No: "Nein",
+			Accept: "Akzeptiere",
+			Decline: "Abnahme",
+			OK: "OK",
+			Cancel: "Annullieren"
+		},
+		Search: {
+			WindowTitle: "Suche",
+			Searching: "Suchen..."
+		},
+		Profile: {
+			WindowTitle: "Profil - #{name}",
+			Loading: "Lade...",
+			JoinDate: "Verbunden: #{date}",
+			Account: "Konto:<br />#{type}",
+			PaymentInfoOnFile: "Zahlung Info auf Akte",
+			PaymentInfoUsed: "Zahlung Info benutzt",
+			LindenAccount: "Linden Lab Angestellter",
+			NoPaymentInfo: "Keine Zahlung Info",
+			Picks: "Auswähle",
+			SecondLife: "2nd Life",
+			FirstLife: "1st Life",
+			Groups: "Gruppen",
+			About: "Info über die Person"
+		}
+	},
+	//Translated by Mikka Hax da-dk
+	da: {
+		Friends: {
+			OnlineNotification: "#{name} er #{status}.",
+			Online: "online",
+			Offline: "offline"
+		},
+		InstantMessage: {
+			Typing: "#{name} skriver...",
+			OnlineFriends: "Online Venner",
+			Send: "Send",
+			WindowTitle: "Privat Besked"
+		},
+		AjaxLife: {
+			Precaching: "Buffer filer...", //Not sure with this one.
+			MOTD: "Dagens besked"
+		},
+		Map: {
+			TeleportConfirm: "Er du sikker på at du vil teleportere til #{sim} (#{x}, #{y})?",
+			RegionLabel: "Region:",
+			PositionLabel: "Position:",
+			TeleportNoun: "Teleport",
+			TeleportVerb: "Teleport",
+			Teleporting: "Teleportere",
+			FocusYou: "Fokuser på dig",
+			Clear: "Fjern",
+			FocusTarget: "Fokuser på målet",
+			HomeButton: "Gå hjem",
+			HomeConfirm: "Er du sikker på at du vil gå hjem?",
+			TeleportRequest: "#{name} har tilbudt dig en teleport:<br /><br />#{message}",
+			TeleportRequestTitle: "Teleport tilbudt",
+			Teleportation: "Teleportering",
+			TeleportSuccess: "Du blev teleporteret til #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "Din teleport blev annulleret.",
+			TeleportError: "Din teleport fejlede. Prøv igen senere.",
+			WindowTitle: "Kort",
+			NoRegionGiven: "Serveren fejlede med at sende navnet af det sim du er i."
+			
+		},
+		Network: {
+			LoggingOut: "Logging out...",
+			LogoutError: "Kunne ikke logged ud af Second Life pga. kommunikations fejl.",
+			LogoutSuccess: "Du er blevet logget ud af Second Life.",
+			LogoutForced: "Du er blevet logget ud af Second Life:<br /><br />#{reason}",
+			UnhandledMessage: "Uhåndteret besked",
+			EventQueueFailure: "Begivenheden kunne ikke opdateres.",
+			GenericSendError: "Stødte på en fejl samtidigt med indlæsningen af data.",
+			InventoryReceive: "#{name} gav dig #{item}",
+			Error: "Fejl",
+			Disconnected: "Disconnected"
+		},
+		StatusBar: {
+			Money: "Penge",
+			LindenDollarSymbol: "L$",
+			Loading: " Indlæser..."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " råber:",
+			SecondPersonShout: " råber:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: " hvisker:",
+			SecondPersonWhisper: " hvisker:",
+			You: "Dig",
+			Say: "Sig",
+			Whisper: "Hvisk",
+			Shout: "Råb",
+			WindowTitle: "Lokal chat"
+		},
+		Toolbar: {
+			ChatButton: "Chat",
+			ChatTooltip: "Snak med folk tæt ved dig",
+			IMButton: "Instant Messages",
+			IMTooltip: "Kommuniker med fjerne folk",
+			MapButton: "Kort",
+			MapTooltip: "Vis kortet",
+			SearchButton: "Søg",
+			SearchTooltip: "",
+			LogoutButton: "Log ud",
+			LogoutTitle: "Log ud",
+			LogoutPrompt: "Er du sikkker på at du vil logge af?",
+			LogoutTooltip: "Log ud af Second Life"
+		},
+		Widgets: {
+			Yes: "Ja",
+			No: "Nej",
+			Accept: "Accepter",
+			Decline: "Afvis",
+			OK: "OK",
+			Cancel: "Annuler"
+		},
+		Search: {
+			WindowTitle: "Søg",
+			Searching: "Søger..."
+		},
+		Profile: {
+			WindowTitle: "Profil - #{name}",
+			Loading: "Indlæser...",
+			JoinDate: "Tilmeldt: #{date}",
+			Account: "Bruger:<br />#{type}",
+			PaymentInfoOnFile: "Betalings info på fil",
+			PaymentInfoUsed: "Betalings info brugt",
+			LindenAccount: "Linden Lab Ansat",
+			NoPaymentInfo: "Ingen betalings info",
+			Picks: "Valgte",
+			Interests: "Interesser",
+			SecondLife: "2nd Life",
+			FirstLife: "1st Life",
+			Groups: "Grupper",
+			About: "Info om personen",
+			Name: "Navn: #{name}"
+		}
+	},
+	// Translated by Mondrian Lykin
+	it: {
+		Friends: {
+			OnlineNotification: "#{name} è #{status}.",
+			Online: "online",
+			Offline: "offline"
+		},
+		InstantMessage: {
+			Typing: "#{name} sta scrivendo...",
+			OnlineFriends: "Amici online",
+			Send: "Invia",
+			WindowTitle: "Messaggio instantaneo"
+		},
+		AjaxLife: {
+			Precaching: "Precaching...",
+			MOTD: "Messaggio del giorno"
+		},
+		Map: {
+			TeleportConfirm: "Sei sicuro che vuoi teletrasportarti a #{sim} (#{x}, #{y})?",
+			RegionLabel: "Regione:",
+			PositionLabel: "Posizione:",
+			TeleportNoun: "Teletrasporto",
+			TeleportVerb: "Teletrasporta",
+			Teleporting: "Teletrasporto",
+			FocusYou: "Focus on you",
+			Clear: "Clear",
+			FocusTarget: "Focus on target",
+			HomeButton: "Torna a casa",
+			HomeConfirm: "Sei sicuro che vuoi tornare a casa?",
+			TeleportRequest: "#{name} ti ha offerto di essere teletrasportato:<br /><br />#{message}",
+			TeleportRequestTitle: "Offerta di teletrasporto",
+			Teleportation: "Teletrasporto",
+			TeleportSuccess: "Sei stato teletrasportato con successo a #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "Il teletrasporto è stato cancellato.",
+			TeleportError: "Teletrasporto non riuscito. Ti preghiamo di provare più.",
+			WindowTitle: "Mappa"
+			
+		},
+		Network: {
+			LoggingOut: "Disconnessione in corso...",
+			LogoutError: "Impossibile connettersi a Second Life a causa di un errore di connessione.",
+			LogoutSuccess: "You have logged out of Second Life.",
+			LogoutForced: "Sei stato disconnesso da Second Life:<br /><br />#{reason}",
+			UnhandledMessage: "Messaggio non processato",
+			EventQueueFailure: "Non è stato possibile aggiornare la coda degli eventi.",
+			GenericSendError: "Si è verificato un errore di trasmissione dei dati.",
+			InventoryReceive: "#{name} ti ha dato #{item}",
+			Error: "Errore",
+			Disconnected: "Disconnesso"
+		},
+		StatusBar: {
+			Money: "Soldi",
+			LindenDollarSymbol: "L$",
+			Loading: " sta caricando..."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " urla:",
+			SecondPersonShout: " urli:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: " sussurra:",
+			SecondPersonWhisper: " sussurri:",
+			You: "Tu",
+			Say: "Parla",
+			Whisper: "Sussurra",
+			Shout: "Urla",
+			WindowTitle: "Chat locale"
+		},
+		Toolbar: {
+			ChatButton: "Chat",
+			ChatTooltip: "Parla alle persone vicine a te",
+			IMButton: "Messaggi instantanei",
+			IMTooltip: "Comunica con persone distanti da te",
+			MapButton: "Mappa",
+			MapTooltip: "Mostra la mappa del grid",
+			LogoutButton: "Esci",
+			LogoutTitle: "Esci",
+			LogoutPrompt: "Sei sicuro di voler uscire?",
+			LogoutTooltip: "Esci da Second Life"
+		},
+		Widgets: {
+			Yes: "Sì",
+			No: "No",
+			Accept: "Accetta",
+			Decline: "Rifiuta"
 		}
 	}
 	// More translations here.

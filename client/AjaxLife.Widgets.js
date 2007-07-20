@@ -102,6 +102,7 @@ AjaxLife.Widgets.Confirm = function(title, message, callback) {
 };
 
 AjaxLife.Widgets.SelectList = function(id,parent,settings) {
+
 	var changeCallback = false;
 	var sorted = false;
 	if(settings)
@@ -117,13 +118,34 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 	}
 	var div = Ext.get(document.createElement('div'));
 	div.addClass('al-selectlist');
-	div.setStyle({width: (settings.width?settings.width:'250px'), background: settings.background?settings.background:'#fff'});
+	div.setStyle({
+		width: (settings.width?settings.width:'250px'),
+		background: settings.background?settings.background:'#fff'
+	});
+	if(settings.height)
+	{
+		div.setStyle({
+			'overflow-y': 'auto',
+			'overflow-x': 'hidden',
+			height: settings.height
+		});
+	}
 	var list = Ext.get(document.createElement('ul'));
 	var elems = {};
 	list.dom.setAttribute('id',id);
 	list.addClass('al-selectlist');
 	div.dom.appendChild(list.dom);
 	parent.appendChild(div.dom);
+	
+	function sortlist()
+	{
+		$(list.dom).getElementsBySelector('li').sortBy(function(n) {
+			return n.innerHTML.toLowerCase();
+		}).each(function(e) {
+			list.dom.appendChild(e);
+		});
+	}
+	
 	return {
 		// Public
 		add: function(key, text) {
@@ -154,6 +176,23 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 				}
 				elems[key] = false;
 			}
+		},
+		clear: function() {
+			for(var i in elems)
+			{
+				this.remove(i);
+			}
+		},
+		sort: function() {
+			sortlist();
+		},
+		getkeys: function() {
+			var keys = [];
+			for(var i in elems)
+			{
+				keys[keys.length] = i;
+			}
+			return keys;
 		}
 	};
 };

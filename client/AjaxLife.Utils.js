@@ -54,8 +54,10 @@ AjaxLife.Utils.UUID = function() {
 			}
 			return uuid;
 		},
-		Zero: function() {
-			return '00000000-0000-0000-0000-000000000000';
-		}
+		Zero: '00000000-0000-0000-0000-000000000000'
 	};
 }();
+
+AjaxLife.Utils.FixText = function(text) {
+	return text.escapeHTML().gsub('  ',' &nbsp;').gsub('\n','<br />');
+};

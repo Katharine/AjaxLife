@@ -55,6 +55,7 @@ AjaxLife.init = function()
 	//AjaxLife.StatusBar.init();
 	AjaxLife.NameCache.init();
 	AjaxLife.Friends.init();
+	AjaxLife.Search.init();
 	AjaxLife.PageWait.updateText(_("AjaxLife.Precaching"));
 	setTimeout(function () {
 		AjaxLife.PageWait.hide();

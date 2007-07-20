@@ -31,6 +31,7 @@ AjaxLife.Toolbar = function() {
 	var log_btn = false;
 	var map_btn = false;
 	var chat_btn = false;
+	var search_btn = false;
 	
 	function im_btn_clicked()
 	{
@@ -57,6 +58,11 @@ AjaxLife.Toolbar = function() {
 		AjaxLife.SpatialChat.toggle(chat_btn.getEl());
 	}
 	
+	function search_btn_clicked()
+	{
+		AjaxLife.Search.toggle(search_btn.getEl());
+	}
+	
 	// Public
 	return {
 		init: function(div) {
@@ -74,6 +80,11 @@ AjaxLife.Toolbar = function() {
 				handler: map_btn_clicked,
 				text: _("Toolbar.MapButton"),
 				tooltip: _("Toolbar.MapTooltip")
+			});
+			search_btn = new Ext.Button(div, {
+				handler: search_btn_clicked,
+				text: _("Toolbar.SearchButton"),
+				tooltip: _("Toolbar.SearchTooltip")
 			});
 			log_btn = new Ext.Button(div, {
 				handler: log_btn_clicked,

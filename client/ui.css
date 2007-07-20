@@ -165,3 +165,9 @@ div.al-selectlist ul li {
 div.al-selectlist ul li.al-selectlist-selected { 
 	background-color: rgb(95, 155, 250);
 }
+
+/* Profile */
+
+.profile-2ndlife {
+	font-size: 12px;
+}
