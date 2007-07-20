@@ -184,7 +184,7 @@ namespace AjaxLife.Html
                         case "FindPeople":
                             {
                                 Hashtable hash = new Hashtable();
-                                hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.NameSort | DirectoryManager.DirFindFlags.SortAsc, POST["Search"], int.Parse(POST["Start"])).ToStringHyphenated());
+                                hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.People, POST["Search"], int.Parse(POST["Start"])).ToStringHyphenated());
                                 textwriter.WriteLine(JavaScriptConvert.SerializeObject(hash));
                                 goto flushwriter;
                             }

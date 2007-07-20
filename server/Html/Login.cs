@@ -73,14 +73,13 @@ namespace AjaxLife.Html
                 // NOTE: This presumably breaks the GetSimStats request - which isn't used anyway.
                 client.Settings.ENABLE_SIMSTATS = false;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
-                // This'll probably cause problems when we have to deal with texture downloading.
-                // Perhaps - the units aren't specified anywhere.
                 client.Throttle.Cloud = 0;
                 client.Throttle.Land = 0;
                 client.Throttle.Task = 0;
                 client.Throttle.Wind = 0;
-                client.Throttle.Asset = 0;
-                client.Throttle.Resend = 10000;
+                client.Throttle.Asset = 50000;
+                client.Throttle.Resend = 500000;
+                client.Throttle.Texture = 500000;
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("SecondLife", client);
                 hashtable.Add("LastRequest", DateTime.Now);

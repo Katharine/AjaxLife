@@ -127,7 +127,16 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirPeopleReply");
-            item.Add("MatchedPeople", matchedPeople);
+            List<Hashtable> results = new List<Hashtable>();
+            foreach (DirectoryManager.AgentSearchData person in matchedPeople)
+            {
+                Hashtable result = new Hashtable();
+                result.Add("AgentID", person.AgentID.ToStringHyphenated());
+                result.Add("FirstName", person.FirstName);
+                result.Add("LastName", person.LastName);
+                results.Add(result);
+            }
+            item.Add("Results", results);
             this.pending.Enqueue(item);
         }
 
