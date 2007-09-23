@@ -61,22 +61,13 @@ namespace AjaxLife
 
         public IFile GetFile(string filename)
         {
-            if (filename.EndsWith(".png"))
+            if (!filename.EndsWith(".png")) return null;
+            LLUUID image = new LLUUID(filename.Substring(0, filename.Length - 4));
+            if (System.IO.File.Exists("texturecache/" + image.ToStringHyphenated() + ".png"))
             {
-                try
-                {
-                    new LLUUID(filename.Substring(0, 36));
-                    return new TextureFile(users, filename, this);
-                }
-                catch
-                {
-                    return null;
-                }
+                return new DriveFile("texturecache/" + image.ToStringHyphenated() + ".png", this);
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public System.Collections.ICollection GetFiles()

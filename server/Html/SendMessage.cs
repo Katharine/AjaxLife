@@ -96,7 +96,7 @@ namespace AjaxLife.Html
                 switch (messagetype)
                 {
                     case "SpatialChat":
-                        client.Self.Chat(POST["Message"], int.Parse(POST["Channel"]), (MainAvatar.ChatType)((byte)int.Parse(POST["Type"])));
+                        client.Self.Chat(POST["Message"], int.Parse(POST["Channel"]), (ChatType)((byte)int.Parse(POST["Type"])));
                         goto flushwriter;
 
                     case "SimpleInstantMessage":
@@ -116,8 +116,8 @@ namespace AjaxLife.Html
                             new LLUUID(POST["Target"]), 
                             POST["Message"], 
                             new LLUUID(POST["IMSessionID"]), 
-                            (MainAvatar.InstantMessageDialog)((byte)int.Parse(POST["Dialog"])), 
-                            (MainAvatar.InstantMessageOnline)int.Parse(POST["Online"]), 
+                            (InstantMessageDialog)((byte)int.Parse(POST["Dialog"])), 
+                            (InstantMessageOnline)int.Parse(POST["Online"]), 
                             client.Self.Position, 
                             client.Network.CurrentSim.ID,
                             new byte[0]);
@@ -167,13 +167,13 @@ namespace AjaxLife.Html
                         case "GetSimStats":
                             {
                                 Hashtable hash = new Hashtable();
-                                hash.Add("FPS", client.Network.CurrentSim.FPS);
-                                hash.Add("TimeDilation", client.Network.CurrentSim.Dilation);
-                                hash.Add("LSLIPS", client.Network.CurrentSim.LSLIPS);
-                                hash.Add("Objects", client.Network.CurrentSim.Objects);
-                                hash.Add("ActiveScripts", client.Network.CurrentSim.ActiveScripts);
-                                hash.Add("Agents", client.Network.CurrentSim.Agents);
-                                hash.Add("ChildAgents", client.Network.CurrentSim.ChildAgents);
+                                hash.Add("FPS", client.Network.CurrentSim.Stats.FPS);
+                                hash.Add("TimeDilation", client.Network.CurrentSim.Stats.Dilation);
+                                hash.Add("LSLIPS", client.Network.CurrentSim.Stats.LSLIPS);
+                                hash.Add("Objects", client.Network.CurrentSim.Stats.Objects);
+                                hash.Add("ActiveScripts", client.Network.CurrentSim.Stats.ActiveScripts);
+                                hash.Add("Agents", client.Network.CurrentSim.Stats.Agents);
+                                hash.Add("ChildAgents", client.Network.CurrentSim.Stats.ChildAgents);
                                 textwriter.WriteLine(JavaScriptConvert.SerializeObject(hash));
                                 goto flushwriter;
                             }
@@ -199,7 +199,7 @@ namespace AjaxLife.Html
                             client.Self.AnimationStop(new LLUUID(POST["Animation"]));
                             break;
                         case "SendAppearance":
-                            client.Appearance.BeginAgentSendAppearance();
+                            client.Appearance.SetPreviousAppearance();
                             break;
                         case "GetMapItems":
                             {
@@ -229,6 +229,47 @@ namespace AjaxLife.Html
                                 req.AgentData.AgentID = client.Network.AgentID;
                                 req.AgentData.SessionID = client.Network.SessionID;
                                 client.Network.SendPacket((Packet)req);
+                            }
+                            break;
+                        case "GetFriendList":
+                            {
+                                List<FriendsManager.FriendInfo> friends = client.Friends.FriendsList();
+                                List<Hashtable> friendlist = new List<Hashtable>();
+                                foreach (FriendsManager.FriendInfo friend in friends)
+                                {
+                                    Hashtable friendhash = new Hashtable();
+                                    friendhash.Add("ID", friend.UUID.ToStringHyphenated());
+                                    friendhash.Add("Name", friend.Name);
+                                    friendhash.Add("Online", friend.IsOnline);
+                                    friendhash.Add("MyRights", friend.MyRightsFlags);
+                                    friendhash.Add("TheirRights", friend.TheirRightsFlags);
+                                    friendlist.Add(friendhash);
+                                }
+                                (new JsonSerializer()).Serialize(textwriter, friendlist);
+                            }
+                            break;
+                        case "RequestTexture":
+                            {
+                                LLUUID image = new LLUUID(POST["ID"]);
+                                if (File.Exists("texturecache/" + image.ToStringHyphenated() + ".png"))
+                                {
+                                    textwriter.Write("{Ready: true, URL: \"textures/" + image.ToStringHyphenated() + ".png\"}");
+                                }
+                                else
+                                {
+                                    client.Assets.RequestImage(image, ImageType.Normal, 125000.0f, 0);
+                                    textwriter.Write("{Ready: false}");
+                                }
+                            }
+                            break;
+                        case "AcceptFriendship":
+                            {
+                                client.Friends.AcceptFriendship(client.Self.ID, POST["IMSessionID"]);
+                            }
+                            break;
+                        case "DeclineFriendship":
+                            {
+                                client.Friends.DeclineFriendship(client.Self.ID, POST["IMSessionID"]);
                             }
                             break;
                     }

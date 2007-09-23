@@ -39,7 +39,7 @@
   <ItemGroup>
     <Reference Include="libsecondlife, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>dependencies\libsecondlife.dll</HintPath>
+      <HintPath>..\..\libsl\bin\libsecondlife.dll</HintPath>
     </Reference>
     <Reference Include="MiniHttpd, Version=1.2.0.35930, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -66,7 +66,6 @@
     <Compile Include="Html\UI.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="TextureDirectory.cs" />
-    <Compile Include="TextureFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html">

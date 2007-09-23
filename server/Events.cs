@@ -32,8 +32,8 @@ using System.Text;
 using System.IO;
 using libsecondlife;
 using libsecondlife.Packets;
-using libsecondlife.InventorySystem;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace AjaxLife
 {
@@ -176,11 +176,10 @@ namespace AjaxLife
             item.Add("Position", position);
             item.Add("Timestamp", timestamp);
             item.Add("Name", folder.Name);
-            item.Add("FolderID", folder.FolderID.ToStringHyphenated());
+            item.Add("FolderID", folder.UUID.ToStringHyphenated());
             this.pending.Enqueue(item);
         }
-
-        public void Inventory_OnInventoryItemReceived(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, InventoryItem item)
+        public void Inventory_OnInventoryObjectReceived(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, AssetType type, LLUUID objectID, bool fromTask)
         {
             if (!active) return;
             Hashtable hashtable = new Hashtable();
@@ -191,16 +190,6 @@ namespace AjaxLife
             hashtable.Add("RegionID", regionID.ToStringHyphenated());
             hashtable.Add("Position", position);
             hashtable.Add("Timestamp", timestamp);
-            hashtable.Add("ItemID", item.AssetID.ToStringHyphenated());
-            hashtable.Add("BaseMask", item.BaseMask);
-            hashtable.Add("Description", item.Description);
-            hashtable.Add("InvType", item.InvType);
-            hashtable.Add("Name", item.Name);
-            hashtable.Add("ItemID", item.ItemID.ToStringHyphenated());
-            hashtable.Add("CreationDate", item.CreationDate);
-            hashtable.Add("CreatorID", item.CreatorID.ToStringHyphenated());
-            hashtable.Add("Type", item.Type);
-            hashtable.Add("NextOwnerMask", item.NextOwnerMask);
             this.pending.Enqueue(hashtable);
         }
 
@@ -222,8 +211,7 @@ namespace AjaxLife
             item.Add("Balance", balance);
             this.pending.Enqueue(item);
         }
-
-        public void Self_OnChat(string message, MainAvatar.ChatAudibleLevel audible, MainAvatar.ChatType type, MainAvatar.ChatSourceType sourceType, string fromName, LLUUID id, LLUUID ownerid, LLVector3 position)
+        public void Self_OnChat(string message, ChatAudibleLevel audible, ChatType type, ChatSourceType sourceType, string fromName, LLUUID id, LLUUID ownerid, LLVector3 position)
         {
             if (!active) return;
             Hashtable item = new Hashtable();
@@ -238,10 +226,40 @@ namespace AjaxLife
             item.Add("Position", position);
             this.pending.Enqueue(item);
         }
-
-        public void Self_OnInstantMessage(LLUUID fromAgentID, string fromAgentName, LLUUID toAgentID, uint parentEstateID, LLUUID regionID, LLVector3 position, MainAvatar.InstantMessageDialog dialog, bool groupIM, LLUUID imSessionID, DateTime timestamp, string message, MainAvatar.InstantMessageOnline offline, byte[] binaryBucket)
+        public void Self_OnInstantMessage(InstantMessage im, Simulator simulator)
         {
             if (!active) return;
+            LLUUID fromAgentID = im.FromAgentID;
+            string fromAgentName = im.FromAgentName;
+            LLUUID toAgentID = im.ToAgentID;
+            LLUUID regionID = im.RegionID;
+            LLVector3 position = im.Position;
+            InstantMessageDialog dialog = im.Dialog;
+            bool groupIM = im.GroupIM;
+            LLUUID imSessionID = im.IMSessionID;
+            DateTime timestamp = im.Timestamp;
+            string message = im.Message;
+            InstantMessageOnline offline = im.Offline;
+            byte[] binaryBucket = im.BinaryBucket;
+            uint parentEstateID = im.ParentEstateID;
+            // LibSL screwed us over again - we're forced instantly accept or decline inventory!
+            // Reimplementing here without instant accept/decline
+            if (dialog == InstantMessageDialog.InventoryOffered)
+            {
+                if (binaryBucket.Length == 17)
+                {
+                    Inventory_OnInventoryObjectReceived(fromAgentID, fromAgentName, parentEstateID, regionID, position, timestamp, (AssetType)binaryBucket[0], new LLUUID(binaryBucket, 1), false);
+                }
+                return;
+            }
+            else if (dialog == InstantMessageDialog.TaskInventoryOffered)
+            {
+                if (binaryBucket.Length == 1)
+                {
+                    Inventory_OnInventoryObjectReceived(fromAgentID, fromAgentName, parentEstateID, regionID, position, timestamp, (AssetType)binaryBucket[0], LLUUID.Zero, true);
+                }
+                return;
+            }
             Hashtable item = new Hashtable();
             item.Add("MessageType", "InstantMessage");
             item.Add("FromAgentID", fromAgentID.ToStringHyphenated());
@@ -289,7 +307,7 @@ namespace AjaxLife
             this.pending.Enqueue(item);
         }
 
-        public void Self_OnScriptQuestion(LLUUID taskID, LLUUID itemID, string objectName, string objectOwner, MainAvatar.ScriptPermission questions)
+        public void Self_OnScriptQuestion(Simulator simulator, LLUUID taskID, LLUUID itemID, string objectName, string objectOwner, ScriptPermission questions)
         {
             if (!active) return;
             Hashtable item = new Hashtable();
@@ -359,6 +377,81 @@ namespace AjaxLife
                 items.Add(itemhash);
             }
             hash.Add("Items", items);
+            this.pending.Enqueue(hash);
+        }
+
+        public void Assets_OnImageReceived(ImageDownload image, AssetTexture asset)
+        {
+            if (image.NotFound)
+            {
+                Console.WriteLine("Failed to download " + image.ID.ToStringHyphenated() + " - not found.");
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "ImageDownloaded");
+                hash.Add("UUID", image.ID.ToStringHyphenated());
+                hash.Add("Success", false);
+                hash.Add("Error", "Image not found in database.");
+                this.pending.Enqueue(hash);
+            }
+            else if (image.Success)
+            {
+                string key = image.ID.ToStringHyphenated();
+                File.WriteAllBytes("texturecache/" + key + ".j2c", image.AssetData);
+                Process process = Process.Start("convert", "texturecache/" + key + ".j2c texturecache/" + key + ".png");
+                process.WaitForExit();
+                process.Dispose();
+                File.Delete("texturecache/" + key + ".j2c");
+                Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "ImageDownloaded");
+                hash.Add("Success", true);
+                hash.Add("Size", image.Size);
+                hash.Add("UUID", key);
+                hash.Add("URL", "textures/" + key + ".png");
+                this.pending.Enqueue(hash);
+            }
+            else
+            {
+                Console.WriteLine("Failed to download " + image.ID.ToStringHyphenated() + ".");
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "ImageDownloaded");
+                hash.Add("UUID", image.ID.ToStringHyphenated());
+                hash.Add("Success", false);
+                hash.Add("Error", "Unknown error.");
+                this.pending.Enqueue(hash);
+            }
+        }
+
+        public void Friends_OnFriendshipOffered(LLUUID agentID, string agentName, LLUUID imSessionID)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "FriendshipOffered");
+            hash.Add("AgentID", agentID.ToStringHyphenated());
+            hash.Add("AgentName", agentName);
+            hash.Add("IMSessionID", imSessionID.ToStringHyphenated());
+            this.pending.Enqueue(hash);
+        }
+
+        public void Friends_OnFriendRights(FriendsManager.FriendInfo friend)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "FriendRightsChanged");
+            hash.Add("Name", friend.Name);
+            hash.Add("ID", friend.UUID.ToStringHyphenated());
+            hash.Add("TheirRights", friend.TheirRightsFlags);
+            hash.Add("MyRights", friend.MyRightsFlags);
+            hash.Add("Online", friend.IsOnline);
+            this.pending.Enqueue(hash);
+        }
+
+        public void Friends_OnOnOffline(FriendsManager.FriendInfo friend)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "FriendOnOffline");
+            hash.Add("Name", friend.Name);
+            hash.Add("ID", friend.UUID.ToStringHyphenated());
+            hash.Add("TheirRights", friend.TheirRightsFlags);
+            hash.Add("MyRights", friend.MyRightsFlags);
+            hash.Add("Online", friend.IsOnline);
             this.pending.Enqueue(hash);
         }
 

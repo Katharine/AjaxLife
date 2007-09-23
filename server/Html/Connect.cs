@@ -33,7 +33,6 @@ using System.IO;
 using MiniHttpd;
 using libsecondlife;
 using libsecondlife.Packets;
-using libsecondlife.InventorySystem;
 using Newtonsoft.Json;
 
 namespace AjaxLife.Html
@@ -69,7 +68,7 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
-                Dictionary<string,string> POST = AjaxLife.PostDecode(qstring);
+                Dictionary<string, string> POST = AjaxLife.PostDecode(qstring);
                 Guid key = new Guid(POST["session"]);
                 if (!this.users.ContainsKey(key))
                 {
@@ -99,11 +98,15 @@ namespace AjaxLife.Html
                     {
                         user["Events"] = events;
                     }
+                    // Event callbacks
                     client.Self.OnScriptQuestion += new MainAvatar.ScriptQuestionCallback(events.Self_OnScriptQuestion);
                     client.Self.OnScriptDialog += new MainAvatar.ScriptDialogCallback(events.Self_OnScriptDialog);
                     client.Self.OnInstantMessage += new MainAvatar.InstantMessageCallback(events.Self_OnInstantMessage);
                     client.Self.OnChat += new MainAvatar.ChatCallback(events.Self_OnChat);
-                    client.Avatars.OnFriendNotification += new AvatarManager.FriendNotificationCallback(events.Avatars_OnFriendNotification);
+                    client.Friends.OnFriendOnline += new FriendsManager.FriendOnlineEvent(events.Friends_OnOnOffline);
+                    client.Friends.OnFriendOffline += new FriendsManager.FriendOfflineEvent(events.Friends_OnOnOffline);
+                    client.Friends.OnFriendRights += new FriendsManager.FriendRightsEvent(events.Friends_OnFriendRights);
+                    client.Friends.OnFriendshipOffered += new FriendsManager.FriendshipOfferedEvent(events.Friends_OnFriendshipOffered);
                     client.Avatars.OnAvatarNames += new AvatarManager.AvatarNamesCallback(events.Avatars_OnAvatarNames);
                     client.Directory.OnDirPeopleReply += new DirectoryManager.DirPeopleReplyCallback(events.Directory_OnDirPeopleReply);
                     client.Network.OnDisconnected += new NetworkManager.DisconnectedCallback(events.Network_OnDisconnected);
@@ -114,12 +117,16 @@ namespace AjaxLife.Html
                     client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
                     // LibSL screwed this one up, so it's implemented manually.
                     //client.Avatars.OnAvatarProperties += new AvatarManager.AvatarPropertiesCallback(events.Avatars_OnAvatarProperties);
-                    client.Inventory.OnInventoryItemReceived += new InventoryManager.On_InventoryItemReceived(events.Inventory_OnInventoryItemReceived);
-                    client.Inventory.OnInventoryFolderReceived += new InventoryManager.On_InventoryFolderReceived(events.Inventory_OnInventoryFolderReceived);
+                    // LibSL made this one useless to us, so it's implemented manually as well.
+                    //client.Inventory.OnInventoryObjectReceived += new InventoryManager.InventoryObjectReceived(events.Inventory_OnInventoryObjectReceived);
+                    client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
+                    // Packet callbacks
                     client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
                     client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
                     client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
-                    client.Appearance.BeginAgentSendAppearance();
+                    //client.Appearance.SetPreviousAppearance();
+                    client.Self.UpdateCamera(0, client.Self.Position, new LLVector3(0, 0.9999f, 0), new LLVector3(0.9999f, 0, 0), new LLVector3(0, 0, 0.9999f),
+                        LLQuaternion.Identity, LLQuaternion.Identity, 32.0f, MainAvatar.AgentFlags.None, MainAvatar.AgentState.None, true);
                     textWriter.WriteLine("{success: true}");
                 }
                 else
