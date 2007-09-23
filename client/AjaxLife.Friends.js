@@ -27,34 +27,79 @@
 AjaxLife.Friends = function() {
 	var friends = {};
 	var onchangecallbacks = [];
+	var onnewcallbacks = [];
 	
-	function statuschange(agentid, online)	{
-		if(friends[agentid] !== online)
+	function statuschange(friend)	{
+		if(!friends[friend.ID] || friends[friend.ID].Online !== friend.Online)
 		{
-			AjaxLife.NameCache.Find(agentid,function(name) {
-				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: name, status: (online?_("Friends.Online"):_("Friends.Offline"))}));
+			if(friends[friend.ID])
+			{
+				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}));
 				onchangecallbacks.each(function(callback) {
-					callback(agentid, name, online);
+					callback(friend);
 				});
-			});
-			friends[agentid] = online;
+			}
+			else
+			{
+				added(friend);
+			}
+			friends[friend.ID] = friend;
 		}
+	}
+	
+	function added(friend)
+	{
+		onnewcallbacks.each(function (callback) {
+			callback(friend);
+		});
 	}
 	
 	return {
 		init: function() {
-			AjaxLife.Network.MessageQueue.RegisterCallback('FriendNotification', function(data) {
-				statuschange(data.AgentID, data.Online);
+			AjaxLife.Network.MessageQueue.RegisterCallback('FriendOnOffline', function(data) {
+				statuschange(data);
+			});
+	
+			AjaxLife.Network.Send("GetFriendList",{
+				callback: function(data) {
+					if(data.each)
+					{
+						data.each(function(friend) {
+							if(!friends[friend.ID])
+							{
+								added(friend);
+							}
+							friends[friend.ID] = friend;
+							AjaxLife.NameCache.Add(friend.ID, friend.Name);
+						});
+					}
+					else
+					{
+						alert(data);
+					}
+				}
 			});
 		},
 		StatusChange: function(agentid, online)	{
-			statuschange(agentid,online);
+			if(friends[agentid])
+			{
+				var friend = AjaxLife.Utils.Clone(friends[agentid]);
+				friend.Online = online;
+				statuschange(friend);
+			}
+			else
+			{
+				alert("Failed AjaxLife.Friends.StatusChange operation while setting "+agentid+" to "+(online?"online":"offline"));
+			}
 		},
 		GetFriends: function() {
 			return friends;
 		},
-		AddCallback: function(callback) {
+		AddStatusCallback: function(callback) {
 			onchangecallbacks[onchangecallbacks.length] = callback;
+		},
+		AddNewFriendCallback: function(callback) {
+			onnewcallbacks[onnewcallbacks.length] = callback;
 		}
 	};
 }();

@@ -61,3 +61,15 @@ AjaxLife.Utils.UUID = function() {
 AjaxLife.Utils.FixText = function(text) {
 	return text.escapeHTML().gsub('  ',' &nbsp;').gsub('\n','<br />');
 };
+
+AjaxLife.Utils.Clone = function(myObj) {
+	if(typeof(myObj) != 'object') return myObj;
+	if(myObj == null) return myObj;
+
+	var myNewObj = new Object();
+
+	for(var i in myObj)
+		myNewObj[i] = clone(myObj[i]);
+
+	return myNewObj;
+}

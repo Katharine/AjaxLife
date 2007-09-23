@@ -253,17 +253,19 @@ AjaxLife.InstantMessage = function() {
 			var sortdelay = new Ext.util.DelayedTask(function() {
 				friendlist.sort();
 			});
-			AjaxLife.Friends.AddCallback(function (agentid, name, online) {
-				if(online)
+			var addname = function (friend) {
+				if(friend.Online)
 				{
-					friendlist.add(agentid,name);
+					friendlist.add(friend.ID,friend.Name);
 				}
 				else
 				{
-					friendlist.remove(agentid);
+					friendlist.remove(friend.ID);
 				}
 				sortdelay.delay(200);
-			});
+			};
+			AjaxLife.Friends.AddStatusCallback(addname);
+			AjaxLife.Friends.AddNewFriendCallback(addname);
 			dialog.body.setStyle({overflow: 'hidden'});
 			width = 700;
 			height = 400;

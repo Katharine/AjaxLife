@@ -81,7 +81,10 @@ AjaxLife.Network.MessageQueue = function() {
 				try
 				{
 					callbacks[item.MessageType].each(function(callback) {
-						callback(item);
+						if(callback)
+						{
+							callback(item);
+						}
 					});
 					handled = true;
 				}
@@ -208,7 +211,15 @@ AjaxLife.Network.MessageQueue = function() {
 			if(!callbacks[message]) {
 				callbacks[message] = new Array();
 			};
-			callbacks[message][callbacks[message].length] = callback;
+			var num = callbacks[message].length;
+			callbacks[message][num] = callback;
+			return num;
+		},
+		UnregisterCallback: function(message, callback) {
+			if(callbacks[message] && callbacks[message][callback])
+			{
+				callbacks[message][callback] = false;
+			}
 		}
 	};
 }();
@@ -235,6 +246,7 @@ AjaxLife.Network.Send = function(message, opts) {
 			{
 				try
 				{
+					//alert(response.responseText);
 					var data = Ext.util.JSON.decode(response.responseText);
 					callbackf(data);
 				}

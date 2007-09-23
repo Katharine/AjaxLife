@@ -69,7 +69,6 @@ AjaxLife.Search = function() {
 			results_list = new AjaxLife.Widgets.SelectList('search_list_results', people_tab.bodyEl.dom, {
 				width: '99%',
 				callback: function(key) {
-					AjaxLife.Widgets.Ext.msg("Debug",key);
 					new AjaxLife.Profile(key);
 				}
 			});

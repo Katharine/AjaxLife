@@ -142,6 +142,9 @@ AjaxLife.Strings = {
 			Partner: "Partner:<br />#{partner}",
 			None: "None",
 			IMButton: "Instant Message"
+		},
+		Texture: {
+			DownloadFailed: "Could not download texture."
 		}
 	},
 	// Translated by Mariel Voyunicef

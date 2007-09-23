@@ -248,8 +248,8 @@ AjaxLife.SpatialChat = function() {
 			//});
 			
 			// Friend notifications.
-			AjaxLife.Friends.AddCallback(function(agentid, name, online) {
-				add(_("Friends.OnlineNotification",{name: name, status: (online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System);
+			AjaxLife.Friends.AddStatusCallback(function(friend) {
+				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System);
 			});
 			
 			// Incoming chat.

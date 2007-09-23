@@ -31,7 +31,7 @@ if(!window.AjaxLife)
 	window.AjaxLife = {};
 }
 // Stick up a loading notice.
-AjaxLife.PageWait = Ext.Msg.wait("Loading subsystems. Please wait...<br />This shouldn't take more than a few seconds.","AjaxLife");
+AjaxLife.PageWait = Ext.Msg.wait("Loading subsystems. Please wait...","AjaxLife");
 
 // A couple of namespaces.
 AjaxLife.Widgets = {};

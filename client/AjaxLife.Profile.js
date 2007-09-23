@@ -59,8 +59,7 @@ AjaxLife.Profile = function(agentid) {
 		left: '5px'
 	});
 	div_name.dom.update(_("Profile.Name",{name: _("Profile.Loading")}));
-	img_sl = Ext.get($(document.createElement('img')));
-	img_sl.dom.setAttribute('src',AjaxLife.STATIC_ROOT+'images/noimage.png');
+	img_sl = Ext.get($(document.createElement('div')));
 	img_sl.setStyle({
 		width: '181px',
 		height: '136px',
@@ -103,7 +102,7 @@ AjaxLife.Profile = function(agentid) {
 	div_sl_about_label.setStyle({
 		position: 'absolute',
 		top: '170px',
-		left: '5px',
+		left: '5px'
 	});
 	div_sl_about_label.update(_("Profile.About"));
 	div_sl_about= Ext.get($(document.createElement('div')));
@@ -120,7 +119,7 @@ AjaxLife.Profile = function(agentid) {
 	div_groups_label.setStyle({
 		position: 'absolute',
 		top: '260px',
-		left: '5px',
+		left: '5px'
 	});
 	div_groups_label.update(_("Profile.Groups"));
 	div_groups= Ext.get($(document.createElement('div')));
@@ -146,7 +145,7 @@ AjaxLife.Profile = function(agentid) {
 		left: '10px'
 	});
 	// Append...
-	tab_sl.bodyEl.addClass("profile-2ndlife");
+	tab_sl.bodyEl.addClass("profile 2ndlife");
 	tab_sl.bodyEl.dom.appendChild(div_name.dom);
 	tab_sl.bodyEl.dom.appendChild(img_sl.dom);
 	tab_sl.bodyEl.dom.appendChild(div_born.dom);
@@ -162,9 +161,41 @@ AjaxLife.Profile = function(agentid) {
 	// 1st Life
 	tab_fl = win.getTabs().addTab("profile_tab_"+agentid+"_1stlife",_("Profile.FirstLife"));
 	
+	div_img_fl = Ext.get($(document.createElement('div')));
+	div_img_fl.setStyle({
+		width: '200x',
+		height: '200px',
+		position: 'absolute',
+		top: '5px',
+		left: '5px',
+		border: 'thin solid black'
+	});
+	div_about_fl = Ext.get($(document.createElement('div')));
+	div_about_fl.setStyle({
+		position: 'absolute',
+		top: '250px',
+		left: '5px',
+		height: '150px',
+		width: '320px',
+		border: 'thin solid black',
+		overflow: 'auto'
+	});
+	div_about_fl_label = Ext.get($(document.createElement('div')));
+	div_about_fl_label.setStyle({
+		position: 'absolute',
+		top: '230px',
+		left: '5px'
+	});
+	div_about_fl_label.update(_("Profile.About"));
+	
+	// Append...
+	tab_fl.bodyEl.addClass("profile 1stlife");
+	tab_fl.bodyEl.dom.appendChild(div_img_fl.dom);
+	tab_fl.bodyEl.dom.appendChild(div_about_fl.dom);
+	tab_fl.bodyEl.dom.appendChild(div_about_fl_label.dom);
 	
 	// Interests
-	tab_interests = win.getTabs().addTab("profile_tab_"+agentid+"_skills",_("Profile.Interests"));
+	// tab_interests = win.getTabs().addTab("profile_tab_"+agentid+"_skills",_("Profile.Interests")); // Meh.
 	
 	
 	
@@ -172,14 +203,30 @@ AjaxLife.Profile = function(agentid) {
 	
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarProperties", function(data) {
 		if(!active || data.AvatarID != agentid) return;
+		
+		// 2nd Life
 		if(data.ProfileImage != AjaxLife.Utils.UUID.Zero)
 		{
-			img_sl.dom.setAttribute('src','textures/'+data.ProfileImage+'.png?sid='+gSessionID);
+			new AjaxLife.Texture(img_sl.dom,181,136,data.ProfileImage);
+		}
+		else
+		{
+			var noimg = Ext.get($(document.createElement('img')));
+			noimg.dom.setAttribute('src',AjaxLife.STATIC_ROOT+'images/noimage.png');
+			noimg.setStyle({
+				width: '181px',
+				height: '136px'
+			});
+			img_sl.dom.appendChild(noimg.dom);
 		}
 		div_born.dom.update(_("Profile.JoinDate", {date: data.BornOn}));
 		div_online.dom.update(_(data.Online?"Profile.Online":"Profile.Offline"));
 		var payment = "";
-		if(data.Identified && data.Transacted)
+		if(lastname == "Linden")
+		{
+			payment = _("Profile.LindenAccount");
+		}
+		else if(data.Identified && data.Transacted)
 		{
 			payment = _("Profile.PaymentInfoUsed");
 		}
@@ -203,6 +250,23 @@ AjaxLife.Profile = function(agentid) {
 				div_partner.dom.update(_("Profile.Partner", {partner: name}));
 			});
 		}
+		
+		// 1st Life
+		if(data.FirstLifeImage != AjaxLife.Utils.UUID.Zero)
+		{
+			new AjaxLife.Texture(div_img_fl.dom,200,200,data.FirstLifeImage);
+		}
+		else
+		{
+			var noimg = Ext.get($(document.createElement('img')));
+			noimg.dom.setAttribute('src',AjaxLife.STATIC_ROOT+'images/noimage.png');
+			noimg.setStyle({
+				width: '200px',
+				height: '200px'
+			});
+			div_img_fl.dom.appendChild(noimg.dom);
+		}
+		div_about_fl.dom.update(AjaxLife.Utils.FixText(data.FirstLifeText));
 	});
 	
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarInterests", function(data) {
