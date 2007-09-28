@@ -223,6 +223,20 @@ namespace AjaxLife.Html
                                 client.Network.SendPacket((Packet)req);
                             }
                             break;
+                        case "GetMapBlock":
+                            {
+                                ushort x = ushort.Parse(POST["X"]);
+                                ushort y = ushort.Parse(POST["Y"]);
+                                MapBlockRequestPacket req = new MapBlockRequestPacket();
+                                req.AgentData.AgentID = client.Network.AgentID;
+                                req.AgentData.SessionID = client.Network.SessionID;
+                                req.PositionData.MinX = x;
+                                req.PositionData.MinY = y;
+                                req.PositionData.MaxX = x;
+                                req.PositionData.MaxY = y;
+                                client.Network.SendPacket((Packet)req);
+                            }
+                            break;
                         case "GetOfflineMessages":
                             {
                                 RetrieveInstantMessagesPacket req = new RetrieveInstantMessagesPacket();
