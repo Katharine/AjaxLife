@@ -124,10 +124,31 @@ AjaxLife.Map = function() {
 		}
 	}
 	
-	function singleClickHandler(x, y)
+	function singleClickHandler(x, y, retried)
 	{
 		var now = new Date();
 		var sim = getRegionName(x,y);
+		// Check if the map block loaded yet.
+		if(!sim || sim == '')
+		{
+			if(retried)
+			{
+				AjaxLife.Widgets.Ext.msg("Error","Can't focus on that region until we know its name. Please wait a bit.");
+			}
+			else
+			{
+				AjaxLife.Network.Send("GetMapBlock",{
+					X: Math.floor(x),
+					Y: Math.floor(y)
+				});
+				setTimeout(function() {
+					singleClickHandler(x, y, true);
+				},1000); // Request region data and wait a second. Never know - it might work.
+				AjaxLife.Widgets.Ext.msg("","Requsting name for ("+Math.floor(x)+", "+Math.floor(y)+")...");
+			}
+			// Try and speed up loading that region.
+			return;
+		}
 		// If double clicked...
 		if(now.getTime() - last_click.getTime() < 1000 && marked_position.sim == sim && marked_position.x == (x%1)*256 && marked_position.y == (y%1)*256)
 		{
@@ -222,6 +243,7 @@ AjaxLife.Map = function() {
 	
 	return {
 		init: function() {
+			
 			marker_you_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_you.png",16,16,true));
 			marker_you_icons = [marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img];
 			marker_mark_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_selected.png",16,16,true));
@@ -306,6 +328,11 @@ AjaxLife.Map = function() {
 				//	}
 				//}
 			});
+			
+			// Add initial sim to avoid crash due to dead MapAPI.
+			lh[gRegion.toLowerCase()] = gRegionCoords;
+			rlh[gRegionCoords.x+"-"+gRegionCoords.y] = gRegion;
+			
 			map = new SLMap(Ext.get('div_map').dom, {hasZoomControls: false, hasPanningControls: false, singleClickHandler: singleClickHandler});
 			map.centerAndZoomAtSLCoord(new SLPoint(position.sim, position.x, position.y),2);
 			marker_you = new Marker(marker_you_icons,new SLPoint(position.sim, position.x, position.y));
@@ -516,6 +543,7 @@ AjaxLife.Map = function() {
 							Classifieds: []
 						};
 						rlh[sims[i].X+"-"+sims[i].Y] = sims[i].Name;
+						lh[sims[i].Name.toLowerCase()] = {x: sims[i].X, y: sims[i].Y};
 						//sims[i].AgentMarker = false;
 					}
 					if(sims[i].Access == AjaxLife.Constants.Map.SimAccess.Down)

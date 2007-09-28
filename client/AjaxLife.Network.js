@@ -226,6 +226,10 @@ AjaxLife.Network.MessageQueue = function() {
 
 AjaxLife.Network.Send = function(message, opts) {
 	var link = new Ext.data.Connection({timeout: 60000});
+	if(!opts)
+	{
+		opts = {};
+	}
 	opts.sid = gSessionID;
 	opts.MessageType = message;
 	var callbackf = false;
