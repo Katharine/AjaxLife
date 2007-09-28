@@ -56,6 +56,11 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 		paddingBottom: (height/2-16)+'px'
 	}).setAttribute('src',AjaxLife.STATIC_ROOT+'images/loader.gif');
 	$(parent).appendChild(elem);
+	if(texture == AjaxLife.Utils.UUID.Zero)
+	{
+		replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
+		return;
+	}
 	callbackid = AjaxLife.Network.MessageQueue.RegisterCallback('ImageDownloaded', function(data) {
 		if(data.UUID == texture)
 		{

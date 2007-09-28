@@ -75,7 +75,7 @@ AjaxLife.InstantMessage = function() {
 		{
 			chats[sessionid].content.dom.scrollTop = chats[sessionid].content.dom.scrollHeight;
 			chats[sessionid].content.setStyle({height: (height - 88)+'px'});
-			chats[sessionid].entrybox.setStyle({width: (width - 82)+'px'});
+			chats[sessionid].entrybox.setStyle({width: (width - 133)+'px'});
 		}
 	};
 	
@@ -143,7 +143,7 @@ AjaxLife.InstantMessage = function() {
 		content.setStyle({overflow: 'auto', width:'99%'});
 		chats[sessionid].content = content;
 		var entrybox = Ext.get(document.createElement('input'));
-		entrybox.setHeight(17);
+		entrybox.setHeight(20);
 		chats[sessionid].entrybox = entrybox;
 		chats[sessionid].tab.bodyEl.setStyle({overflow: 'hidden'});
 		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
@@ -154,9 +154,14 @@ AjaxLife.InstantMessage = function() {
 				entrybox.dom.value = '';
 				entrybox.dom.focus();
 			},
-			text: _("InstantMessage.Send"),
-			height: '12px'
+			text: _("InstantMessage.Send")
 		})).getEl().setStyle({position: 'absolute', bottom: '0px', right: '0px'});
+		(new Ext.Button(chats[sessionid].tab.bodyEl, {
+			handler: function() {
+				new AjaxLife.Profile(chats[sessionid].target);
+			},
+			text: _("InstantMessage.Profile")
+		})).getEl().setStyle({position: 'absolute', bottom: '0px', right: '48px'});
 		div_typing = Ext.get(document.createElement('div'));
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));

@@ -25,7 +25,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+AjaxLife.ActiveProfileWindows = {};
+
 AjaxLife.Profile = function(agentid) {
+	if(AjaxLife.ActiveProfileWindows[agentid])
+	{
+		AjaxLife.ActiveProfileWindows[agentid].focus();
+		return;
+	}
 	// Private
 	var win = false;
 	var firstname = "";
@@ -46,7 +53,9 @@ AjaxLife.Profile = function(agentid) {
 		title: _("Profile.WindowTitle",{name: _("Profile.Loading")}),
 		resizable: false
 	});
+	AjaxLife.ActiveProfileWindows[agentid] = win;
 	win.on('hide', function() {
+		AjaxLife.ActiveProfileWindows[agentid] = null;
 		active = false;
 		win.destroy(true);
 	});
@@ -205,20 +214,7 @@ AjaxLife.Profile = function(agentid) {
 		if(!active || data.AvatarID != agentid) return;
 		
 		// 2nd Life
-		if(data.ProfileImage != AjaxLife.Utils.UUID.Zero)
-		{
-			new AjaxLife.Texture(img_sl.dom,181,136,data.ProfileImage);
-		}
-		else
-		{
-			var noimg = Ext.get($(document.createElement('img')));
-			noimg.dom.setAttribute('src',AjaxLife.STATIC_ROOT+'images/noimage.png');
-			noimg.setStyle({
-				width: '181px',
-				height: '136px'
-			});
-			img_sl.dom.appendChild(noimg.dom);
-		}
+		new AjaxLife.Texture(img_sl.dom,181,136,data.ProfileImage);
 		div_born.dom.update(_("Profile.JoinDate", {date: data.BornOn}));
 		div_online.dom.update(_(data.Online?"Profile.Online":"Profile.Offline"));
 		var payment = "";
@@ -252,20 +248,7 @@ AjaxLife.Profile = function(agentid) {
 		}
 		
 		// 1st Life
-		if(data.FirstLifeImage != AjaxLife.Utils.UUID.Zero)
-		{
-			new AjaxLife.Texture(div_img_fl.dom,200,200,data.FirstLifeImage);
-		}
-		else
-		{
-			var noimg = Ext.get($(document.createElement('img')));
-			noimg.dom.setAttribute('src',AjaxLife.STATIC_ROOT+'images/noimage.png');
-			noimg.setStyle({
-				width: '200px',
-				height: '200px'
-			});
-			div_img_fl.dom.appendChild(noimg.dom);
-		}
+		new AjaxLife.Texture(div_img_fl.dom,200,200,data.FirstLifeImage);
 		div_about_fl.dom.update(AjaxLife.Utils.FixText(data.FirstLifeText));
 	});
 	

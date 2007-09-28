@@ -36,7 +36,8 @@ AjaxLife.Strings = {
 			Typing: "#{name} is typing...",
 			OnlineFriends: "Online Friends",
 			Send: "Send",
-			WindowTitle: "Instant Messages"
+			WindowTitle: "Instant Messages",
+			Profile: "Profile"
 		},
 		AjaxLife: {
 			Precaching: "Precaching...",
