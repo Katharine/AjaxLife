@@ -75,6 +75,12 @@ AjaxLife.Network.MessageQueue = function() {
 	
 	function processqueue(queue) {
 		queue.each(function(item) {
+			/*var is = "";
+			for(var i in item)
+			{
+				is += i+": "+item[i]+"\n";
+			}
+			alert(is);*/
 			var handled = false;
 			if(callbacks[item.MessageType])
 			{
@@ -92,43 +98,43 @@ AjaxLife.Network.MessageQueue = function() {
 				{
 					AjaxLife.Widgets.Ext.msg("Error",e);
 				}
-			}
-			if(item.MessageType == 'InstantMessage')
-			{
-				if(item.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryOffered)
-				{
-					/*
-					Ext.Msg.show({
-						title:"New inventory",
-						msg: item.FromAgentName+" gave you "+item.Message,
-						buttons: {
-							yes: "Accept",
-							no: "Decline"
-						},
-						modal: false,
-						closable: false,
-						fn: function(btn) {
-							if(btn == "yes")
-							{
-								AjaxLife.SpatialChat.addline("Second Life",item.FromAgentName+" gave you "+item.Message, AjaxLife.Constants.MainAvatar.ChatSource.System, AjaxLife.Constants.MainAvatar.ChatType.Normal);
-								AjaxLife.Network.Send("GenericInstantMessage", {
-									Target: item.FromAgentID,
-									Message: item.Message,
-									IMSessionID: item.IMSessionID,
-									Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryAccepted,
-									Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Offline,
-									X: 0,
-									Y: 0,
-									Z: 0
-								});
-							}
-						}
-					});
-					*/
-					AjaxLife.Widgets.Ext.msg("",_("Network.ReceiveInventory", {name: item.FromAgentName, item: item.Message}));
-				}
-			}
-			else if(item.MessageType == 'Disconnected')
+			}	
+			//if(item.MessageType == 'InstantMessage')
+			//{
+			//	if(item.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryOffered)
+			//	{
+			//		/*
+			//		Ext.Msg.show({
+			//			title:"New inventory",
+			//			msg: item.FromAgentName+" gave you "+item.Message,
+			//			buttons: {
+			//				yes: "Accept",
+			//				no: "Decline"
+			//				},
+			//			modal: false,
+			//			closable: false,
+			//			fn: function(btn) {
+			//				if(btn == "yes")
+			//				{
+			//					AjaxLife.SpatialChat.addline("Second Life",item.FromAgentName+" gave you "+item.Message, AjaxLife.Constants.MainAvatar.ChatSource.System, AjaxLife.Constants.MainAvatar.ChatType.Normal);
+			//					AjaxLife.Network.Send("GenericInstantMessage", {
+			//						Target: item.FromAgentID,
+			//						Message: item.Message,
+			//						IMSessionID: item.IMSessionID,
+			//						Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryAccepted,
+			//						Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Offline,
+			//						X: 0,
+			//						Y: 0,
+			//						Z: 0
+			//					});
+			//				}
+			//			}
+			//		});
+			//		*/
+			//		AjaxLife.Widgets.Ext.msg("",_("Network.ReceiveInventory", {name: item.FromAgentName, item: item.Message}));
+			//	}
+			//}
+			/*else */if(item.MessageType == 'Disconnected')
 			{
 				if(item.Reason != AjaxLife.Constants.NetworkManager.DisconnectType.ClientInitiated)
 				{
@@ -141,10 +147,6 @@ AjaxLife.Network.MessageQueue = function() {
 						buttons: false
 					});
 				}
-			}
-			else if(item.MessageType == 'MoneyBalanceReplyReceived')
-			{
-				AjaxLife.Widgets.Ext.msg(_("StatusBar.Money"),item.Description);
 			}
 			else if(!handled)
 			{

@@ -30,7 +30,10 @@ AjaxLife.Strings = {
 		Friends: {
 			OnlineNotification: "#{name} is #{status}.",
 			Online: "online",
-			Offline: "offline"
+			Offline: "offline",
+			FriendshipOffered: "#{name} has offered friendship. Will you accept?",
+			YouAccept: "You accepted #{name} as a friend.",
+			YouDecline: "You declined #{name}'s friendship offer."
 		},
 		InstantMessage: {
 			Typing: "#{name} is typing...",
@@ -80,7 +83,9 @@ AjaxLife.Strings = {
 		StatusBar: {
 			Money: "Money",
 			LindenDollarSymbol: "L$",
-			Loading: " loading..."
+			Loading: " loading...",
+			MoneyReceived: "You were paid L$#{amount}.",
+			MoneyGiven: "You paid L$#{amount}."
 		},
 		SpatialChat: {
 			ThirdPersonShout: " shouts:",
@@ -142,10 +147,22 @@ AjaxLife.Strings = {
 			Offline: "Offline",
 			Partner: "Partner:<br />#{partner}",
 			None: "None",
-			IMButton: "Instant Message"
+			IMButton: "Instant Message",
+			PayButton: "Pay",
+			PayDialogTitle: "Paying #{first} #{last}",
+			PayDialogPrompt: "How much do you want to pay #{first} #{last}?",
+			InvalidAmount: "That is an invalid amount to pay!",
+			FriendButton: "Add Friend",
+			ConfirmFriendAdd: "Are you sure you want to add #{first} #{last} as a friend?",
+			FriendshipOffered: "You have offered #{first} #{last} friendship."
 		},
 		Texture: {
 			DownloadFailed: "Could not download texture."
+		},
+		Number: {
+			SeparatorPeriod: 3,
+			Separator: ",",
+			DecimalSeparator: "."
 		}
 	},
 	// Translated by Mariel Voyunicef

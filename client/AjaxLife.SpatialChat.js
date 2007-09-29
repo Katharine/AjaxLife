@@ -277,6 +277,9 @@ AjaxLife.SpatialChat = function() {
 		addline: function(name, message, sourcetype, type) {
 			incomingline(name, message, sourcetype, type);
 		},
+		systemmessage: function(message) {
+			add(message,AjaxLife.Constants.MainAvatar.ChatSourceType.System);
+		},
 		open: function(opener) {
 			if(opener)
 			{

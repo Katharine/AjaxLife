@@ -58,6 +58,19 @@ function handlelogin()
 	}
 	$(document.body).setStyle({backgroundColor: 'white', color: 'black'});
 	setTimeout(function() {
+		if(!$('grid').getValue().endsWith('(Linden Lab)'))
+		{
+			if(!confirm("You are about to send data to a login server that is NOT owned by Linden Lab.\n"+
+				"The login info will be passed on UNENCRYPTED.\n\n"+
+				"DO NOT USE your Second Life account to log into this grid.\n"+
+				"If you are using an account specifically for "+$('grid').getValue()+", it is safe to proceed.\n"+
+				"Do you wish to continue?"))
+			{
+				revertscreen();
+				return false;
+			}
+			
+		}
 		var hanging = Ext.Msg.wait("Connecting to Second Life...");
 		var link = new Ext.data.Connection({timeout: 120000});
 		link.request({

@@ -59,6 +59,23 @@ AjaxLife.Friends = function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('FriendOnOffline', function(data) {
 				statuschange(data);
 			});
+			
+			AjaxLife.Network.MessageQueue.RegisterCallback('FriendshipOffered', function(data) {
+				Ext.Msg.confirm("",_("Friends.FriendshipOffered",{name: data.AgentName}), function(btn) {
+					if(btn == 'yes')
+					{
+						AjaxLife.Network.Send('AcceptFriendship',{IMSessionID: data.IMSessionID});
+						AjaxLife.Widgets.Ext.msg("",_("Friends.YouAccept", {name: data.AgentName}));
+						AjaxLife.SpatialChat.systemmessage(_("Friends.YouAccept", {name: data.AgentName}));
+					}
+					else
+					{
+						AjaxLife.Network.Send('DeclineFriendship',{IMSessionID: data.IMSessionID});
+						AjaxLife.Widgets.Ext.msg("",_("Friends.YouDecline", {name: data.AgentName}));
+						AjaxLife.SpatialChat.systemmessage(_("Friends.YouDecline", {name: data.AgentName}));
+					}
+				});
+			});
 	
 			AjaxLife.Network.Send("GetFriendList",{
 				callback: function(data) {
@@ -94,6 +111,9 @@ AjaxLife.Friends = function() {
 		},
 		GetFriends: function() {
 			return friends;
+		},
+		IsFriend: function(agent) {
+			return !!friends[agent];
 		},
 		AddStatusCallback: function(callback) {
 			onchangecallbacks[onchangecallbacks.length] = callback;

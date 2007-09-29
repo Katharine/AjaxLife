@@ -26,13 +26,30 @@
 
 AjaxLife.StatusBar = function() {
 	var div_ld = false;
+	var balance = false;
 	
 	return {
 		init: function() {
 			div_ld = Ext.get(document.createElement('div'));
-			div_ld.setStyle({'float': 'right', color: 'green'});
+			div_ld.setStyle({'float': 'right', color: '#00e752'});
 			div_ld.dom.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
 			document.getElementById('statusbar').appendChild(div_ld.dom);
+			
+			AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
+				div_ld.dom.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+				balance = data.Balance;
+				if(data.Description != '')
+				{
+					AjaxLife.Widgets.Ext.msg("",data.Description);
+				}
+			});
+			
+			AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {
+				div_ld.dom.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+				balance = data.Balance;
+			});
+			
+			AjaxLife.Network.Send('RequestBalance', {});
 		}
 	};
 }();

@@ -73,3 +73,22 @@ AjaxLife.Utils.Clone = function(myObj) {
 
 	return myNewObj;
 }
+
+AjaxLife.Utils.FormatNumber = function(number) {
+	number = '' + number;
+	var comma = _("Number.Separator");
+	if (number.length > 3)
+	{
+		var mod = number.length % 3;
+		var output = (mod > 0 ? (number.substring(0,mod)) : '');
+		for (i=0 ; i < Math.floor(number.length / 3); i++)
+		{
+			if ((mod == 0) && (i == 0))
+				output += number.substring(mod+ 3 * i, mod + 3 * i + 3);
+			else
+				output+= comma + number.substring(mod + 3 * i, mod + 3 * i + 3);
+		}
+		return (output);
+	}
+	else return number;
+}

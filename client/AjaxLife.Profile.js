@@ -68,7 +68,7 @@ AjaxLife.Profile = function(agentid) {
 		left: '5px'
 	});
 	div_name.dom.update(_("Profile.Name",{name: _("Profile.Loading")}));
-	img_sl = Ext.get($(document.createElement('div')));
+	var img_sl = Ext.get($(document.createElement('div')));
 	img_sl.setStyle({
 		width: '181px',
 		height: '136px',
@@ -77,13 +77,13 @@ AjaxLife.Profile = function(agentid) {
 		left: '5px',
 		border: 'thin solid black'
 	});
-	div_online = Ext.get($(document.createElement('div')));
+	var div_online = Ext.get($(document.createElement('div')));
 	div_online.setStyle({
 		position: 'absolute',
 		top: '5px',
 		left: '200px'
 	});
-	div_born = Ext.get($(document.createElement('div')));
+	var div_born = Ext.get($(document.createElement('div')));
 	div_born.setStyle({
 		position: 'absolute',
 		top: '30px',
@@ -91,7 +91,7 @@ AjaxLife.Profile = function(agentid) {
 		border: 'thin solid black'
 	});
 	div_born.dom.update(_("Profile.JoinDate"));
-	div_account = Ext.get($(document.createElement('div')));
+	var div_account = Ext.get($(document.createElement('div')));
 	div_account.setStyle({
 		position: 'absolute',
 		top: '60px',
@@ -99,7 +99,7 @@ AjaxLife.Profile = function(agentid) {
 		border: 'thin solid black'
 	});
 	div_account.dom.update(_("Profile.Account"));
-	div_partner = Ext.get($(document.createElement('div')));
+	var div_partner = Ext.get($(document.createElement('div')));
 	div_partner.setStyle({
 		position: 'absolute',
 		top: '100px',
@@ -107,14 +107,14 @@ AjaxLife.Profile = function(agentid) {
 		border: 'thin solid black'
 	});
 	div_partner.dom.update(_("Profile.Partner"));
-	div_sl_about_label = Ext.get($(document.createElement('div')));
+	var div_sl_about_label = Ext.get($(document.createElement('div')));
 	div_sl_about_label.setStyle({
 		position: 'absolute',
 		top: '170px',
 		left: '5px'
 	});
 	div_sl_about_label.update(_("Profile.About"));
-	div_sl_about= Ext.get($(document.createElement('div')));
+	var div_sl_about = Ext.get($(document.createElement('div')));
 	div_sl_about.setStyle({
 		position: 'absolute',
 		top: '185px',
@@ -124,24 +124,24 @@ AjaxLife.Profile = function(agentid) {
 		border: 'thin solid black',
 		overflow: 'auto'
 	});
-	div_groups_label = Ext.get($(document.createElement('div')));
+	var div_groups_label = Ext.get($(document.createElement('div')));
 	div_groups_label.setStyle({
 		position: 'absolute',
 		top: '260px',
 		left: '5px'
 	});
 	div_groups_label.update(_("Profile.Groups"));
-	div_groups= Ext.get($(document.createElement('div')));
+	var div_groups= Ext.get($(document.createElement('div')));
 	div_groups.setStyle({
 		position: 'absolute',
 		top: '285px',
 		left: '5px'
 	});
-	list_groups = new AjaxLife.Widgets.SelectList('profile_'+agentid+'_groups',div_groups.dom, {
+	var list_groups = new AjaxLife.Widgets.SelectList('profile_'+agentid+'_groups',div_groups.dom, {
 		width: '320px',
 		height: '68px'
 	});
-	btn_im = new Ext.Button(tab_sl.bodyEl.dom, {
+	var btn_im = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
 			AjaxLife.InstantMessage.start(agentid);
 			AjaxLife.InstantMessage.open(btn_im.getEl());
@@ -150,9 +150,53 @@ AjaxLife.Profile = function(agentid) {
 	});
 	btn_im.getEl().setStyle({
 		position: 'absolute',
-		top: '380px',
+		top: '360px',
 		left: '10px'
 	});
+	var btn_pay = new Ext.Button(tab_sl.bodyEl.dom, {
+		handler: function() {
+			Ext.Msg.prompt(_("Profile.PayDialogTitle",{first: firstname, last: lastname}),_("Profile.PayDialogPrompt",{first: firstname, last: lastname}), function(btn, text) {
+				if(btn == 'ok')
+				{
+					amount = parseInt(text.gsub(/[^0-9]/,''));
+					if(amount > 0)
+					{
+						AjaxLife.Network.Send("SendAgentMoney", {Target: agentid, Amount: amount});
+					}
+					else
+					{
+						Ext.msg.alert("",_("Profile.InvalidAmount"));
+					}
+				}
+			});
+		},
+		text: _("Profile.PayButton")
+	});
+	btn_pay.getEl().setStyle({
+		position: 'absolute',
+		top: '360px',
+		left: '120px'
+	});
+	if(!AjaxLife.Friends.IsFriend(agentid))
+	{
+		var btn_friend = new Ext.Button(tab_sl.bodyEl.dom, {
+			handler: function() {
+				Ext.Msg.confirm("",_("Profile.ConfirmFriendAdd",{first: firstname, last: lastname}), function(btn) {
+					if(btn == 'yes')
+					{
+						AjaxLife.Network.Send("OfferFriendship", {Target: agentid});
+						AjaxLife.Widgets.Ext.msg("",_("Profile.FriendshipOffered", {first: firstname, last: lastname}));
+					}
+				});
+			},
+			text: _("Profile.FriendButton")
+		});
+		btn_friend.getEl().setStyle({
+			position: 'absolute',
+			top: '385px',
+			left: '10px'
+		});
+	}
 	// Append...
 	tab_sl.bodyEl.addClass("profile 2ndlife");
 	tab_sl.bodyEl.dom.appendChild(div_name.dom);

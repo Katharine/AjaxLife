@@ -52,7 +52,7 @@ AjaxLife.init = function()
 	AjaxLife.Map.init();
 	AjaxLife.SpatialChat.init();
 	AjaxLife.Toolbar.init('toolbar');
-	//AjaxLife.StatusBar.init();
+	AjaxLife.StatusBar.init();
 	AjaxLife.NameCache.init();
 	AjaxLife.Friends.init();
 	AjaxLife.Search.init();
