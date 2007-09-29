@@ -67,6 +67,7 @@ function handlelogin()
 				first: Ext.get('first').dom.value,
 				last: Ext.get('last').dom.value,
 				password: Ext.get('password').dom.value,
+				grid: $('grid').getValue(),
 				session: gSessionID
 			},
 			callback: function(options, success, response) {

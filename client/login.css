@@ -9,10 +9,15 @@ body {
 	color: #fefefe;
 }
 
-#language {
+#advanced {
 	right: 5px;
 	top: 5px;
 	position: absolute;
+}
+
+#advanced td {
+	padding-left: 10px;
+	text-align: center;
 }
 
 #loginstuff {
