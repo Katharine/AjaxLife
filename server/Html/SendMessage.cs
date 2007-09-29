@@ -277,14 +277,19 @@ namespace AjaxLife.Html
                             }
                             break;
                         case "AcceptFriendship":
-                            {
-                                client.Friends.AcceptFriendship(client.Self.ID, POST["IMSessionID"]);
-                            }
+                            client.Friends.AcceptFriendship(client.Self.ID, POST["IMSessionID"]);
                             break;
                         case "DeclineFriendship":
-                            {
-                                client.Friends.DeclineFriendship(client.Self.ID, POST["IMSessionID"]);
-                            }
+                            client.Friends.DeclineFriendship(client.Self.ID, POST["IMSessionID"]);
+                            break;
+                        case "OfferFriendship":
+                            client.Friends.OfferFriendship(new LLUUID(POST["Target"]));
+                            break;
+                        case "TerminateFriendship":
+                            client.Friends.TerminateFriendship(new LLUUID(POST["Target"]));
+                            break;
+                        case "SendAgentMoney":
+                            client.Self.GiveAvatarMoney(new LLUUID(POST["Target"]), int.Parse(POST["Amount"]));
                             break;
                     }
                 }

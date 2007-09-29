@@ -77,10 +77,8 @@ namespace AjaxLife.Html
                 Hashtable replacements = new Hashtable();
                 replacements.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 string param = "";
-                GridRegion region;
-                client.Grid.GetGridRegion(client.Network.CurrentSim.Name, out region);
-                param += "\t\t\tgRegionCoords = {x: " + region.X + ", y:" + region.Y + "};\n";
-                param += "\t\t\tgRegion = " + AjaxLife.StringToJSON(region.Name) + ";\n";
+                param += "\t\t\tgRegionCoords = {x: " + Math.Floor(client.Self.GlobalPosition.X / 256) + ", y:" + Math.Floor(client.Self.GlobalPosition.Y / 256) + "};\n";
+                param += "\t\t\tgRegion = " + AjaxLife.StringToJSON(client.Network.CurrentSim.Name) + ";\n";
                 param += "\t\t\tvar gPosition = " + Newtonsoft.Json.JavaScriptConvert.SerializeObject(client.Self.Position) + ";\n";
                 param += "\t\t\tvar gMOTD = " + AjaxLife.StringToJSON(client.Network.LoginMessage) + ";\n";
                 param += "\t\t\tvar gSessionID = " + AjaxLife.StringToJSON(sessionid.ToString("D")) + ";\n";

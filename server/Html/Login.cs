@@ -70,8 +70,7 @@ namespace AjaxLife.Html
                 client.Settings.ALWAYS_DECODE_OBJECTS = false;
                 client.Settings.ALWAYS_REQUEST_OBJECTS = false;
                 client.Settings.MULTIPLE_SIMS = false;
-                // NOTE: This presumably breaks the GetSimStats request - which isn't used anyway.
-                client.Settings.ENABLE_SIMSTATS = false;
+                client.Settings.ENABLE_SIMSTATS = true;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
                 client.Throttle.Cloud = 0;
                 client.Throttle.Land = 0;
@@ -83,17 +82,16 @@ namespace AjaxLife.Html
                 Hashtable hashtable = new Hashtable();
                 hashtable.Add("SecondLife", client);
                 hashtable.Add("LastRequest", DateTime.Now);
-                lock (this.users)
-                {
-                    this.users.Add(key, hashtable);
-                }
+                lock (this.users) this.users.Add(key, hashtable);
                 Hashtable hash = new Hashtable();
                 hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 hash.Add("SESSION_ID", key.ToString("D"));
                 string grids = "";
                 foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
                 {
-                    grids += "<option value=\"" + server + "\""+(server==AjaxLife.DEFAULT_LOGIN_SERVER?" selected=\"selected\"":"")+">" + server + "</option>\n";
+                    grids += "<option value=\"" + System.Web.HttpUtility.HtmlAttributeEncode(server) + 
+                        "\""+(server==AjaxLife.DEFAULT_LOGIN_SERVER?" selected=\"selected\"":"")+">" + 
+                        System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
                 }
                 hash.Add("GRID_OPTIONS", grids);
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
