@@ -1,0 +1,4 @@
+https://login.agni.lindenlab.com/cgi-bin/login.cgi Main Grid (Linden Lab)
+https://login.aditi.lindenlab.com/cgi-bin/login.cgi Beta Grid (Linden Lab)
+http://osgrid.org:8002/ OSGrid (UNOFFICIAL)
+http://user.deepgrid.com:8002 DeepGrid (UNOFFICIAL)

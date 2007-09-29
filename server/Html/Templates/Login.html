@@ -26,16 +26,30 @@
 					<td><input type="button" value="Log in" id="btn_login" /></td>
 				</tr>
 			</table>
-			<div id="language">
-				Language:<br />
-				<select name="lang">
-					<option value="en" selected="selected">English</option>
-					<option value="es">Spanish</option>
-					<option value="fr">French</option>
-					<option value="de">German</option>
-					<option value="da">Danish</option>
-					<option value="it">Italian</option>
-				</select>
+			<div id="advanced">
+				<table>
+					<tr>
+						<td>Grid</td>
+						<td>Language</td>
+					</tr>
+					<tr>
+						<td>
+							<select id="grid">
+								{GRID_OPTIONS}
+							</select>
+						</td>
+						<td>
+							<select name="lang">
+								<option value="en" selected="selected">English</option>
+								<option value="es">Spanish</option>
+								<option value="fr">French</option>
+								<option value="de">German</option>
+								<option value="da">Danish</option>
+								<option value="it">Italian</option>
+							</select>
+						</td>
+					</tr>
+				</table>
 			</div>
 			<input type="hidden" name="sid" value="{SESSION_ID}" />
 		</form>

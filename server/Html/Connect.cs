@@ -91,7 +91,13 @@ namespace AjaxLife.Html
                 {
                     client = (SecondLife)user["SecondLife"];
                 }
-                if (client.Network.Login(POST["first"], POST["last"], POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>"))
+                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(POST["first"],POST["last"],POST["password"],"AjaxLife","Katharine Berry <katharine@katharineberry.co.uk>");
+                login.Platform = "Ajax";
+                login.Channel = "AjaxLife";
+                lock(AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
+                client.Settings.LOGIN_SERVER = login.URI;
+                Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
+                if (client.Network.Login(login))
                 {
                     Events events = new Events();
                     lock (user)

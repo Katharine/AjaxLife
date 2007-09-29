@@ -90,6 +90,12 @@ namespace AjaxLife.Html
                 Hashtable hash = new Hashtable();
                 hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 hash.Add("SESSION_ID", key.ToString("D"));
+                string grids = "";
+                foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
+                {
+                    grids += "<option value=\"" + server + "\""+(server==AjaxLife.DEFAULT_LOGIN_SERVER?" selected=\"selected\"":"")+">" + server + "</option>\n";
+                }
+                hash.Add("GRID_OPTIONS", grids);
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/Login.html")));
             }

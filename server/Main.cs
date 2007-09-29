@@ -39,9 +39,20 @@ namespace AjaxLife
 {
     class AjaxLife
     {
+        public static Dictionary<string, string> LOGIN_SERVERS
+        {
+            get
+            {
+                return LoginServers;
+            }
+        }
+        public static string DEFAULT_LOGIN_SERVER { get { return DefaultLoginServer; } }
+        private static string DefaultLoginServer = "";
+        private static Dictionary<string, string> LoginServers;
         private static string StaticRoot = "/ajaxlife/";
         public static string STATIC_ROOT { get { return StaticRoot; } }
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
+
         static void Main(string[] args)
         {
             new AjaxLife(args);
@@ -52,6 +63,31 @@ namespace AjaxLife
         public AjaxLife(string[] arg)
         {
             CommandLineArgs args = new CommandLineArgs(arg);
+            string gridfile = "Grids.txt";
+            if (args["gridfile"] != null)
+            {
+                gridfile = args["gridfile"];
+            }
+            string[] grids = File.ReadAllLines(gridfile);
+            //lock (LoginServers)
+            //{
+                LoginServers = new Dictionary<string, string>();
+                bool defaulted = false;
+                foreach (string grid in grids)
+                {
+                    string[] split = new string[1];
+                    split[0] = " ";
+                    string[] griddata = grid.Trim().Split(split, 2, StringSplitOptions.RemoveEmptyEntries);
+                    LoginServers.Add(griddata[1], griddata[0]);
+                    if (!defaulted)
+                    {
+                        DefaultLoginServer = griddata[1];
+                        defaulted = true;
+                    }
+                    Console.WriteLine("Loaded grid " + griddata[1] + " (" + griddata[0] + ")");
+                }
+                Console.WriteLine("Default grid: " + DEFAULT_LOGIN_SERVER);
+            //}
             if (args["root"] != null)
             {
                 StaticRoot = args["root"];
