@@ -24,6 +24,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+AjaxLife.Network.Connected = false;
+
 AjaxLife.Network.init = function() {
 	AjaxLife.Network.MessageQueue.init();
 };
@@ -70,7 +72,6 @@ AjaxLife.Network.MessageQueue = function() {
 	// Private
 	var requesting = false;
 	var link = new Ext.data.Connection({timeout: 60000});
-	var running = false;
 	var callbacks = {};
 	
 	function processqueue(queue) {
@@ -102,7 +103,7 @@ AjaxLife.Network.MessageQueue = function() {
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Error",e.name+" - "+e.message);
+					AjaxLife.Widgets.Ext.msg("Error in processqueue",e.name+" - "+e.message);
 				}
 			}	
 			//if(item.MessageType == 'InstantMessage')
@@ -167,7 +168,7 @@ AjaxLife.Network.MessageQueue = function() {
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Exception",e.name+" - "+e.message);
+					AjaxLife.Widgets.Ext.msg("Error in processqueue (state 'unhandled')",e.name+" - "+e.message);
 				}
 			}
 		});
@@ -175,7 +176,7 @@ AjaxLife.Network.MessageQueue = function() {
 	
 	function queuecallback(options, success, response)
 	{
-		if(!running) return;
+		if(!AjaxLife.Network.Connected) return;
 		try
 		{
 			if(success)
@@ -198,10 +199,10 @@ AjaxLife.Network.MessageQueue = function() {
 		}
 		catch(e)
 		{
-			AjaxLife.Widgets.Ext.msg("", "Exception caught in callback handler: "+e.name+" - "+e.message);
+			AjaxLife.Widgets.Ext.msg("Error in queuecallback",e.name+" - "+e.message);
 		}
 		requesting = false;
-		if(running) requestqueue();
+		if(AjaxLife.Network.Connected) requestqueue();
 	}
 	
 	function requestqueue() {
@@ -221,13 +222,13 @@ AjaxLife.Network.MessageQueue = function() {
 		// Public
 		init: function() {
 			//timer = setInterval(requestqueue,1000);
-			running = true;
+			AjaxLife.Network.Connected = true;
 			requestqueue();
 		},
 		shutdown: function() {
 			//clearInterval(timer);
-			running = false;
 			requesting = false;
+			AjaxLife.Network.Connected = false;
 			link.abort();
 		},
 		RegisterCallback: function(message, callback) {
@@ -279,7 +280,9 @@ AjaxLife.Network.Send = function(message, opts) {
 				}
 				catch(e)
 				{
-					callbackf(response.responseText);
+					AjaxLife.Widgets.Ext.msg("Error in Network.Send",e.name+" - "+e.message);
+					AjaxLife.Widgets.Ext.msg("",response.responseText);
+					//callbackf(response.responseText);
 				}
 			}
 			else

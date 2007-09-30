@@ -68,3 +68,9 @@ AjaxLife.init = function()
 
 // Init stuff.
 Event.observe(window,'load',AjaxLife.init);
+window.onbeforeunload = function() {
+	if(AjaxLife.Network.Connected)
+	{
+		return "Leaving this page now is not recommended.\nIf you're sure you want to leave, you should first use the Logout button below.";
+	}
+};

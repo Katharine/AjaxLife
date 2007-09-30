@@ -120,7 +120,10 @@ AjaxLife.InstantMessage = function() {
 			if(chats[i].target == id)
 			{
 				chats[i].tab.activate();
-				return false;
+				chats[i].session = sessionid;
+				chats[sessionid] = chats[i];
+				return true;
+				//return false;
 			}
 		}
 		chats[sessionid] = {
@@ -130,7 +133,8 @@ AjaxLife.InstantMessage = function() {
 			content: false,
 			entrybox: false,
 			sendbtn: false,
-			div_typing: false
+			div_typing: false,
+			session: sessionid
 		};
 		chats[sessionid].tab.on('close',function() {
 			if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == chats[sessionid].tab.id)
@@ -150,7 +154,7 @@ AjaxLife.InstantMessage = function() {
 		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
-				sendmessage(id, entrybox.dom.value, sessionid);
+				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
 				entrybox.dom.value = '';
 				entrybox.dom.focus();
 			},
@@ -171,7 +175,7 @@ AjaxLife.InstantMessage = function() {
 			AjaxLife.Network.Send('GenericInstantMessage', {
 				Message: "none",
 				Target: chats[sessionid].target,
-				IMSessionID: sessionid,
+				IMSessionID: chats[sessionid].session,
 				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
 				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
 			});
@@ -184,7 +188,7 @@ AjaxLife.InstantMessage = function() {
 				AjaxLife.Network.Send('GenericInstantMessage', {
 					Message: "none",
 					Target: chats[sessionid].target,
-					IMSessionID: sessionid,
+					IMSessionID: chats[sessionid].session,
 					Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
 					Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StartTyping
 				});
@@ -327,7 +331,12 @@ AjaxLife.InstantMessage = function() {
 					}
 					else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping)
 					{
-						chats[data.IMSessionID].div_typing.dom.parentNode.removeChild(chats[data.IMSessionID].div_typing.dom);
+						if(chats[data.IMSessionID].div_typing && 
+							chats[data.IMSessionID].div_typing.dom.parentNode && 
+							typeof chats[data.IMSessionID].div_typing.dom.parentNode.removeChild == 'function')
+						{
+							chats[data.IMSessionID].div_typing.dom.parentNode.removeChild(chats[data.IMSessionID].div_typing.dom);
+						}
 					}
 				}
 			});
