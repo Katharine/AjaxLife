@@ -74,7 +74,9 @@ AjaxLife.Network.MessageQueue = function() {
 	var callbacks = {};
 	
 	function processqueue(queue) {
+		if(!queue.each) return;
 		queue.each(function(item) {
+			
 			/*var is = "";
 			for(var i in item)
 			{
@@ -87,16 +89,20 @@ AjaxLife.Network.MessageQueue = function() {
 				try
 				{
 					callbacks[item.MessageType].each(function(callback) {
-						if(callback)
+						if(callback && typeof callback == 'function')
 						{
 							callback(item);
+						}
+						else if(typeof callback != 'boolean')
+						{
+							AjaxLife.Widgets.Ext.msg("Error","Typeof callback = "+(typeof callback)+". MessageType = "+item.MessageType);
 						}
 					});
 					handled = true;
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Error",e);
+					AjaxLife.Widgets.Ext.msg("Error",e.name+" - "+e.message);
 				}
 			}	
 			//if(item.MessageType == 'InstantMessage')
@@ -150,12 +156,19 @@ AjaxLife.Network.MessageQueue = function() {
 			}
 			else if(!handled)
 			{
-				var parsed = '';
-				for(var i in item)
+				try
 				{
-					parsed += i+': '+item[i]+'<br />';
+					var parsed = '';
+					for(var i in item)
+					{
+						parsed += i+': '+item[i]+'<br />';
+					}
+					AjaxLife.Widgets.Ext.msg(_("Network.UnhandledMessage"),parsed);
 				}
-				AjaxLife.Widgets.Ext.msg(_("Network.UnhandledMessage"),parsed);
+				catch(e)
+				{
+					AjaxLife.Widgets.Ext.msg("Exception",e.name+" - "+e.message);
+				}
 			}
 		});
 	};
@@ -163,22 +176,29 @@ AjaxLife.Network.MessageQueue = function() {
 	function queuecallback(options, success, response)
 	{
 		if(!running) return;
-		if(success)
+		try
 		{
-			try
+			if(success)
 			{
-				var data = Ext.util.JSON.decode(response.responseText);
+				try
+				{
+					var data = Ext.util.JSON.decode(response.responseText);
+				}
+				catch(e)
+				{
+					// Meep.
+					return;
+				}
+				processqueue(data);
 			}
-			catch(e)
+			else
 			{
-				// Meep.
-				return;
+				AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.EventQueueFailure"));
 			}
-			processqueue(data);
 		}
-		else
+		catch(e)
 		{
-			AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.EventQueueFailure"));
+			AjaxLife.Widgets.Ext.msg("", "Exception caught in callback handler: "+e.name+" - "+e.message);
 		}
 		requesting = false;
 		if(running) requestqueue();
@@ -207,6 +227,7 @@ AjaxLife.Network.MessageQueue = function() {
 		shutdown: function() {
 			//clearInterval(timer);
 			running = false;
+			requesting = false;
 			link.abort();
 		},
 		RegisterCallback: function(message, callback) {
