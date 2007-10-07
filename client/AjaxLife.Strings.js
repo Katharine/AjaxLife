@@ -112,7 +112,13 @@ AjaxLife.Strings = {
 			LogoutButton: "Log out",
 			LogoutTitle: "Log out",
 			LogoutPrompt: "Are you sure you want to log out?",
-			LogoutTooltip: "Log out of Second Life"
+			LogoutTooltip: "Log out of Second Life",
+			NearbyButton: "Nearby Avatars",
+			NearbyTooltop: "People in your general vicinity.",
+			InventoryButton: "Inventory",
+			InventoryTooltip: "Read-only inventory access",
+			StatsButton: "Stats",
+			StatsTooltip: ""
 		},
 		Widgets: {
 			Yes: "Yes",
@@ -154,7 +160,11 @@ AjaxLife.Strings = {
 			InvalidAmount: "That is an invalid amount to pay!",
 			FriendButton: "Add Friend",
 			ConfirmFriendAdd: "Are you sure you want to add #{first} #{last} as a friend?",
-			FriendshipOffered: "You have offered #{first} #{last} friendship."
+			FriendshipOffered: "You have offered #{first} #{last} friendship.",
+			TeleportButton: "Offer Teleport",
+			TeleportDialogTitle: "Teleporting #{first} #{last}",
+			TeleportDialogPrompt: "Enter a message to send with your teleport offer:",
+			TeleportDefaultMessage: "Join me in #{sim}!"
 		},
 		Texture: {
 			DownloadFailed: "Could not download texture."
@@ -163,6 +173,30 @@ AjaxLife.Strings = {
 			SeparatorPeriod: 3,
 			Separator: ",",
 			DecimalSeparator: "."
+		},
+		AvatarsNear: {
+			WindowTitle: "Nearby Avatars"
+		},
+		Inventory: {
+			WindowTitle: "Inventory"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "Texture: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "Notecard: #{name}"
+			},
+			Script: {
+				WindowTitle: "Script: #{name}"
+			},
+			Landmark: {
+				Title: "Teleport to landmark",
+				Message: "Are you sure you want to teleport to #{name}?"
+			}
+		},
+		Stats: {
+			WindowTitle: "Stats"
 		}
 	},
 	// Translated by Mariel Voyunicef
@@ -679,6 +713,10 @@ function _(str, args)
 		{
 			if(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]])
 			{
+				if(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])
+				{
+					return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])).evaluate(args);
+				}
 				return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]])).evaluate(args);
 			}
 		}

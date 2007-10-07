@@ -27,6 +27,7 @@
 AjaxLife.Texture = function(parent, width, height, texture) {
 	var callbackid = 0;
 	var elem;
+	var loaded = false;
 	
 	function replaceimage(src)
 	{
@@ -40,6 +41,7 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 				width: width+'px',
 				height: height+'px'
 			}).setAttribute('src',src);
+			loaded = true;
 			img.onload = function(){};
 		}
 		img.src = src;
@@ -86,4 +88,24 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 			}
 		}
 	});
+	
+	return {
+		resize: function(x, y) {
+			width = x;
+			height = y;
+			if(loaded)
+			{
+				elem.setStyle({width: width+'px', height: height+'px'});
+			}
+			else
+			{
+				elem.setStyle({
+					paddingLeft: (width/2-16)+'px',
+					paddingRight: (width/2-16)+'px',
+					paddingTop: (height/2-16)+'px',
+					paddingBottom: (height/2-16)+'px'
+				});
+			}
+		}
+	};
 };

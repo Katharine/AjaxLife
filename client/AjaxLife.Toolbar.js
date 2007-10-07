@@ -32,6 +32,9 @@ AjaxLife.Toolbar = function() {
 	var map_btn = false;
 	var chat_btn = false;
 	var search_btn = false;
+	var nearby_btn = false;
+	var inventory_btn = false;
+	var stats_btn = false;
 	
 	function im_btn_clicked()
 	{
@@ -63,6 +66,21 @@ AjaxLife.Toolbar = function() {
 		AjaxLife.Search.toggle(search_btn.getEl());
 	}
 	
+	function nearby_btn_clicked()
+	{
+		AjaxLife.AvatarsNear.toggle(nearby_btn.getEl());
+	}
+
+	function inventory_btn_clicked()
+	{
+		AjaxLife.Inventory.toggle(inventory_btn.getEl());
+	}
+	
+	function stats_btn_clicked()
+	{
+		AjaxLife.Stats.toggle(stats_btn.getEl());
+	}
+	
 	// Public
 	return {
 		init: function(div) {
@@ -85,6 +103,21 @@ AjaxLife.Toolbar = function() {
 				handler: search_btn_clicked,
 				text: _("Toolbar.SearchButton"),
 				tooltip: _("Toolbar.SearchTooltip")
+			});
+			nearby_btn = new Ext.Button(div, {
+				handler: nearby_btn_clicked,
+				text: _("Toolbar.NearbyButton"),
+				tooltip: _("Toolbar.NearbyTooltip")
+			});
+			inventory_btn = new Ext.Button(div, {
+				handler: inventory_btn_clicked,
+				text: _("Toolbar.InventoryButton"),
+				tooltip: _("Toolbar.InventoryTooltip")
+			});
+			stats_btn = new Ext.Button(div, {
+				handler: stats_btn_clicked,
+				text: _("Toolbar.StatsButton"),
+				tooltip: _("Toolbar.StatsTooltip")
 			});
 			log_btn = new Ext.Button(div, {
 				handler: log_btn_clicked,

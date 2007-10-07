@@ -171,3 +171,69 @@ div.al-selectlist ul li.al-selectlist-selected {
 .profile {
 	font-size: 12px;
 }
+
+#dlg_inventory .x-tree-node-inline-icon {
+	height: 16px !important;
+	width: 16px;
+}
+
+/* Notecard */
+
+.notecard {
+	font-size: 12px;
+}
+
+/* LSL Viewer */
+
+.script {
+	font-size: 12px;
+	font-family: "Panic Sans", "Courier New", monospace;
+}
+
+/* Stats */
+
+#dlg_stats {
+	font-size: 12px;
+}
+
+
+
+#dlg_stats table {
+	margin-left: 0%;
+	margin-bottom: 0%;
+	margin-right: 0px;
+	margin-top: -20px;
+	width: 100%;
+}
+
+#dlg_stats th {
+	text-align: left;
+	border-bottom-color: #828282;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+}
+
+.titlerow th {
+	margin-right: 0px;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	padding-top: 20px;
+	font-weight: bold;
+}
+
+#dlg_stats td {
+	border-right-width: 0px;
+	border-left-width: 0px;
+	border-top-width: 0px;
+	border-bottom-color: #828282;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	text-align: right;
+}
+
+#dlg_stats tr  {
+	border-bottom-color: #828282;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+}
+

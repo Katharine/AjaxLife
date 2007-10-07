@@ -82,29 +82,12 @@ AjaxLife.Friends = function() {
 					if(data.each)
 					{
 						data.each(function(friend) {
-							if(typeof friend.Name != 'string' || friend.Name == '' || friend.Name == 'null')
+							if(!friends[friend.ID])
 							{
-								if(friend.ID != AjaxLife.Utils.UUID.Zero)
-								{
-									AjaxLife.NameCache.Find(friend.ID, function(name) {
-										friend.Name = name;
-										if(!friends[friend.ID])
-										{
-											added(friend);
-										}
-										friends[friend.ID] = friend;
-									});
-								}
+								added(friend);
 							}
-							else
-							{
-								if(!friends[friend.ID])
-								{
-									added(friend);
-								}
-								friends[friend.ID] = friend;
-								AjaxLife.NameCache.Add(friend.ID, friend.Name);
-							}
+							friends[friend.ID] = friend;
+							AjaxLife.NameCache.Add(friend.ID, friend.Name);
 						});
 					}
 					else

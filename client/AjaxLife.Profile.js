@@ -194,9 +194,37 @@ AjaxLife.Profile = function(agentid) {
 		btn_friend.getEl().setStyle({
 			position: 'absolute',
 			top: '385px',
-			left: '10px'
+			left: '120px'
 		});
 	}
+	var btn_teleport = new Ext.Button(tab_sl.bodyEl.dom, {
+		handler: function() {
+			Ext.Msg.show({
+				title: _("Profile.TeleportDialogTitle", {first: firstname, last: lastname}),
+				msg: _("Profile.TeleportDialogPrompt",{first: firstname, last: lastname}),
+				value: _("Profile.TeleportDefaultMessage", {sim: AjaxLife.Map.getpos().sim}),
+				buttons: Ext.Msg.OKCANCEL,
+				modal: true,
+				prompt: true,
+				closable: true,
+				fn: function(btn, text) {
+					if(btn == 'ok')
+					{
+						AjaxLife.Network.Send('SendTeleportLure', {
+							Target: agentid, 
+							Message: text
+						});
+					}
+				}
+			});
+		},
+		text: _("Profile.TeleportButton")
+	});
+	btn_teleport.getEl().setStyle({
+		position: 'absolute',
+		top: '385px',
+		left: '10px'
+	});
 	// Append...
 	tab_sl.bodyEl.addClass("profile 2ndlife");
 	tab_sl.bodyEl.dom.appendChild(div_name.dom);

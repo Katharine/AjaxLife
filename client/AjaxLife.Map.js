@@ -651,6 +651,12 @@ AjaxLife.Map = function() {
 			marker_you = new Marker(marker_you_icons,new SLPoint(sim,x,y));
 			map.addMarker(marker_you);
 			position = {sim: sim, x: x, y: y, z: z};
+		},
+		getpos: function() {
+			return position;
+		},
+		TPDialog: function() {
+			teleport_dialog(true);
 		}
 	}
 }();

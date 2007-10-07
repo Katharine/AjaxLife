@@ -49,15 +49,19 @@ AjaxLife.init = function()
 		cancel: _("Widgets.Cancel")
 	};
 	AjaxLife.InstantMessage.init();
-	AjaxLife.Map.init();
 	AjaxLife.SpatialChat.init();
 	AjaxLife.Toolbar.init('toolbar');
 	AjaxLife.StatusBar.init();
 	AjaxLife.NameCache.init();
 	AjaxLife.Friends.init();
 	AjaxLife.Search.init();
+	AjaxLife.AvatarsNear.init();
+	AjaxLife.Inventory.init();
+	AjaxLife.Stats.init();
+	AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function() {}); // Dummy to suppress messages from de-ruthing.
 	AjaxLife.PageWait.updateText(_("AjaxLife.Precaching"));
 	setTimeout(function () {
+		AjaxLife.Map.init();
 		AjaxLife.PageWait.hide();
 		AjaxLife.PageWait = false;
 		AjaxLife.Network.init();

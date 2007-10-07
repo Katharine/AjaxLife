@@ -280,7 +280,7 @@ AjaxLife.Network.Send = function(message, opts) {
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Error in Network.Send",e.name+" - "+e.message);
+					AjaxLife.Widgets.Ext.msg("Error in Network.Send",e.name+" - "+e.message+"<br />Message: "+message);
 					AjaxLife.Widgets.Ext.msg("",response.responseText);
 					//callbackf(response.responseText);
 				}
