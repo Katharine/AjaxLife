@@ -50,8 +50,12 @@ namespace AjaxLife
         private static string DefaultLoginServer = "";
         private static Dictionary<string, string> LoginServers;
         private static string StaticRoot = "/ajaxlife/";
+        private static string TextureCache = "texturecache/";
+        public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
+        public static int TextureCacheCount = 0;
+        public static long TextureCacheSize = 0;
 
         static void Main(string[] args)
         {
@@ -68,29 +72,35 @@ namespace AjaxLife
             {
                 gridfile = args["gridfile"];
             }
+            Console.WriteLine("Reading grids from " + gridfile);
             string[] grids = File.ReadAllLines(gridfile);
-            //lock (LoginServers)
-            //{
-                LoginServers = new Dictionary<string, string>();
-                bool defaulted = false;
-                foreach (string grid in grids)
+            LoginServers = new Dictionary<string, string>();
+            bool defaulted = false;
+            foreach (string grid in grids)
+            {
+                string[] split = new string[1];
+                split[0] = " ";
+                string[] griddata = grid.Trim().Split(split, 2, StringSplitOptions.RemoveEmptyEntries);
+                LoginServers.Add(griddata[1], griddata[0]);
+                if (!defaulted)
                 {
-                    string[] split = new string[1];
-                    split[0] = " ";
-                    string[] griddata = grid.Trim().Split(split, 2, StringSplitOptions.RemoveEmptyEntries);
-                    LoginServers.Add(griddata[1], griddata[0]);
-                    if (!defaulted)
-                    {
-                        DefaultLoginServer = griddata[1];
-                        defaulted = true;
-                    }
-                    Console.WriteLine("Loaded grid " + griddata[1] + " (" + griddata[0] + ")");
+                    DefaultLoginServer = griddata[1];
+                    defaulted = true;
                 }
-                Console.WriteLine("Default grid: " + DEFAULT_LOGIN_SERVER);
-            //}
+                Console.WriteLine("Loaded grid " + griddata[1] + " (" + griddata[0] + ")");
+            }
+            Console.WriteLine("Default grid: " + DEFAULT_LOGIN_SERVER);
             if (args["root"] != null)
             {
                 StaticRoot = args["root"];
+            }
+            if (args["texturecache"] != null)
+            {
+                TextureCache = args["texturecache"];
+            }
+            if (!TextureCache.EndsWith("/"))
+            {
+                TextureCache += "/";
             }
             Users = new Dictionary<Guid, Hashtable>();
             HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
@@ -106,10 +116,34 @@ namespace AjaxLife
             {
                 //
             }
+            Console.WriteLine("Checking texture cache...");
+            if (!Directory.Exists(TEXTURE_CACHE))
+            {
+                Console.WriteLine("Not found; Attempting to create texture cache...");
+                try
+                {
+                    Directory.CreateDirectory(TEXTURE_CACHE);
+                    Console.WriteLine("Created texture cache.");
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to create texture cache at " + TEXTURE_CACHE + "; aborting.");
+                    return;
+                }
+            }
+            Console.WriteLine("Counting texture cache...");
+            string[] files = Directory.GetFiles(TEXTURE_CACHE);
+            TextureCacheCount = files.Length;
+            foreach (string file in files)
+            {
+                TextureCacheSize += (new FileInfo(file)).Length;
+            }
+            Console.WriteLine("Found " + TextureCacheCount + " cached textures, representing " + TextureCacheSize.ToString() + " bytes of texture data.");
+            Console.WriteLine("Setting up pages...");
             VirtualDirectory root = new VirtualDirectory();
             webserver.Root = root;
-            root.AddFile("index.html");
             #region Dynamic file setup
+            root.AddFile(new Html.Index("index.html", root));
             root.AddFile(new Html.Login("login.kat", root, Users));
             root.AddFile(new Html.Connect("connect.kat", root, Users));
             root.AddFile(new Html.UI("main.kat", root, Users));
@@ -118,14 +152,15 @@ namespace AjaxLife
             root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
             root.AddDirectory(new TextureDirectory("textures", root, Users));
             #endregion
+            Console.WriteLine("Starting server...");
             webserver.Start();
             System.Timers.Timer timer = new System.Timers.Timer(5000);
             timer.AutoReset = true;
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timecheck);
-            // Starting this timer is very important - but it seems broken, and probably fundamentally flawed.
             timer.Start();
             string reason = Console.ReadLine();
             timer.Stop();
+            Console.WriteLine("Initiating shutdown sequence.");
             timer.Dispose();
             Console.WriteLine("Notifying clients...");
             foreach (KeyValuePair<Guid,Hashtable> entry in Users)

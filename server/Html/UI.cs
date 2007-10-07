@@ -72,19 +72,21 @@ namespace AjaxLife.Html
                     {
                         client = (SecondLife)user["SecondLife"];
                         user["LastRequest"] = DateTime.Now;
+                        ((Events)user["Events"]).ClearInventory();
                     }
                 }
                 Hashtable replacements = new Hashtable();
                 replacements.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 string param = "";
-                param += "\t\t\tgRegionCoords = {x: " + Math.Floor(client.Self.GlobalPosition.X / 256) + ", y:" + Math.Floor(client.Self.GlobalPosition.Y / 256) + "};\n";
-                param += "\t\t\tgRegion = " + AjaxLife.StringToJSON(client.Network.CurrentSim.Name) + ";\n";
+                param += "\t\t\tvar gRegionCoords = {x: " + Math.Floor(client.Self.GlobalPosition.X / 256) + ", y:" + Math.Floor(client.Self.GlobalPosition.Y / 256) + "};\n";
+                param += "\t\t\tvar gRegion = " + AjaxLife.StringToJSON(client.Network.CurrentSim.Name) + ";\n";
                 param += "\t\t\tvar gPosition = " + Newtonsoft.Json.JavaScriptConvert.SerializeObject(client.Self.Position) + ";\n";
                 param += "\t\t\tvar gMOTD = " + AjaxLife.StringToJSON(client.Network.LoginMessage) + ";\n";
                 param += "\t\t\tvar gSessionID = " + AjaxLife.StringToJSON(sessionid.ToString("D")) + ";\n";
                 param += "\t\t\tvar gUserName = " + AjaxLife.StringToJSON(client.Self.FirstName + " " + client.Self.LastName) + ";\n";
                 param += "\t\t\tvar gLanguageCode = " + AjaxLife.StringToJSON(POST.ContainsKey("lang")?POST["lang"]:"en") + ";\n";
                 param += "\t\t\tvar gAgentID = " + AjaxLife.StringToJSON(client.Network.AgentID.ToStringHyphenated()) + ";\n";
+                param += "\t\t\tvar gInventoryRoot = " + AjaxLife.StringToJSON(client.Inventory.Store.RootFolder.UUID.ToStringHyphenated()) + ";\n";
                 replacements.Add("INIT_PARAMS", param);
                 Html.Template.Parser parser = new Html.Template.Parser(replacements);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/UI.html")));

@@ -69,6 +69,7 @@ namespace AjaxLife.Html
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
                 Dictionary<string, string> POST = AjaxLife.PostDecode(qstring);
+                bool iPhone = POST.ContainsKey("iphone");
                 Guid key = new Guid(POST["session"]);
                 if (!this.users.ContainsKey(key))
                 {
@@ -86,25 +87,25 @@ namespace AjaxLife.Html
                 lock (user)
                 {
                     user["LastRequest"] = DateTime.Now;
-                }
-                lock (user)
-                {
                     client = (SecondLife)user["SecondLife"];
                 }
-                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(POST["first"],POST["last"],POST["password"],"AjaxLife","Katharine Berry <katharine@katharineberry.co.uk>");
-                login.Platform = "Ajax";
-                login.Channel = "AjaxLife";
-                lock(AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
+                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(POST["first"], POST["last"], POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
+                login.Platform = (iPhone?"iPhone/iPod":"web");
+                login.Channel = (iPhone?"i":"")+"AjaxLife";
+                lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;
                 Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
                 if (client.Network.Login(login))
                 {
-                    Events events = new Events();
+                    AvatarTracker avatars = new AvatarTracker(client);
+                    Events events = new Events(user);
                     lock (user)
                     {
                         user["Events"] = events;
+                        user.Add("Avatars", avatars);
                     }
-                    // Event callbacks
+
+                    // SecondLife Event callbacks
                     client.Self.OnScriptQuestion += new MainAvatar.ScriptQuestionCallback(events.Self_OnScriptQuestion);
                     client.Self.OnScriptDialog += new MainAvatar.ScriptDialogCallback(events.Self_OnScriptDialog);
                     client.Self.OnInstantMessage += new MainAvatar.InstantMessageCallback(events.Self_OnInstantMessage);
@@ -119,18 +120,35 @@ namespace AjaxLife.Html
                     client.Self.OnTeleport += new MainAvatar.TeleportCallback(events.Self_OnTeleport);
                     client.Self.OnBalanceUpdated += new MainAvatar.BalanceCallback(events.Self_OnBalanceUpdated);
                     client.Self.OnMoneyBalanceReplyReceived += new MainAvatar.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
-                    client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
-                    client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
+                    if (!iPhone)
+                    {
+                        client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
+                        client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
+                    }
                     // LibSL screwed this one up, so it's implemented manually.
                     //client.Avatars.OnAvatarProperties += new AvatarManager.AvatarPropertiesCallback(events.Avatars_OnAvatarProperties);
-                    // LibSL made this one useless to us, so it's implemented manually as well.
-                    //client.Inventory.OnInventoryObjectReceived += new InventoryManager.InventoryObjectReceived(events.Inventory_OnInventoryObjectReceived);
+                    // We shouldn't really be using this... it forces us to immediately accept inventory.
+                    client.Inventory.OnObjectOffered += new InventoryManager.ObjectOfferedCallback(events.Inventory_OnObjectOffered);
                     client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
+                    client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
+                    client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
+
+                    // AvatarTracker event callbacks
+                    if (!iPhone)
+                    {
+                        avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
+                        avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);
+                        avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
+                    }
+
                     // Packet callbacks
                     client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
-                    client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
-                    client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
-                    //client.Appearance.SetPreviousAppearance();
+                    if (!iPhone)
+                    {
+                        client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
+                        client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
+                    }
+                    client.Appearance.SetPreviousAppearance(false);
                     client.Self.UpdateCamera(0, client.Self.Position, new LLVector3(0, 0.9999f, 0), new LLVector3(0.9999f, 0, 0), new LLVector3(0, 0, 0.9999f),
                         LLQuaternion.Identity, LLQuaternion.Identity, 32.0f, MainAvatar.AgentFlags.None, MainAvatar.AgentState.None, true);
                     textWriter.WriteLine("{success: true}");

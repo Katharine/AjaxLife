@@ -61,10 +61,7 @@ namespace AjaxLife.Html
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
             try
             {
-                StreamReader reader = new StreamReader(request.PostData);
-                string qstring = reader.ReadToEnd();
-                reader.Dispose();
-                AjaxLife.PostDecode(qstring);
+                bool iPhone = (request.Query["iphone"] != null);
                 Guid key = Guid.NewGuid();
                 SecondLife client = new SecondLife();
                 client.Settings.ALWAYS_DECODE_OBJECTS = false;
@@ -84,18 +81,21 @@ namespace AjaxLife.Html
                 hashtable.Add("LastRequest", DateTime.Now);
                 lock (this.users) this.users.Add(key, hashtable);
                 Hashtable hash = new Hashtable();
-                hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                if(!iPhone) hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 hash.Add("SESSION_ID", key.ToString("D"));
-                string grids = "";
-                foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
+                if (!iPhone)
                 {
-                    grids += "<option value=\"" + System.Web.HttpUtility.HtmlAttributeEncode(server) + 
-                        "\""+(server==AjaxLife.DEFAULT_LOGIN_SERVER?" selected=\"selected\"":"")+">" + 
-                        System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
+                    string grids = "";
+                    foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
+                    {
+                        grids += "<option value=\"" + System.Web.HttpUtility.HtmlAttributeEncode(server) +
+                            "\"" + (server == AjaxLife.DEFAULT_LOGIN_SERVER ? " selected=\"selected\"" : "") + ">" +
+                            System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
+                    }
+                    hash.Add("GRID_OPTIONS", grids);
                 }
-                hash.Add("GRID_OPTIONS", grids);
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/Login.html")));
+                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/"+(iPhone?"i":"")+"Login.html")));
             }
             catch (Exception exception)
             {

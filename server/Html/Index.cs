@@ -29,63 +29,47 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using MiniHttpd;
 using libsecondlife;
 
-namespace AjaxLife
+namespace AjaxLife.Html
 {
-    class TextureDirectory : IDirectory
+    public class Index : IFile
     {
-        private Dictionary<Guid, Hashtable> users;
-        private string name;
-        private IDirectory parent;
+        #region IFile Members
 
-        public TextureDirectory(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public Index(string name, IDirectory parent)
         {
-            this.users = users;
             this.name = name;
             this.parent = parent;
         }
 
-        #region IDirectory Members
+        private string name;
+        private IDirectory parent;
 
-        public System.Collections.ICollection GetDirectories()
+        public string ContentType
         {
-            return new List<IDirectory>();
+            get { return "text/html; charset=utf-8"; }
         }
 
-        public IDirectory GetDirectory(string dir)
+        public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
-            return null;
-        }
-
-        public IFile GetFile(string filename)
-        {
-            if (!filename.EndsWith(".png")) return null;
-            LLUUID image = new LLUUID(filename.Substring(0, filename.Length - 4));
-            if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png"))
+            request.Response.ResponseContent = new MemoryStream();
+            StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
+            Console.WriteLine(request.UserAgent);
+            if (request.UserAgent.Contains("Mobile/") && request.UserAgent.Contains("Safari/") && request.UserAgent.Contains("Mac OS X"))
             {
-                return new DriveFile(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png", this);
-            }
-            return null;
-        }
-
-        public System.Collections.ICollection GetFiles()
-        {
-            return new List<IFile>();
-        }
-
-        public IResource GetResource(string name)
-        {
-            IFile file = GetFile(name);
-            if (file == null)
-            {
-                return null;
+                Console.WriteLine("Detected MobileSafari, loading mobile version...");
+                Hashtable hash = new Hashtable();
+                hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                writer.Write((new Html.Template.Parser(hash)).Parse(File.ReadAllText("iphone.html")));
             }
             else
             {
-                return file;
+                writer.Write(File.ReadAllText("index.html"));
             }
+            writer.Flush();
         }
 
         #endregion
@@ -94,12 +78,12 @@ namespace AjaxLife
 
         public string Name
         {
-            get { return name; }
+            get { return this.name; }
         }
 
         public IDirectory Parent
         {
-            get { return parent; }
+            get { return this.parent; }
         }
 
         #endregion
@@ -108,7 +92,7 @@ namespace AjaxLife
 
         public void Dispose()
         {
-            // 
+            // Nothing to do here.
         }
 
         #endregion

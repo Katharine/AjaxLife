@@ -34,6 +34,7 @@ using libsecondlife;
 using libsecondlife.Packets;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using AjaxLife.Converters;
 
 namespace AjaxLife
 {
@@ -42,6 +43,18 @@ namespace AjaxLife
         // Fields
         private Queue<Hashtable> pending = new Queue<Hashtable>();
         private bool active = true;
+        private SecondLife Client;
+        private AvatarTracker Avatars;
+        private List<LLUUID> LoadedInventory = new List<LLUUID>();
+
+        public Events(Hashtable user)
+        {
+            lock (user)
+            {
+                this.Client = (SecondLife)user["SecondLife"];
+                this.Avatars = (AvatarTracker)user["Avatars"];
+            }
+        }
 
         // Methods
         public void Avatars_OnAvatarGroups(LLUUID avatarID, AvatarGroupsReplyPacket.GroupDataBlock[] groups)
@@ -51,8 +64,8 @@ namespace AjaxLife
             foreach (AvatarGroupsReplyPacket.GroupDataBlock block in groups)
             {
                 Hashtable hashtable = new Hashtable();
-                hashtable.Add("GroupID", block.GroupID.ToStringHyphenated());
-                hashtable.Add("GroupInsigniaID", block.GroupInsigniaID.ToStringHyphenated());
+                hashtable.Add("GroupID", block.GroupID);
+                hashtable.Add("GroupInsigniaID", block.GroupInsigniaID);
                 hashtable.Add("GroupName", Helpers.FieldToUTF8String(block.GroupName));
                 hashtable.Add("GroupTitle", Helpers.FieldToUTF8String(block.GroupTitle));
                 hashtable.Add("GroupPowers", block.GroupPowers);
@@ -61,7 +74,7 @@ namespace AjaxLife
             }
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarGroups");
-            item.Add("AvatarID", avatarID.ToStringHyphenated());
+            item.Add("AvatarID", avatarID);
             item.Add("Groups", list);
             this.pending.Enqueue(item);
         }
@@ -71,7 +84,7 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarInterests");
-            item.Add("AvatarID", avatarID.ToStringHyphenated());
+            item.Add("AvatarID", avatarID);
             item.Add("WantToMask", interests.WantToMask);
             item.Add("WantToText", interests.WantToText);
             item.Add("SkillsMask", interests.SkillsMask);
@@ -85,7 +98,12 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarNames");
-            item.Add("Names", names);
+            Dictionary<string, string> namedict = new Dictionary<string, string>();
+            foreach (KeyValuePair<LLUUID, string> name in names)
+            {
+                namedict.Add(name.Key.ToStringHyphenated(), name.Value);
+            }
+            item.Add("Names", namedict);
             this.pending.Enqueue(item);
         }
 
@@ -95,12 +113,12 @@ namespace AjaxLife
             Hashtable item = new Hashtable();
             AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)packet;
             item.Add("MessageType",     "AvatarProperties");
-            item.Add("AvatarID",        reply.AgentData.AvatarID.ToStringHyphenated());
-            item.Add("PartnerID",       reply.PropertiesData.PartnerID.ToStringHyphenated());
+            item.Add("AvatarID",        reply.AgentData.AvatarID);
+            item.Add("PartnerID",       reply.PropertiesData.PartnerID);
             item.Add("AboutText",       Helpers.FieldToUTF8String(reply.PropertiesData.AboutText));
             item.Add("FirstLifeText",   Helpers.FieldToUTF8String(reply.PropertiesData.FLAboutText));
-            item.Add("FirstLifeImage",  reply.PropertiesData.FLImageID.ToStringHyphenated());
-            item.Add("ProfileImage",    reply.PropertiesData.ImageID.ToStringHyphenated());
+            item.Add("FirstLifeImage",  reply.PropertiesData.FLImageID);
+            item.Add("ProfileImage",    reply.PropertiesData.ImageID);
             item.Add("ProfileURL",      Helpers.FieldToUTF8String(reply.PropertiesData.ProfileURL));
             item.Add("BornOn",          Helpers.FieldToUTF8String(reply.PropertiesData.BornOn));
             item.Add("CharterMember",   Helpers.FieldToUTF8String(reply.PropertiesData.CharterMember));
@@ -117,7 +135,7 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "FriendNotification");
-            item.Add("AgentID", agentID.ToStringHyphenated());
+            item.Add("AgentID", agentID);
             item.Add("Online", online);
             this.pending.Enqueue(item);
         }
@@ -131,7 +149,7 @@ namespace AjaxLife
             foreach (DirectoryManager.AgentSearchData person in matchedPeople)
             {
                 Hashtable result = new Hashtable();
-                result.Add("AgentID", person.AgentID.ToStringHyphenated());
+                result.Add("AgentID", person.AgentID);
                 result.Add("FirstName", person.FirstName);
                 result.Add("LastName", person.LastName);
                 results.Add(result);
@@ -151,6 +169,8 @@ namespace AjaxLife
             JsonWriter jsonWriter = new JsonWriter(textWriter);
             jsonWriter.WriteStartArray();
             JsonSerializer serializer = new JsonSerializer();
+            LLUUIDConverter UUID = new LLUUIDConverter();
+            serializer.Converters.Add(UUID);
             while (this.pending.Count > 0)
             {
                 Hashtable hashtable = this.pending.Dequeue();
@@ -164,33 +184,22 @@ namespace AjaxLife
             return text;
         }
 
-        public void Inventory_OnInventoryFolderReceived(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, InventoryFolder folder)
+        public bool Inventory_OnObjectOffered(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, AssetType type, LLUUID objectID, bool fromTask)
         {
-            if (!active) return;
-            Hashtable item = new Hashtable();
-            item.Add("MessageType", "InventoryFolderReceived");
-            item.Add("FromAgentID", fromAgentID.ToStringHyphenated());
-            item.Add("FromAgentName", fromAgentName);
-            item.Add("ParentEstateID", parentEstateID);
-            item.Add("RegionID", regionID.ToStringHyphenated());
-            item.Add("Position", position);
-            item.Add("Timestamp", timestamp);
-            item.Add("Name", folder.Name);
-            item.Add("FolderID", folder.UUID.ToStringHyphenated());
-            this.pending.Enqueue(item);
-        }
-        public void Inventory_OnInventoryObjectReceived(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, AssetType type, LLUUID objectID, bool fromTask)
-        {
-            if (!active) return;
+            if (!active) return false;
             Hashtable hashtable = new Hashtable();
-            hashtable.Add("MessageType", "InventoryItemRecieved");
-            hashtable.Add("FromAgentID", fromAgentID.ToStringHyphenated());
+            hashtable.Add("MessageType", "ObjectOffered");
+            hashtable.Add("FromAgentID", fromAgentID);
             hashtable.Add("FromAgentName", fromAgentName);
             hashtable.Add("ParentEstateID", parentEstateID);
-            hashtable.Add("RegionID", regionID.ToStringHyphenated());
+            hashtable.Add("RegionID", regionID);
             hashtable.Add("Position", position);
             hashtable.Add("Timestamp", timestamp);
+            hashtable.Add("Type", type);
+            hashtable.Add("ObjectID", objectID);
+            hashtable.Add("FromTask", fromTask);
             this.pending.Enqueue(hashtable);
+            return true; // Sigh...
         }
 
         public void Network_OnDisconnected(NetworkManager.DisconnectType reason, string message)
@@ -221,8 +230,8 @@ namespace AjaxLife
             item.Add("Type", type);
             item.Add("SourceType", sourceType);
             item.Add("FromName", fromName);
-            item.Add("ID", id.ToStringHyphenated());
-            item.Add("OwnerID", ownerid.ToStringHyphenated());
+            item.Add("ID", id);
+            item.Add("OwnerID", ownerid);
             item.Add("Position", position);
             this.pending.Enqueue(item);
         }
@@ -242,34 +251,16 @@ namespace AjaxLife
             InstantMessageOnline offline = im.Offline;
             byte[] binaryBucket = im.BinaryBucket;
             uint parentEstateID = im.ParentEstateID;
-            // LibSL screwed us over again - we're forced instantly accept or decline inventory!
-            // Reimplementing here without instant accept/decline
-            if (dialog == InstantMessageDialog.InventoryOffered)
-            {
-                if (binaryBucket.Length == 17)
-                {
-                    Inventory_OnInventoryObjectReceived(fromAgentID, fromAgentName, parentEstateID, regionID, position, timestamp, (AssetType)binaryBucket[0], new LLUUID(binaryBucket, 1), false);
-                }
-                return;
-            }
-            else if (dialog == InstantMessageDialog.TaskInventoryOffered)
-            {
-                if (binaryBucket.Length == 1)
-                {
-                    Inventory_OnInventoryObjectReceived(fromAgentID, fromAgentName, parentEstateID, regionID, position, timestamp, (AssetType)binaryBucket[0], LLUUID.Zero, true);
-                }
-                return;
-            }
             Hashtable item = new Hashtable();
             item.Add("MessageType", "InstantMessage");
-            item.Add("FromAgentID", fromAgentID.ToStringHyphenated());
+            item.Add("FromAgentID", fromAgentID);
             item.Add("FromAgentName", fromAgentName);
             item.Add("ParentEstateID", parentEstateID.ToString());
-            item.Add("RegionID", regionID.ToStringHyphenated());
+            item.Add("RegionID", regionID);
             item.Add("Position", position);
             item.Add("Dialog", dialog);
             item.Add("GroupIM", groupIM);
-            item.Add("IMSessionID", imSessionID.ToStringHyphenated());
+            item.Add("IMSessionID", imSessionID);
             item.Add("Timestamp", timestamp);
             item.Add("Message", message);
             item.Add("Offline", offline);
@@ -282,7 +273,7 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "MoneyBalanceReplyReceived");
-            item.Add("TransactionID", transactionID.ToStringHyphenated());
+            item.Add("TransactionID", transactionID);
             item.Add("TransactionSuccess", transactionSuccess);
             item.Add("Balance", balance);
             item.Add("MetersCredit", metersCredit);
@@ -298,8 +289,8 @@ namespace AjaxLife
             item.Add("MessageType", "ScriptDialog");
             item.Add("Message", message);
             item.Add("ObjectName", objectName);
-            item.Add("ImageID", imageID.ToStringHyphenated());
-            item.Add("ObjectID", objectID.ToStringHyphenated());
+            item.Add("ImageID", imageID);
+            item.Add("ObjectID", objectID);
             item.Add("FirstName", firstName);
             item.Add("LastName", lastName);
             item.Add("ChatChannel", chatChannel);
@@ -312,8 +303,8 @@ namespace AjaxLife
             if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptPermissionRequest");
-            item.Add("TaskID", taskID.ToStringHyphenated());
-            item.Add("ItemID", itemID.ToStringHyphenated());
+            item.Add("TaskID", taskID);
+            item.Add("ItemID", itemID);
             item.Add("ObjectName", objectName);
             item.Add("ObjectOwner", objectOwner);
             item.Add("Permissions", (int)questions);
@@ -373,7 +364,7 @@ namespace AjaxLife
                 itemhash.Add("Y", data.Y);
                 itemhash.Add("Extra", data.Extra);
                 itemhash.Add("Extra2", data.Extra2);
-                itemhash.Add("ID", data.ID.ToStringHyphenated());
+                itemhash.Add("ID", data.ID);
                 items.Add(itemhash);
             }
             hash.Add("Items", items);
@@ -387,7 +378,7 @@ namespace AjaxLife
                 Console.WriteLine("Failed to download " + image.ID.ToStringHyphenated() + " - not found.");
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
-                hash.Add("UUID", image.ID.ToStringHyphenated());
+                hash.Add("UUID", image.ID);
                 hash.Add("Success", false);
                 hash.Add("Error", "Image not found in database.");
                 this.pending.Enqueue(hash);
@@ -395,12 +386,14 @@ namespace AjaxLife
             else if (image.Success)
             {
                 string key = image.ID.ToStringHyphenated();
-                File.WriteAllBytes("texturecache/" + key + ".j2c", image.AssetData);
-                Process process = Process.Start("convert", "texturecache/" + key + ".j2c texturecache/" + key + ".png");
+                File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".j2c", image.AssetData);
+                Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".j2c " + AjaxLife.TEXTURE_CACHE + key + ".png");
                 process.WaitForExit();
                 process.Dispose();
-                File.Delete("texturecache/" + key + ".j2c");
+                File.Delete(AjaxLife.TEXTURE_CACHE + key + ".j2c");
                 Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
+                ++AjaxLife.TextureCacheCount;
+                AjaxLife.TextureCacheSize += (new FileInfo(AjaxLife.TEXTURE_CACHE + key + ".png")).Length;
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
                 hash.Add("Success", true);
@@ -411,10 +404,10 @@ namespace AjaxLife
             }
             else
             {
-                Console.WriteLine("Failed to download " + image.ID.ToStringHyphenated() + ".");
+                Console.WriteLine("Failed to download " + image.ID + ".");
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
-                hash.Add("UUID", image.ID.ToStringHyphenated());
+                hash.Add("UUID", image.ID);
                 hash.Add("Success", false);
                 hash.Add("Error", "Unknown error.");
                 this.pending.Enqueue(hash);
@@ -425,9 +418,9 @@ namespace AjaxLife
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendshipOffered");
-            hash.Add("AgentID", agentID.ToStringHyphenated());
+            hash.Add("AgentID", agentID);
             hash.Add("AgentName", agentName);
-            hash.Add("IMSessionID", imSessionID.ToStringHyphenated());
+            hash.Add("IMSessionID", imSessionID);
             this.pending.Enqueue(hash);
         }
 
@@ -436,7 +429,7 @@ namespace AjaxLife
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendRightsChanged");
             hash.Add("Name", friend.Name);
-            hash.Add("ID", friend.UUID.ToStringHyphenated());
+            hash.Add("ID", friend.UUID);
             hash.Add("TheirRights", friend.TheirRightsFlags);
             hash.Add("MyRights", friend.MyRightsFlags);
             hash.Add("Online", friend.IsOnline);
@@ -448,16 +441,138 @@ namespace AjaxLife
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendOnOffline");
             hash.Add("Name", friend.Name);
-            hash.Add("ID", friend.UUID.ToStringHyphenated());
+            hash.Add("ID", friend.UUID);
             hash.Add("TheirRights", friend.TheirRightsFlags);
             hash.Add("MyRights", friend.MyRightsFlags);
             hash.Add("Online", friend.IsOnline);
             this.pending.Enqueue(hash);
         }
 
+        public void AvatarTracker_OnAvatarAdded(Avatar avatar)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "AvatarAdded");
+            hash.Add("Name", avatar.Name);
+            hash.Add("ID", avatar.ID);
+            hash.Add("LocalID", avatar.LocalID);
+            hash.Add("Position", avatar.Position);
+            hash.Add("Rotation", avatar.Rotation);
+            hash.Add("Scale", avatar.Scale);
+            hash.Add("GroupName", avatar.GroupName);
+            this.pending.Enqueue(hash);
+        }
+
+        public void AvatarTracker_OnAvatarRemoved(Avatar avatar)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "AvatarRemoved");
+            hash.Add("Name", avatar.Name);
+            hash.Add("ID", avatar.ID);
+            hash.Add("LocalID", avatar.LocalID);
+            this.pending.Enqueue(hash);
+        }
+
+        public void AvatarTracker_OnAvatarUpdated(Avatar avatar)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "AvatarUpdated");
+            hash.Add("ID", avatar.ID);
+            hash.Add("Position", avatar.Position);
+            hash.Add("Rotation", avatar.Rotation);
+            this.pending.Enqueue(hash);
+        }
+
+        public void Assets_OnAssetReceived(AssetDownload transfer, Asset asset)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "AssetReceived");
+            //Console.WriteLine(Helpers.FieldToUTF8String(asset.AssetData));
+            hash.Add("Success", transfer.Success);
+            if (!transfer.Success)
+            {
+                hash.Add("AssetData", "Could not download asset: " + transfer.Status.ToString());
+            }
+            else
+            {
+                switch (asset.AssetType)
+                {
+                    case AssetType.Notecard:
+                    case AssetType.LSLText:
+                        hash.Add("AssetData", Helpers.FieldToUTF8String(asset.AssetData));
+                        break;
+                    case AssetType.Bodypart:
+                        {
+                            AssetBodypart part = (AssetBodypart)asset;
+                            hash.Add("Creator", part.Creator);
+                            hash.Add("Description", part.Description);
+                            hash.Add("Textures", part.Textures);
+                            hash.Add("Params", part.Params);
+                            hash.Add("Permissions", part.Permissions);
+                            hash.Add("Owner", part.Owner);
+                        }
+                        break;
+                }
+            }
+            hash.Add("AssetType", transfer.AssetType);
+            hash.Add("AssetID", transfer.AssetID);
+            hash.Add("TransferID", transfer.ID);
+            this.pending.Enqueue(hash);
+        }
+
+        public void Inventory_OnFolderUpdated(LLUUID folderID)
+        {
+            List<InventoryBase> contents = Client.Inventory.Store.GetContents(folderID);
+            Hashtable roothash = new Hashtable();
+            roothash.Add("MessageType", "FolderUpdated");
+            roothash.Add("FolderID", folderID);
+            List<Hashtable> response = new List<Hashtable>();
+            lock (LoadedInventory)
+            {
+                foreach (InventoryBase o in contents)
+                {
+                    if (LoadedInventory.Contains(o.UUID)) continue;
+                    LoadedInventory.Add(o.UUID);
+                    Hashtable hash = new Hashtable();
+                    if (o is InventoryFolder)
+                    {
+                        InventoryFolder folder = (InventoryFolder)o;
+                        hash.Add("Type", "InventoryFolder");
+                        hash.Add("Name", folder.Name);
+                        hash.Add("PreferredType", folder.PreferredType);
+                        hash.Add("OwnerID", folder.OwnerID.ToStringHyphenated());
+                        hash.Add("UUID", folder.UUID.ToStringHyphenated());
+                        response.Add(hash);
+                    }
+                    else if (o is InventoryItem)
+                    {
+                        InventoryItem item = (InventoryItem)o;
+                        hash.Add("Type", "InventoryItem");
+                        hash.Add("Name", item.Name);
+                        hash.Add("UUID", item.UUID);
+                        hash.Add("AssetType", item.AssetType);
+                        hash.Add("AssetUUID", item.AssetUUID);
+                        hash.Add("CreatorID", item.CreatorID);
+                        hash.Add("CreationDate", item.CreationDate);
+                        hash.Add("Description", item.Description);
+                        hash.Add("Flags", item.Flags);
+                        hash.Add("InventoryType", item.InventoryType);
+                        hash.Add("Permissions", item.Permissions);
+                        response.Add(hash);
+                    }
+                }
+            }
+            roothash.Add("Contents", response);
+            this.pending.Enqueue(roothash);
+        }
+
         public void deactivate()
         {
             active = false;
+        }
+
+        public void ClearInventory()
+        {
+            LoadedInventory.Clear();
         }
     }
 }
