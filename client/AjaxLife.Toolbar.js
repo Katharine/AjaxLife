@@ -38,7 +38,7 @@ AjaxLife.Toolbar = function() {
 	
 	function im_btn_clicked()
 	{
-		AjaxLife.InstantMessage.toggle(im_btn.getEl());
+		AjaxLife.InstantMessage.toggle(AjaxLife.Fancy?im_btn.getEl():null);
 	}
 	
 	function log_btn_clicked()
@@ -53,32 +53,32 @@ AjaxLife.Toolbar = function() {
 	
 	function map_btn_clicked()
 	{
-		AjaxLife.Map.toggle(map_btn.getEl());
+		AjaxLife.Map.toggle(AjaxLife.Fancy?map_btn.getEl():null);
 	}
 	
 	function chat_btn_clicked()
 	{
-		AjaxLife.SpatialChat.toggle(chat_btn.getEl());
+		AjaxLife.SpatialChat.toggle(AjaxLife.Fancy?chat_btn.getEl():null);
 	}
 	
 	function search_btn_clicked()
 	{
-		AjaxLife.Search.toggle(search_btn.getEl());
+		AjaxLife.Search.toggle(AjaxLife.Fancy?search_btn.getEl():null);
 	}
 	
 	function nearby_btn_clicked()
 	{
-		AjaxLife.AvatarsNear.toggle(nearby_btn.getEl());
+		AjaxLife.AvatarsNear.toggle(AjaxLife.Fancy?nearby_btn.getEl():null);
 	}
 
 	function inventory_btn_clicked()
 	{
-		AjaxLife.Inventory.toggle(inventory_btn.getEl());
+		AjaxLife.Inventory.toggle(AjaxLife.Fancy?inventory_btn.getEl():null);
 	}
 	
 	function stats_btn_clicked()
 	{
-		AjaxLife.Stats.toggle(stats_btn.getEl());
+		AjaxLife.Stats.toggle(AjaxLife.Fancy?stats_btn.getEl():null);
 	}
 	
 	// Public
@@ -117,7 +117,8 @@ AjaxLife.Toolbar = function() {
 			stats_btn = new Ext.Button(div, {
 				handler: stats_btn_clicked,
 				text: _("Toolbar.StatsButton"),
-				tooltip: _("Toolbar.StatsTooltip")
+				tooltip: _("Toolbar.StatsTooltip"),
+				disabled: Prototype.Browser.IE
 			});
 			log_btn = new Ext.Button(div, {
 				handler: log_btn_clicked,

@@ -248,7 +248,8 @@ AjaxLife.InstantMessage = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("InstantMessage.WindowTitle")
+				title: _("InstantMessage.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
 			dialog.getTabs().addTab("im-default-tab",_("InstantMessage.OnlineFriends"),"",false).activate();
 			friendlist = new AjaxLife.Widgets.SelectList('im-friendlist',dialog.getTabs().getActiveTab().bodyEl.dom,{

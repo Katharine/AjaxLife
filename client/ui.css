@@ -192,6 +192,10 @@ div.al-selectlist ul li.al-selectlist-selected {
 
 /* Stats */
 
+.script a  {
+	text-decoration: none;
+}
+
 #dlg_stats {
 	font-size: 12px;
 }

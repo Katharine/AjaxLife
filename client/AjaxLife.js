@@ -33,6 +33,12 @@ if(!window.AjaxLife)
 // Stick up a loading notice.
 AjaxLife.PageWait = Ext.Msg.wait("Loading subsystems. Please wait...","AjaxLife");
 
+// Sigh. IE is too slow for a lot of this stuff.
+// Opera is fast, but Wii is slow. Opera on Wii is therefore slow,
+// so we disable it there too by checking for the wiiremote API.
+// Should consider making this more thorough.
+AjaxLife.Fancy = !Prototype.Browser.IE && !(window.opera && window.opera.wiiremote);
+
 // A couple of namespaces.
 AjaxLife.Widgets = {};
 AjaxLife.Network = {};

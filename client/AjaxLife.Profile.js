@@ -42,7 +42,6 @@ AjaxLife.Profile = function(agentid) {
 	var tab_fl = false;
 	var tab_sl = false;
 	var tab_interests = false;
-	
 	// Init.
 	win = new Ext.BasicDialog("dlg_profile_"+agentid, {
 		width: '350px',
@@ -51,7 +50,8 @@ AjaxLife.Profile = function(agentid) {
 		shadow: true,
 		autoCreate: true,
 		title: _("Profile.WindowTitle",{name: _("Profile.Loading")}),
-		resizable: false
+		resizable: false,
+		proxyDrag: !AjaxLife.Fancy
 	});
 	AjaxLife.ActiveProfileWindows[agentid] = win;
 	win.on('hide', function() {
@@ -238,20 +238,18 @@ AjaxLife.Profile = function(agentid) {
 	tab_sl.bodyEl.dom.appendChild(div_groups_label.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups.dom);
 	tab_sl.activate();
-	
 	// 1st Life
 	tab_fl = win.getTabs().addTab("profile_tab_"+agentid+"_1stlife",_("Profile.FirstLife"));
-	
-	div_img_fl = Ext.get($(document.createElement('div')));
+	var div_img_fl = Ext.get($(document.createElement('div')));
 	div_img_fl.setStyle({
-		width: '200x',
+		width: '200px',
 		height: '200px',
 		position: 'absolute',
 		top: '5px',
 		left: '5px',
 		border: 'thin solid black'
 	});
-	div_about_fl = Ext.get($(document.createElement('div')));
+	var div_about_fl = Ext.get($(document.createElement('div')));
 	div_about_fl.setStyle({
 		position: 'absolute',
 		top: '250px',
@@ -261,14 +259,13 @@ AjaxLife.Profile = function(agentid) {
 		border: 'thin solid black',
 		overflow: 'auto'
 	});
-	div_about_fl_label = Ext.get($(document.createElement('div')));
+	var div_about_fl_label = Ext.get($(document.createElement('div')));
 	div_about_fl_label.setStyle({
 		position: 'absolute',
 		top: '230px',
 		left: '5px'
 	});
-	div_about_fl_label.update(_("Profile.About"));
-	
+	div_about_fl_label.dom.update(_("Profile.About"));
 	// Append...
 	tab_fl.bodyEl.addClass("profile 1stlife");
 	tab_fl.bodyEl.dom.appendChild(div_img_fl.dom);
@@ -281,7 +278,6 @@ AjaxLife.Profile = function(agentid) {
 	
 	
 	win.show();
-	
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarProperties", function(data) {
 		if(!active || data.AvatarID != agentid) return;
 		

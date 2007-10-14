@@ -50,7 +50,8 @@ AjaxLife.Search = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("Search.WindowTitle")
+				title: _("Search.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
 			people_tab = search_win.getTabs().addTab("search_tab_people",_("Search.People"));
 			people_tab.activate();

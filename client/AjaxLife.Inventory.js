@@ -81,17 +81,15 @@
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("Inventory.WindowTitle")
+				title: _("Inventory.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
 			var treeholder = document.createElement('div');
 			tree = new Tree.TreePanel(win.body.dom, {
-				animate: true,
-				enableDD: false, // Change this when we have inventory writing working.
-				//containerScroll: true,
-				lines: false,
-				//dropConfig: {appendOnly: true}
+				animate: AjaxLife.Fancy,
+				enableDD: false,
+				'lines': false
 			});
-			//new Tree.TreeSorter(tree, {folderSort: true}); // Sorting = boom.
 			var root = new Tree.TreeNode({
 				text: 'My Inventory',
 				draggable: false,
@@ -125,6 +123,9 @@
 					break;
 				case T.Landmark:
 					new AjaxLife.InventoryDialogs.Landmark(node.attributes.AssetUUID, node.text);
+					break;
+				case T.CallingCard:
+					new AjaxLife.Profile(node.attributes.CreatorID);
 					break;
 				default:
 					AjaxLife.Widgets.Ext.msg("Error","Don't know what to do with #"+node.attributes.InventoryType+"s!");

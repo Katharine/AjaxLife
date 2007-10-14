@@ -277,7 +277,9 @@ AjaxLife.Map = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("Map.WindowTitle")
+				title: _("Map.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy,
+				collapsible: false
 			});
 			map_win.body.setStyle({overflow: 'hidden'});
 			map_win.body.dom.innerHTML = "<div id=\"div_map\" style=\"width:480px; height: 470px;\"></div><div id=\"div_map_control\"></div>";

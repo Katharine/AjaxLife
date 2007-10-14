@@ -30,13 +30,13 @@ AjaxLife.StatusBar = function() {
 	
 	return {
 		init: function() {
-			div_ld = Ext.get(document.createElement('div'));
+			div_ld = $(document.createElement('div'));
 			div_ld.setStyle({'float': 'right', color: '#00e752'});
-			div_ld.dom.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
-			document.getElementById('statusbar').appendChild(div_ld.dom);
+			div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
+			$('statusbar').appendChild(div_ld);
 			
 			AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
-				div_ld.dom.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
 				balance = data.Balance;
 				if(data.Description != '')
 				{
@@ -45,7 +45,7 @@ AjaxLife.StatusBar = function() {
 			});
 			
 			AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {
-				div_ld.dom.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
 				balance = data.Balance;
 			});
 			

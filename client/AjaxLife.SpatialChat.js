@@ -147,7 +147,8 @@ AjaxLife.SpatialChat = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("SpatialChat.WindowTitle")
+				title: _("SpatialChat.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
 			chat_win.body.setStyle({overflow: 'hidden'});
 			div_chat_history = Ext.get(document.createElement('div'));

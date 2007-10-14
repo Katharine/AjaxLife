@@ -76,7 +76,8 @@
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("Stats.WindowTitle")
+				title: _("Stats.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
 			// Create table
 			var table = $(document.createElement('table'));
@@ -204,9 +205,7 @@
 			texturesizefield = $(document.createElement('td'));
 			texturesizefield.appendChild(document.createTextNode('Loading...'));
 			row.appendChild(texturesizefield);
-			
 			win.body.dom.appendChild(table);
-			
 			win.on('show', function() {
 				clearTimeout(timer);
 				fetchdata();

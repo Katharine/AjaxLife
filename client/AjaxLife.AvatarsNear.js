@@ -39,7 +39,8 @@
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				title: _("AvatarsNear.WindowTitle")
+				title: _("AvatarsNear.WindowTitle"),
+				proxyDrag: !AjaxLife.Fancy
 			});
  			list = new AjaxLife.Widgets.SelectList('lst_avatarsnear',win.body.dom,{
  				width: '99%',
