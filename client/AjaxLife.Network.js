@@ -146,13 +146,8 @@ AjaxLife.Network.MessageQueue = function() {
 				if(item.Reason != AjaxLife.Constants.NetworkManager.DisconnectType.ClientInitiated)
 				{
 					AjaxLife.Network.logout(true);
-					Ext.Msg.show({
-						closable: false,
-						title: _("Network.Disconnected"),
-						msg: _("Network.LogoutForced", {reason: item.Message}),
-						modal: true,
-						buttons: false
-					});
+					// We should probably fire off some event here so we can disable bits of UI.
+					Ext.Msg.alert(_("Network.Disconnected"),_("Network.LogoutForced", {reason: item.Message}));
 				}
 			}
 			else if(!handled)
@@ -249,6 +244,7 @@ AjaxLife.Network.MessageQueue = function() {
 }();
 
 AjaxLife.Network.Send = function(message, opts) {
+	if(!AjaxLife.Network.Connected) return false;
 	var link = new Ext.data.Connection({timeout: 60000});
 	if(!opts)
 	{

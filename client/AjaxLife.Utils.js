@@ -92,3 +92,35 @@ AjaxLife.Utils.FormatNumber = function(number) {
 	}
 	else return number;
 }
+
+// This function is untested, and may not work.
+String.prototype.addslashes = function(){
+	return this.replace(/\'/g,'\\\'').replace(/\"/g,'\\"').replace(/\\/g,'\\\\').replace(/\0/g,'\\0');
+}
+
+// This function is untested and unused. It may not work.
+AjaxLife.Utils.ParseURL = function(string) {
+	string.replace(/([a-z]+?):\/\/(\S)/gi,function(text, protocol, url) {
+		protocol = protocol.toLowerCase();
+		if(protocol == 'http' || protocol == 'https')
+		{
+			return '<a href="'+string.escapeHTML()+'" target="_blank">'+string.escapeHTML()+'</a>';
+		}
+		else if(protocol == 'secondlife')
+		{
+			var parts = url.split('/');
+			if(parts[0] == 'app')
+			{
+				Ext.Msg.alert("",_("Utils.UnknownSLUrl",{}));
+			}
+			else
+			{
+				return '<a href="'+'javascript:AjaxLife.Map.TeleportTo("'+
+					(parts[1]?parts[1].addslashes():'Ahern')+'","'+
+					(parts[2]?parts[2].addslashes():128)+'","'+
+					(parts[3]?parts[3].addslashes():128)+'","'+
+					(parts[4]?parts[4].addslashes():40)+'");'.escapeHTML()+'">'+text+'</a>';
+			}
+		}
+	});
+};

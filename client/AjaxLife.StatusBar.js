@@ -26,6 +26,7 @@
 
 AjaxLife.StatusBar = function() {
 	var div_ld = false;
+	var div_position = false;
 	var balance = false;
 	
 	return {
@@ -34,6 +35,10 @@ AjaxLife.StatusBar = function() {
 			div_ld.setStyle({'float': 'right', color: '#00e752'});
 			div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
 			$('statusbar').appendChild(div_ld);
+			div_position = $(document.createElement('div'));
+			div_position.setStyle({'float':'left', color: 'white'});
+			div_position.appendChild(document.createTextNode('Unknown (0, 0, 0)'));
+			$('statusbar').appendChild(div_position);
 			
 			AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
 				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
@@ -42,6 +47,10 @@ AjaxLife.StatusBar = function() {
 				{
 					AjaxLife.Widgets.Ext.msg("",data.Description);
 				}
+			});
+			
+			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
+				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+')');
 			});
 			
 			AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {

@@ -623,6 +623,16 @@ AjaxLife.Map = function() {
 				}
 			});	
 			
+			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
+				if(data.YourRegion != position.sim || 
+					data.YourPosition.X != position.x ||
+					data.YourPosition.Y != position.y ||
+					data.YourPosition.Z != position.z)
+				{
+					AjaxLife.Map.move(data.YourRegion,data.YourPosition.X,data.YourPosition.Y,data.YourPosition.Z);
+				}
+			});
+			
 			setInterval(updateitems,600000)		
 		},
 		open: function(opener) {
@@ -653,12 +663,16 @@ AjaxLife.Map = function() {
 			marker_you = new Marker(marker_you_icons,new SLPoint(sim,x,y));
 			map.addMarker(marker_you);
 			position = {sim: sim, x: x, y: y, z: z};
+			AjaxLife.MiniMap.SetPos(position);
 		},
 		getpos: function() {
 			return position;
 		},
 		TPDialog: function() {
 			teleport_dialog(true);
+		},
+		TeleportTo: function(sim, x, y, z) {
+			teleportTo(sim, x, y, z);
 		}
 	}
 }();

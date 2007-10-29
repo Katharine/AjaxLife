@@ -435,7 +435,7 @@ AjaxLife.HighlightLSL = function(text) {
 		}
 		else
 		{
-			if(LSLkeywords.indexOf(match) !== -1) return '<span style="color: #00f;">'+match+'</span>';
+			if(LSLkeywords.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #00f;">'+match+'</span></a>';
 			else if(LSLtypes.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #070;">'+match+'</span></a>';
 			else if(LSLevents.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #00A0A0;">'+match+'</span></a>';
 			else if(LSLconstants.indexOf(match) !== -1) return '<span style="color: #0000A0;">'+match+'</span>';

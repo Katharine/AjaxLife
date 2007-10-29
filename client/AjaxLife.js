@@ -54,6 +54,7 @@ AjaxLife.init = function()
 		ok: _("Widgets.OK"),
 		cancel: _("Widgets.Cancel")
 	};
+	AjaxLife.Network.Connected = true;
 	AjaxLife.InstantMessage.init();
 	AjaxLife.SpatialChat.init();
 	AjaxLife.Toolbar.init('toolbar');
@@ -68,6 +69,7 @@ AjaxLife.init = function()
 	AjaxLife.PageWait.updateText(_("AjaxLife.Precaching"));
 	setTimeout(function () {
 		AjaxLife.Map.init();
+		AjaxLife.MiniMap.init('minimap','minimap-landscape');
 		AjaxLife.PageWait.hide();
 		AjaxLife.PageWait = false;
 		AjaxLife.Network.init();

@@ -103,8 +103,10 @@ AjaxLife.Widgets.Confirm = function(title, message, callback) {
 
 AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 
+	var clickCallback = false;
 	var changeCallback = false;
 	var sorted = false;
+	var doubleclick = false;
 	if(settings)
 	{
 		if(settings.sort)
@@ -113,7 +115,15 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 		}
 		if(settings.callback)
 		{
-			changeCallback = settings.callback;
+			clickCallback = settings.callback;
+		}
+		if(settings.onchange)
+		{
+			changeCallback = settings.onchange;
+		}
+		if(settings.selectable || settings.doubleclick)
+		{
+			doubleclick = true;
 		}
 	}
 	var div = Ext.get(document.createElement('div'));
@@ -132,6 +142,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 	}
 	var list = Ext.get(document.createElement('ul'));
 	var elems = {};
+	var highlighted = false;
 	list.dom.setAttribute('id',id);
 	list.addClass('al-selectlist');
 	div.dom.appendChild(list.dom);
@@ -146,6 +157,21 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 		});
 	}
 	
+	function highlight(key)
+	{
+		if(!elems[key]) return;
+		if(highlighted && elems[highlighted] && typeof elems[highlighted].removeClass == 'function')
+		{
+			elems[highlighted].removeClass('al-selectlist-highlighted');
+		}
+		highlighted = key;
+		elems[key].addClass('al-selectlist-highlighted');
+		if(changeCallback)
+		{
+			changeCallback(key);
+		}
+	}
+	
 	return {
 		// Public
 		add: function(key, text) {
@@ -158,9 +184,16 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 				elem.removeClass('al-selectlist-selected');
 			});
 			elem.on('click', function() {
-				if(changeCallback)
+				if(!doubleclick ||  highlighted == key)
 				{
-					changeCallback(key);
+					if(clickCallback)
+					{
+						clickCallback(key);
+					}
+				}
+				else
+				{
+					highlight(key);
 				}
 			});
 			elem.dom.appendChild(document.createTextNode(text));
@@ -170,6 +203,10 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 		remove: function(key) {
 			if(elems[key])
 			{
+				if(highlighted == key)
+				{
+					highlighted = false;
+				}
 				if(elems[key].dom.parentNode)
 				{
 					elems[key].dom.parentNode.removeChild(elems[key].dom);
@@ -178,6 +215,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 			}
 		},
 		clear: function() {
+			highlighted = false;
 			for(var i in elems)
 			{
 				this.remove(i);

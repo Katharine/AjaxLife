@@ -162,8 +162,13 @@ div.al-selectlist ul li {
 	padding:3px;
 	cursor: pointer;
 }
+
 div.al-selectlist ul li.al-selectlist-selected { 
 	background-color: rgb(95, 155, 250);
+}
+
+div.al-selectlist ul li.al-selectlist-highlighted { 
+	background-color: rgb(75, 135, 230); /* Need to find a decent colour. */
 }
 
 /* Profile */
@@ -190,17 +195,15 @@ div.al-selectlist ul li.al-selectlist-selected {
 	font-family: "Panic Sans", "Courier New", monospace;
 }
 
-/* Stats */
-
 .script a  {
 	text-decoration: none;
 }
 
+/* Stats */
+
 #dlg_stats {
 	font-size: 12px;
 }
-
-
 
 #dlg_stats table {
 	margin-left: 0%;
@@ -239,5 +242,16 @@ div.al-selectlist ul li.al-selectlist-selected {
 	border-bottom-color: #828282;
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
+}
+
+/* Minimap */
+
+#minimap  {
+	border-color: black;
+	border-width: 1px;
+	border-style: solid;
+	position: absolute;
+	right: 0px;
+	top: 30px;
 }
 
