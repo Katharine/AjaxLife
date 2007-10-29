@@ -70,7 +70,6 @@ namespace AjaxLife.Html
                 client.Settings.ENABLE_SIMSTATS = true;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
                 client.Throttle.Cloud = 0;
-                client.Throttle.Land = 0;
                 client.Throttle.Task = 0;
                 client.Throttle.Wind = 0;
                 client.Throttle.Asset = 50000;

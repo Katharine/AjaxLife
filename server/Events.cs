@@ -163,7 +163,7 @@ namespace AjaxLife
             return this.pending.Count;
         }
 
-        public string GetPendingJson()
+        public string GetPendingJson(SecondLife client)
         {
             StringWriter textWriter = new StringWriter();
             JsonWriter jsonWriter = new JsonWriter(textWriter);
@@ -171,6 +171,7 @@ namespace AjaxLife
             JsonSerializer serializer = new JsonSerializer();
             LLUUIDConverter UUID = new LLUUIDConverter();
             serializer.Converters.Add(UUID);
+            this.pending.Enqueue(this.GetFooter(client));
             while (this.pending.Count > 0)
             {
                 Hashtable hashtable = this.pending.Dequeue();
@@ -565,6 +566,49 @@ namespace AjaxLife
             this.pending.Enqueue(roothash);
         }
 
+        public void Terrain_OnLandPatch(Simulator simulator, int x, int y, int width, float[] data)
+        {
+            if (x >= 16 || y >= 16)
+            {
+                Console.WriteLine("Bad patch coordinates, (" + x + ", " + y+")");
+                return;
+            }
+
+            if (width != 16)
+            {
+                Console.WriteLine("Unhandled patch size " + width + "x" + width);
+                return;
+            }
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "LandPatch");
+            hash.Add("OffsetX", x * 16);
+            hash.Add("OffsetY", y * 16);
+            hash.Add("Region", simulator.Name);
+            hash.Add("WaterLevel", simulator.WaterHeight); // Is there anywhere better to put this?
+            
+            float[,] landscape = new float[16, 16];
+            for (int i = 0; i < 16; ++i)
+            {
+                for (int j = 0; j < 16; ++j)
+                {
+                    landscape[i, j] = data[i * 16 + j];
+                }
+            }
+            // Ugly hack to fix the JSON encoding.
+            Dictionary<int, float[]> resp = new Dictionary<int, float[]>(); // Lists don't maintain element ordering.
+            for (int i = 0; i < 16; ++i)
+            {
+                float[] row = new float[16];
+                for (int j = 0; j < 16; ++j)
+                {
+                    row[j] = landscape[i, j];
+                }
+                resp.Add(i, row);
+            }
+            hash.Add("Patch", resp);
+            this.pending.Enqueue(hash);
+        }
+
         public void deactivate()
         {
             active = false;
@@ -573,6 +617,16 @@ namespace AjaxLife
         public void ClearInventory()
         {
             LoadedInventory.Clear();
+        }
+
+        public Hashtable GetFooter(SecondLife client)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "UsefulData");
+            message.Add("Positions", client.Network.CurrentSim.AvatarPositions);
+            message.Add("YourPosition", client.Self.Position);
+            message.Add("YourRegion", client.Network.CurrentSim.Name);
+            return message;
         }
     }
 }

@@ -90,8 +90,8 @@ namespace AjaxLife.Html
                     client = (SecondLife)user["SecondLife"];
                 }
                 NetworkManager.LoginParams login = client.Network.DefaultLoginParams(POST["first"], POST["last"], POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
-                login.Platform = (iPhone?"iPhone/iPod":"web");
-                login.Channel = (iPhone?"i":"")+"AjaxLife";
+                login.Platform = (iPhone ? "iPhone/iPod" : "web");
+                login.Channel = (iPhone ? "i" : "") + "AjaxLife";
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;
                 Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
@@ -132,6 +132,7 @@ namespace AjaxLife.Html
                     client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
                     client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
                     client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
+                    client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
 
                     // AvatarTracker event callbacks
                     if (!iPhone)
@@ -149,8 +150,7 @@ namespace AjaxLife.Html
                         client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
                     }
                     client.Appearance.SetPreviousAppearance(false);
-                    client.Self.UpdateCamera(0, client.Self.Position, new LLVector3(0, 0.9999f, 0), new LLVector3(0.9999f, 0, 0), new LLVector3(0, 0, 0.9999f),
-                        LLQuaternion.Identity, LLQuaternion.Identity, 32.0f, MainAvatar.AgentFlags.None, MainAvatar.AgentState.None, true);
+                    client.Self.Status.Camera.Far = 64.0f;
                     textWriter.WriteLine("{success: true}");
                 }
                 else

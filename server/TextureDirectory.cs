@@ -61,13 +61,21 @@ namespace AjaxLife
 
         public IFile GetFile(string filename)
         {
-            if (!filename.EndsWith(".png")) return null;
-            LLUUID image = new LLUUID(filename.Substring(0, filename.Length - 4));
-            if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png"))
+            try
             {
-                return new DriveFile(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png", this);
+                if (!filename.EndsWith(".png")) return null;
+                LLUUID key = new LLUUID(filename.Substring(0, filename.Length - 4));
+                if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + key.ToStringHyphenated() + ".png"))
+                {
+                    return new DriveFile(AjaxLife.TEXTURE_CACHE + key.ToStringHyphenated() + ".png", this);
+                }
+                return null;
             }
-            return null;
+            catch
+            {
+                // Should put an error messsage here.
+                return null;
+            }
         }
 
         public System.Collections.ICollection GetFiles()

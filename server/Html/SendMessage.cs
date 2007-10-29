@@ -132,7 +132,7 @@ namespace AjaxLife.Html
             {
                 Hashtable hash = new Hashtable();
                 bool status;
-                if(POST["Landmark"] != null)
+                if(POST.ContainsKey("Landmark"))
                 {
                     status = client.Self.Teleport(new LLUUID(POST["Landmark"]));
                 }

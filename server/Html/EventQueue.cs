@@ -32,6 +32,7 @@ using System.Text;
 using System.IO;
 using MiniHttpd;
 using libsecondlife;
+using Newtonsoft.Json;
 
 namespace AjaxLife.Html
 {
@@ -69,21 +70,30 @@ namespace AjaxLife.Html
                 Guid session = new Guid(POST["sid"]);
                 Events eventqueue;
                 Hashtable user = new Hashtable();
+                SecondLife client;
                 lock (users)
                 {
                     user = users[session];
                     lock (user)
                     {
                         eventqueue = (Events)user["Events"];
+                        client = (SecondLife)user["SecondLife"];
                         user["LastRequest"] = DateTime.Now;
                     }
                 }   
                 bool sent = false;
+                double heading = 0.0;
                 for (int i = 0; i < 15; ++i)
                 {
+                    // Very ugly hack - we're riding on the back of the event poll to rotate our camera.
+                    // There probably shouldn't even *be* an event poll.
+                    // This event will probably poll for long enough for us to not have to maintain a global heading...
+                    client.Self.Status.UpdateFromHeading(heading,false);
+                    heading += 0.5d;
+                    if(heading > Math.PI) heading = -Math.PI;
                     if (eventqueue.GetEventCount() > 0)
                     {
-                        writer.WriteLine(eventqueue.GetPendingJson());
+                        writer.WriteLine(eventqueue.GetPendingJson(client));
                         sent = true;
                         break;
                     }
@@ -94,7 +104,13 @@ namespace AjaxLife.Html
                 }
                 if (!sent)
                 {
-                    writer.WriteLine("[]");
+                    //writer.WriteLine("[]");
+                    // Send avatar positions. I think. >.>
+                    JsonWriter w = new JsonWriter(writer);
+                    w.WriteStartArray();
+                    (new JsonSerializer()).Serialize(w, eventqueue.GetFooter(client));
+                    w.WriteEndArray();
+                    w.Flush();
                 }
             }   
             catch (Exception e)

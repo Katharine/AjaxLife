@@ -51,8 +51,10 @@ namespace AjaxLife
         private static Dictionary<string, string> LoginServers;
         private static string StaticRoot = "/ajaxlife/";
         private static string TextureCache = "texturecache/";
+        private static int MagicNumber;
         public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
+        public static int MAGIC_NUMBER { get { return MagicNumber; } }
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
         public static int TextureCacheCount = 0;
         public static long TextureCacheSize = 0;
@@ -102,6 +104,9 @@ namespace AjaxLife
             {
                 TextureCache += "/";
             }
+            Random generator = new Random();
+            MagicNumber = generator.Next(256,int.MaxValue/2);
+            Console.WriteLine("Magic number: " + MAGIC_NUMBER);
             Users = new Dictionary<Guid, Hashtable>();
             HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
             try
