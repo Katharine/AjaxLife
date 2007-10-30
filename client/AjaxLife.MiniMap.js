@@ -11,6 +11,7 @@ AjaxLife.MiniMap = function() {
 	var selfimg = new Image();
 	var imgloaded = false;
 	var water = 20;
+	var active = true;
 	
 	var heights = {};
 	heights[0] = {red: 0, green: 0, blue: 128};
@@ -224,6 +225,7 @@ AjaxLife.MiniMap = function() {
 	
 	return {
 		Mark: function(id, pos, wait) {
+			if(!active) return;
 			var draw = !!marks[id];
 			marks[id] = pos;
 			if(draw)
@@ -238,12 +240,14 @@ AjaxLife.MiniMap = function() {
 			}
 		},
 		Resize: function(size) {
+			if(!active) return;
 			canvas.style.width = size+'px';
 			canvas.style.height = size+'px';
 			scale = size/256;
 			redraw();
 		},
 		SetPos: function(position) {
+			if(!active) return;
 			if(position.sim != pos.sim)
 			{
 				emptyland();
@@ -252,6 +256,7 @@ AjaxLife.MiniMap = function() {
 			redraw();
 		},
 		PersonUpdate: function(people) {
+			if(!active) return;
 			marks = {};
 			for(var i in people)
 			{
@@ -263,7 +268,7 @@ AjaxLife.MiniMap = function() {
 			canvas = $(canvasid);
 			if(!canvas.getContext || !canvas.getContext('2d')) // No canvas support.
 			{
-				AjaxLife.Network.MessageQueue.RegisterCallback('AvatarPositions',Prototype.emptyFunction); // Suppress error messages.
+				active = false;
 				return;
 			}
 			context = canvas.getContext('2d');
