@@ -110,7 +110,7 @@ AjaxLife.MiniMap = function() {
 	function drawPatch(c, x, y, patch)
 	{
 		c.save();
-		c.translate(x,255-y);
+		c.translate(x,255-(y+16));
 		c.translate(8,8);
 		c.rotate(Math.PI/2);
 		c.translate(-8,-8);
