@@ -312,7 +312,7 @@ namespace AjaxLife
             this.pending.Enqueue(item);
         }
 
-        public void Self_OnTeleport(string message, MainAvatar.TeleportStatus status, MainAvatar.TeleportFlags flags)
+        public void Self_OnTeleport(string message, AgentManager.TeleportStatus status, AgentManager.TeleportFlags flags)
         {
             if (!active) return;
             Hashtable item = new Hashtable();
@@ -624,7 +624,7 @@ namespace AjaxLife
             Hashtable message = new Hashtable();
             message.Add("MessageType", "UsefulData");
             message.Add("Positions", client.Network.CurrentSim.AvatarPositions);
-            message.Add("YourPosition", client.Self.Position);
+            message.Add("YourPosition", client.Self.SimPosition);
             message.Add("YourRegion", client.Network.CurrentSim.Name);
             return message;
         }

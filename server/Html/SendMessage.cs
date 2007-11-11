@@ -118,7 +118,7 @@ namespace AjaxLife.Html
                         new LLUUID(POST["IMSessionID"]), 
                         (InstantMessageDialog)((byte)int.Parse(POST["Dialog"])), 
                         (InstantMessageOnline)int.Parse(POST["Online"]), 
-                        client.Self.Position, 
+                        client.Self.SimPosition, 
                         client.Network.CurrentSim.ID,
                         new byte[0]);
                     goto flushwriter;
@@ -144,7 +144,7 @@ namespace AjaxLife.Html
                 {
                     hash.Add("Success", true);
                     hash.Add("Sim", client.Network.CurrentSim.Name);
-                    hash.Add("Position", client.Self.Position);
+                    hash.Add("Position", client.Self.SimPosition);
                 }
                 else
                 {
@@ -165,7 +165,7 @@ namespace AjaxLife.Html
                         {
                             Hashtable hash = new Hashtable();
                             hash.Add("Sim", client.Network.CurrentSim.Name);
-                            hash.Add("Position", client.Self.Position);
+                            hash.Add("Position", client.Self.SimPosition);
                             textwriter.WriteLine(JavaScriptConvert.SerializeObject(hash));
                             goto flushwriter;
                         }
@@ -219,8 +219,8 @@ namespace AjaxLife.Html
                     case "GetMapItems":
                         {
                             MapItemRequestPacket req = new MapItemRequestPacket();
-                            req.AgentData.AgentID = client.Network.AgentID;
-                            req.AgentData.SessionID = client.Network.SessionID;
+                            req.AgentData.AgentID = client.Self.AgentID;
+                            req.AgentData.SessionID = client.Self.SessionID;
                             GridRegion region;
                             client.Grid.GetGridRegion(POST["Region"], GridLayerType.Objects, out region);
                             req.RequestData.RegionHandle = region.RegionHandle;
@@ -231,8 +231,8 @@ namespace AjaxLife.Html
                     case "GetMapBlocks":
                         {
                             MapBlockRequestPacket req = new MapBlockRequestPacket();
-                            req.AgentData.AgentID = client.Network.AgentID;
-                            req.AgentData.SessionID = client.Network.SessionID;
+                            req.AgentData.AgentID = client.Self.AgentID;
+                            req.AgentData.SessionID = client.Self.SessionID;
                             req.PositionData.MinX = 0;
                             req.PositionData.MinY = 0;
                             req.PositionData.MaxX = ushort.MaxValue;
@@ -245,8 +245,8 @@ namespace AjaxLife.Html
                             ushort x = ushort.Parse(POST["X"]);
                             ushort y = ushort.Parse(POST["Y"]);
                             MapBlockRequestPacket req = new MapBlockRequestPacket();
-                            req.AgentData.AgentID = client.Network.AgentID;
-                            req.AgentData.SessionID = client.Network.SessionID;
+                            req.AgentData.AgentID = client.Self.AgentID;
+                            req.AgentData.SessionID = client.Self.SessionID;
                             req.PositionData.MinX = x;
                             req.PositionData.MinY = y;
                             req.PositionData.MaxX = x;
@@ -257,8 +257,8 @@ namespace AjaxLife.Html
                     case "GetOfflineMessages":
                         {
                             RetrieveInstantMessagesPacket req = new RetrieveInstantMessagesPacket();
-                            req.AgentData.AgentID = client.Network.AgentID;
-                            req.AgentData.SessionID = client.Network.SessionID;
+                            req.AgentData.AgentID = client.Self.AgentID;
+                            req.AgentData.SessionID = client.Self.SessionID;
                             client.Network.SendPacket((Packet)req);
                         }
                         break;
@@ -295,10 +295,10 @@ namespace AjaxLife.Html
                         }
                         break;
                     case "AcceptFriendship":
-                        client.Friends.AcceptFriendship(client.Self.ID, POST["IMSessionID"]);
+                        client.Friends.AcceptFriendship(client.Self.AgentID, POST["IMSessionID"]);
                         break;
                     case "DeclineFriendship":
-                        client.Friends.DeclineFriendship(client.Self.ID, POST["IMSessionID"]);
+                        client.Friends.DeclineFriendship(client.Self.AgentID, POST["IMSessionID"]);
                         break;
                     case "OfferFriendship":
                         client.Friends.OfferFriendship(new LLUUID(POST["Target"]));
@@ -329,7 +329,7 @@ namespace AjaxLife.Html
                         }
                         break;
                     case "LoadInventoryFolder":
-                        client.Inventory.RequestFolderContents(new LLUUID(POST["UUID"]), client.Network.AgentID, true, true, InventorySortOrder.ByDate | InventorySortOrder.SystemFoldersToTop);
+                        client.Inventory.RequestFolderContents(new LLUUID(POST["UUID"]), client.Self.AgentID, true, true, InventorySortOrder.ByDate | InventorySortOrder.SystemFoldersToTop);
                         break;
                     case "RequestAsset":
                         {

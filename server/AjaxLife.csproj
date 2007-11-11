@@ -39,7 +39,7 @@
   <ItemGroup>
     <Reference Include="libsecondlife, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>dependencies\libsecondlife.dll</HintPath>
+      <HintPath>..\..\libsl-0.3\bin\libsecondlife.dll</HintPath>
     </Reference>
     <Reference Include="MiniHttpd, Version=1.2.0.35930, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

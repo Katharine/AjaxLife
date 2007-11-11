@@ -23,13 +23,13 @@ namespace AjaxLife
             this.Client = client;
             this.Client.Objects.OnNewAvatar += new ObjectManager.NewAvatarCallback(Objects_OnNewAvatar);
             this.Client.Objects.OnObjectKilled += new ObjectManager.KillObjectCallback(Objects_OnObjectKilled);
-            this.Client.Self.OnTeleport += new MainAvatar.TeleportCallback(Self_OnTeleport);
+            this.Client.Self.OnTeleport += new AgentManager.TeleportCallback(Self_OnTeleport);
             //this.Client.Objects.OnObjectUpdated += new ObjectManager.ObjectUpdatedCallback(Objects_OnObjectUpdated);
         }
 
-        void Self_OnTeleport(string message, MainAvatar.TeleportStatus status, MainAvatar.TeleportFlags flags)
+        void Self_OnTeleport(string message, AgentManager.TeleportStatus status, AgentManager.TeleportFlags flags)
         {
-            if (status == MainAvatar.TeleportStatus.Finished)
+            if (status == AgentManager.TeleportStatus.Finished)
             {
                 this.avatars.Clear();
             }

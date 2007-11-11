@@ -88,7 +88,7 @@ namespace AjaxLife.Html
                     // Very ugly hack - we're riding on the back of the event poll to rotate our camera.
                     // There probably shouldn't even *be* an event poll.
                     // This event will probably poll for long enough for us to not have to maintain a global heading...
-                    client.Self.Status.UpdateFromHeading(heading,false);
+                    client.Self.Movement.UpdateFromHeading(heading,false);
                     heading += 0.5d;
                     if(heading > Math.PI) heading = -Math.PI;
                     if (eventqueue.GetEventCount() > 0)

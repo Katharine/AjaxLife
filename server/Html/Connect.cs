@@ -106,10 +106,10 @@ namespace AjaxLife.Html
                     }
 
                     // SecondLife Event callbacks
-                    client.Self.OnScriptQuestion += new MainAvatar.ScriptQuestionCallback(events.Self_OnScriptQuestion);
-                    client.Self.OnScriptDialog += new MainAvatar.ScriptDialogCallback(events.Self_OnScriptDialog);
-                    client.Self.OnInstantMessage += new MainAvatar.InstantMessageCallback(events.Self_OnInstantMessage);
-                    client.Self.OnChat += new MainAvatar.ChatCallback(events.Self_OnChat);
+                    client.Self.OnScriptQuestion += new AgentManager.ScriptQuestionCallback(events.Self_OnScriptQuestion);
+                    client.Self.OnScriptDialog += new AgentManager.ScriptDialogCallback(events.Self_OnScriptDialog);
+                    client.Self.OnInstantMessage += new AgentManager.InstantMessageCallback(events.Self_OnInstantMessage);
+                    client.Self.OnChat += new AgentManager.ChatCallback(events.Self_OnChat);
                     client.Friends.OnFriendOnline += new FriendsManager.FriendOnlineEvent(events.Friends_OnOnOffline);
                     client.Friends.OnFriendOffline += new FriendsManager.FriendOfflineEvent(events.Friends_OnOnOffline);
                     client.Friends.OnFriendRights += new FriendsManager.FriendRightsEvent(events.Friends_OnFriendRights);
@@ -117,9 +117,9 @@ namespace AjaxLife.Html
                     client.Avatars.OnAvatarNames += new AvatarManager.AvatarNamesCallback(events.Avatars_OnAvatarNames);
                     client.Directory.OnDirPeopleReply += new DirectoryManager.DirPeopleReplyCallback(events.Directory_OnDirPeopleReply);
                     client.Network.OnDisconnected += new NetworkManager.DisconnectedCallback(events.Network_OnDisconnected);
-                    client.Self.OnTeleport += new MainAvatar.TeleportCallback(events.Self_OnTeleport);
-                    client.Self.OnBalanceUpdated += new MainAvatar.BalanceCallback(events.Self_OnBalanceUpdated);
-                    client.Self.OnMoneyBalanceReplyReceived += new MainAvatar.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
+                    client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
+                    client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
+                    client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
                     if (!iPhone)
                     {
                         client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
@@ -150,7 +150,7 @@ namespace AjaxLife.Html
                         client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
                     }
                     client.Appearance.SetPreviousAppearance(false);
-                    client.Self.Status.Camera.Far = 64.0f;
+                    client.Self.Movement.Camera.Far = 64.0f;
                     textWriter.WriteLine("{success: true}");
                 }
                 else
