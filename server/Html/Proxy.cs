@@ -71,6 +71,7 @@ namespace AjaxLife.Html
             StreamReader responsestream = new StreamReader(response.GetResponseStream());
             foreach(string header in response.Headers)
             {
+                if (header == "Transfer-Encoding") continue;
                 request.Response.SetHeader(header, response.Headers[header]);
             }
             string output = responsestream.ReadToEnd();
