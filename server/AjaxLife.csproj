@@ -64,6 +64,7 @@
     <Compile Include="Html\Index.cs" />
     <Compile Include="Html\Login.cs" />
     <Compile Include="Html\Logout.cs" />
+    <Compile Include="Html\Proxy.cs" />
     <Compile Include="Html\SendMessage.cs" />
     <Compile Include="Html\Templates\Parser.cs" />
     <Compile Include="Html\UI.cs" />

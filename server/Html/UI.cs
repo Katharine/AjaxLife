@@ -87,6 +87,7 @@ namespace AjaxLife.Html
                 param += "\t\t\tvar gLanguageCode = " + AjaxLife.StringToJSON(POST.ContainsKey("lang")?POST["lang"]:"en") + ";\n";
                 param += "\t\t\tvar gAgentID = " + AjaxLife.StringToJSON(client.Self.AgentID.ToStringHyphenated()) + ";\n";
                 param += "\t\t\tvar gInventoryRoot = " + AjaxLife.StringToJSON(client.Inventory.Store.RootFolder.UUID.ToStringHyphenated()) + ";\n";
+                param += "\t\t\tvar gSearchRoot = " + AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT) + ";\n";
                 replacements.Add("INIT_PARAMS", param);
                 Html.Template.Parser parser = new Html.Template.Parser(replacements);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/UI.html")));

@@ -51,11 +51,13 @@ namespace AjaxLife
         private static Dictionary<string, string> LoginServers;
         private static string StaticRoot = "/ajaxlife/";
         private static string TextureCache = "texturecache/";
+        private static string SearchRoot = "http://services.katharineberry.co.uk/search/";
         private static int MagicNumber;
         public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
         public static int MAGIC_NUMBER { get { return MagicNumber; } }
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
+        public static string SEARCH_ROOT { get { return SearchRoot; } }
         public static int TextureCacheCount = 0;
         public static long TextureCacheSize = 0;
 
@@ -69,6 +71,10 @@ namespace AjaxLife
         public AjaxLife(string[] arg)
         {
             CommandLineArgs args = new CommandLineArgs(arg);
+            if (args["searchroot"] != null)
+            {
+                SearchRoot = args["searchroot"];
+            }
             string gridfile = "Grids.txt";
             if (args["gridfile"] != null)
             {
@@ -155,6 +161,7 @@ namespace AjaxLife
             root.AddFile(new Html.Logout("logout.kat", root, Users));
             root.AddFile(new Html.EventQueue("eventqueue.kat", root, Users));
             root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
+            root.AddFile(new Html.Proxy("differentorigin.kat", root));
             root.AddDirectory(new TextureDirectory("textures", root, Users));
             #endregion
             Console.WriteLine("Starting server...");
