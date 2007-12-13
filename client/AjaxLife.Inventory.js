@@ -33,6 +33,7 @@
  	var list = false;
  	var T = AjaxLife.Constants.Inventory.InventoryType;	
  	
+ 	// Return the appropriate icon based on inventory type.
  	function getitemicon(type)
  	{
  		switch(type)
@@ -74,7 +75,8 @@
  	
  	return {
  		// Public:
- 		init: function() { 		
+ 		init: function() { 	
+ 			// Create a new window and tree for the inventory.	
  			win = new Ext.BasicDialog("dlg_inventory", {
 				width: '300px',
 				height: '400px',
@@ -95,6 +97,7 @@
 				draggable: false,
 				icon: AjaxLife.STATIC_ROOT+'/images/inventory/folder_plain_closed.gif'
 			});
+			// Create a root node. The tree is set up to be analogous to the inventory tree
 			root.attributes.UUID = gInventoryRoot;
 			root.attributes.loaded = false;
 			root.attributes.folder = true;
@@ -106,6 +109,7 @@
 			}));
 			inventory[gInventoryRoot] = root;
 			tree.setRootNode(root);
+			// Handle double clicking of inventory items by opening the appriopriate type of window.
 			tree.on('dblclick', function(node) {
 				if(!node.attributes.InventoryType && node.attributes.InventoryType !== 0) return;
 				var type = node.attributes.InventoryType;
@@ -132,6 +136,7 @@
 					break;
 				}
 			});
+			// Handle expanding folders by loading their contents.
 			tree.on('expand',function(node) {
 				if(!node.attributes.loaded && !node.attributes.loading)
 				{
@@ -141,25 +146,33 @@
 					});
 				}
 			});
+			// Show the tree.
 			tree.render();
  			win.body.dom.appendChild(treeholder);
  			
+ 			// Handle incoming inventory data.
  			AjaxLife.Network.MessageQueue.RegisterCallback('FolderUpdated', function(data) {
+ 				// Ignore it if we didn't expect it.
  				if(!inventory[data.FolderID])
  				{
  					return;
  				}
+ 				// Find the inventory node in the hashtable
  				var node = inventory[data.FolderID];
  				var firstload = node.attributes.loading;
+ 				// Mark it as loaded.
  				node.attributes.loaded = true;
 				node.attributes.loading = false;
 				data = data.Contents;
+				// If there were actually any folders
 				if(data.length > 0)
 				{
+					// Go through each item, create a node for it, set attributes,
+					// sort it and add it.
 					var folders = [];
 					var items = [];
 					data.each(function(item) {
-						if(inventory[item.UUID]) return; // continue;
+						if(inventory[item.UUID]) return; // equivilent to "continue;"
 						if(item.Type == "InventoryFolder")
 						{
 							var newnode = new Tree.TreeNode({

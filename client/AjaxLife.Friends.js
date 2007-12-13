@@ -29,11 +29,15 @@ AjaxLife.Friends = function() {
 	var onchangecallbacks = [];
 	var onnewcallbacks = [];
 	
+	// Called when a friend's status changes - expects the standard friend object.
 	function statuschange(friend)	{
+		// Check if anything's actually changed.
 		if(!friends[friend.ID] || friends[friend.ID].Online !== friend.Online)
 		{
+			// If the friend was already known..
 			if(friends[friend.ID])
 			{
+				// Notification + run any applicable callbacks.
 				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}));
 				onchangecallbacks.each(function(callback) {
 					callback(friend);
@@ -41,12 +45,15 @@ AjaxLife.Friends = function() {
 			}
 			else
 			{
+				// Friend wasn't probably known - probably login spam from the server. Handle it as a new friend.
 				added(friend);
 			}
+			// Mark as known.
 			friends[friend.ID] = friend;
 		}
 	}
 	
+	// Call callbacks when a friend is added.
 	function added(friend)
 	{
 		onnewcallbacks.each(function (callback) {
@@ -55,11 +62,14 @@ AjaxLife.Friends = function() {
 	}
 	
 	return {
+		// Init function. Register for network events.
 		init: function() {
+			// Friend login/logoff
 			AjaxLife.Network.MessageQueue.RegisterCallback('FriendOnOffline', function(data) {
 				statuschange(data);
 			});
 			
+			// Show a dialog to accept or decline friendship, and send back the response. Show confirmation too.
 			AjaxLife.Network.MessageQueue.RegisterCallback('FriendshipOffered', function(data) {
 				Ext.Msg.confirm("",_("Friends.FriendshipOffered",{name: data.AgentName}), function(btn) {
 					if(btn == 'yes')
@@ -76,7 +86,8 @@ AjaxLife.Friends = function() {
 					}
 				});
 			});
-	
+			
+			// Loads and displays the friendlist.
 			AjaxLife.Network.Send("GetFriendList",{
 				callback: function(data) {
 					if(data.each)
@@ -97,6 +108,7 @@ AjaxLife.Friends = function() {
 				}
 			});
 		},
+		// Used to force a status change
 		StatusChange: function(agentid, online)	{
 			if(friends[agentid])
 			{
@@ -109,15 +121,19 @@ AjaxLife.Friends = function() {
 				alert("Failed AjaxLife.Friends.StatusChange operation while setting "+agentid+" to "+(online?"online":"offline"));
 			}
 		},
+		// Get friend list
 		GetFriends: function() {
 			return friends;
 		},
+		// Returns true if someone is your friend
 		IsFriend: function(agent) {
 			return !!friends[agent];
 		},
+		// Register for logon/logoff callback
 		AddStatusCallback: function(callback) {
 			onchangecallbacks[onchangecallbacks.length] = callback;
 		},
+		// Register for friend added callback.
 		AddNewFriendCallback: function(callback) {
 			onnewcallbacks[onnewcallbacks.length] = callback;
 		}

@@ -39,6 +39,7 @@ AjaxLife.InstantMessage = function() {
 	var friendlist = false;
 	var noted_typing = false;
 	
+	// Set a tab to flash
 	function highlighttab(sessionid)
 	{
 		if(chats[sessionid] && highlighted.indexOf(sessionid) == -1)
@@ -48,16 +49,19 @@ AjaxLife.InstantMessage = function() {
 		}
 	};
 	
+	// Set a tab to stop flashing
 	function unhighlight(sessionid)
 	{
 		highlighted = highlighted.without(sessionid);
 		if(chats[sessionid]) chats[sessionid].tab.textEl.setStyle({color: origtabcolour});
 	};
 	
+	// Turn the text of a tab red or not red, alternating each time it's called.
 	function processhighlight()
 	{
 		highlight = !highlight;
 		highlighted.each(function(item) {
+			// Check that the tab's still there. If it's not, remove it from the array.
 			if(chats[item])
 			{
 				chats[item].tab.textEl.setStyle({color: highlight?highlightcolour:origtabcolour});
@@ -69,6 +73,7 @@ AjaxLife.InstantMessage = function() {
 		});
 	};
 	
+	// Handles resized tabs.
 	function fixtab(sessionid)
 	{
 		if(chats[sessionid])
@@ -79,6 +84,9 @@ AjaxLife.InstantMessage = function() {
 		}
 	};
 	
+	// Sends an IM saying the target, using the sessionid.
+	// NOTE: sessionid should be the same each time an agent is messaged - otherwise the IM
+	// will appear in a different tab in the official client.
 	function sendmessage(target, message, sessionid)
 	{
 		if(message.blank())
@@ -89,6 +97,7 @@ AjaxLife.InstantMessage = function() {
 		{
 			sessionid = AjaxLife.Utils.UUID.Random();
 		}
+		// Notify other person that typing has stopped. Fixes SL bug.
 		AjaxLife.Network.Send('GenericInstantMessage', {
 			Message: "none",
 			Target: chats[sessionid].target,
@@ -102,6 +111,7 @@ AjaxLife.InstantMessage = function() {
 			Target: target,
 			Message: message
 		});
+		// Add the IM to your own window, being sure to handle /me correctly.
 		if(message.substr(0,3) == "/me")
 		{
 			message = gUserName+message.substr(3);
@@ -113,8 +123,12 @@ AjaxLife.InstantMessage = function() {
 		appendline(sessionid,message);
 	};
 	
+	// Creates a new IM session with agent "id" who is called "name".
+	// Session ID should be generated such that all IMs with the target will have the same ID,
+	// but IMs from different people to the same agent, or the same person to different agents, will not.
 	function createTab(id, name, sessionid)
 	{
+		// Check that we don't have a chat open already.
 		for(var i in chats)
 		{
 			if(chats[i].target == id)
@@ -123,9 +137,9 @@ AjaxLife.InstantMessage = function() {
 				chats[i].session = sessionid;
 				chats[sessionid] = chats[i];
 				return true;
-				//return false;
 			}
 		}
+		// Create the tab and add to the array.
 		chats[sessionid] = {
 			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id,name,"",true),
 			name: name,
@@ -143,6 +157,7 @@ AjaxLife.InstantMessage = function() {
 			}
 			chats[sessionid] = false;
 		});
+		// Chat area
 		var content = Ext.get(document.createElement('div'));
 		content.setStyle({overflow: 'auto', width:'99%'});
 		chats[sessionid].content = content;
@@ -152,6 +167,7 @@ AjaxLife.InstantMessage = function() {
 		chats[sessionid].tab.bodyEl.setStyle({overflow: 'hidden'});
 		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
 		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
+		// Button setup, callbacks and formatting.
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
@@ -170,7 +186,7 @@ AjaxLife.InstantMessage = function() {
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));
 		chats[sessionid].div_typing = div_typing;
-		//content.dom.appendChild(div_typing.dom);
+		// Called two seconds after the last key is pressed. Sends not typing notification.
 		var delayed_stop_typing = new Ext.util.DelayedTask(function() {
 			AjaxLife.Network.Send('GenericInstantMessage', {
 				Message: "none",
@@ -181,6 +197,7 @@ AjaxLife.InstantMessage = function() {
 			});
 			noted_typing = false;
 		});
+		// Sends typing notification and sets timeout for above function to two seconds.
 		entrybox.on('keypress',function(e) {
 			if(!noted_typing)
 			{
@@ -216,6 +233,7 @@ AjaxLife.InstantMessage = function() {
 		return true;
 	};
 	
+	// Append a line to the box with a timestamp.
 	function appendline(session, text)
 	{
 		if(chats[session] && chats[session].content)
@@ -240,6 +258,7 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
+			// Create the new window at 700x400, with a default tab for friendlist.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,
 				width: 700,
@@ -263,6 +282,7 @@ AjaxLife.InstantMessage = function() {
 			var sortdelay = new Ext.util.DelayedTask(function() {
 				friendlist.sort();
 			});
+			// Deal with adding and removing friends to/from the friend list.
 			var addname = function (friend) {
 				if(friend.Online)
 				{
@@ -284,9 +304,12 @@ AjaxLife.InstantMessage = function() {
 				height = h;
 				fixtab(activesession);
 			});
+			// Handle incoming IMs.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
+				// Ensure it's something to display
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent)
 				{
+					// Create a tab for them if we haven't already. Also play new IM sound.
 					if(!chats[data.IMSessionID])
 					{
 						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID);
@@ -301,6 +324,7 @@ AjaxLife.InstantMessage = function() {
 						}
 						Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
 					}
+					// Format the incoming message, taking care of /me.
 					var message = data.Message;
 					if(message.substr(0,3) == "/me")
 					{
@@ -310,18 +334,23 @@ AjaxLife.InstantMessage = function() {
 					{
 						message = data.FromAgentName+": "+message;
 					}
+					// Assume they stopped typing.
 					if(chats[data.IMSessionID].div_typing.dom.parentNode)
 					{
 						chats[data.IMSessionID].div_typing.dom.parentNode.removeChild(chats[data.IMSessionID].div_typing.dom);
 					}
+					// Actually add the line.
 					appendline(data.IMSessionID, message);
+					// If the tab is not active, make it flash.
 					if(dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID+'-'+data.FromAgentID)
 					{
 						highlighttab(data.IMSessionID);
 					}
 				}
+				// If we have a tab for the sessionid...
 				if(chats[data.IMSessionID])
 				{
+					// Show typing note on StartTyping message, remove it on StopTyping.
 					if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.StartTyping)
 					{
 						if(chats[data.IMSessionID].div_typing.dom.parentNode)
@@ -341,6 +370,7 @@ AjaxLife.InstantMessage = function() {
 					}
 				}
 			});
+			// Highlighted tabs to flash every half second.
 			setInterval(processhighlight,500);
 		},
 		open: function(opener) {

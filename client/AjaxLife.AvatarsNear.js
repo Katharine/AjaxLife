@@ -33,6 +33,7 @@
  	return {
  		// Public:
  		init: function() {
+ 			// Create 300x400 window with list widget
  			win = new Ext.BasicDialog("dlg_nearby", {
 				width: '300px',
 				height: '400px',
@@ -48,24 +49,30 @@
  					new AjaxLife.Profile(id);
  				}
  			});
+ 			// Hook into network callbacks
  			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarAdded', function(data) {
+ 				// Be helpful and dump the keypair into the cache
  				AjaxLife.NameCache.Add(data.ID,data.Name);
+ 				// Add the name to the list and sort.
  				if(data.ID != gAgentID) list.add(data.ID,data.Name);
  				list.sort();
  			});
  			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarRemoved', function(data) {
+ 				// Remove avatars who move out of range.
  				list.remove(data.ID);
  			});
  			
  			AjaxLife.Network.MessageQueue.RegisterCallback('Teleport', function(data) {
+ 				// Wipe it out on teleport completition.
 				if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Finished)
 				{
 					list.clear();
 				}
 			});
- 			
+ 			// Ask for a list of nearby avatars cached by the server - needed for dealing with page refreshes
  			AjaxLife.Network.Send('RequestAvatarList', {
  				callback: function(data) {
+ 					// Add each item in the list to the list, if it's not there already.
 					if(data.each)
 					{
 						list.clear();
@@ -79,6 +86,7 @@
  			});
  			
  		},
+ 		// Open, close and toggle functions.
 		open: function(opener) {
 			if(opener)
 			{
