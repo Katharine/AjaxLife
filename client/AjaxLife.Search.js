@@ -30,10 +30,11 @@ AjaxLife.Search = function() {
 	var search_box = false;
 	var results_list = false;
 	
+	// Called after the user stops typing in the search box.
+	// We just send a FindPeople message with the search string.
 	function performlookup()
 	{
 		results_list.clear();
-		//results_list.add("",_("Search.Searching"));
 		var search = search_box.dom.value;
 		AjaxLife.Network.Send("FindPeople", {
 			Search: search,
@@ -44,6 +45,7 @@ AjaxLife.Search = function() {
 	return {
 		// Public
 		init: function() {
+			// Creates the search window.
 			search_win = new Ext.BasicDialog("dlg_search", {
 				width: '300px',
 				height: '400px',
@@ -53,6 +55,7 @@ AjaxLife.Search = function() {
 				title: _("Search.WindowTitle"),
 				proxyDrag: !AjaxLife.Fancy
 			});
+			// Build the UI
 			people_tab = search_win.getTabs().addTab("search_tab_people",_("Search.People"));
 			people_tab.activate();
 			var div_people_search = Ext.get(document.createElement('div'));
@@ -64,15 +67,21 @@ AjaxLife.Search = function() {
 			div_people_search.dom.appendChild(search_box.dom);
 			people_tab.bodyEl.dom.appendChild(div_people_search.dom);
 			var delay = new Ext.util.DelayedTask(performlookup);
+			// Set the performlookup task to happen 0.75 seconds after the key is pressed.
+			// This is reset every time a key is pressed, thus waiting until the user
+			// stops typing to begin.
 			search_box.on('keydown', function() {
 				delay.delay(750);
 			});
+			// Create the search box, and set a click callback to just open the profile.
 			results_list = new AjaxLife.Widgets.SelectList('search_list_results', people_tab.bodyEl.dom, {
 				width: '99%',
 				callback: function(key) {
 					new AjaxLife.Profile(key);
 				}
 			});
+			// Register for the DirPeopleReply message that carries the information we want.
+			// Add their name and key to the list.
 			AjaxLife.Network.MessageQueue.RegisterCallback('DirPeopleReply', function(data) {
 				data.Results.each(function(item) {
 					AjaxLife.NameCache.Add(item.AgentID,item.FirstName+" "+item.LastName);

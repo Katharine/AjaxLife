@@ -36,11 +36,14 @@ AjaxLife.Toolbar = function() {
 	var inventory_btn = false;
 	var stats_btn = false;
 	
+	// Toggle the IM window when its button is clicked.
+	// AjaxLife.Fancy is checked to see whether we should animate this.
 	function im_btn_clicked()
 	{
 		AjaxLife.InstantMessage.toggle(AjaxLife.Fancy?im_btn.getEl():null);
 	}
 	
+	// Logout after prompting for confirmation.
 	function log_btn_clicked()
 	{
 		AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
@@ -51,31 +54,34 @@ AjaxLife.Toolbar = function() {
 		});
 	}
 	
+	// Toggle the map window.
 	function map_btn_clicked()
 	{
 		AjaxLife.Map.toggle(AjaxLife.Fancy?map_btn.getEl():null);
 	}
 	
+	// Toggle the chat window
 	function chat_btn_clicked()
 	{
 		AjaxLife.SpatialChat.toggle(AjaxLife.Fancy?chat_btn.getEl():null);
 	}
 	
+	// Toggle the search window
 	function search_btn_clicked()
 	{
 		AjaxLife.Search.toggle(AjaxLife.Fancy?search_btn.getEl():null);
 	}
-	
+	// Toggle the nearby window
 	function nearby_btn_clicked()
 	{
 		AjaxLife.AvatarsNear.toggle(AjaxLife.Fancy?nearby_btn.getEl():null);
 	}
-
+	// Toggle the inventory window
 	function inventory_btn_clicked()
 	{
 		AjaxLife.Inventory.toggle(AjaxLife.Fancy?inventory_btn.getEl():null);
 	}
-	
+	// Toggle the stats window
 	function stats_btn_clicked()
 	{
 		AjaxLife.Stats.toggle(AjaxLife.Fancy?stats_btn.getEl():null);
@@ -84,6 +90,7 @@ AjaxLife.Toolbar = function() {
 	// Public
 	return {
 		init: function(div) {
+			// Build lots of buttons.
 			chat_btn = new Ext.Button(div, {
 				handler: chat_btn_clicked,
 				text: _("Toolbar.ChatButton"),
@@ -114,6 +121,7 @@ AjaxLife.Toolbar = function() {
 				text: _("Toolbar.InventoryButton"),
 				tooltip: _("Toolbar.InventoryTooltip")
 			});
+			// This is disabled in IE because it doesn't work.
 			stats_btn = new Ext.Button(div, {
 				handler: stats_btn_clicked,
 				text: _("Toolbar.StatsButton"),

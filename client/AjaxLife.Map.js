@@ -30,6 +30,7 @@ AjaxLife.Map = function() {
 	var map = false;
 	var marker_you = false;
 	var marker_mark = false;
+	var marker_agent_img = false;
 	var marker_you_img = false;
 	var marker_you_icons = false;
 	var marker_mark_img = false;
@@ -70,11 +71,14 @@ AjaxLife.Map = function() {
 	var classified_markers = [];
 	var for_sale_markers = [];
 	
+	// Focus the map on our position when the focus button is clicked.
 	function btn_focus_self_clicked()
 	{
 		map.panOrRecenterToSLCoord(new SLPoint(position.sim, position.x, position.y));
 	};
 	
+	// Teleport dialog, called after the teleport starts.
+	// call with show = TRUE to show it, show = FALSE to hide it.
 	function teleport_dialog(show)
 	{
 		if(show)
@@ -95,6 +99,7 @@ AjaxLife.Map = function() {
 		}
 	}
 	
+	// Perform an actual teleport, after confirming we want to do it.
 	function teleportTo(sim, x, y, z)
 	{
 		if(!sim) return;
@@ -112,6 +117,8 @@ AjaxLife.Map = function() {
 		});
 	};
 	
+	// Callback for keys being pressed in the target boxes.
+	// Trigger teleport if the key was enter (keycode 13)
 	function boxposkeyup(e)
 	{
 		if(e.keyCode != 13 && e.which != 13)
@@ -124,6 +131,8 @@ AjaxLife.Map = function() {
 		}
 	}
 	
+	// Handle single clicks. Setting a doubleClickHandler broke this, so we do our own double-click detection here too.
+	// "Retried" is for internal use only.
 	function singleClickHandler(x, y, retried)
 	{
 		var now = new Date();
@@ -131,10 +140,12 @@ AjaxLife.Map = function() {
 		// Check if the map block loaded yet.
 		if(!sim || sim == '')
 		{
+			// If it hasn't, and we've already tried loading it, give up.
 			if(retried)
 			{
 				AjaxLife.Widgets.Ext.msg("Error","Can't focus on that region until we know its name. Please wait a bit.");
 			}
+			// If we haven't tried specifically loading it, do so. After a second, call the function.
 			else
 			{
 				AjaxLife.Network.Send("GetMapBlock",{
@@ -142,23 +153,31 @@ AjaxLife.Map = function() {
 					Y: Math.floor(y)
 				});
 				setTimeout(function() {
+					// Recursion. Yay.
 					singleClickHandler(x, y, true);
 				},1000); // Request region data and wait a second. Never know - it might work.
 				AjaxLife.Widgets.Ext.msg("","Requsting name for ("+Math.floor(x)+", "+Math.floor(y)+")...");
 			}
-			// Try and speed up loading that region.
 			return;
 		}
-		// If double clicked...
+		// Work out if we were double clicked by comparing the time and position of the last click 
+		// to the time and position of this one.
+		// If they're roughly the same, it was a double click.
 		if(now.getTime() - last_click.getTime() < 1000 && marked_position.sim == sim && marked_position.x == (x%1)*256 && marked_position.y == (y%1)*256)
 		{
+			// If we know where you clicked, doubleclick means teleport.
 			if(sim)
 			{
 				teleportTo(marked_position.sim, marked_position.x, marked_position.y, marked_position.z);
 			}
 		}
+		// Not a double click. Must be a single click then!
 		else
 		{
+			// Move the marker to the new position. 
+			// This is done by removing it from its current position (if one exists),
+			// and placing it at the new one.
+			// Lots of math to get it into a format the thing likes.
 			if(marker_mark)
 			{
 				map.removeMarker(marker_mark);
@@ -188,12 +207,16 @@ AjaxLife.Map = function() {
 				box_z.dom.value = 0;
 				box_sim.dom.value = "";
 			}
+			// We've made a target, so we enable the buttons to focus on and clear it.
 			target_focus_btn.enable();
 			clear_btn.enable();
 		}
+		// Log the last click, for double-click detection purposes.
 		last_click = new Date();
 	};
 	
+	// Called when the position boxes change. We move the marker to the new position,
+	// again by removing and replacing it.
 	function textposchanged()
 	{
 		if(marker_mark)
@@ -215,6 +238,7 @@ AjaxLife.Map = function() {
 		map.panOrRecenterToSLCoord(new SLPoint(sim, x, y));
 	};
 	
+	// This recursively removes all items in a sim.
 	function clearitems(sim)
 	{
 		if(sim)
@@ -236,20 +260,29 @@ AjaxLife.Map = function() {
 		}
 	}
 	
+	// This fetches all items in a sim. Not currently used, as the number of items that would
+	// exist on the main grid is excessive (over 50,000 at peak time) and could potentially crash
+	// the browser. Also, it'd hog bandwidth.
 	function updateitems()
 	{
 		AjaxLife.Network.Send('GetSimStatus', {});
 	}
 	
+	
+	// These methods are public.
 	return {
 		init: function() {
-			
+			// Set up all the icons on the map. Use the same size at each scale.
 			marker_you_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_you.png",16,16,true));
 			marker_you_icons = [marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img];
 			marker_mark_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_selected.png",16,16,true));
 			marker_mark_icons = [marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img];
 			marker_bad_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_bad.png",16,16,true));
 			marker_bad_icons = [marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img];
+			marker_agent_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_agent.png",9,9,true));
+			marker_agent_icons = [marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img];
+			// This isn't an icon, really. It's a 1 sim x 1 sim translucent red square. We place it in the middle of a sim
+			// if it's down. This effectively tints it red. To do this we need a different image for each scale.
 			sim_down_icons = [
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=256",256,256,true)),
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=128",128,128,true)),
@@ -258,8 +291,8 @@ AjaxLife.Map = function() {
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=16",	16,	16,	true)),
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=8",	8,	8,	true))
 			];
-			var marker_agent_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_agent.png",9,9,true));
-			marker_agent_icons = [marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img];
+			// If we know where we are, set our position to there.
+			// Otherwise use the default position, which was set to the centre of the TG welcome area.
 			if(gRegion != "")
 			{
 				position.sim = gRegion;
@@ -271,6 +304,8 @@ AjaxLife.Map = function() {
 			position.x = gPosition.X;
 			position.y = gPosition.Y;
 			position.z = gPosition.Z;
+			
+			// Create the map window.
 			map_win = new Ext.BasicDialog("dlg_map",{
 				width: 700,
 				height: 500,
@@ -283,6 +318,9 @@ AjaxLife.Map = function() {
 			});
 			map_win.body.setStyle({overflow: 'hidden'});
 			map_win.body.dom.innerHTML = "<div id=\"div_map\" style=\"width:480px; height: 470px;\"></div><div id=\"div_map_control\"></div>";
+			// Resize the map viewport when the window is resized.
+			// It turns out the map doesn't like this - so we have to actually wipe out and rebuild the whole map.
+			// This means replacing us, out target, any downed sims, and agent markers.
 			map_win.on('resize',function(themap, width, height) {
 				var zoom = map.getCurrentZoomLevel();
 				var pos = map.getMapCenter();
@@ -304,46 +342,37 @@ AjaxLife.Map = function() {
 					}
 				}
 				
-				//if(Prototype.Browser.WebKit)
-				//{
-					if(map.getCurrentZoomLevel() <= 3)
+				if(map.getCurrentZoomLevel() <= 3)
+				{
+					for(var i in sims)
 					{
-						for(var i in sims)
+						for(var j in sims[i].Items)
 						{
-							for(var j in sims[i].Items)
-							{
-								sims[i].Items[j].each(function(item) {
-									map.addMarker(item.marker);
-								});
-							}
+							sims[i].Items[j].each(function(item) {
+								map.addMarker(item.marker);
+							});
 						}
 					}
-				//}
-				//else
-				//{
-				//	for(var i in sims)
-				//	{
-				//		if(sims[i].AgentMarker)
-				//		{
-				//			map.addMarker(sims[i].AgentMarker);
-				//		}
-				//	}
-				//}
+				}
 			});
 			
 			// Add initial sim to avoid crash due to dead MapAPI.
+			// *shakes fist at LL*
 			lh[gRegion.toLowerCase()] = gRegionCoords;
 			rlh[gRegionCoords.x+"-"+gRegionCoords.y] = gRegion;
 			
+			// Create the map and mark us on it.
 			map = new SLMap(Ext.get('div_map').dom, {hasZoomControls: false, hasPanningControls: false, singleClickHandler: singleClickHandler});
 			map.centerAndZoomAtSLCoord(new SLPoint(position.sim, position.x, position.y),2);
 			marker_you = new Marker(marker_you_icons,new SLPoint(position.sim, position.x, position.y));
 			map.addMarker(marker_you);
 			var showing_markers = true;
+			// Set up the slider and have the map zoom in and out when the slider is dragged.
 			zoom_slider = new AjaxLife.Widgets.Slider('div_map_control', 'map_slider_zoom', {
 				width: 180,
 				onChange: function(value) {
 					map.setCurrentZoomLevel(value);
+					// Don't show the markers when we're at a zoom level greater than 3 (1 is the highest)
 					if(value > 3 && showing_markers)
 					{
 						showing_markers = false;
@@ -375,6 +404,7 @@ AjaxLife.Map = function() {
 				range: $R(1,6),
 				sliderValue: map.getCurrentZoomLevel()
 			});
+			// UI fun.
 			var locationholder = document.createElement('div');
 			locationholder.setAttribute('id','div_map_location_boxes');
 			var regionpara = document.createElement('p');
@@ -412,6 +442,8 @@ AjaxLife.Map = function() {
 			box_z.on('change',textposchanged);
 			box_sim.on('change',textposchanged);
 			
+			// Make some buttons, and make them do stuff.
+			// Teleport when the teleport button's clicked.
 			teleport_btn = new Ext.Button(buttonholder, {
 				handler: function() {
 					teleportTo(marked_position.sim, marked_position.x, marked_position.y, marked_position.z);
@@ -419,6 +451,7 @@ AjaxLife.Map = function() {
 				text: _("Map.TeleportVerb")
 			});
 			teleport_btn.getEl().setStyle({position: 'absolute', right: '80px', bottom: '70px'});
+			// Focus on you and zoom all the way in when the focus on you button's clicked.
 			you_focus_btn = new Ext.Button(buttonholder, {
 				handler: function() {
 					map.centerAndZoomAtSLCoord(new SLPoint(position.sim, position.x, position.y),1);
@@ -427,6 +460,7 @@ AjaxLife.Map = function() {
 				text: _("Map.FocusYou")
 			});
 			you_focus_btn.getEl().setStyle({position: 'absolute', right: '80px', bottom: '35px'});
+			// Remove the icon when the clear button's clicked.
 			clear_btn = new Ext.Button(buttonholder, {
 				handler: function() {
 					if(marker_mark)
@@ -441,6 +475,7 @@ AjaxLife.Map = function() {
 				disabled: true
 			});
 			clear_btn.getEl().setStyle({position: 'absolute', right: '5px', bottom: '35px'});
+			// Focus and zoom in on the target when this button's pressed.
 			target_focus_btn = new Ext.Button(buttonholder, {
 				handler: function() {
 					map.centerAndZoomAtSLCoord(new SLPoint(marked_position.sim, marked_position.x, marked_position.y),1);
@@ -450,6 +485,7 @@ AjaxLife.Map = function() {
 				disabled: true
 			});
 			target_focus_btn.getEl().setStyle({position: 'absolute', right: '80px', bottom: '0px'});
+			// Teleport directly home when the teleport home button's pressed.
 			home_btn = new Ext.Button(buttonholder, {
 				handler: function () {
 					AjaxLife.Widgets.Confirm(_("Map.Teleporting"),_("Map.HomeConfirm"), function(btn) {
@@ -468,6 +504,8 @@ AjaxLife.Map = function() {
 			
 			// Handle teleport lures
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
+				// If this is a teleport request, play the IM sound, then offer an accept/decline box.
+				// If it's accepted, pull up the teleport box and send the affirmative to the server.
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.RequestTeleport)
 				{
 					Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
@@ -496,11 +534,14 @@ AjaxLife.Map = function() {
 			
 			// Handle teleport status updates.
 			AjaxLife.Network.MessageQueue.RegisterCallback('Teleport', function(data) {
+				// If we're starting a teleport, play the teleport noise and show the progress bar.
 				if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Start)
 				{
 					Sound.play(AjaxLife.STATIC_ROOT+"sounds/teleport.wav");
 					teleport_dialog(true);
 				}
+				// If we've arrived, get rid of the dialog and request our position.
+				// Also show a message noting our arrival.
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Finished)
 				{
 					teleport_dialog(false);
@@ -515,11 +556,13 @@ AjaxLife.Map = function() {
 						}
 					});
 				}
+				// Something didn't work. Pop up an error box.
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Failed)
 				{
 					teleport_dialog(false);
 					Ext.Msg.alert(_("Map.Teleportation"),_("Map.TeleportError"));
 				}
+				// The user somehow cancelled the teleport, despite not having a cancel button. Amazing.
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Cancelled)
 				{
 					teleport_dialog(false);
@@ -529,9 +572,12 @@ AjaxLife.Map = function() {
 			
 			// Map blocks...
 			
+			// Deal with incoming map data. This generally means lists of sim positions and names,
+			// along with their status.
 			AjaxLife.Network.MessageQueue.RegisterCallback('MapBlocks', function(blocks) {
 				for(var i in blocks.Blocks)
 				{
+					// If the sim's new, create new entries for it.
 					if(!sims[i])
 					{
 						sims[i] = blocks.Blocks[i];
@@ -548,6 +594,7 @@ AjaxLife.Map = function() {
 						lh[sims[i].Name.toLowerCase()] = {x: sims[i].X, y: sims[i].Y};
 						//sims[i].AgentMarker = false;
 					}
+					// If it's down, add a sim down marker to its centre to show this.
 					if(sims[i].Access == AjaxLife.Constants.Map.SimAccess.Down)
 					{
 						if(!sim_down_markers[i])
@@ -556,6 +603,7 @@ AjaxLife.Map = function() {
 							map.addMarker(sim_down_markers[i]);
 						}
 					}
+					// If it's up, but we marked it as down, remove the marker.
 					else
 					{
 						if(sim_down_markers[i])
@@ -565,20 +613,25 @@ AjaxLife.Map = function() {
 						}
 					}
 					// Request item set.
-					//AjaxLife.Network.Send('GetMapItems',{ItemType: AjaxLife.Constants.Map.Item.AgentLocations, Region: i}); // Don't bother with this until we're slightly more advanced - it'll choke the MG.
+					// Actaully, don't bother with this until we're slightly more advanced - 
+					// it'll choke the MG.
+					//AjaxLife.Network.Send('GetMapItems',{ItemType: AjaxLife.Constants.Map.Item.AgentLocations, Region: i});
 				}
 			});
+			// Request the map data
 			AjaxLife.Network.Send('GetMapBlocks', {}); 
 			
 			// Map items...
 			
 			AjaxLife.Network.MessageQueue.RegisterCallback('MapItems', function(items) {
+				// If they're agent locations, mark them all on the map.
+				// This means clearing the current set of marks and adding a new one.
+				// Note that if the sim's down we abort the process.
 				if(items.ItemType == AjaxLife.Constants.Map.Item.AgentLocations)
 				{
 					if(items.Items.length > 0)
 					{
 						var first = true;
-						//var querystring = '';
 						var sim = '';
 						items.Items.each(function(item) {
 							sim = getRegionName(item.X/256,item.Y/256);
@@ -589,40 +642,16 @@ AjaxLife.Map = function() {
 								first = false;
 							}
 							if(item.X % 256 == 0 && item.Y % 256 == 0) return;
-							//querystring += '&agent%5B%5D='+item.X+','+item.Y;
-							//if(Prototype.Browser.WebKit)
-							//{
 							var marker = new Marker(marker_agent_icons, new XYPoint(item.X / 256.0, item.Y / 256.0));
 							if(map.getCurrentZoomLevel() <= 3) map.addMarker(marker);
 							item.marker = marker;
-							//}
 							sims[sim.toLowerCase()].Items.Agents[sims[sim.toLowerCase()].Items.Agents.length] = item;
 						});
-						/*
-						if(!Prototype.Browser.WebKit)
-						{
-							var transparent = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/s.gif",1,1));
-							var marker = new Marker([
-								new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/agentoverlay.php?size=256"	+querystring,266,	266,true)),
-								new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/agentoverlay.php?size=128"	+querystring,138,	138,true)),
-								new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/agentoverlay.php?size=64"	+querystring,74,	74,	true)),
-								transparent,
-								transparent,
-								transparent], 
-								new SLPoint(sim,128,128)
-							);
-							if(sims[sim.toLowerCase()].AgentMarker)
-							{
-								map.removeMarker(sims[sim.toLowerCase()].AgentMarker);
-							}
-							map.addMarker(marker);
-							sims[sim.toLowerCase()].AgentMarker = marker;
-						}
-						*/
 					}
 				}
 			});	
 			
+			// Update our position every time we get the periodic "UsefulData" message.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
 				if(data.YourRegion != position.sim || 
 					data.YourPosition.X != position.x ||
@@ -633,8 +662,10 @@ AjaxLife.Map = function() {
 				}
 			});
 			
+			// Update the sim status.
 			setInterval(updateitems,600000)		
 		},
+		// Open the window.
 		open: function(opener) {
 			if(opener)
 			{
@@ -645,9 +676,11 @@ AjaxLife.Map = function() {
 				map_win.show();
 			}
 		},
+		// Close the window.
 		close: function() {
 			map_win.hide();
 		},
+		// Close the open window, or open the closed window
 		toggle: function(opener) {
 			if(!map_win.isVisible())
 			{
@@ -658,6 +691,7 @@ AjaxLife.Map = function() {
 				this.close();
 			}
 		},
+		// Set the position to some else.
 		move: function(sim, x, y, z) {
 			map.removeMarker(marker_you);
 			marker_you = new Marker(marker_you_icons,new SLPoint(sim,x,y));
@@ -665,12 +699,15 @@ AjaxLife.Map = function() {
 			position = {sim: sim, x: x, y: y, z: z};
 			AjaxLife.MiniMap.SetPos(position);
 		},
+		// Returns a vector with the current position.
 		getpos: function() {
 			return position;
 		},
+		// Forces the teleport dialog.
 		TPDialog: function() {
 			teleport_dialog(true);
 		},
+		// Teleport somewhere.
 		TeleportTo: function(sim, x, y, z) {
 			teleportTo(sim, x, y, z);
 		}

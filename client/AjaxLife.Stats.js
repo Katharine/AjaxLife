@@ -41,11 +41,15 @@
  	var texturesizefield = false;
  	var timer = false;
  	
+ 	// Polls the stats data.
+ 	//TODO: put this in the UsefulData message, but only when this window is open.
  	function fetchdata()
  	{
  		AjaxLife.Network.Send('GetStats', {callback: update});
  	}
  	
+ 	// Updates the information in the window using the provided data,
+ 	// then requests another set in five seconds, if the window's still open.
  	function update(data)
  	{
 		fpsfield.update(Math.round(data.FPS));
@@ -69,7 +73,8 @@
 	}
  	return {
  		// Public:
- 		init: function() { 		
+ 		init: function() { 	
+ 			// Builds a window containing a table with stats in it.	
  			win = new Ext.BasicDialog("dlg_stats", {
 				width: '250px',
 				height: '280px',

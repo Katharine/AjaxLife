@@ -689,12 +689,16 @@ AjaxLife.Strings = {
 
 // Global usage functions.
 
+// This function uses the current language to find the required string.
+// It's called "_" because it's used so often.
 function _(str, args)
 {
+	// Avoid complaints about this being null.
 	if(!args)
 	{
 		args = {};
 	}
+	// Remove anything that's not scalar, make strings safe for display.
 	for(var i in args)
 	{
 		if(typeof(args[i]) == "string")
@@ -706,6 +710,7 @@ function _(str, args)
 			args[i] = "";
 		}
 	}
+	// Find the required part, replace any #{something} codes, and return it.
 	var parts = str.split('.');
 	if(AjaxLife.Strings[gLanguageCode])
 	{
@@ -721,15 +726,21 @@ function _(str, args)
 			}
 		}
 	}
+	// If we don't have that language, use English.
 	if(AjaxLife.Strings.en)
 	{
 		if(AjaxLife.Strings.en[parts[0]])
 		{
 			if(AjaxLife.Strings.en[parts[0]][parts[1]])
 			{
+				if(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])
+				{
+					return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])).evaluate(args);
+				}
 				return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]])).evaluate(args);
 			}
 		}
 	}
+	// Give up and return what we were given.
 	return str;
 };

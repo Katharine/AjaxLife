@@ -29,6 +29,7 @@ AjaxLife.NameCache = function () {
 	var keys = new Object();
 	var pending = new Array();
 	
+	// Adds a key to the cache. Calls any callbacks that were waiting for it.
 	function add (id, name)
 	{
 		if(!keys[id])
@@ -45,6 +46,8 @@ AjaxLife.NameCache = function () {
 	};
 	
 	return {
+		// Look up a key. Calls callbackf immediately if we already know it,
+		// otherwise stores it away until we find it, then sends a NameLookup request.
 		Find: function(id, callbackf) {
 			if(keys[id])
 			{
@@ -62,13 +65,16 @@ AjaxLife.NameCache = function () {
 				});
 			}
 		},
+		// Manually add a new keypair.
 		Add: function(id, name) {
 			add(id, name);
 		},
+		// Intialisation - sets up listener for keypair lookup responses.
 		init: function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {
 				for(var i in data.Names)
 				{
+					// Hyphenate the key.
 					var key = i.substr(0,8)+"-"+i.substr(8,4)+"-"+i.substr(12,4)+"-"+i.substr(16,4)+"-"+i.substr(20);
 					add(key,data.Names[i]);
 				}

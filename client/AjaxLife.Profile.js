@@ -25,9 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+// This object stores open profiles. We use it to avoid doing things twice.
 AjaxLife.ActiveProfileWindows = {};
 
 AjaxLife.Profile = function(agentid) {
+	// If the profile is open in another window, bail out.
 	if(AjaxLife.ActiveProfileWindows[agentid])
 	{
 		AjaxLife.ActiveProfileWindows[agentid].focus();
@@ -43,6 +45,7 @@ AjaxLife.Profile = function(agentid) {
 	var tab_sl = false;
 	var tab_interests = false;
 	// Init.
+	// Create the window.
 	win = new Ext.BasicDialog("dlg_profile_"+agentid, {
 		width: '350px',
 		height: '500px',
@@ -54,11 +57,13 @@ AjaxLife.Profile = function(agentid) {
 		proxyDrag: !AjaxLife.Fancy
 	});
 	AjaxLife.ActiveProfileWindows[agentid] = win;
+	// When the window is closed, destroy it.
 	win.on('hide', function() {
 		AjaxLife.ActiveProfileWindows[agentid] = null;
 		active = false;
 		win.destroy(true);
 	});
+	// Create the tabs, then create lots and lots of elements in said tabs.
 	// 2nd Life
 	tab_sl = win.getTabs().addTab("profile_tab_"+agentid+"_2ndlife",_("Profile.SecondLife"));
 	var div_name = Ext.get($(document.createElement('div')));
@@ -153,6 +158,8 @@ AjaxLife.Profile = function(agentid) {
 		top: '360px',
 		left: '10px'
 	});
+	// When this button is pressed, a dialog is popped up asking how much you wish to pay.
+	// When the "OK" button is pressed, the payment is completed, after some sanity checking.
 	var btn_pay = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
 			Ext.Msg.prompt(_("Profile.PayDialogTitle",{first: firstname, last: lastname}),_("Profile.PayDialogPrompt",{first: firstname, last: lastname}), function(btn, text) {
@@ -177,10 +184,13 @@ AjaxLife.Profile = function(agentid) {
 		top: '360px',
 		left: '120px'
 	});
+	// The "add friend" button is only shown if this person isn't your friend already.
 	if(!AjaxLife.Friends.IsFriend(agentid))
 	{
 		var btn_friend = new Ext.Button(tab_sl.bodyEl.dom, {
 			handler: function() {
+				// When this button is clicked, and the confirmation accepted, an OfferFriendship message
+				// is sent, and a confirmation message shown.
 				Ext.Msg.confirm("",_("Profile.ConfirmFriendAdd",{first: firstname, last: lastname}), function(btn) {
 					if(btn == 'yes')
 					{
@@ -197,6 +207,8 @@ AjaxLife.Profile = function(agentid) {
 			left: '120px'
 		});
 	}
+	// Shows a dialog asking what message they wish to send, then sends a 
+	// teleport lure to the target.
 	var btn_teleport = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
 			Ext.Msg.show({
@@ -278,6 +290,8 @@ AjaxLife.Profile = function(agentid) {
 	
 	
 	win.show();
+	// Register our interest in the AvatarProperties message.
+	// When it's received, update all the text boxes appropriately.
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarProperties", function(data) {
 		if(!active || data.AvatarID != agentid) return;
 		
@@ -320,11 +334,14 @@ AjaxLife.Profile = function(agentid) {
 		div_about_fl.dom.update(AjaxLife.Utils.FixText(data.FirstLifeText));
 	});
 	
+	// This isn't implemented yet.
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarInterests", function(data) {
 		if(!active || data.AvatarID != agentid) return;
 		
 	});
 	
+	// When we receive the list of groups, just go through and add the list of 
+	// names to the list. Someday we might implement more of this.
 	AjaxLife.Network.MessageQueue.RegisterCallback("AvatarGroups", function(data) {
 		if(!active || data.AvatarID != agentid) return;
 		data.Groups.each(function(group) {
@@ -334,6 +351,8 @@ AjaxLife.Profile = function(agentid) {
 	});
 	
 	// Start up.
+	// When we're created we need to work out the name of whoever owns the profile.
+	// Once we've done so, we can get on with actually displaying it.
 	AjaxLife.NameCache.Find(agentid,function(name) {
 		win.setTitle(_("Profile.WindowTitle",{name: name}));
 		div_name.dom.update(_("Profile.Name",{name: name}));

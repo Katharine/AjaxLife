@@ -39,21 +39,25 @@ AjaxLife.MiniMap = function() {
 	var water = 20;
 	var active = true;
 	
+	// Here's a nice set of colours. Largely gathered by trial and error, and not great.
+	// Some of them are altered later.
 	var heights = {};
 	heights[0] = {red: 0, green: 0, blue: 128};
 	heights[water*0.75] = {red: 0, green: 0, blue: 255};
 	heights[water] = {red: 0, green: 128, blue: 255};
 	heights[water+1] = {red: 240, green: 240, blue: 64};
 	heights[24] = {red: 32, green: 160, blue: 0};
-	//heights[70] = {red: 244, green: 244, blue: 0};
 	heights[100] = {red: 128, green: 127, blue: 128};
 	heights[120] = {red: 255, green: 255, blue: 255};
-	var available = [0,water*0.75,water,water+1,24/*,70*/,100,120];
+	var available = [0,water*0.75,water,water+1,24,100,120];
 	var count = available.length;
 	
 	var heightcache = [];
+	// Sets up the redraw delay - used to ensure we don't waste time redrawing excessively.
 	var redrawdelay = new Ext.util.DelayedTask(redraw);
-
+	
+	// This turns our 64x64 grid of heights into a 256x256 grid of heights,
+	// smoothly interpolating this missing values.
 	function interpolate(heights)
 	{
 		var newheight = [];
@@ -101,12 +105,15 @@ AjaxLife.MiniMap = function() {
 		return newheight;
 	}
 	
+	// This draws the landscape on the visible canvas.
 	function drawLandscape()
 	{
 		// Copy the image from the buffer.
 		context.drawImage(buffer,0,0,256,256);
 	}
 	
+	// This is used draw a 16x16m patch of land data to a specified position in the buffer.
+	// We also rotate it 90 degrees to compensate for receiving the data the wrong way up.
 	function drawPatch(c, x, y, patch)
 	{
 		c.save();
@@ -116,6 +123,10 @@ AjaxLife.MiniMap = function() {
 		c.translate(-8,-8);
 		var i = 0;
 		var j = 0;
+		// Once we're drawing in the right place, we draw the 256 pixels by interpolating the
+		// required colours.
+		// We're actually drawing 2x2 blocks of same-coloured pixels, as the difference is 
+		// insignificant, and it takes a quarter of the time to render.
 		for(var i = 0; i < 16; i += 2)
 		{
 			for(var j = 0; j < 16; j += 2)
@@ -165,16 +176,24 @@ AjaxLife.MiniMap = function() {
 	
 	function drawObjects()
 	{
-		// Do something here.
+		// We don't support object data. If we ever do, this function should be used
+		// to render them.
 	}
 	
+	// This draws the position of others in the sim.
+	// They're drawn as circles if they're within five metres of us, otherwise
+	// pointing in the right direction.
 	function drawMark(mark)
 	{
+		// Green.
 		context.strokeStyle = "rgb(0,255,0)";
 		context.fillStyle = "rgb(0,255,0)";
+		// Difference between our height and the other person's height.
 		var diff = mark.Z - pos.z;
 		if(Math.round(pos.x) == mark.X && Math.round(pos.y) == mark.Y && Math.round(pos.z) == mark.Z) return;
 		if(!mark.Z) return;
+		// Everything is divided by scale to compensate for any resizing that has taken place.
+		// Draw the down-pointing version for more than 2.5m below us.
 		if(diff < -2.5)
 		{
 			context.save();
@@ -187,6 +206,7 @@ AjaxLife.MiniMap = function() {
 			context.stroke();
 			context.restore();
 		}
+		// Up-pointing for more than 2.5m above us.
 		else if(diff > 2.5)
 		{
 			context.save();
@@ -199,6 +219,7 @@ AjaxLife.MiniMap = function() {
 			context.stroke();
 			context.restore();
 		}
+		// If they're within five metres, we draw a circle.
 		else
 		{
 			context.beginPath();
@@ -208,15 +229,16 @@ AjaxLife.MiniMap = function() {
 		}
 	}
 	
+	// Draw ourselves on the map.
 	function drawSelf()
 	{
 		if(!imgloaded) return;
 		context.drawImage(selfimg, pos.x, 256-pos.y, 8/scale,8/scale);
 	}
 	
+	// Wipe the canvas and draw the whole map on it.
 	function redraw()
 	{
-		//console.log("Redrawing...");
 		context.clearRect(0,0,width,height);
 		drawLandscape();
 		drawObjects();
@@ -227,6 +249,7 @@ AjaxLife.MiniMap = function() {
 		drawSelf();
 	}
 	
+	// Wipe the buffer and fill it with water.
 	function emptyland()
 	{
 		bufferc.fillStyle = 'rgb(0,0,128)';
@@ -234,22 +257,23 @@ AjaxLife.MiniMap = function() {
 		return [];
 	}
 	
+	// Adds a patch of land to the buffer, and sets the redraw to
+	// happen in 0.5 seconds' time. The buffer is cleared if we're
+	// in another sim now.
 	function addpatch(region, ox, oy, patch)
 	{
-		////console.log(pos);
 		if(region != pos.sim) // Changed sim.
 		{
 			pos.sim = region;
-			////console.log("Changed sim. Clearing...");
 			emptyland();
 		}
 		drawPatch(bufferc,ox,oy,patch);
 		redrawdelay.delay(500);
-		//console.log("Waiting 0.5 seconds before redrawing...");
-		//redraw();
 	}
 	
 	return {
+		// Draws a mark on the map. If it's a new mark, we just add it,
+		// otherwise it has to be added and then the map redrawn.
 		Mark: function(id, pos, wait) {
 			if(!active) return;
 			var draw = !!marks[id];
@@ -265,6 +289,7 @@ AjaxLife.MiniMap = function() {
 				return true;
 			}
 		},
+		// Scales and redraws the map.
 		Resize: function(size) {
 			if(!active) return;
 			canvas.style.width = size+'px';
@@ -272,6 +297,8 @@ AjaxLife.MiniMap = function() {
 			scale = size/256;
 			redraw();
 		},
+		// Changes our position on the map and redraws it.
+		// If we're in a different sim, wipes the buffer.
 		SetPos: function(position) {
 			if(!active) return;
 			if(position.sim != pos.sim)
@@ -281,6 +308,8 @@ AjaxLife.MiniMap = function() {
 			pos = position;
 			redraw();
 		},
+		// Draw a new set of marks, after wiping the old one.
+		// Forces a redraw.
 		PersonUpdate: function(people) {
 			if(!active) return;
 			marks = {};
@@ -290,16 +319,23 @@ AjaxLife.MiniMap = function() {
 			}
 			redraw();
 		},
-		init: function(canvasid, bufferid) {	
+		init: function(canvasid, bufferid) {
+			// Set up the canvas.
 			canvas = $(canvasid);
+			// Bail out if we can't do them. I'm looking at you, Microsoft.
+			// We can't use an emulation layer for IE here for performance reasons - 
+			// IE only supports vector images, whilst we're performing heavy operations
+			// with pixels. The DOM formed would be horrible.
 			if(!canvas.getContext || !canvas.getContext('2d')) // No canvas support.
 			{
 				active = false;
 				return;
 			}
+			// Set everything up nicely.
 			context = canvas.getContext('2d');
 			buffer = $(bufferid);
 			bufferc = buffer.getContext('2d');
+			// Set the picture of ourselves to appear once loaded.
 			selfimg.onload = function() {
 				imgloaded = true;
 				drawSelf();
@@ -307,6 +343,8 @@ AjaxLife.MiniMap = function() {
 			selfimg.src = AjaxLife.STATIC_ROOT+'/images/map_marker_you.png';
 			pos = {sim: gRegion, x: gPosition.X, y: gPosition.Y, z: gPosition.Z};
 			// Setup callback
+			// This will be called when we have land data. If the water level has changed,
+			// the water-related colour heights are recalculated and the heightcache purged.
 			AjaxLife.Network.MessageQueue.RegisterCallback('LandPatch', function(data) {
 				if(water != data.WaterLevel)
 				{
@@ -326,14 +364,14 @@ AjaxLife.MiniMap = function() {
 				{
 					land[land.length] = ldata[i];
 				}
-				////console.log("Reconstructed patch.");
 				addpatch(data.Region, data.OffsetX, data.OffsetY, land);
-				////console.log("Completed addpatch.");
 			});
+			// Update our position on the map whenever we receiving our position.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
 				AjaxLife.MiniMap.PersonUpdate(data.Positions);
 			});
 			emptyland();
+			// Use a size of 150x150 by default.
 			this.Resize(150);	
 		}
 	};

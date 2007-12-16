@@ -24,13 +24,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+// This class implements a slider with callbacks for being changed.
 AjaxLife.Widgets.Slider = function(parent, id, opts) {
+	// Default width = 50
 	if(!opts.width)
 	{
 		opts.width = 50;
 	}
 	var onChange = false;
 	var slider = false;
+	// Creates the slider
 	var div = $(document.createElement('div'));
 	div.setAttribute('id',id);
 	div.setStyle({
@@ -38,6 +41,7 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 		width: opts.width+'px',
 		backgroundColor: '#ccc'
 	});
+	// Creates the handle
 	var handlediv = $(document.createElement('div'));
 	handlediv.setAttribute('id',id+'-handle');
 	//handlediv.setAttribute('style','-moz-border-radius: 5px; -webkit-border-radius: 5px;');
@@ -58,8 +62,9 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 	handlediv.appendChild(img);
 	div.appendChild(handlediv);
 	$(parent).appendChild(div);
+	// Creates a script.aculo.us slider object.
 	slider = new Control.Slider(id+'-handle', id, opts);
-	
+	// Slider control - public functions
 	return {
 		setvalue: function(value) {
 			slider.setValue(value);
@@ -67,6 +72,8 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 	};
 };
 
+// Displays a message at the top for three seconds.
+// A div is created, inserted, then faded upwards and destoyed three seconds later.
 AjaxLife.Widgets.Ext = function(){
     var msgCt;
     
@@ -87,6 +94,8 @@ AjaxLife.Widgets.Ext = function(){
     };
 }();
 
+// Shows a localised confirm dialog.
+// DEPRECATED in favour of Ext.Msg.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
 	return Ext.Msg.show({
 		title: title,
@@ -101,12 +110,14 @@ AjaxLife.Widgets.Confirm = function(title, message, callback) {
 	});
 };
 
+// This implements a select list with single-click, double-click callbacks,
+// highlighting of elements with the mouse over, etc.
 AjaxLife.Widgets.SelectList = function(id,parent,settings) {
-
 	var clickCallback = false;
 	var changeCallback = false;
 	var sorted = false;
 	var doubleclick = false;
+	// Set some settings.
 	if(settings)
 	{
 		if(settings.sort)
@@ -126,6 +137,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 			doubleclick = true;
 		}
 	}
+	// Create a div with list.
 	var div = Ext.get(document.createElement('div'));
 	div.addClass('al-selectlist');
 	div.setStyle({
@@ -148,6 +160,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 	div.dom.appendChild(list.dom);
 	parent.appendChild(div.dom);
 	
+	// Sorts the list by displayed value in a case-insensitive manner
 	function sortlist()
 	{
 		$(list.dom).getElementsBySelector('li').sortBy(function(n) {
@@ -157,6 +170,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 		});
 	}
 	
+	// Highlights the specified list item, unhighlighting the previous one (if any)
 	function highlight(key)
 	{
 		if(!elems[key]) return;
@@ -174,15 +188,22 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 	
 	return {
 		// Public
+		// Adds a new item and sets up the standard callbacks.
 		add: function(key, text) {
+			// Cancel if we already have this key.
 			if(elems[key]) return;
+			// Creates the list entry
 			var elem = Ext.get(document.createElement('li'));
+			// Adds the selected class on hover
 			elem.on('mouseover',function() {
 				elem.addClass('al-selectlist-selected');
 			});
+			// Removes the class on mouseout.
 			elem.on('mouseout',function() {
 				elem.removeClass('al-selectlist-selected');
 			});
+			// Highlights the element if double click is enabled.
+			// If it's not, or it's already highlighted, calls the callback.
 			elem.on('click', function() {
 				if(!doubleclick ||  highlighted == key)
 				{
@@ -196,10 +217,12 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 					highlight(key);
 				}
 			});
+			// Adds the element to the list.
 			elem.dom.appendChild(document.createTextNode(text));
 			list.dom.appendChild(elem.dom);
 			elems[key] = elem;
 		},
+		// Removes an element from the list, if it exists.
 		remove: function(key) {
 			if(elems[key])
 			{
@@ -214,6 +237,7 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 				elems[key] = false;
 			}
 		},
+		// Wipes the list by looping through it and removing items.
 		clear: function() {
 			highlighted = false;
 			for(var i in elems)
@@ -221,9 +245,11 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 				this.remove(i);
 			}
 		},
+		// Sort the list.
 		sort: function() {
 			sortlist();
 		},
+		// Gets the keys in the list.
 		getkeys: function() {
 			var keys = [];
 			for(var i in elems)

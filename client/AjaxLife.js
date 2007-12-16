@@ -45,16 +45,21 @@ AjaxLife.Network = {};
 AjaxLife.Utils = {};
 AjaxLife.Strings = {};
 
+// Called as soon as the page loads - meaning all the scripts are ready.
 AjaxLife.init = function()
 {
+	// Fix the blank images.
 	Ext.BLANK_IMAGE_URL = AjaxLife.STATIC_ROOT+"images/s.gif";
+	// Set the button labels - this is important for the localisation.
 	Ext.MessageBox.buttonText = {
 		yes: _("Widgets.Yes"),
 		no: _("Widgets.No"),
 		ok: _("Widgets.OK"),
 		cancel: _("Widgets.Cancel")
 	};
+	// We're connected. Actually, we aren't, but this is close enough and things break if we leave it too long.
 	AjaxLife.Network.Connected = true;
+	// Start everything up.
 	AjaxLife.InstantMessage.init();
 	AjaxLife.SpatialChat.init();
 	AjaxLife.Toolbar.init('toolbar');
@@ -65,8 +70,11 @@ AjaxLife.init = function()
 	AjaxLife.AvatarsNear.init();
 	AjaxLife.Inventory.init();
 	AjaxLife.Stats.init();
-	AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function() {}); // Dummy to suppress messages from de-ruthing.
-	AjaxLife.PageWait.updateText(_("AjaxLife.Precaching"));
+	// Dummy to suppress messages from de-ruthing.
+	// These messages also apparently count as a "received asset"
+	//TODO: Investigate the feasibility of a system for using this information to throw together a rendering of your avatar.
+	// This is fairly low down on the todo list.
+	AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', Prototype.emptyFunction); 	AjaxLife.PageWait.updateText(_("AjaxLife.Precaching"));
 	setTimeout(function () {
 		AjaxLife.Map.init();
 		AjaxLife.MiniMap.init('minimap','minimap-landscape');
@@ -80,6 +88,10 @@ AjaxLife.init = function()
 
 // Init stuff.
 Event.observe(window,'load',AjaxLife.init);
+
+// If someone leaves the page, and we're still connected, give them the chance to cancel and log out properly.
+// It's worth noting that reloading is actually harmless, but since we can't differentiate, we'll have to always do this.
+// Plus, reloading is advanced use only. :p
 window.onbeforeunload = function() {
 	if(AjaxLife.Network.Connected)
 	{

@@ -29,6 +29,8 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 	var elem;
 	var loaded = false;
 	
+	// This function resets the borders and sets the real image at the requested
+	// size.
 	function replaceimage(src)
 	{
 		var img = new Image();
@@ -47,7 +49,9 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 		img.src = src;
 	}
 	
-	// Add the spinny image.
+	// This creates a spinner to indicate that something's happening.
+	// It's a 32x32 image, but we pad it to ensure it ends up in the center of the
+	// area specified, and also to ensure that we used this space.
 	elem = $(document.createElement('img'));
 	elem.setStyle({
 		width: '32px',
@@ -58,11 +62,13 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 		paddingBottom: (height/2-16)+'px'
 	}).setAttribute('src',AjaxLife.STATIC_ROOT+'images/loader.gif');
 	$(parent).appendChild(elem);
+	// If the UUID is null, we just stick the no-image image up.
 	if(texture == AjaxLife.Utils.UUID.Zero)
 	{
 		replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
 		return;
 	}
+	// Callback so we know when the image is downloaded, and what its URL is.
 	callbackid = AjaxLife.Network.MessageQueue.RegisterCallback('ImageDownloaded', function(data) {
 		if(data.UUID == texture)
 		{
@@ -78,6 +84,8 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 			}
 		}
 	});
+	// Request the texture download. If it's ready immediately, we'll get it in the URL part of
+	// the response, so replace the image with that.
 	AjaxLife.Network.Send("RequestTexture", {
 		ID: texture,
 		callback: function(data) {
@@ -90,6 +98,9 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 	});
 	
 	return {
+		// Just resizes the image. This is used by the texture dialog.
+		// If it's loaded we just alter the width and height, otherwise the
+		// padding.
 		resize: function(x, y) {
 			width = x;
 			height = y;

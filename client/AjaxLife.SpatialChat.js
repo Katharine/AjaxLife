@@ -35,6 +35,13 @@ AjaxLife.SpatialChat = function() {
 	var last_channel = 0;
 	var anim_started = false;
 	
+	// Send a message to the server.
+	// If the message starts with a "/", extra processing takes place first:
+	// If the message starts "//" it's sent on the the last-used channel.
+	// If the message starts "/123" (or other number), the message is sent on that channel.
+	// The channel number is determined by counting characters forward until we reach something
+	// not in the numbers array.
+	// The message will be sent back to us, so we don't have to add it to the log.
 	function sendmessage(type, message)
 	{
 		var channel = 0;
@@ -75,6 +82,8 @@ AjaxLife.SpatialChat = function() {
 		});
 	}
 	
+	// Add a line to the chatlog. Formatting is applied based on the sourcetype,
+	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
 	function add(text, sourcetype)
 	{
 		var line = Ext.get(document.createElement('div'));
@@ -101,6 +110,10 @@ AjaxLife.SpatialChat = function() {
 		div_chat_history.dom.scrollTop = div_chat_history.dom.scrollHeight;
 	}
 	
+	// Some incoming chat. This is essentially a wrapper around addline, with some
+	// processing to deal with formatting it in the first person, use of "/me"
+	// (which requres removal of the colon), and to add the appropriate verb to the line
+	// (i.e. if they're shouting or whispering)
 	function incomingline (name, message, sourcetype, type)
 	{
 		if(message.blank())
@@ -141,6 +154,7 @@ AjaxLife.SpatialChat = function() {
 	return {
 		// Public
 		init: function() {
+			// Build the window and UI
 			chat_win = new Ext.BasicDialog("dlg_chat",{
 				width: 500,
 				height: 300,
@@ -156,7 +170,7 @@ AjaxLife.SpatialChat = function() {
 			box_chat_entry = Ext.get(document.createElement('input'));
 			box_chat_entry.dom.setAttribute('type','text');
 			box_chat_entry.setStyle({width: '310px', height: '15px', 'float': 'left'});
-			
+			// Resize the chatlog and input line when the window is resized.
 			chat_win.on('resize',function(win, width, height) {
 				div_chat_history.setStyle({height: (height-59)+'px'});
 				box_chat_entry.setStyle({width: (width-190)+'px'});
@@ -165,6 +179,8 @@ AjaxLife.SpatialChat = function() {
 			
 			chat_win.body.dom.appendChild(div_chat_history.dom);
 			chat_win.body.dom.appendChild(box_chat_entry.dom);
+			// All of these buttons do exactly the same thing, but use a differing ChatType.
+			// They clear the input box, focus it, and send the message. Not in that order.
 			btn_say = new Ext.Button(chat_win.body, {
 				handler: function() {
 					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Normal,box_chat_entry.dom.value);
@@ -195,6 +211,10 @@ AjaxLife.SpatialChat = function() {
 				height: '12px'
 			});
 			btn_shout.getEl().setStyle({position: 'absolute', right: '5px', bottom: '2px'});
+			// This captures keys pressed in the chatbox. If the key was the return key,
+			// we send the message and stop the typing animation. The remainder is handled by
+			// the keypress event later on, as that accounts for holding keys down. This isn't there
+			// because we don't want the message to be sent repeatedly.
 			box_chat_entry.addListener('keyup', function(event) {
 				if(event.keyCode == 13 || event.which == 13)
 				{
@@ -215,6 +235,8 @@ AjaxLife.SpatialChat = function() {
 					}
 				}
 			});
+			// This is set by the keypress event in the chatbox. It stops the typing animation
+			// and sends the StopTyping message.
 			var chat_stop_task = new Ext.util.DelayedTask(function() {
 				//AjaxLife.Network.Send("StopAnimation", {
 				// FIXME: Code duplication is bad. (See 17 lines up)
@@ -228,6 +250,9 @@ AjaxLife.SpatialChat = function() {
 				});
 				anim_started = false;
 			});
+			// If the first character of the text is not "/", this sends the StartTyping
+			// message and starts the typing animation, if this hasn't already been done.
+			// After two seconds of not typing, the chat_stop_task function will be fired.
 			box_chat_entry.addListener('keypress', function(event) {
 				if(!anim_started && box_chat_entry.dom.value.substr(0,1) != '/')
 				{
@@ -249,13 +274,16 @@ AjaxLife.SpatialChat = function() {
 			//});
 			
 			// Friend notifications.
+			// This just adds an online/offline note to the chatlog when friends log on or off.
 			AjaxLife.Friends.AddStatusCallback(function(friend) {
 				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System);
 			});
 			
 			// Incoming chat.
+			// This deals with incoming chat. If it's audible, and is a type of standard chat,
+			// it is proceesed by the incomingline function. Otherwise we ignore it.
+			// (To avoid printing messages whenever people type or annoying things like that)
 			AjaxLife.Network.MessageQueue.RegisterCallback('SpatialChat', function(data) {
-				//alert(data);
 				if(data.Audible > -1)
 				{
 					if(data.Type == AjaxLife.Constants.MainAvatar.ChatType.Whisper	|| 
@@ -267,6 +295,8 @@ AjaxLife.SpatialChat = function() {
 					}
 				}
 			});
+			// We subscribe to the InstantMessage event in order to take account of objects
+			// using the llInstantMessage function. We simply handle this as normal object chat.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromObject)
 				{
@@ -275,9 +305,11 @@ AjaxLife.SpatialChat = function() {
 			});
 		},
 		
+		// Manually add a line to the chatlog
 		addline: function(name, message, sourcetype, type) {
 			incomingline(name, message, sourcetype, type);
 		},
+		// Add a system message to the chatlog.
 		systemmessage: function(message) {
 			add(message,AjaxLife.Constants.MainAvatar.ChatSourceType.System);
 		},

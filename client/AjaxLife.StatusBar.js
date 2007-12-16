@@ -31,6 +31,7 @@ AjaxLife.StatusBar = function() {
 	
 	return {
 		init: function() {
+			// Builds and styles the statusbar.
 			div_ld = $(document.createElement('div'));
 			div_ld.setStyle({'float': 'right', color: '#00e752'});
 			div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
@@ -40,6 +41,8 @@ AjaxLife.StatusBar = function() {
 			div_position.appendChild(document.createTextNode('Unknown (0, 0, 0)'));
 			$('statusbar').appendChild(div_position);
 			
+			// Register a callback for the MoneyBalanceReplyReceived message to update the balance
+			// when we get a response to our request.
 			AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
 				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
 				balance = data.Balance;
@@ -49,15 +52,21 @@ AjaxLife.StatusBar = function() {
 				}
 			});
 			
+			// Register for the UsefulData in order to update the position shown in the top-left whenever possible.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
 				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+')');
 			});
 			
+			// Register for the BalanceUpdated message so we know when our balance is updated.
+			// For reasons I don't understand, this seems to be called rarely, whilst
+			// MoneyBalanceReplyReceived is called frequently, even when no BalanceRequest message
+			// was sent.
 			AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {
 				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
 				balance = data.Balance;
 			});
 			
+			// Request the initial balance on loading.
 			AjaxLife.Network.Send('RequestBalance', {});
 		}
 	};

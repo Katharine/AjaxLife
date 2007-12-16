@@ -24,11 +24,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
  
+// Container object for the dialogs.
 AjaxLife.InventoryDialogs = {};
+
+// Used to note dialogs already open - used to avoid opening things twice.
+// This is bad because the ids are unique per object, not per window.
 AjaxLife.ActiveInventoryDialogs = {};
 
+// Texture display
 AjaxLife.ActiveInventoryDialogs.Texture = {};
 AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
+	// If the requested texture is already being displayed, just focus the window.
 	if(AjaxLife.ActiveInventoryDialogs.Texture[textureid])
 	{
 		AjaxLife.ActiveInventoryDialogs.Texture[texture].focus();
@@ -38,6 +44,7 @@ AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
 	var texture = false;
 	var win = false;
 	
+	// Create window - internal dimensions are 256x256
 	win = new Ext.BasicDialog("dlg_texture_"+textureid, {
 		width: '272px',
 		height: '292px',
@@ -53,13 +60,17 @@ AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
 		margin: '0px',
 		overflow: 'hidden'
 	});
+	// Log the existence of this window
 	AjaxLife.ActiveInventoryDialogs.Texture[textureid] = win;
+	// Remove this window when it's closed.
 	win.on('hide', function() {
 		AjaxLife.ActiveInventoryDialogs.Texture[textureid] = false;
 		win.destroy(true);
 	});
 	
+	// Create new texture object at 256x256.
 	texture = new AjaxLife.Texture(win.body.dom, 256, 256, textureid);
+	// Resize the texture when the window is resized, ensuring it always fills the window.
 	win.on('resize', function(thewin, width, height) {
 		texture.resize(width - 16, height - 36);
 	});
@@ -67,8 +78,12 @@ AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
 	win.show();
 };
 
+// Used to display notecards.
+//TODO: Consider splitting this out into two classes - one for handling notecard
+//decoding, annother for actually displaying it, a'la the Texture dialog.
 AjaxLife.ActiveInventoryDialogs.Notecard = {};
 AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
+	// If this window already exists, focus it and quit.
 	if(AjaxLife.ActiveInventoryDialogs.Notecard[notecardid])
 	{
 		AjaxLife.ActiveInventoryDialogs.Notecard[notecardid].focus();
@@ -77,6 +92,7 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	var notecard = false;
 	var win = false;
 	var callback = false;
+	// Create the window.
 	win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
 		width: '500px',
 		height: '520px',
@@ -88,24 +104,40 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 		proxyDrag: !AjaxLife.Fancy
 	});
 	var style = {};
+	// For reasons I don't understand, this breaks IE.
+	// As such. we omit it if you're using IE. Sorry.
+	// I doubt you'll mind the lack of an artfully shaded box.
+	//TODO: Try and find a workaround.
 	if(!Prototype.Browser.IE)
 	{
 		style.backgroundColor = 'grey';
 	}
-	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading  notecard, please wait...');
+	// Set up the window with initial data and note its existence.
+	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading notecard, please wait...');
 	AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
+	// When the window is closed, destroy it and unregister the event handlers.
 	win.on('hide', function() {
 		AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = false;
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
 		win.destroy(true);
 	});
 	
+	// Register a callback for the AssetReceived callback.
 	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
+		// Bail out if this isn't what we were waiting for.
 		if(data.AssetID != notecardid) return;
+		// Unregister it - we aren't going to receive more than one, so leaving it registered
+		// is a waste of CPU time.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
+		// This parses the Linden notecard format.
 		var text = data.AssetData;
+		// This is the number of items we're expecting.
+		// We don't actually use this for anything, yet.
 		var count = text.match(/count ([0-9]+?)/)[0];
 		var stack = -1;
+		// loop through until we reach the the end of the embedded blocks.
+		// This isn't particularly efficient, but these headers are always fairly short,
+		// so it doesn't really matter.
 		var i;
 		for(i = 0; i < text.length; ++i)
 		{
@@ -123,25 +155,38 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 				}
 			}
 		}
+		// Cut off everything past that point.
 		text = text.substr(i+1);
+		// Work out how many characters we expect.
+		// Note that this number seems to be somewhat off, so we ignore it and proceed to
+		// just take the whole thing minus the last character.
 		var length = text.match(/Text length ([0-9]+)/)[0].strip();
 		text = text.replace(/Text length ([0-9]+)\w/,'').strip();
 		text = text.substr(0,text.length - 1);
+		// Put the text into the window, replacing the placeholder.
+		// Oddly, IE doesn't mind the backgroundColor here.
+		//TODO: Figure out why IE likes this and not the previous attempt.
 		win.body.dom.update(AjaxLife.Utils.FixText(text)).setStyle({backgroundColor: 'white'});
 	});
 	
+	// Actually download the texture.
+
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: notecardid,
 		InventoryID: inventoryid,
 		OwnerID: gAgentID,
 		AssetType: AjaxLife.Constants.Inventory.InventoryType.Notecard
 	});
-	
+	// Display the thing.
 	win.show();
 };
 
+// This is used for scripts. It's only slightly different from the notecards
+// in general principle, but includes a syntax highligher. Additionally, we
+// don't need to decode scripts - we already get the text without any decoding.
 AjaxLife.ActiveInventoryDialogs.Script = {};
 AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
+	// Check if this is already open; focus it and bail out if so.
 	if(AjaxLife.ActiveInventoryDialogs.Script[inventoryid])
 	{
 		AjaxLife.ActiveInventoryDialogs.Script[inventoryid].focus();
@@ -151,6 +196,7 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	var callback = false;
 	var transferid = AjaxLife.Utils.UUID.Zero;
 	
+	// Create the window.
 	win = new Ext.BasicDialog("dlg_script_"+inventoryid, {
 		width: '500px',
 		height: '520px',
@@ -162,24 +208,32 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 		proxyDrag: !AjaxLife.Fancy
 	});
 	var style = {};
+	// Disabled in IE. See Notecard object for reasons.
 	if(!Prototype.Browser.IE)
 	{
 		style.backgroundColor = 'grey';
 	}
+	// Set the thing up.
 	$(win.body.dom).setStyle(style).addClassName('script').update('Loading script, please wait...');
 	AjaxLife.ActiveInventoryDialogs.Script[inventoryid] = win;
+	// Destroy and unregister on closing the window.
 	win.on('hide', function() {
+	
 		AjaxLife.ActiveInventoryDialogs.Script[inventoryid] = false;
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
 		win.destroy(true);
 	});
-	
+	// Set up callback for receiving the script.
 	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
+		// Ignore it if it's not ours.
 		if(data.TransferID != transferid) return;
+		// Unregister the callback, since we don't need it any more.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
+		// Highlight and display the script. (Highlight function is further down in this file)
 		win.body.dom.update(AjaxLife.HighlightLSL(data.AssetData)).setStyle({backgroundColor: 'white'});
 	});
 	
+	// Request the aset download.
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: AjaxLife.Utils.UUID.Zero,
 		InventoryID: inventoryid,
@@ -193,7 +247,9 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	win.show();
 };
 
+// Landmark display
 AjaxLife.InventoryDialogs.Landmark = function(landmark, name) {
+	// This is easy - we just prompt for confirmation and initiate the teleport on an affirmative response.
 	Ext.Msg.confirm(_("InventoryDialogs.Landmark.Title"), _("InventoryDialogs.Landmark.Message", {name: name}), function(btn) {
 		if(btn == 'yes')
 		{
@@ -203,17 +259,23 @@ AjaxLife.InventoryDialogs.Landmark = function(landmark, name) {
 	});
 };
 
-// -- Move to another file?
+//TODO: Consider moving to another file. It's not used anywhere else, so I'm undecided.
 
 AjaxLife.HighlightLSL = function(text) {
-	// These lists come from my (Katharine Berry's) old GeSHi-based PHP highlighter.
+	// These lists come from my old GeSHi-based PHP highlighter.
 	// They are probably slightly outdated.
+	
+	// All LSL keywords.
 	var LSLkeywords = [
 		'default', 'if', 'else', 'while', 'do', 'for', 'jump', 'return', 'state'
 	];
+	
+	// LSL types.
 	var LSLtypes = [
 		'integer', 'float', 'vector', 'rotation', 'quaternion', 'key', 'string', 'list'
 	];
+	
+	// Non-mathematical or type-related constants.
 	var LSLconstants = [
 		'STATUS_PHYSICS', 'STATUS_ROTATE_X', 'STATUS_ROTATE_Y',
 		'STATUS_ROTATE_Z', 'STATUS_PHANTOM', 'STATUS_SANDBOX',
@@ -318,15 +380,21 @@ AjaxLife.HighlightLSL = function(text) {
 		'HTTP_METHOD', 'HTTP_MIMETYPE', 'HTTP_VERIFY_CERT',
 		'HTTP_BODY_MAXLENGTH', 'HTTP_BODY_TRUNCATED'
 	];
+	
+	// String constants.
 	var LSLconstants2 = [
 		'NULL_KEY', 'EOF'
 	];
+	
+	// 3D-space constants.
 	var LSLconstants3 = [
 		'ZERO_VECTOR', 'ZERO_ROTATION'
 	];
+	// Various useful numbers.
 	var LSLmathconstants = [
 		'PI', 'TWO_PI', 'PI_BY_TWO', 'DEG_TO_RAD', 'RAD_TO_DEG', 'SQRT2'
 	];
+	// An obscenely long list of functions.
 	var LSLfunctions = [
 		'llAbs', 'llAcos', 'llAddToLandBanList', 'llAddToLandPassList', 'llAdjustSoundVolume',
 		'llAllowInventoryDrop', 'llAngleBetween', 'llApplyImpulse', 'llApplyRotationalImpulse',
@@ -409,10 +477,14 @@ AjaxLife.HighlightLSL = function(text) {
 		'run_time_permissions', 'sensor', 'state_entry', 'state_exit', 'timer',
 		'touch', 'touch_start', 'touch_end'
 	];
-        
+    
+    // This function is called by the regex match for each atom matched.
 	var matcher = function(match) {
+		// If we're dealing with a string.
 		if(match.substr(-1) == '"')
 		{
+			// This fixes a bug whereby some stuff would be inadvertantly highlighted as a string.
+			// Wait until we actually reach a quote to colour things in.
 			var prematch = '';
 			while(match.substr(0,1) != '"')
 			{
@@ -421,18 +493,22 @@ AjaxLife.HighlightLSL = function(text) {
 			}
 			return prematch+'<span style="color: #00A000;">'+match+'</span>';
 		}
+		// A comment
 		else if(match.substr(0,2) == "//")
 		{
 			return '<span style="color: #f70;">'+match+'</span>';
 		}
+		// < or >
 		else if(match == "&lt;" || match == "&gt;")
 		{
 			return '<span style="color: #f0f;">'+match+'</span>';
 		}
+		// List start or end.
 		else if(match == "[" || match == "]")
 		{
 			return '<span style="color: #f00;">'+match+'</span>';
 		}
+		// Keyword or nothing.
 		else
 		{
 			if(LSLkeywords.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #00f;">'+match+'</span></a>';
@@ -456,5 +532,6 @@ AjaxLife.HighlightLSL = function(text) {
 	//              --------------------|-------|---------------|-------------|------|---------------------
 	var regex = /(?:".*?(?:[^\\]"|\\\\")|[^\\]""|\/\/.*?(?:\n|$)|(?:&lt;|&gt;)|[\[\]]|[a-zA-Z_][a-zA-Z0-9_]*)/g;
 	
+	// Run the matcher.
 	return '<pre>'+text.replace(regex, matcher)+'</pre>';
 };

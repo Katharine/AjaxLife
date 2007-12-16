@@ -15,8 +15,8 @@
 		<div id="toolbar"></div>
 		<!-- Canvases seem to have issues with dynamic generation and scaling, at least in WebKit -->
 		<canvas id="minimap" width="256" height="256"></canvas>
-		<canvas id="minimap-landscape" width="256" height="256"></canvas> <!-- style="display:none;" -->
 		<!-- This one is used to avoid having to redraw the backround each time. -->
+		<canvas id="minimap-landscape" width="256" height="256"></canvas> <!-- This is hidden behind the background image. -->
 		<script src="{STATIC_ROOT}AjaxLife.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			{INIT_PARAMS}

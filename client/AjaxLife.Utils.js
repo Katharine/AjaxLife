@@ -26,6 +26,8 @@
 
 AjaxLife.Utils.UUID = function() {
 	return {
+		// Generates a random UUID by picking 32 entries from this list.
+		// Inserts dashes in the appropriate places.
 		Random: function() {
 			var valid = [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'];
 			var ret = '';
@@ -39,6 +41,7 @@ AjaxLife.Utils.UUID = function() {
 			}
 			return ret;
 		},
+		// Merges two UUIDs such that you always get the same output when given the same input.
 		Combine: function(uuid1, uuid2) {
 			var uuid = '';
 			for(var i = 0; i < 36; ++i)
@@ -54,14 +57,17 @@ AjaxLife.Utils.UUID = function() {
 			}
 			return uuid;
 		},
+		// NULL_KEY
 		Zero: '00000000-0000-0000-0000-000000000000'
 	};
 }();
 
+// Makes plaintext suitable for HTML use.
 AjaxLife.Utils.FixText = function(text) {
 	return text.escapeHTML().gsub('  ',' &nbsp;').gsub('\n','<br />');
 };
 
+// Deep clone on an object.
 AjaxLife.Utils.Clone = function(myObj) {
 	if(typeof(myObj) != 'object') return myObj;
 	if(myObj == null) return myObj;
@@ -69,11 +75,12 @@ AjaxLife.Utils.Clone = function(myObj) {
 	var myNewObj = new Object();
 
 	for(var i in myObj)
-		myNewObj[i] = clone(myObj[i]);
+		myNewObj[i] = AjaxLife.Utils.Clone(myObj[i]);
 
 	return myNewObj;
 }
 
+// Formats a number.
 AjaxLife.Utils.FormatNumber = function(number) {
 	number = '' + number;
 	var comma = _("Number.Separator");
@@ -92,35 +99,3 @@ AjaxLife.Utils.FormatNumber = function(number) {
 	}
 	else return number;
 }
-
-// This function is untested, and may not work.
-String.prototype.addslashes = function(){
-	return this.replace(/\'/g,'\\\'').replace(/\"/g,'\\"').replace(/\\/g,'\\\\').replace(/\0/g,'\\0');
-}
-
-// This function is untested and unused. It may not work.
-AjaxLife.Utils.ParseURL = function(string) {
-	string.replace(/([a-z]+?):\/\/(\S)/gi,function(text, protocol, url) {
-		protocol = protocol.toLowerCase();
-		if(protocol == 'http' || protocol == 'https')
-		{
-			return '<a href="'+string.escapeHTML()+'" target="_blank">'+string.escapeHTML()+'</a>';
-		}
-		else if(protocol == 'secondlife')
-		{
-			var parts = url.split('/');
-			if(parts[0] == 'app')
-			{
-				Ext.Msg.alert("",_("Utils.UnknownSLUrl",{}));
-			}
-			else
-			{
-				return '<a href="'+'javascript:AjaxLife.Map.TeleportTo("'+
-					(parts[1]?parts[1].addslashes():'Ahern')+'","'+
-					(parts[2]?parts[2].addslashes():128)+'","'+
-					(parts[3]?parts[3].addslashes():128)+'","'+
-					(parts[4]?parts[4].addslashes():40)+'");'.escapeHTML()+'">'+text+'</a>';
-			}
-		}
-	});
-};
