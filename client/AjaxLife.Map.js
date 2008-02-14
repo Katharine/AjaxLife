@@ -273,23 +273,23 @@ AjaxLife.Map = function() {
 	return {
 		init: function() {
 			// Set up all the icons on the map. Use the same size at each scale.
-			marker_you_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_you.png",16,16,true));
+			marker_you_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"images/map_marker_you.png",16,16,true));
 			marker_you_icons = [marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img];
-			marker_mark_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_selected.png",16,16,true));
+			marker_mark_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"images/map_marker_selected.png",16,16,true));
 			marker_mark_icons = [marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img, marker_mark_img];
-			marker_bad_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_bad.png",16,16,true));
+			marker_bad_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"images/map_marker_bad.png",16,16,true));
 			marker_bad_icons = [marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img, marker_bad_img];
-			marker_agent_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/map_marker_agent.png",9,9,true));
+			marker_agent_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"images/map_marker_agent.png",9,9,true));
 			marker_agent_icons = [marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img,marker_agent_img];
 			// This isn't an icon, really. It's a 1 sim x 1 sim translucent red square. We place it in the middle of a sim
 			// if it's down. This effectively tints it red. To do this we need a different image for each scale.
 			sim_down_icons = [
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=256",256,256,true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=128",128,128,true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=64",	64,	64,	true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=32",	32,	32,	true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=16",	16,	16,	true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"/images/simdownoverlay.php?size=8",	8,	8,	true))
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay256.png",256,256,true)),
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay128.png",128,128,true)),
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay64.png" , 64, 64,true)),
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay32.png" , 32, 32,true)),
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay16.png" , 16, 16,true)),
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay8.png"  ,  8,  8,true))
 			];
 			// If we know where we are, set our position to there.
 			// Otherwise use the default position, which was set to the centre of the TG welcome area.
