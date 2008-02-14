@@ -28,24 +28,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
+using libsecondlife;
 
-namespace AjaxLife.Converters
+namespace AjaxLife
 {
-    // Inherit from the generic JsonConverter.
-    class LLUUIDConverter : JsonConverter
+    // This has to be a reference type to avoid things breaking horribly.
+    // That means a class, as opposed to a struct.
+    public class User
     {
-        // Convert JSON using LLUUID::ToStringHyphenated, which outputs as follows:
-        // 00000000-0000-0000-0000-000000000000
-        public override void WriteJson(JsonWriter writer, object value)
-        {
-            base.WriteJson(writer, ((libsecondlife.LLUUID)value).ToStringHyphenated());
-        }
-
-        // Check if we can created an LLUUID from whatever we're being given.
-        public override bool CanConvert(Type objectType)
-        {
-            return typeof(libsecondlife.LLUUID).IsAssignableFrom(objectType);
-        }
+        public SecondLife Client;
+        public DateTime LastRequest;
+        public Events Events;
+        public AvatarTracker Avatars;
+        public string Challenge;
+        public double Rotation;
+		public bool LindenGrid;
     }
 }

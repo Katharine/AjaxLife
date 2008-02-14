@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Security.Cryptography;
 using MiniHttpd;
 using libsecondlife;
 
@@ -41,10 +42,10 @@ namespace AjaxLife.Html
         private string contenttype = "text/html; charset=utf-8";
         private string name;
         private IDirectory parent;
-        private Dictionary<Guid, Hashtable> users;
+        private Dictionary<Guid, User> users;
 
         // Methods
-        public Login(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public Login(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -61,40 +62,51 @@ namespace AjaxLife.Html
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
             try
             {
-                bool iPhone = (request.Query["iphone"] != null);
+                // Generate a new session ID.
                 Guid key = Guid.NewGuid();
+                // Create a SecondLife client and set some defaults.
                 SecondLife client = new SecondLife();
                 client.Settings.ALWAYS_DECODE_OBJECTS = false;
                 client.Settings.ALWAYS_REQUEST_OBJECTS = false;
                 client.Settings.MULTIPLE_SIMS = false;
                 client.Settings.ENABLE_SIMSTATS = true;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
+                client.Settings.DEBUG = false;
+                client.Settings.LOG_RESENDS = false;
                 client.Throttle.Cloud = 0;
                 client.Throttle.Task = 0;
                 client.Throttle.Wind = 0;
                 client.Throttle.Asset = 50000;
                 client.Throttle.Resend = 500000;
                 client.Throttle.Texture = 500000;
-                Hashtable hashtable = new Hashtable();
-                hashtable.Add("SecondLife", client);
-                hashtable.Add("LastRequest", DateTime.Now);
-                lock (this.users) this.users.Add(key, hashtable);
+                // Create a new User.
+                User user = new User();
+                // Set the user session properties.
+                user.Client = client;
+                user.LastRequest = DateTime.Now;
+                // Generate a single-use challenge key.
+                user.Challenge = RSACrypto.CreateChallengeString(AjaxLife.RSAp);
+                // Add the session to the users.
+                lock (users) users.Add(key, user);
                 Hashtable hash = new Hashtable();
-                if(!iPhone) hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                // Set up the template with useful details and the challenge and public key.
+                hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 hash.Add("SESSION_ID", key.ToString("D"));
-                if (!iPhone)
+                hash.Add("CHALLENGE", user.Challenge);
+                hash.Add("RSA_EXPONENT", StringHelper.BytesToHexString(AjaxLife.RSAp.Exponent));
+                hash.Add("RSA_MODULUS", StringHelper.BytesToHexString(AjaxLife.RSAp.Modulus));
+                // Make the grid list, ensuring the default one is selected.
+                string grids = "";
+                foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
                 {
-                    string grids = "";
-                    foreach (string server in AjaxLife.LOGIN_SERVERS.Keys)
-                    {
-                        grids += "<option value=\"" + System.Web.HttpUtility.HtmlAttributeEncode(server) +
-                            "\"" + (server == AjaxLife.DEFAULT_LOGIN_SERVER ? " selected=\"selected\"" : "") + ">" +
-                            System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
-                    }
-                    hash.Add("GRID_OPTIONS", grids);
+                    grids += "<option value=\"" + System.Web.HttpUtility.HtmlAttributeEncode(server) +
+                        "\"" + (server == AjaxLife.DEFAULT_LOGIN_SERVER ? " selected=\"selected\"" : "") + ">" +
+                        System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
                 }
+                hash.Add("GRID_OPTIONS", grids);
+                // Parse the template.
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/"+(iPhone?"i":"")+"Login.html")));
+                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/Login.html")));
             }
             catch (Exception exception)
             {
@@ -128,5 +140,6 @@ namespace AjaxLife.Html
                 return this.parent;
             }
         }
+        
     }
 }

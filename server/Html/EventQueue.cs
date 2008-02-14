@@ -40,7 +40,7 @@ namespace AjaxLife.Html
     {
         #region IFile Members
 
-        public EventQueue(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public EventQueue(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -50,7 +50,7 @@ namespace AjaxLife.Html
         private string name;
         private IDirectory parent;
         private string contenttype = "text/plain; charset=utf-8";
-        private Dictionary<Guid, Hashtable> users;
+        private Dictionary<Guid, User> users;
 
         public string ContentType
         {
@@ -66,31 +66,31 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string post = reader.ReadToEnd();
                 reader.Dispose();
+                // Decode the POST data.
                 Dictionary<string,string> POST = AjaxLife.PostDecode(post);
                 Guid session = new Guid(POST["sid"]);
                 Events eventqueue;
-                Hashtable user = new Hashtable();
+                User user;
                 SecondLife client;
+                // Load in the session data.
                 lock (users)
                 {
                     user = users[session];
-                    lock (user)
-                    {
-                        eventqueue = (Events)user["Events"];
-                        client = (SecondLife)user["SecondLife"];
-                        user["LastRequest"] = DateTime.Now;
-                    }
+                    eventqueue = user.Events;
+                    client = user.Client;
+                    user.LastRequest = DateTime.Now;
                 }   
                 bool sent = false;
-                double heading = 0.0;
+                double heading = user.Rotation;
+                // Check once per second, timing out after 15 seconds.
                 for (int i = 0; i < 15; ++i)
                 {
-                    // Very ugly hack - we're riding on the back of the event poll to rotate our camera.
-                    // There probably shouldn't even *be* an event poll.
-                    // This event will probably poll for long enough for us to not have to maintain a global heading...
-                    client.Self.Movement.UpdateFromHeading(heading,false);
+                    // Ugly hack - we're riding on the back of the event poll to rotate our camera.
                     heading += 0.5d;
-                    if(heading > Math.PI) heading = -Math.PI;
+                    if (heading > Math.PI) heading = -Math.PI;
+                    user.Rotation = heading;
+                    client.Self.Movement.UpdateFromHeading(heading, false);
+
                     if (eventqueue.GetEventCount() > 0)
                     {
                         writer.WriteLine(eventqueue.GetPendingJson(client));
@@ -102,10 +102,9 @@ namespace AjaxLife.Html
                         System.Threading.Thread.Sleep(1000);
                     }
                 }
+                // If nothing of interest ever came up, we just send the standard footer.
                 if (!sent)
                 {
-                    //writer.WriteLine("[]");
-                    // Send avatar positions. I think. >.>
                     JsonWriter w = new JsonWriter(writer);
                     w.WriteStartArray();
                     (new JsonSerializer()).Serialize(w, eventqueue.GetFooter(client));

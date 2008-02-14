@@ -35,28 +35,95 @@ using libsecondlife.Packets;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using AjaxLife.Converters;
+using Affirma.ThreeSharp;
+using Affirma.ThreeSharp.Query;
 
 namespace AjaxLife
 {
-    internal class Events
+    public class Events
     {
         // Fields
         private Queue<Hashtable> pending = new Queue<Hashtable>();
         private bool active = true;
         private SecondLife Client;
-        private AvatarTracker Avatars;
         private List<LLUUID> LoadedInventory = new List<LLUUID>();
 
-        public Events(Hashtable user)
+        // Constructor. Lets us have access to various useful user things.
+        public Events(User user)
         {
-            lock (user)
-            {
-                this.Client = (SecondLife)user["SecondLife"];
-                this.Avatars = (AvatarTracker)user["Avatars"];
-            }
+            this.Client = user.Client;
+        }
+        
+        // Returns the number of events pending.
+        public int GetEventCount()
+        {
+            return this.pending.Count;
         }
 
-        // Methods
+        // Returns the event queue in JSON format, with our custom converters (e.g.
+        // LLUUIDConverter) active.
+        public string GetPendingJson(SecondLife client)
+        {
+            StringWriter textWriter = new StringWriter();
+            JsonWriter jsonWriter = new JsonWriter(textWriter);
+            jsonWriter.WriteStartArray();
+            JsonSerializer serializer = new JsonSerializer();
+            LLUUIDConverter UUID = new LLUUIDConverter();
+            serializer.Converters.Add(UUID);
+            this.pending.Enqueue(this.GetFooter(client));
+            while (this.pending.Count > 0)
+            {
+                Hashtable hashtable = this.pending.Dequeue();
+                serializer.Serialize(jsonWriter, hashtable);
+            }
+            jsonWriter.WriteEndArray();
+            jsonWriter.Flush();
+            string text = textWriter.ToString();
+            jsonWriter.Close();
+            textWriter.Dispose();
+            return text;
+        }
+        
+        
+        // Marks us as inactive - i.e. we should be logged off.
+        public void deactivate()
+        {
+            active = false;
+        }
+
+        // Clear the inventory cache. This is needed to avoid confusing the client if it
+        // reloads without relogging.
+        public void ClearInventory()
+        {
+            LoadedInventory.Clear();
+        }
+
+        // Whatever this function returns is tacked onto every message queue response.
+        // It contains useful data (thus the name "UsefulData") - that is, the user's position,
+        // region, and the positions of others in the region.
+        public Hashtable GetFooter(SecondLife client)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "UsefulData");
+            message.Add("Positions", client.Network.CurrentSim.AvatarPositions);
+            message.Add("YourPosition", client.Self.SimPosition);
+            message.Add("YourRegion", client.Network.CurrentSim.Name);
+            return message;
+        }
+
+        // CALLBACKS
+        
+        // These are all assigned to LibSL callbacks in Connect.cs. This determines their argument order.
+        // The if(!active) check is to ensure they don't get called after we've logged off. This is a
+        // LibSL bug.
+        
+        // These almost all perform the same task:
+        // 1) Create a hashtable
+        // 2) Place various passed-in arguments in the hashtable
+        // 3) Optionally, loop through one of the arguments if necessary, and add this to the hashtable
+        //    as a bunch more hashtables.
+        // 4) Enqueue the hashtable in the message queue. This is periodically emptied by the client.
+        
         public void Avatars_OnAvatarGroups(LLUUID avatarID, AvatarGroupsReplyPacket.GroupDataBlock[] groups)
         {
             if (!active) return;
@@ -158,33 +225,6 @@ namespace AjaxLife
             this.pending.Enqueue(item);
         }
 
-        public int GetEventCount()
-        {
-            return this.pending.Count;
-        }
-
-        public string GetPendingJson(SecondLife client)
-        {
-            StringWriter textWriter = new StringWriter();
-            JsonWriter jsonWriter = new JsonWriter(textWriter);
-            jsonWriter.WriteStartArray();
-            JsonSerializer serializer = new JsonSerializer();
-            LLUUIDConverter UUID = new LLUUIDConverter();
-            serializer.Converters.Add(UUID);
-            this.pending.Enqueue(this.GetFooter(client));
-            while (this.pending.Count > 0)
-            {
-                Hashtable hashtable = this.pending.Dequeue();
-                serializer.Serialize(jsonWriter, hashtable);
-            }
-            jsonWriter.WriteEndArray();
-            jsonWriter.Flush();
-            string text = textWriter.ToString();
-            jsonWriter.Close();
-            textWriter.Dispose();
-            return text;
-        }
-
         public bool Inventory_OnObjectOffered(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, AssetType type, LLUUID objectID, bool fromTask)
         {
             if (!active) return false;
@@ -241,7 +281,7 @@ namespace AjaxLife
             if (!active) return;
             LLUUID fromAgentID = im.FromAgentID;
             string fromAgentName = im.FromAgentName;
-            LLUUID toAgentID = im.ToAgentID;
+            //LLUUID toAgentID = im.ToAgentID;
             LLUUID regionID = im.RegionID;
             LLVector3 position = im.Position;
             InstantMessageDialog dialog = im.Dialog;
@@ -318,7 +358,11 @@ namespace AjaxLife
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Teleport");
             item.Add("Status", status);
-            item.Add("Flags", flags); 
+            item.Add("Flags", flags);
+            if (status == AgentManager.TeleportStatus.Finished)
+            {
+                Client.Self.Movement.Camera.SetPositionOrientation(new LLVector3(128, 128, 0), 0, 0, 0);
+            }
             this.pending.Enqueue(item);
         }
 
@@ -386,21 +430,38 @@ namespace AjaxLife
             }
             else if (image.Success)
             {
+                bool success = true;
                 string key = image.ID.ToStringHyphenated();
-                File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".j2c", image.AssetData);
-                Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".j2c " + AjaxLife.TEXTURE_CACHE + key + ".png");
+                byte[] img = OpenJPEGNet.OpenJPEG.DecodeToTGA(image.AssetData);
+                File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
+                Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".tga " + AjaxLife.TEXTURE_CACHE + key + ".png");
                 process.WaitForExit();
                 process.Dispose();
-                File.Delete(AjaxLife.TEXTURE_CACHE + key + ".j2c");
+                File.Delete(AjaxLife.TEXTURE_CACHE + key + ".tga");
                 Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
-                ++AjaxLife.TextureCacheCount;
-                AjaxLife.TextureCacheSize += (new FileInfo(AjaxLife.TEXTURE_CACHE + key + ".png")).Length;
+				if(AjaxLife.USE_S3)
+				{
+	                try
+	                {
+	                    IThreeSharp service = new ThreeSharpQuery(AjaxLife.S3Config);
+	                    Affirma.ThreeSharp.Model.ObjectAddRequest request = new Affirma.ThreeSharp.Model.ObjectAddRequest(AjaxLife.TEXTURE_BUCKET, key + ".png");
+	                    request.LoadStreamWithFile(AjaxLife.TEXTURE_CACHE + key + ".png");
+	                    request.Headers.Add("x-amz-acl", "public-read");
+	                    service.ObjectAdd(request).DataStream.Close();
+	                    AjaxLife.CachedTextures.Add(image.ID);
+	                }
+	                catch
+	                {
+	                    success = false;
+	                }
+					File.Delete(AjaxLife.TEXTURE_CACHE + key + ".png");
+				}
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
-                hash.Add("Success", true);
+                hash.Add("Success", success);
                 hash.Add("Size", image.Size);
                 hash.Add("UUID", key);
-                hash.Add("URL", "textures/" + key + ".png");
+                hash.Add("URL", AjaxLife.TEXTURE_ROOT + key + ".png");
                 this.pending.Enqueue(hash);
             }
             else
@@ -485,39 +546,47 @@ namespace AjaxLife
 
         public void Assets_OnAssetReceived(AssetDownload transfer, Asset asset)
         {
-            Hashtable hash = new Hashtable();
-            hash.Add("MessageType", "AssetReceived");
-            //Console.WriteLine(Helpers.FieldToUTF8String(asset.AssetData));
-            hash.Add("Success", transfer.Success);
-            if (!transfer.Success)
+            if (transfer == null || asset == null)
             {
-                hash.Add("AssetData", "Could not download asset: " + transfer.Status.ToString());
+                Console.WriteLine("Null transfer/asset");
+                return;
             }
-            else
+            try
             {
-                switch (asset.AssetType)
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "AssetReceived");
+                hash.Add("Success", transfer.Success);
+                if (!transfer.Success)
                 {
-                    case AssetType.Notecard:
-                    case AssetType.LSLText:
-                        hash.Add("AssetData", Helpers.FieldToUTF8String(asset.AssetData));
-                        break;
-                    case AssetType.Bodypart:
-                        {
-                            AssetBodypart part = (AssetBodypart)asset;
-                            hash.Add("Creator", part.Creator);
-                            hash.Add("Description", part.Description);
-                            hash.Add("Textures", part.Textures);
-                            hash.Add("Params", part.Params);
-                            hash.Add("Permissions", part.Permissions);
-                            hash.Add("Owner", part.Owner);
-                        }
-                        break;
+                    hash.Add("AssetData", "Could not download asset: " + transfer.Status.ToString());
                 }
+                else
+                {
+                    switch (asset.AssetType)
+                    {
+                        case AssetType.Notecard:
+                        case AssetType.LSLText:
+                            hash.Add("AssetData", Helpers.FieldToUTF8String(asset.AssetData));
+                            break;
+                        case AssetType.Bodypart:
+                            {
+                                AssetBodypart part = (AssetBodypart)asset;
+                                hash.Add("Creator", part.Creator);
+                                hash.Add("Description", part.Description);
+                                hash.Add("Textures", part.Textures);
+                                hash.Add("Params", part.Params);
+                                hash.Add("Permissions", part.Permissions);
+                                hash.Add("Owner", part.Owner);
+                            }
+                            break;
+                    }
+                }
+                hash.Add("AssetType", transfer.AssetType);
+                hash.Add("AssetID", transfer.AssetID);
+                hash.Add("TransferID", transfer.ID);
+                this.pending.Enqueue(hash);
             }
-            hash.Add("AssetType", transfer.AssetType);
-            hash.Add("AssetID", transfer.AssetID);
-            hash.Add("TransferID", transfer.ID);
-            this.pending.Enqueue(hash);
+            catch { }
         }
 
         public void Inventory_OnFolderUpdated(LLUUID folderID)
@@ -595,38 +664,30 @@ namespace AjaxLife
                 }
             }
             // Ugly hack to fix the JSON encoding.
-            Dictionary<int, float[]> resp = new Dictionary<int, float[]>(); // Lists don't maintain element ordering.
+            float[][] resp = new float[16][];
             for (int i = 0; i < 16; ++i)
             {
-                float[] row = new float[16];
+                resp[i] = new float[16];
                 for (int j = 0; j < 16; ++j)
                 {
-                    row[j] = landscape[i, j];
+                    resp[i][j] = landscape[i, j];
                 }
-                resp.Add(i, row);
             }
             hash.Add("Patch", resp);
             this.pending.Enqueue(hash);
         }
 
-        public void deactivate()
-        {
-            active = false;
-        }
 
-        public void ClearInventory()
-        {
-            LoadedInventory.Clear();
-        }
 
-        public Hashtable GetFooter(SecondLife client)
+        public void Assets_OnAssetUploaded(AssetUpload upload)
         {
-            Hashtable message = new Hashtable();
-            message.Add("MessageType", "UsefulData");
-            message.Add("Positions", client.Network.CurrentSim.AvatarPositions);
-            message.Add("YourPosition", client.Self.SimPosition);
-            message.Add("YourRegion", client.Network.CurrentSim.Name);
-            return message;
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "AssetUploaded");
+            hash.Add("AssetID", upload.AssetID);
+            hash.Add("TransferID", upload.XferID);
+            hash.Add("ID", upload.ID);
+            hash.Add("Success", upload.Success);
+            this.pending.Enqueue(hash);
         }
     }
 }

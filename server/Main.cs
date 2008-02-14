@@ -34,43 +34,72 @@ using System.IO;
 using libsecondlife;    
 using MiniHttpd;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace AjaxLife
 {
     class AjaxLife
     {
-        public static Dictionary<string, string> LOGIN_SERVERS
-        {
-            get
-            {
-                return LoginServers;
-            }
-        }
+        // All of these are publically available, but read-only. The class itself can set them
+        // by setting the references variables.
+        public static Dictionary<string, string> LOGIN_SERVERS { get{ return LoginServers; } }
         public static string DEFAULT_LOGIN_SERVER { get { return DefaultLoginServer; } }
-        private static string DefaultLoginServer = "";
-        private static Dictionary<string, string> LoginServers;
-        private static string StaticRoot = "/ajaxlife/";
-        private static string TextureCache = "texturecache/";
-        private static string SearchRoot = "http://services.katharineberry.co.uk/search/";
-        private static int MagicNumber;
+        public static string TEXTURE_BUCKET { get { return TextureBucket; } }
+        public static string TEXTURE_ROOT { get { return TextureRoot; } }
         public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
-        public static int MAGIC_NUMBER { get { return MagicNumber; } }
-        public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
         public static string SEARCH_ROOT { get { return SearchRoot; } }
-        public static int TextureCacheCount = 0;
-        public static long TextureCacheSize = 0;
+		public static bool USE_S3 { get { return UseS3; } }
 
+        // Constant - the number of seconds before the session times out and logs you off.
+        // This handles people losing their internet connection or closing the window without
+        // logging off.
+        public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
+        
+        // These are the private editable versions of the read-only properties above.
+        private static string DefaultLoginServer = "";
+        private static Dictionary<string, string> LoginServers;
+        private static string StaticRoot = "http://static.ajaxlife.net/";
+        private static string TextureBucket = "";
+        private static string TextureRoot = "";
+        private static string AccessKey = "";
+        private static string PrivateAccessKey = "";
+        private static string TextureCache = "texturecache/";
+        private static string SearchRoot = "http://services.katharineberry.co.uk/search/"; // Unused, currently.
+		private static bool UseS3 = false;
+        
+        public static int TextureCacheCount = 0; // Temporarily completely unused.
+        public static long TextureCacheSize = 0; // Temporarily completely unused.
+        
+        // These are used for the RSA encryption. RSAp holds the public and private keys, 
+        // RSA is the object responsible for decrypting. No encryption is done on the server.
+        public static RSAParameters RSAp;
+        public static RSACrypto RSA;
+        
+        // Marks whether we're meant to be running.
+        public static bool Running = true;
+        
+        // Stores the S3 login information.
+        public static Affirma.ThreeSharp.ThreeSharpConfig S3Config;
+        
+        // List of textures we know we have cached. This enables us to avoid looking it up on S3.
+        // This is useful because looking things up on S3 costs money and is slightly slower.
+        public static List<LLUUID> CachedTextures = new List<LLUUID>();
+
+        // Dictionary of users, indexed by session ID.
+        public Dictionary<Guid, User> Users;
+
+        // Program start. Just launches the real program.
         static void Main(string[] args)
         {
             new AjaxLife(args);
         }
 
-        public Dictionary<Guid, Hashtable> Users;
-
         public AjaxLife(string[] arg)
         {
+            // Parse the command line arguments. See CommandLine.cs.
             CommandLineArgs args = new CommandLineArgs(arg);
+            // Set various options if they're specified.
             if (args["searchroot"] != null)
             {
                 SearchRoot = args["searchroot"];
@@ -80,6 +109,9 @@ namespace AjaxLife
             {
                 gridfile = args["gridfile"];
             }
+            // Read in the grids. Loop through the space-separated file, adding them to the dictionary.
+            // Since there's no way of maintaining order, we also store the default separately.
+            
             Console.WriteLine("Reading grids from " + gridfile);
             string[] grids = File.ReadAllLines(gridfile);
             LoginServers = new Dictionary<string, string>();
@@ -98,25 +130,42 @@ namespace AjaxLife
                 Console.WriteLine("Loaded grid " + griddata[1] + " (" + griddata[0] + ")");
             }
             Console.WriteLine("Default grid: " + DEFAULT_LOGIN_SERVER);
+            
+            // More fun option setting.
             if (args["root"] != null)
             {
                 StaticRoot = args["root"];
+            }
+            if(!StaticRoot.EndsWith("/"))
+            {
+                StaticRoot += "/";
             }
             if (args["texturecache"] != null)
             {
                 TextureCache = args["texturecache"];
             }
+            // TextureCache must end with a forward slash. Make sure it does.
             if (!TextureCache.EndsWith("/"))
             {
                 TextureCache += "/";
             }
-            Random generator = new Random();
-            MagicNumber = generator.Next(256,int.MaxValue/2);
-            Console.WriteLine("Magic number: " + MAGIC_NUMBER);
-            Users = new Dictionary<Guid, Hashtable>();
+			if(args["texturebucket"] != null)
+			{
+				TextureBucket = args["texturebucket"];
+			}
+			if(args["textureroot"] != null)
+			{
+				TextureRoot = args["textureroot"];
+			}
+            // Create an empty dictionary for the users. This is defined as public further up.
+            Users = new Dictionary<Guid, User>();
+            
+            // Make a web server!
             HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
             try
             {
+                // If the "private" CLI argument was specified, make it private by making us only
+                // listen to the loopback address (127.0.0.0)
                 if (args["private"] != null && bool.Parse(args["private"]))
                 {
                     webserver.LocalAddress = System.Net.IPAddress.Loopback;
@@ -125,8 +174,12 @@ namespace AjaxLife
             }
             catch
             {
-                //
+                // If we can't make it private, oh well.
             }
+            
+            // Make sure we have a usable texture cache, create it if not.
+			// If we're using S3, this is just used for conversions. If we're using
+			// our own texture system, we store textures here for client use.
             Console.WriteLine("Checking texture cache...");
             if (!Directory.Exists(TEXTURE_CACHE))
             {
@@ -142,18 +195,34 @@ namespace AjaxLife
                     return;
                 }
             }
-            Console.WriteLine("Counting texture cache...");
-            string[] files = Directory.GetFiles(TEXTURE_CACHE);
-            TextureCacheCount = files.Length;
-            foreach (string file in files)
-            {
-                TextureCacheSize += (new FileInfo(file)).Length;
-            }
-            Console.WriteLine("Found " + TextureCacheCount + " cached textures, representing " + TextureCacheSize.ToString() + " bytes of texture data.");
-            Console.WriteLine("Setting up pages...");
+            
+            Console.WriteLine("Initialising RSA service...");
+            RSA = new RSACrypto();
+            // Create a new RSA keypair with the specified length. 1024 if unspecified.
+            RSA.InitCrypto((args["keylength"]==null)?1024:int.Parse(args["keylength"]));
+            RSAp = RSA.ExportParameters(true);
+            Console.WriteLine("Generated " + ((args["keylength"] == null) ? 1024 : int.Parse(args["keylength"])) + "-bit key.");
+            Console.WriteLine("RSA ready.");
+            // Grab the S3 details off the command line if available.
+            S3Config = new Affirma.ThreeSharp.ThreeSharpConfig();
+            S3Config.AwsAccessKeyID = (args["s3key"] == null) ? AccessKey : args["s3key"];
+            S3Config.AwsSecretAccessKey = (args["s3secret"] == null) ? PrivateAccessKey : args["s3secret"];
+			// Check that, if we're using S3, we have enough information to do so.
+            if(TextureBucket != "" && (S3Config.AwsAccessKeyId == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
+			{
+				Console.WriteLine("Error: To use S3 you must set s3key, s3secret, texturebucket and textureroot");
+				return;
+			}
+			UseS3 = (TextureBucket != ""); // We're using S3 if TextureBucket is not blank.
+			if(!UseS3) TextureRoot = "textures/"; // Set the texture root to ourselves if not using S3.
+			Console.WriteLine("Setting up pages...");
+            // Set up the root.
             VirtualDirectory root = new VirtualDirectory();
             webserver.Root = root;
             #region Dynamic file setup
+            // Create the virtual files, passing most of them (except index.html and differentorigin.kat,
+            // as they don't need to deal with SL) the Users dictionary. Users is a reference object,
+            // so changes are reflected in all the pages. The same goes for individual User objects.
             root.AddFile(new Html.Index("index.html", root));
             root.AddFile(new Html.Login("login.kat", root, Users));
             root.AddFile(new Html.Connect("connect.kat", root, Users));
@@ -162,28 +231,39 @@ namespace AjaxLife
             root.AddFile(new Html.EventQueue("eventqueue.kat", root, Users));
             root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
             root.AddFile(new Html.Proxy("differentorigin.kat", root));
-            root.AddDirectory(new TextureDirectory("textures", root, Users));
+            root.AddFile(new Html.BasicStats("ping.kat", root, Users));
+			// textures/ is only used if we aren't using S3 for textures.
+			if(!UseS3)
+			{
+				root.AddDirectory(new TextureDirectory("textures", root));
+			}
             #endregion
             Console.WriteLine("Starting server...");
+            // Start the webserver.
             webserver.Start();
+            // Set a timer to call timecheck() every five seconds to check for timed out sessions.
             System.Timers.Timer timer = new System.Timers.Timer(5000);
             timer.AutoReset = true;
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timecheck);
             timer.Start();
-            string reason = Console.ReadLine();
+            // Sleep forever. Note that this means nothing after this line ever gets executed.
+            // We do this because no more processing takes place in this thread.
+            System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite);
+            //TODO: Move this into another function and come up with a secure way of calling it.
             timer.Stop();
             Console.WriteLine("Initiating shutdown sequence.");
             timer.Dispose();
             Console.WriteLine("Notifying clients...");
-            foreach (KeyValuePair<Guid,Hashtable> entry in Users)
+            // Loop through each user.
+            foreach (KeyValuePair<Guid,User> entry in Users)
             {
                 try
                 {
-                    Hashtable user = entry.Value;
-                    if (user.ContainsKey("Events"))
+                    User user = entry.Value;
+                    if (user.Events != null)
                     {
-                        Events handle = (Events)user["Events"];
-                        handle.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "The AjaxLife server is shutting down: \n" + reason);
+                        // Manually send the OnDisconnected event.
+                        user.Events.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "The AjaxLife server is shutting down.\n");
                     }
                 }
                 catch(Exception e)
@@ -192,13 +272,14 @@ namespace AjaxLife
                 }
             }
             Console.WriteLine("Waiting a bit...");
-            System.Threading.Thread.Sleep(5000);
+            System.Threading.Thread.Sleep(10000); // Sleep for ten seconds while clients work out they're out.
             Console.WriteLine("Disconnecting agents...");
-            foreach (KeyValuePair<Guid,Hashtable> user in Users)
+            // Loop through again and log them out.
+            foreach (KeyValuePair<Guid,User> user in Users)
             {
                 try
                 {
-                    SecondLife sl = (SecondLife)user.Value["SecondLife"];
+                    SecondLife sl = user.Value.Client;
                     if (sl.Network.Connected)
                     {
                         sl.Network.Logout();
@@ -209,9 +290,14 @@ namespace AjaxLife
                     Console.WriteLine("Failed to log out an agent.");
                 }
             }
+            // Gracefully stop the webserver.
             webserver.Stop();
+            // RTS ;)
         }
 
+        // Loop through each user and mark them for deletion if they haven't made a request
+        // for SESSION_TIMEOUT seconds. Then log them out, sending a nice message in case they
+        // come back. Note that this will only be fired if the remote computer is disconnected.
         void timecheck(object sender, System.Timers.ElapsedEventArgs e)
         {
             lock (Users)
@@ -219,11 +305,11 @@ namespace AjaxLife
                 Queue<Guid> marked = new Queue<Guid>();
                 try
                 {
-                    foreach (KeyValuePair<Guid,Hashtable> entry in Users)
+                    foreach (KeyValuePair<Guid,User> entry in Users)
                     {
-                        Hashtable user = entry.Value;
+                        User user = entry.Value;
                         Guid session = (Guid)entry.Key;
-                        DateTime lastrequest = (DateTime)user["LastRequest"];
+                        DateTime lastrequest = user.LastRequest;
                         if (lastrequest.CompareTo(DateTime.Now.AddSeconds(-SESSION_TIMEOUT)) < 0)
                         {
                             marked.Enqueue(session);
@@ -235,20 +321,18 @@ namespace AjaxLife
                         while (marked.Count > 0)
                         {
                             Guid todie = marked.Dequeue();
-                            Hashtable user = (Hashtable)Users[todie];
-                            SecondLife client = (SecondLife)user["SecondLife"];
-                            if (client.Network.Connected)
+                            User user = Users[todie];
+                            if (user.Client.Network.Connected)
                             {
-                                if (user.ContainsKey("Events"))
+                                if (user.Events != null)
                                 {
-                                    Events events = (Events)user["Events"];
-                                    events.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "Your AjaxLife session has timed out.");
-                                    Console.WriteLine("Transmitted logout alert to "+client.Self.FirstName+" "+client.Self.LastName+". Waiting...");
+                                    user.Events.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "Your AjaxLife session has timed out.");
+                                    Console.WriteLine("Transmitted logout alert to "+user.Client.Self.FirstName+" "+user.Client.Self.LastName+". Waiting...");
                                     System.Threading.Thread.Sleep(1000);
-                                    events.deactivate();
+                                    user.Events.deactivate();
                                 }
-                                Console.WriteLine("Disconnecting " + client.Self.FirstName + " " + client.Self.LastName + "...");
-                                client.Network.Logout();
+                                Console.WriteLine("Disconnecting " + user.Client.Self.FirstName + " " + user.Client.Self.LastName + "...");
+                                user.Client.Network.Logout();
                                 System.Threading.Thread.Sleep(2000);
                             }
                             Users.Remove(todie);
@@ -265,16 +349,16 @@ namespace AjaxLife
 
         public static Dictionary<string,string> PostDecode(string qstring)
         {
-            //simplify our task
+            // Make a nice dictionary of data from a standard postdata input.
             qstring = qstring + "&";
 
             Dictionary<string, string> outc = new Dictionary<string, string>();
-
+            // The splitter.
             Regex r = new Regex(@"(?<name>[^=&]+)=(?<value>[^&]*)&", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             IEnumerator _enum = r.Matches(qstring).GetEnumerator();
             while (_enum.MoveNext() && _enum.Current != null)
-            {
+            {   // Decode the URLencoding, and add it to the dictionary.
                 outc.Add(System.Web.HttpUtility.UrlDecode(((Match)_enum.Current).Result("${name}")),
                             System.Web.HttpUtility.UrlDecode(((Match)_enum.Current).Result("${value}")));
             }
@@ -282,6 +366,8 @@ namespace AjaxLife
             return outc;
         }
 
+        // Basic JSON escaping, to save on loading the whole JSON encoder.
+        // This is actually rarely used in actual JSON, but instead in JavaScript.
         public static string StringToJSON(string str)
         {
             str = str.Replace("\\", "\\\\");

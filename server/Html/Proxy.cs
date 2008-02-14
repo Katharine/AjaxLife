@@ -52,12 +52,18 @@ namespace AjaxLife.Html
             get { return ctype; }
         }
 
+        // Someone wants differentorigin.kat. This exists to bypass the Same Origin Policy.
+        // It was going to be proxy.kat, but my school's filter blocks the word "proxy."
         public void OnFileRequested(MiniHttpd.HttpRequest request, IDirectory directory)
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
+            // Work out the URL.
             string url = request.Query["url"];
+            // Make a Sytem.Net.HttpWebRequest for the URL.
             HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
+            // If we're meant to be posting it, take the request's postdata and forward it on,
+            // with appropriate headers.
             if (request.Method.ToLower() == "post")
             {
                 byte[] postdata = Encoding.GetEncoding("utf8").GetBytes((new StreamReader(request.PostData)).ReadToEnd());
@@ -66,20 +72,28 @@ namespace AjaxLife.Html
                 poststream.Write(postdata, 0, postdata.Length);
                 poststream.Close();
             }
+            // For stats/blocking/identification purposes.
             webrequest.UserAgent = "AjaxLife";
+            // Get the response back
             HttpWebResponse response = (HttpWebResponse)webrequest.GetResponse();
+            // Read the response's headers.
             StreamReader responsestream = new StreamReader(response.GetResponseStream());
+            // Set the headers in our response, except for Transfer-Encoding (which would break things)
             foreach(string header in response.Headers)
             {
                 if (header == "Transfer-Encoding") continue;
                 request.Response.SetHeader(header, response.Headers[header]);
             }
+            // Read the rest of the data
             string output = responsestream.ReadToEnd();
             ctype = response.ContentType;
+            // Spit out the data again.
             writer.Write(output);
+            // Close everything.
             writer.Flush();
             responsestream.Close();
             response.Close();
+            // Voila. Proxy.
         }
 
         #endregion

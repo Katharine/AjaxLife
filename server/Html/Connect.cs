@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /* Copyright (c) 2007, Katharine Berry
  * All rights reserved.
  *
@@ -43,10 +43,10 @@ namespace AjaxLife.Html
         private string contenttype = "text/plain; charset=utf-8";
         private string name;
         private IDirectory parent;
-        private Dictionary<Guid, Hashtable> users;
+        private Dictionary<Guid, User> users;
 
         // Methods
-        public Connect(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public Connect(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -57,13 +57,18 @@ namespace AjaxLife.Html
         {
         }
 
+        // Someone wants connect.kat.
         public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter textWriter = new StreamWriter(request.Response.ResponseContent);
             try
             {
-                Hashtable user;
+                // Grab various bits of data from the User object.
+                // If we can't do that, complain.
+                // While we're at it, decode the post data and check if
+                // this is an iPhone.
+                User user;
                 SecondLife client;
                 StreamReader reader = new StreamReader(request.PostData);
                 string qstring = reader.ReadToEnd();
@@ -71,41 +76,61 @@ namespace AjaxLife.Html
                 Dictionary<string, string> POST = AjaxLife.PostDecode(qstring);
                 bool iPhone = POST.ContainsKey("iphone");
                 Guid key = new Guid(POST["session"]);
+                // The session doesn't exist. Get upset.
                 if (!this.users.ContainsKey(key))
                 {
                     Hashtable response = new Hashtable();
                     response.Add("success", false);
-                    response.Add("message", "The session '" + key.ToString("D") + "' does not exist. \nTry reloading the page.");
-                    new JsonSerializer().Serialize(textWriter, response);
+                    response.Add("message", "The session '" + key.ToString("D") + "' does not exist.\nTry reloading the page.");
+                    JsonSerializer s = new JsonSerializer();
+                    s.Serialize(textWriter, response);
                     textWriter.Flush();
                     return;
                 }
                 lock (this.users)
                 {
-                    user = this.users[key];
+                    user = users[key];
                 }
-                lock (user)
+                user.LastRequest = DateTime.Now;
+                client = user.Client;
+
+                string first = "";
+                string last = "";
+                string pass = "";
+                // Decrypt the incoming login data
+                string decrypted = StringHelper.ASCIIBytesToString(AjaxLife.RSA.Decrypt(StringHelper.HexStringToBytes(POST["logindata"])));
+                // Split it into its component parts.
+                string[] data = decrypted.Split('\\');
+                // Get upset if the challenge was incorrect.
+                if (data[0] == null || data[0] != user.Challenge)
                 {
-                    user["LastRequest"] = DateTime.Now;
-                    client = (SecondLife)user["SecondLife"];
+                    throw new Exception("Invalid request.");
                 }
-                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(POST["first"], POST["last"], POST["password"], "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
-                login.Platform = (iPhone ? "iPhone/iPod" : "web");
+                // Decode the login data.
+                first = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[1]));
+                last = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[2]));
+                pass = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[3]));
+                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
+                login.Platform = (iPhone ? "iPhone" : "web");
                 login.Channel = (iPhone ? "i" : "") + "AjaxLife";
+                // Pick the correct loginuri.
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;
+				user.LindenGrid = POST["grid"].EndsWith("(Linden Lab)");
+				Console.WriteLine("LindenGrid: "+user.LindenGrid);
                 Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
                 if (client.Network.Login(login))
                 {
+                    // Ensure that the challenge isn't matched by another request with the same SID. 
+                    // We don't do this until after successful login because otherwise a second attempt will always fail.
+                    user.Challenge = null;
                     AvatarTracker avatars = new AvatarTracker(client);
                     Events events = new Events(user);
-                    lock (user)
-                    {
-                        user["Events"] = events;
-                        user.Add("Avatars", avatars);
-                    }
+                    user.Events = events;
+                    user.Avatars = avatars;
 
-                    // SecondLife Event callbacks
+                    // SecondLife Event callbacks.
+                    // These are assigned to the aforementioned Event object.
                     client.Self.OnScriptQuestion += new AgentManager.ScriptQuestionCallback(events.Self_OnScriptQuestion);
                     client.Self.OnScriptDialog += new AgentManager.ScriptDialogCallback(events.Self_OnScriptDialog);
                     client.Self.OnInstantMessage += new AgentManager.InstantMessageCallback(events.Self_OnInstantMessage);
@@ -120,6 +145,7 @@ namespace AjaxLife.Html
                     client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
                     client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
                     client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
+                    // These aren't used by the iPhone interface.
                     if (!iPhone)
                     {
                         client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
@@ -134,7 +160,8 @@ namespace AjaxLife.Html
                     client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
                     client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
 
-                    // AvatarTracker event callbacks
+                    // AvatarTracker event callbacks.
+                    // Also not needed by the iPhone interface.
                     if (!iPhone)
                     {
                         avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
@@ -142,27 +169,34 @@ namespace AjaxLife.Html
                         avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
                     }
 
+                    client.Assets.OnAssetUploaded += new AssetManager.AssetUploadedCallback(events.Assets_OnAssetUploaded);
+
                     // Packet callbacks
+                    // We register these because there's no LibSL function dor doing it easily.
                     client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
+                    // Manual map handler. I hear rumours that the next libsl will have its own
+                    // map support. iPhone has no map.
                     if (!iPhone)
                     {
                         client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
                         client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
                     }
-                    client.Appearance.SetPreviousAppearance(false);
-                    client.Self.Movement.Camera.Far = 64.0f;
+                    // De-ruth.
+					// This apparently crashes OpenSim, so disable it there.
+                    if(user.LindenGrid) client.Appearance.SetPreviousAppearance(false);
+                    // Pythagoras says that 181.0193m is the optimal view distance to see the whole sim.
+                    client.Self.Movement.Camera.Far = 181.0193f;
+					
+					// This doesn't seem to work.
+                    // client.Self.Movement.Camera.SetPositionOrientation(new LLVector3(128, 128, 0), 0, 0, 0);
+                    
+					// If we got this far, it worked. Announce this.
                     textWriter.WriteLine("{success: true}");
                 }
                 else
                 {
-                    JsonWriter j = new JsonWriter(textWriter);
-                    j.WriteStartObject();
-                    j.WritePropertyName("success");
-                    j.WriteValue(false);
-                    j.WritePropertyName("message");
-                    j.WriteValue(client.Network.LoginMessage);
-                    j.WriteEndObject();
-                    j.Flush();
+                    // Return whatever errors may have transpired.
+                    textWriter.WriteLine("{success: false, message: " + AjaxLife.StringToJSON(client.Network.LoginMessage) + "}");
                 }
             }
             catch (Exception exception)

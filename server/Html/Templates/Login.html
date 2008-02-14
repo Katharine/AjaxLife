@@ -1,17 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
+	<!--
+	#region License
+	/* Copyright (c) 2007, Katharine Berry
+	* All rights reserved.
+	*
+	* Redistribution and use in source and binary forms, with or without
+	* modification, are permitted provided that the following conditions are met:
+	*     * Redistributions of source code must retain the above copyright
+	*       notice, this list of conditions and the following disclaimer.
+	*     * Redistributions in binary form must reproduce the above copyright
+	*       notice, this list of conditions and the following disclaimer in the
+	*       documentation and/or other materials provided with the distribution.
+	*     * Neither the name of Katharine Berry nor the names of any contributors
+	*       may be used to endorse or promote products derived from this software
+	*       without specific prior written permission.
+	*
+	* THIS SOFTWARE IS PROVIDED BY KATHARINE BERRY ``AS IS'' AND ANY
+	* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	* DISCLAIMED. IN NO EVENT SHALL KATHARINE BERRY BE LIABLE FOR ANY
+	* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	******************************************************************************/
+	#endregion
+	-->
 	<head>
 		<title>Log in</title>
-		<script type="text/javascript" src="{STATIC_ROOT}protaculous.js"></script>
-		<script type="text/javascript" src="{STATIC_ROOT}ext-prototype-adapter.js"></script>
-		<script type="text/javascript" src="{STATIC_ROOT}ext-all.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}AjaxLife.Libs.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}Crypto.js"></script>
 		<link href="{STATIC_ROOT}resources/css/ext-all.css" type="text/css" rel="stylesheet" />
 		<link href="{STATIC_ROOT}resources/css/ytheme-aero.css" type="text/css" rel="stylesheet" />
 		<link href="{STATIC_ROOT}login.css" type="text/css" rel="stylesheet" />
 		<script type="text/javascript" src="{STATIC_ROOT}login.js"></script>
-		<script type="text/javascript">var gSessionID = "{SESSION_ID}";</script>
+		<script type="text/javascript">
+			// RSA encryption details.
+			var gSessionID = "{SESSION_ID}";
+			var CHALLENGE = "{CHALLENGE}";
+			var RSA_EXPONENT = "{RSA_EXPONENT}";
+			var RSA_MODULUS = "{RSA_MODULUS}";
+		</script>
 	</head>
 	<body>
 		<form action="main.kat" method="post" id="continue" target="_top" id="form_login">
+			<!-- Right aligned. This goes before loginstuff because that makes
+			loginstuff overlap this if the window is too small, rather than vice-versa -->
+			<div id="advanced">
+				<table>
+					<tr>
+						<td>Grid</td>
+						<td>Language</td>
+					</tr>
+					<tr>
+						<td>
+							<select id="grid">
+								{GRID_OPTIONS}
+							</select>
+						</td>
+						<td>
+							<!-- This is filled when the script loads 
+							As an added bonus, if your local language is available
+							it will be used. -->
+							<select name="lang" id="lang">
+								<option value="en" selected="selected">(loading)</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<!-- Left-aligned -->
 			<table id="loginstuff">
 				<tr>
 					<td>First name</td>
@@ -26,39 +87,7 @@
 					<td><input type="button" value="Log in" id="btn_login" /></td>
 				</tr>
 			</table>
-			<div id="advanced">
-				<table>
-					<tr>
-						<td>Grid</td>
-						<td>Language</td>
-					</tr>
-					<tr>
-						<td>
-							<select id="grid">
-								{GRID_OPTIONS}
-							</select>
-						</td>
-						<td>
-							<select name="lang">
-								<option value="en" selected="selected">English</option>
-								<option value="es">Spanish</option>
-								<option value="fr">French</option>
-								<option value="de">German</option>
-								<option value="da">Danish</option>
-								<option value="it">Italian</option>
-							</select>
-						</td>
-					</tr>
-				</table>
-			</div>
 			<input type="hidden" name="sid" value="{SESSION_ID}" />
 		</form>
-		<!--
-		This is all still true, but screws up the layout.
-		<hr style="width: 90%" />
-		<p>Your password is passed to my server encrypted, and passed to Linden Lab's server encrypted.<br />
-		It is never stored or logged.</p>
-		<p>That said, use your own judgement before using this. If you're unsure, perhaps try an alt with a different password first?</p>
-		-->
 	</body>
 </html>

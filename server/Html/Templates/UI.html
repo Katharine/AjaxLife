@@ -1,10 +1,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
+	<!--
+	#region License
+	/* Copyright (c) 2007, Katharine Berry
+	* All rights reserved.
+	*
+	* Redistribution and use in source and binary forms, with or without
+	* modification, are permitted provided that the following conditions are met:
+	*     * Redistributions of source code must retain the above copyright
+	*       notice, this list of conditions and the following disclaimer.
+	*     * Redistributions in binary form must reproduce the above copyright
+	*       notice, this list of conditions and the following disclaimer in the
+	*       documentation and/or other materials provided with the distribution.
+	*     * Neither the name of Katharine Berry nor the names of any contributors
+	*       may be used to endorse or promote products derived from this software
+	*       without specific prior written permission.
+	*
+	* THIS SOFTWARE IS PROVIDED BY KATHARINE BERRY ``AS IS'' AND ANY
+	* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	* DISCLAIMED. IN NO EVENT SHALL KATHARINE BERRY BE LIABLE FOR ANY
+	* DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	******************************************************************************/
+	#endregion
+	-->
 	<head>
 		<title>AjaxLife</title>
-		<script src="{STATIC_ROOT}protaculous.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}ext-prototype-adapter.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}ext-all.js" type="text/javascript"></script>
+		<!-- Standard AjaxLife libraries - prototype, scriptaculous and ExtJS. -->
+		<script src="{STATIC_ROOT}AjaxLife.Libs.js" type="text/javascript"></script>
+		<!-- Stylesheet fun. -->
 		<link href="{STATIC_ROOT}resources/css/ext-all.css" type="text/css" rel="stylesheet" />
 		<link href="{STATIC_ROOT}resources/css/ytheme-aero.css" type="text/css" rel="stylesheet" />
 		<link href="{STATIC_ROOT}ui.css" type="text/css" rel="stylesheet" />
@@ -17,31 +46,15 @@
 		<canvas id="minimap" width="256" height="256"></canvas>
 		<!-- This one is used to avoid having to redraw the backround each time. -->
 		<canvas id="minimap-landscape" width="256" height="256"></canvas> <!-- This is hidden behind the background image. -->
+		<!-- Core code, so we can put up a nice "Loading..." box while we wait. -->
 		<script src="{STATIC_ROOT}AjaxLife.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			{INIT_PARAMS}
 			AjaxLife.STATIC_ROOT = "{STATIC_ROOT}";
 		</script>
-		<script src="{STATIC_ROOT}AjaxLife.Strings.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Widgets.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Constants.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.InstantMessage.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Map.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.NameCache.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Network.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.SpatialChat.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Toolbar.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Friends.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Search.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.StatusBar.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Profile.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Utils.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Texture.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.AvatarsNear.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Inventory.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.InventoryDialogs.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.Stats.js" type="text/javascript"></script>
-		<script src="{STATIC_ROOT}AjaxLife.MiniMap.js" type="text/javascript"></script>
-		<script src="https://ajaxlife.net/mapapi/noprototype/multigrid/" type="text/javascript"></script>
+		<!-- Main AjaxLife code. This is a very big file. -->
+		<script src="{STATIC_ROOT}AjaxLife.All.js" type="text/javascript"></script>
+		<!-- MapAPI. TODO: Fold MapAPI into AjaxLife.All.js; we already lost the TG anyway. -->
+		<script src="http://ajaxlife.net/mapapi/noprototype/multigrid/" type="text/javascript"></script>
 	</body>
 </html>

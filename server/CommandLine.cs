@@ -38,12 +38,20 @@ namespace AjaxLife
         public CommandLineArgs(string[] args)
         {
             Params = new StringDictionary();
-            Regex split = new Regex(@"^-{1,2}|^/|=", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            Regex remove = new Regex(@"^['""]?(.*?)['""]?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // E.g. "--port=80" becomes ["port","80"]
+            Regex split = new Regex(@"^-{1,2}|^/|=", RegexOptions.Compiled);
+            // Removes quotes around things. Yes, this is a hack, but .NET handles this for us anyway.
+            // '"some' would become 'some' (omitting single quotes)
+            Regex remove = new Regex("^['\"]?(.*?)['\"]?$", RegexOptions.Compiled);
 
             string parameter = null;
             string[] parts;
 
+            // For each word provided, split it according to the split regex - that is.
+            // at "-", "--" or "/" at the start of a line, and "=" in the middle.
+            // Note that we leave the blanks in - so "--port=80" becomes ["","port","80"],
+            // "--port' becomes ["", "port"] and "80" becomes ["80"].
+            // This is used to work out what to do with the parts.
             foreach (string text in args)
             {
                 parts = split.Split(text, 3);
@@ -51,6 +59,9 @@ namespace AjaxLife
                 switch (parts.Length)
                 {
                     case 1:
+                        // If we only have one thing, we aren't starting a new command.
+                        // If we were already building something, take this to be the argument
+                        // and add it. Otherwise ignore the random string.
                         if (parameter != null)
                         {
                             if (!Params.ContainsKey(parameter))
@@ -63,6 +74,9 @@ namespace AjaxLife
                         }
                         break;
                     case 2:
+                        // If we're already building a paramater, and we only have two parts, 
+                        // we appear to be adding a new paramater. Add the previous one with a
+                        // value of "true" and start building a new one.
                         if (parameter != null)
                         {
                             if (!Params.ContainsKey(parameter))
@@ -73,6 +87,9 @@ namespace AjaxLife
                         parameter = parts[1];
                         break;
                     case 3:
+                        // If we have three parts, and we're already building a paramater, 
+                        // set the paramater previous being built to "true" and add it to
+                        // the collection.
                         if (parameter != null)
                         {
                             if (!Params.ContainsKey(parameter))
@@ -80,6 +97,7 @@ namespace AjaxLife
                                 Params.Add(parameter, "true");
                             }
                         }
+                        // Add FirstPart => SecondPart, if FirstPart doesn't already exist.
                         parameter = parts[1];
                         if (!Params.ContainsKey(parameter))
                         {

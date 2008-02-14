@@ -39,7 +39,7 @@ namespace AjaxLife.Html
     {
         #region IFile Members
 
-        public UI(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public UI(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -48,7 +48,7 @@ namespace AjaxLife.Html
 
         private string name;
         private IDirectory parent;
-        private Dictionary<Guid, Hashtable> users;
+        private Dictionary<Guid, User> users;
 
         public string ContentType
         {
@@ -62,19 +62,21 @@ namespace AjaxLife.Html
             try
             {
                 SecondLife client;
-                Hashtable user;
+                User user;
+                // Get the session.
                 Dictionary<string, string> POST = AjaxLife.PostDecode((new StreamReader(request.PostData)).ReadToEnd());
+                Console.WriteLine(POST["sid"]);
                 Guid sessionid = new Guid(POST["sid"]);
+                // Standard user stuff.
                 lock (users)
                 {
                     user = users[sessionid];
-                    lock (user)
-                    {
-                        client = (SecondLife)user["SecondLife"];
-                        user["LastRequest"] = DateTime.Now;
-                        ((Events)user["Events"]).ClearInventory();
-                    }
+                    client = user.Client;
+                    user.LastRequest = DateTime.Now;
+                    // Clear the inventory cache to avoid confusion.
+                    user.Events.ClearInventory();
                 }
+                // Set up the template.
                 Hashtable replacements = new Hashtable();
                 replacements.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
                 string param = "";
@@ -89,6 +91,7 @@ namespace AjaxLife.Html
                 param += "\t\t\tvar gInventoryRoot = " + AjaxLife.StringToJSON(client.Inventory.Store.RootFolder.UUID.ToStringHyphenated()) + ";\n";
                 param += "\t\t\tvar gSearchRoot = " + AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT) + ";\n";
                 replacements.Add("INIT_PARAMS", param);
+                // Use the template.
                 Html.Template.Parser parser = new Html.Template.Parser(replacements);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/UI.html")));
             }

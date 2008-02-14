@@ -36,13 +36,11 @@ namespace AjaxLife
 {
     class TextureDirectory : IDirectory
     {
-        private Dictionary<Guid, Hashtable> users;
         private string name;
         private IDirectory parent;
 
-        public TextureDirectory(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public TextureDirectory(string name, IDirectory parent)
         {
-            this.users = users;
             this.name = name;
             this.parent = parent;
         }

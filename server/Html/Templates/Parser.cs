@@ -39,10 +39,14 @@ namespace AjaxLife.Html.Template
         {
             // Do nothing.
         }
+        
+        // Set up the replacement hash.
         public Parser(Hashtable replacements)
         {
             this.replacements = replacements;
         }
+        
+        // Loop through utilising System.Text.Replace to replace things. Magic.
         public string Parse(string text)
         {
             foreach (DictionaryEntry entry in this.replacements)

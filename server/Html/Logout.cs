@@ -39,7 +39,7 @@ namespace AjaxLife.Html
     {
         #region IFile Members
 
-        public Logout(string name, IDirectory parent, Dictionary<Guid, Hashtable> users)
+        public Logout(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -49,13 +49,14 @@ namespace AjaxLife.Html
         private string name;
         private IDirectory parent;
         private string contenttype = "text/plain; charset=utf-8";
-        private Dictionary<Guid, Hashtable> users;
+        private Dictionary<Guid, User> users;
 
         public string ContentType
         {
             get { return contenttype; }
         }
 
+        // Someone wants logout.kat?
         public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
             request.Response.ResponseContent = new MemoryStream();
@@ -65,42 +66,39 @@ namespace AjaxLife.Html
                 StreamReader reader = new StreamReader(request.PostData);
                 string post = reader.ReadToEnd();
                 reader.Dispose();
+                // Get the user session and SecondLife object.
                 Dictionary<string,string> POST = AjaxLife.PostDecode(post);
                 Guid session = new Guid(POST["sid"]);
                 SecondLife client;
-                Hashtable user = new Hashtable();
+                User user;
                 lock (users)
                 {
-                    user = (Hashtable)users[session];
-                    lock (user)
-                    {
-                        client = (SecondLife)user["SecondLife"];
-                        user["LastRequest"] = DateTime.Now;
-                    }
-                }   
+                    user = users[session];
+                    client = user.Client;
+                    user.LastRequest = DateTime.Now;
+                }
+                // If we're connected, request a logout.
                 if (client.Network.Connected)
                 {
                     client.Network.Logout();
                     System.Threading.Thread.Sleep(2000);
                 }
-                if(user.ContainsKey("Events"))
+                // Deactivate the event queue.
+                if(user.Events != null)
                 {
-                    lock (user)
-                    {
-                        ((Events)user["Events"]).deactivate();
-                        user.Remove("Events");
-                    }
+                    user.Events.deactivate();
                 }
-                if (user.ContainsKey("SecondLife"))
-                {
-                    lock (user) user.Remove("SecondLife");
-                }
+                // Unset everything for garbage collection purposes.
+                user.Events = null;
+                user.Client = null;
                 client = null;
+                user.Avatars = null;
+                // Remove the user
                 lock (users)
                 {
                     users.Remove(session);
                 }
-                user = null;
+                // Announce our success.
                 writer.WriteLine("{success: true}");
             }   
             catch (Exception e)

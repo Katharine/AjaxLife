@@ -57,18 +57,7 @@ namespace AjaxLife.Html
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
-            Console.WriteLine(request.UserAgent);
-            if (request.UserAgent.Contains("Mobile/") && request.UserAgent.Contains("Safari/") && request.UserAgent.Contains("Mac OS X"))
-            {
-                Console.WriteLine("Detected MobileSafari, loading mobile version...");
-                Hashtable hash = new Hashtable();
-                hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
-                writer.Write((new Html.Template.Parser(hash)).Parse(File.ReadAllText("iphone.html")));
-            }
-            else
-            {
-                writer.Write(File.ReadAllText("index.html"));
-            }
+            writer.Write(File.ReadAllText("index.html"));
             writer.Flush();
         }
 
