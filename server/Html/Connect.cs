@@ -74,7 +74,6 @@ namespace AjaxLife.Html
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
                 Dictionary<string, string> POST = AjaxLife.PostDecode(qstring);
-                bool iPhone = POST.ContainsKey("iphone");
                 Guid key = new Guid(POST["session"]);
                 // The session doesn't exist. Get upset.
                 if (!this.users.ContainsKey(key))
@@ -111,13 +110,12 @@ namespace AjaxLife.Html
                 last = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[2]));
                 pass = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[3]));
                 NetworkManager.LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
-                login.Platform = (iPhone ? "iPhone" : "web");
-                login.Channel = (iPhone ? "i" : "") + "AjaxLife";
+                login.Platform = "web";
+                login.Channel = "AjaxLife";
                 // Pick the correct loginuri.
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;
 				user.LindenGrid = POST["grid"].EndsWith("(Linden Lab)");
-				Console.WriteLine("LindenGrid: "+user.LindenGrid);
                 Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
                 if (client.Network.Login(login))
                 {
@@ -145,12 +143,8 @@ namespace AjaxLife.Html
                     client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
                     client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
                     client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
-                    // These aren't used by the iPhone interface.
-                    if (!iPhone)
-                    {
-                        client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
-                        client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
-                    }
+                    client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
+                    client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
                     // LibSL screwed this one up, so it's implemented manually.
                     //client.Avatars.OnAvatarProperties += new AvatarManager.AvatarPropertiesCallback(events.Avatars_OnAvatarProperties);
                     // We shouldn't really be using this... it forces us to immediately accept inventory.
@@ -162,12 +156,9 @@ namespace AjaxLife.Html
 
                     // AvatarTracker event callbacks.
                     // Also not needed by the iPhone interface.
-                    if (!iPhone)
-                    {
-                        avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
-                        avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);
-                        avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
-                    }
+                    avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
+                    avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);
+                    avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
 
                     client.Assets.OnAssetUploaded += new AssetManager.AssetUploadedCallback(events.Assets_OnAssetUploaded);
 
@@ -175,15 +166,11 @@ namespace AjaxLife.Html
                     // We register these because there's no LibSL function dor doing it easily.
                     client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
                     // Manual map handler. I hear rumours that the next libsl will have its own
-                    // map support. iPhone has no map.
-                    if (!iPhone)
-                    {
-                        client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
-                        client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
-                    }
+                    // map support. 
+                    client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
+                    client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
                     // De-ruth.
-					// This apparently crashes OpenSim, so disable it there.
-                    if(user.LindenGrid) client.Appearance.SetPreviousAppearance(false);
+                    client.Appearance.SetPreviousAppearance(false);
                     // Pythagoras says that 181.0193m is the optimal view distance to see the whole sim.
                     client.Self.Movement.Camera.Far = 181.0193f;
 					

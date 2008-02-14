@@ -227,7 +227,7 @@ namespace AjaxLife.Html
                         break;
                     case "SendAppearance":
 						// This apparently crashes OpenSim, so disable it there.
-                        if(user.LindenGrid) client.Appearance.SetPreviousAppearance(false);
+                        client.Appearance.SetPreviousAppearance(false);
                         break;
                     case "GetMapItems":
                         {
@@ -299,9 +299,6 @@ namespace AjaxLife.Html
                             LLUUID image = new LLUUID(POST["ID"]);
                             // We prepare a query to ask if S3 has it. HEAD only to avoid wasting
                             // GET requests and bandwidth.
-                            IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
-                            Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToStringHyphenated() + ".png");
-                            s3request.Method = "HEAD";
                             bool exists = false;
                             // If we already know we have it, note this.
                             if (AjaxLife.CachedTextures.Contains(image))
@@ -310,17 +307,29 @@ namespace AjaxLife.Html
                             }
                             else
                             {
-                                // Otherwise, make that HEAD request and find out.
-                                try
-                                {
-                                    Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
-                                    if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
-                                    {
-                                        exists = true;
-                                    }
-                                    s3response.DataStream.Close();
-                                }
-                                catch { }
+                            	// If we're using S3, check the S3 bucket
+                            	if(AjaxLife.USE_S3)
+                            	{
+					// Otherwise, make that HEAD request and find out.
+					try
+					{
+						IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
+						Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToStringHyphenated() + ".png");
+						s3request.Method = "HEAD";
+						Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
+						if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
+						{
+							exists = true;
+						}
+						s3response.DataStream.Close();
+					}
+					catch { }
+				}
+				// If we aren't using S3, just check the texture cache.
+				else
+				{
+					exists = File.Exists(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png");
+				}
                             }
                             // If it exists, reply with Ready = true and the URL to find it at.
                             if (exists)
