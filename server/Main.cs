@@ -208,7 +208,7 @@ namespace AjaxLife
             S3Config.AwsAccessKeyID = (args["s3key"] == null) ? AccessKey : args["s3key"];
             S3Config.AwsSecretAccessKey = (args["s3secret"] == null) ? PrivateAccessKey : args["s3secret"];
 			// Check that, if we're using S3, we have enough information to do so.
-            if(TextureBucket != "" && (S3Config.AwsAccessKeyId == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
+            if(TextureBucket != "" && (S3Config.AwsAccessKeyID == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
 			{
 				Console.WriteLine("Error: To use S3 you must set s3key, s3secret, texturebucket and textureroot");
 				return;
