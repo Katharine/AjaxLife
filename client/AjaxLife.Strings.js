@@ -170,9 +170,9 @@ AjaxLife.Strings = {
 			DownloadFailed: "Could not download texture."
 		},
 		Number: {
-			SeparatorPeriod: 3,
-			Separator: ",",
-			DecimalSeparator: "."
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
 		},
 		AvatarsNear: {
 			WindowTitle: "Nearby Avatars"
@@ -196,492 +196,583 @@ AjaxLife.Strings = {
 			}
 		},
 		Stats: {
-			WindowTitle: "Stats"
+			WindowTitle: "Stats",
+			Region: "Region",
+			FPS: "FPS",
+			TD: "Time Dilation",
+			ScriptIPS: "Script IPS",
+			Objects: "Objects",
+			Scripts: "Active Scripts",
+			Agents: "Agents",
+			ChildAgents: "Child Agents",
+			ALServer: "AjaxLife Server",
+			Sessions: "Sessions"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "Script permission request",
+			PermissionRequestBody: "'#{object}', an object owned by '#{owner}', would like to:<br /><br />#{permission}<br />Is this OK?",
+			DialogMessage: "#{first} #{last}'s '#{object}':<br />#{message}",
+			DialogTitle: "Script dialog"
+		},
+		Permissions: {
+			Debit: "Take Linden Dollars (L$) from you",
+			TakeControls: "Act on your control inputs",
+			Animate: "Animate your avatar",
+			Attach: "Attach to your avatar",
+			ChangeLinks: "Link and delink from other objects",
+			TrackCamera: "Track your camera",
+			ControlCamera: "Control your camera"
 		}
-	},
-	// Translated by Mariel Voyunicef
-	es: {
+	},	
+	// Translate by Smiley Barry (TG)
+	he: {
 		Friends: {
-			OnlineNotification: "#{name} se ha #{status}.",
-			Online: "conectado",
-			Offline: "desconectado"
+			OnlineNotification: "#{name} כרגע #{status}.",
+			Online: "מחובר",
+			Offline: "מנותק",
+			FriendshipOffered: "#{name} הציע חברות. לאשר?",
+			YouAccept: "הסכמת לבקשת החברות של #{name}.",
+			YouDecline: "סירבת לבקשת החברות של #{name}."
 		},
 		InstantMessage: {
-			Typing: "#{name} está escribiendo...",
-			OnlineFriends: "Amigos conectados",
-			Send: "Enviar",
-			WindowTitle: "Mensajes instantáneos"
+			Typing: "#{name} מקליד הודעה כעת...",
+			OnlineFriends: "חברים מחוברים",
+			Send: "שלח",
+			WindowTitle: "הודעות מיידיות",
+			Profile: "פרופיל"
 		},
 		AjaxLife: {
-			Precaching: "Cargando...",
-			MOTD: "Mensaje del día"
+			Precaching: "טוען מטמון...",
+			MOTD: "הודעת היום"
 		},
 		Map: {
-			TeleportConfirm: "¿Estás seguro(a) de que quieres teletransportarte a #{sim} (#{x}, #{y})?",
-			RegionLabel: "Región:",
-			PositionLabel: "Posición:",
-			TeleportNoun: "Teletransportación",
-			TeleportVerb: "Teletransportar",
-			Teleporting: "Teletransportando",
-			FocusYou: "Mostrarte",
-			Clear: "Limpiar",
-			FocusTarget: "Mostrar destino",
-			HomeButton: "Ir al inicio",
-			HomeConfirm: "¿Estás seguro de querer ir al lugar de inicio?",
-			TeleportRequest: "#{name} ha ofrecido teletransportarte a<br /><br />#{message}",
-			TeleportRequestTitle: "Ofrecimiento de teletransportación",
-			Teleportation: "Teletransportación",
-			TeleportSuccess: "Te has teletransportado con éxito a #{sim} (#{x}, #{y}, #{z})",
-			TeleportCancelled: "Tu teletransportación se ha cancelado.",
-			TeleportError: "Tu teletransportación no fue exitosa. Por favor intenta más tarde.",
-			WindowTitle: "Mapa"
+			TeleportConfirm: "האם אתה בטוח שברצונך לשגר את הדמות שלך אל #{sim} (#{x}, #{y})?",
+			RegionLabel: "אזור:",
+			PositionLabel: "מיקום:",
+			TeleportNoun: "שגר",
+			TeleportVerb: "שגר",
+			Teleporting: "משגר",
+			FocusYou: "התמקד במקומך",
+			Clear: "אפס",
+			FocusTarget: "התמקד במטרה",
+			HomeButton: "השתגר הביתה",
+			HomeConfirm: "האם אתה בטוח שברצונך לשגר את דמותך הביתה?",
+			TeleportRequest: "#{name} הציע לשגר אותך למקומו:<br /><br />#{message}",
+			TeleportRequestTitle: "הצעת שיגור",
+			Teleportation: "שיגור",
+			TeleportSuccess: "השתגרת בהצלחה אל #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "ביטלת את השיגור.",
+			TeleportError: "השיגור נכשל. נסה שנית בבקשה.",
+			WindowTitle: "מפה",
+			NoRegionGiven: "השרת נכשל לשלוח את שם האזור שאתה בו כרגע."
 			
 		},
 		Network: {
-			LoggingOut: "Desconectando...",
-			LogoutError: "No se pudo desconectar de Second Life debido a un error de comunicación.",
-			LogoutSuccess: "Te has desconectado de Second Life.",
-			LogoutForced: "Has sido desconectado(a) de Second Life:<br /><br />#{reason}",
-			UnhandledMessage: "Mensaje no enviado",
-			EventQueueFailure: "La cola de eventos no pudo ser actualizada.",
-			GenericSendError: "Un error ocurrió durante la transferencia de datos.",
-			InventoryReceive: "#{name} te dio #{item}",
-			Error: "Error",
+			LoggingOut: "מתנתק ויוצא...",
+			LogoutError: "אין אפשרות להתנתק בגלל תקלת שירות.",
+			LogoutSuccess: "נותקת בהצלחה.",
+			LogoutForced: "נותקת מהשרת:<br /><br />#{reason}",
+			UnhandledMessage: "הודעה לא מוכרת",
+			EventQueueFailure: "רשימת האירועים נכשלה בעדכון.",
+			GenericSendError: "אירעה שגיאה בעת שליחת המידע.",
+			InventoryReceive: "#{name} נתן לך את הפריט #{item}",
+			Error: "שגיאה",
+			Disconnected: "נותקת"
+		},
+		StatusBar: {
+			Money: "כסף",
+			LindenDollarSymbol: "L$",
+			Loading: " טוען...",
+			MoneyReceived: "שילמו לך L$#{amount}.",
+			MoneyGiven: "אתה שילמת L$#{amount}."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " צועק:",
+			SecondPersonShout: " צעק:",
+			ThirdPersonSay: " אמר:",
+			SecondPersonSay: " אמר:",
+			ThirdPersonWhisper: " לחש:",
+			SecondPersonWhisper: " לחש:",
+			You: "אתה",
+			Say: "אומר",
+			Whisper: "לוחש",
+			Shout: "צועק",
+			WindowTitle: "הודעות מקומיות"
+		},
+		Toolbar: {
+			ChatButton: "דבר",
+			ChatTooltip: "דבר לאנשים הקרובים אליך",
+			IMButton: "הודעות מיידיות",
+			IMTooltip: "דבר עם אנשים הרחוקים ממך",
+			MapButton: "מפה",
+			MapTooltip: "הראה את מפת העולם",
+			SearchButton: "חפש",
+			SearchTooltip: "חפש פריטים, אנשים, ועוד בעולם הוירטואלי",
+			LogoutButton: "התנתק",
+			LogoutTitle: "התנתק",
+			LogoutPrompt: "האם אתה בטוח שברצונך להתנתק?",
+			LogoutTooltip: "התנתק מהשרת",
+			NearbyButton: "דמויות קרובות",
+			NearbyTooltop: "אנשים בקרבתך.",
+			InventoryButton: "מאגר פריטים",
+			InventoryTooltip: "גישה למאגר הפריטים שלך (קריאה בלבד)",
+			StatsButton: "סטטיסטיקות",
+			StatsTooltip: "גלה מידע על האזור שבו אתה כעת, ומידע על שרת התוכנה."
+		},
+		Widgets: {
+			Yes: "כן",
+			No: "לא",
+			Accept: "אשר",
+			Decline: "סרב",
+			OK: "אישור",
+			Cancel: "ביטול"
+		},
+		Search: {
+			WindowTitle: "חפש",
+			Searching: "מחפש...",
+			People: "אנשים"
+		},
+		Profile: {
+			WindowTitle: "פרופיל - #{name}",
+			Loading: "טוען...",
+			JoinDate: "הצטרף: #{date}",
+			Account: "חשבון:<br />#{type}",
+			PaymentInfoOnFile: "מידע תשלום נמצא",
+			PaymentInfoUsed: "מידע תשלום שומש לפחות פעם אחת",
+			LindenAccount: "מנהל שרתים",
+			NoPaymentInfo: "מידע תשלום לא נמצא",
+			Picks: "מקומות",
+			Interests: "תחביבים",
+			SecondLife: "חיים שניים",
+			FirstLife: "חיים ראשונים",
+			Groups: "קבוצות",
+			About: "אודות",
+			Name: "שם: #{name}",
+			Online: "מחובר",
+			Offline: "מנותק",
+			Partner: "בן/בת-זוג:<br />#{partner}",
+			None: "ריק",
+			IMButton: "שלח הודעה",
+			PayButton: "שלם",
+			PayDialogTitle: "משלם ל#{first} #{last}",
+			PayDialogPrompt: "כמה תרצה לשלם ל#{first} #{last}?",
+			InvalidAmount: "זהו סכום בלתי חוקי לשלם!",
+			FriendButton: "הוסף כחבר",
+			ConfirmFriendAdd: "האם אתה בטוח שברצונך להוסיף את #{first} #{last} כחבר?",
+			FriendshipOffered: "אתה הצעת ל#{first} #{last} חברות.",
+			TeleportButton: "הצע שיגור",
+			TeleportDialogTitle: "משגר #{first} #{last}",
+			TeleportDialogPrompt: "הכנס הודעה לכלול עם הצעת השיגור שלך:",
+			TeleportDefaultMessage: "הצטרף אליי ב#{sim}!"
+		},
+		Texture: {
+			DownloadFailed: "לא ניתן להוריד את הטקסטורה."
+		},
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
+		},
+		AvatarsNear: {
+			WindowTitle: "דמויות קרובות"
+		},
+		Inventory: {
+			WindowTitle: "מלאי אישי"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "טקסטורה: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "פתק: #{name}"
+			},
+			Script: {
+				WindowTitle: "קובץ תכנות: #{name}"
+			},
+			Landmark: {
+				Title: "שגר את דמותך למיקום",
+				Message: "האם אתה בטוח שברצונך לשגר את דמותך אל #{name}?"
+			}
+		},
+		Stats: {
+			WindowTitle: "סטטיסטיקה",
+			Region: "שרת אזור",
+			FPS: "מהירות פריים לשניה",
+			TD: "מהירות שרת נוכחית מתוך מקסימום",
+			ScriptIPS: "הוראות תכנות לשניה",
+			Objects: "אובייקטים פרימיטיביים",
+			Scripts: "קובצי תכנות פעילים",
+			Agents: "משתמשים",
+			ChildAgents: "משתמשים בשרת שכן",
+			ALServer: "שרת תוכנה",
+			Sessions: "משתמשים בשרת תוכנה"
+		}
+	},
+	// Translation by Alissa Sabre
+	ja: {
+		Friends: {
+			OnlineNotification: "#{name}は#{status}です。",
+			Online: "オンライン",
+			Offline: "オフライン",
+			FriendshipOffered: "#{name}がフレンド登録を希望しています。承諾しますか?",
+			YouAccept: "#{name}のフレンド登録を承諾しました。",
+			YouDecline: "#{name}からのフレンド登録を辞退しました。"
+		},
+		InstantMessage: {
+			Typing: "#{name}が入力中です...",
+			OnlineFriends: "オンラインのフレンド",
+			Send: "送る",
+			WindowTitle: "IM (インスタントメッセージ)",
+			Profile: "プロフィール"
+		},
+		AjaxLife: {
+			Precaching: "読み込み中...",
+			MOTD: "今日の一言"
+		},
+		Map: {
+			TeleportConfirm: "#{sim} (#{x}/#{y}) にテレポートしていいですか?",
+			RegionLabel: "地区:",
+			PositionLabel: "位置:",
+			TeleportNoun: "テレポート",
+			TeleportVerb: "テレポートする",
+			Teleporting: "テレポート中",
+			FocusYou: "自分に注目",
+			Clear: "クリア",
+			FocusTarget: "他の場所に注目",
+			HomeButton: "ホームに移動",
+			HomeConfirm: "ホームに移動していいですか?",
+			TeleportRequest: "#{name}がテレポートを誘っています:<br /><br />#{message}",
+			TeleportRequestTitle: "テレポートの誘い",
+			Teleportation: "テレポート",
+			TeleportSuccess: "#{sim} (#{x}/#{y}/#{z}) へのテレポートは成功しました。",
+			TeleportCancelled: "テレポートは中断しました。",
+			TeleportError: "テレポートに失敗しました。また後で試してください。",
+			WindowTitle: "地図",
+			NoRegionGiven: "サーバからSIMの名前を獲得できませんでした。"
+		},
+		Network: {
+			LoggingOut: "ログアウトしています...",
+			LogoutError: "通信エラーによりログアウトに失敗しました。",
+			LogoutSuccess: "Second Lifeからログアウトしました。",
+			LogoutForced: "Second Lifeから強制ログアウトされました。<br /><br />#{reason}",
+			UnhandledMessage: "無効なメッセージ",
+			EventQueueFailure: "イベントキューを更新できません。",
+			GenericSendError: "データ送信中にエラーが発生しました。",
+			InventoryReceive: "#{name}が#{item}を贈ってきました。",
+			Error: "エラー",
+			Disconnected: "切断しました。"
+		},
+		StatusBar: {
+			Money: "残高",
+			LindenDollarSymbol: "L$",
+			Loading: " 読み込み中 ...",
+			MoneyReceived: "L$#{amount}を受け取りました。",
+			MoneyGiven: "L$#{amount}を支払いました。"
+		},
+		SpatialChat: {
+			ThirdPersonShout: "の叫び:",
+			SecondPersonShout: "の叫び:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: "のささやき:",
+			SecondPersonWhisper: "のささやき:",
+			You: "あなた",
+			Say: "言う",
+			Whisper: "ささやく",
+			Shout: "叫ぶ",
+			WindowTitle: "チャット"
+		},
+		Toolbar: {
+			ChatButton: "チャット",
+			ChatTooltip: "近くの人に向けて話す",
+			IMButton: "IM",
+			IMTooltip: "遠くの特定の人と話す",
+			MapButton: "地図",
+			MapTooltip: "グリッドの地図を表示",
+			SearchButton: "検索",
+			SearchTooltip: "",
+			LogoutButton: "ログアウト",
+			LogoutTitle: "ログアウト",
+			LogoutPrompt: "本当にログアウトしたいのですか?",
+			LogoutTooltip: "Second Lifeからログアウトする",
+			NearbyButton: "近くの人",
+			NearbyTooltop: "あなたの近くにいる人達",
+			InventoryButton: "持ち物",
+			InventoryTooltip: "持ち物を表示する (変更できません)",
+			StatsButton: "統計",
+			StatsTooltip: ""
+		},
+		Widgets: {
+			Yes: "はい",
+			No: "いいえ",
+			Accept: "了承",
+			Decline: "辞退",
+			OK: "OK",
+			Cancel: "キャンセル"
+		},
+		Search: {
+			WindowTitle: "検索",
+			Searching: "検索中...",
+			People: "人々"
+		},
+		Profile: {
+			WindowTitle: "#{name}のプロフィール",
+			Loading: "読み込み中...",
+			JoinDate: "登録: #{date}",
+			Account: "アカウント:<br />#{type}",
+			PaymentInfoOnFile: "支払情報登録済み",
+			PaymentInfoUsed: "支払い実績あり",
+			LindenAccount: "リンデン社従業員",
+			NoPaymentInfo: "支払情報未登録",
+			Picks: "お勧め",
+			Interests: "興味",
+			SecondLife: "セカンドライフ",
+			FirstLife: "リアルライフ",
+			Groups: "グループ",
+			About: "基本情報",
+			Name: "名前: #{name}",
+			Online: "オンライン",
+			Offline: "オフライン",
+			Partner: "パートナー:<br />#{partner}",
+			None: "(なし)",
+			IMButton: "IM",
+			PayButton: "支払う",
+			PayDialogTitle: "#{first} #{last}への支払い",
+			PayDialogPrompt: "いくら#{first} #{last}に支払いますか?",
+			InvalidAmount: "支払い金額が不適当です!",
+			FriendButton: "フレンド登録",
+			ConfirmFriendAdd: "本当に#{first} #{last}をフレンド登録したいのですか?",
+			FriendshipOffered: "#{first} #{last}にフレンド登録を頼みました。",
+			TeleportButton: "テレポートに誘う",
+			TeleportDialogTitle: "#{first} #{last}をテレポートに誘う",
+			TeleportDialogPrompt: "テレポートを誘う一言:",
+			TeleportDefaultMessage: "Join me in #{sim}! / 私がいる#{sim}に来てください!"
+		},
+		Texture: {
+			DownloadFailed: "テクスチャをダウンロードできませんでした。"
+		},
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
+		},
+		AvatarsNear: {
+			WindowTitle: "近くの人々"
+		},
+		Inventory: {
+			WindowTitle: "持ち物"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "テクスチャ: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "ノート: #{name}"
+			},
+			Script: {
+				WindowTitle: "スクリプト: #{name}"
+			},
+			Landmark: {
+				Title: "ランドマークにテレポート",
+				Message: "#{name}にテレポートしますか?"
+			}
+		},
+		Stats: {
+			WindowTitle: "統計",
+			Region: "地区",
+			FPS: "FPS",
+			TD: "時間の乖離",
+			ScriptIPS: "スクリプト速度",
+			Objects: "オブジェクト",
+			Scripts: "実行中スクリプト",
+			Agents: "エージェント",
+			ChildAgents: "子エージェント",
+			ALServer: "AjaxLifeサーバ",
+			Sessions: "セション"
+		}
+	},
+	// by Aurelio A. Heckert (http://aurium.cjb.net)
+	pt_br: {
+		Friends: {
+			OnlineNotification: "#{name} está #{status}.",
+			Online: "on-line",
+			Offline: "off-line",
+			FriendshipOffered: "#{name} quer ser seu amigo. Você aceita?",
+			YouAccept: "Você aceitou #{name} como amigo.",
+			YouDecline: "Você rejeitou a amizade de #{name}."
+		},
+		InstantMessage: {
+			Typing: "#{name} está digitando...",
+			OnlineFriends: "Amigos On-line",
+			Send: "Enviar",
+			WindowTitle: "Mensagens Instantâneas",
+			Profile: "Profile"
+		},
+		AjaxLife: {
+			Precaching: "Pré cache...",
+			MOTD: "Mensagem do Dia"
+		},
+		Map: {
+			TeleportConfirm: "Você tem certeza de que quer teleportar-se para #{sim} (#{x}, #{y})?",
+			RegionLabel: "Região:",
+			PositionLabel: "Posição:",
+			TeleportNoun: "Teleporte",
+			TeleportVerb: "Teleportar",
+			Teleporting: "Teleportando",
+			FocusYou: "Foco em você",
+			Clear: "Limpar",
+			FocusTarget: "Foco no alvo",
+			HomeButton: "Ir para Casa",
+			HomeConfirm: "Tem certeza de que quer ir para casa?",
+			TeleportRequest: "#{name} está te oferecendo um teleporte:<br /><br />#{message}",
+			TeleportRequestTitle: "Oferta de Teleporte",
+			Teleportation: "Teleportação",
+			TeleportSuccess: "Você foi teleportado com sucesso para #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "Seu teleporte foi cancelado.",
+			TeleportError: "Seu teleporte falhou. Por favor, tente novamente depois.",
+			WindowTitle: "Mapa",
+			NoRegionGiven: "O servidor falhou ao enviar o nome do sim onde você está."
+			
+		},
+		Network: {
+			LoggingOut: "Saindo...",
+			LogoutError: "Não foi possível sair do Second Life por erro na comunicação.",
+			LogoutSuccess: "Você saiu do Second Life.",
+			LogoutForced: "Você foi desconectado do Second Life:<br /><br />#{reason}",
+			UnhandledMessage: "Mensagem Desconhecida",
+			EventQueueFailure: "A fila de eventos não pode ser atualizada.",
+			GenericSendError: "Um erro ocorreu enquanto os dados eram enviados.",
+			InventoryReceive: "#{name} lhe deu um(a) #{item}",
+			Error: "Erro",
 			Disconnected: "Desconectado"
 		},
 		StatusBar: {
-			Money: "Dinero",
+			Money: "Dinheiro",
 			LindenDollarSymbol: "L$",
-			Loading: " cargando..."
+			Loading: " carregando...",
+			MoneyReceived: "Você recebeu L$#{amount}.",
+			MoneyGiven: "Você pagou L$#{amount}."
 		},
 		SpatialChat: {
-			ThirdPersonShout: "grita:",
-			SecondPersonShout: " gritas:",
+			ThirdPersonShout: " gritou:",
+			SecondPersonShout: " gritou:",
 			ThirdPersonSay: ":",
 			SecondPersonSay: ":",
-			ThirdPersonWhisper: " susurra:",
-			SecondPersonWhisper: " susurras:",
-			You: "Tú",
-			Say: "Decir",
-			Whisper: "Susurrar",
+			ThirdPersonWhisper: " sussurrou:",
+			SecondPersonWhisper: " sussurrou:",
+			You: "Você",
+			Say: "Disse",
+			Whisper: "Sussurrar",
 			Shout: "Gritar",
-			WindowTitle: "Chat local"
+			WindowTitle: "Conversa local"
 		},
 		Toolbar: {
-			ChatButton: "Chat",
-			ChatTooltip: "Hablar con las personas cerca de ti",
-			IMButton: "Mensajes instantáneos",
-			IMTooltip: "Comunicar con las personas distantes",
+			ChatButton: "Conversa",
+			ChatTooltip: "Falar para as pessoas próximas a você",
+			IMButton: "Mensagens Instantâneas",
+			IMTooltip: "Comunicar-se com pessoas distantes",
 			MapButton: "Mapa",
-			MapTooltip: "Mostrar el mapa del mundo",
-			LogoutButton: "Desconectarse",
-			LogoutTitle: "Desconexión",
-			LogoutPrompt: "¿Estás seguro de querer desconectarte?",
-			LogoutTooltip: "Desconectarse de Second Life"
-		},
-		Widgets: {
-			Yes: "Sí",
-			No: "No",
-			Accept: "Aceptar",
-			Decline: "Declinar"
-		}
-	},
-	// Translated by Mariel Voyunicef
-	fr: {
-		Friends: {
-			OnlineNotification: "#{name} vient de se #{status}.",
-			Online: "connecter",
-			Offline: "déconnecter"
-		},
-		InstantMessage: {
-			Typing: "#{name} est en train d'écrire...",
-			OnlineFriends: "Amis en ligne",
-			Send: "Envoyer",
-			WindowTitle: "Messages instantanés"
-		},
-		AjaxLife: {
-			Precaching: "En train de charger...",
-			MOTD: "Message du jour"
-		},
-		Map: {
-			TeleportConfirm: "Tu es sûr(e) de vouloir te téléporter à #{sim} (#{x}, #{y})?",
-			RegionLabel: "Région:",
-			PositionLabel: "Position:",
-			TeleportNoun: "Téléportation",
-			TeleportVerb: "Téléporter",
-			Teleporting: "En train de téléporter...",
-			FocusYou: "Ma position",
-			Clear: "Effacer",
-			FocusTarget: "Destination",
-			HomeButton: "À l'origine",
-			HomeConfirm: "Tu es sûr(e) de vouloir te téléporter à ton lieu d'origin?",
-			TeleportRequest: "#{name} a proposé de téléporter à<br /><br />#{message}",
-			TeleportRequestTitle: "Offre de téléportation",
-			Teleportation: "Téléportation",
-			TeleportSuccess: "Tu t'es téléporté avec de succès à #{sim} (#{x}, #{y}, #{z})",
-			TeleportCancelled: "Ta téléportation a été annulée.",
-			TeleportError: "Ta téleportation n'a pas eu de succès. S'il te plaît, essaie plus tard.",
-			WindowTitle: "Carte"
-			
-		},
-		Network: {
-			LoggingOut: "En train de se déconnecter...",
-			LogoutError: "Tu n'es pas déconnecté(e) de Second Life pour une erreur de communication.",
-			LogoutSuccess: "Tu t'es déconnecté(e) de Second Life.",
-			LogoutForced: "Tu as été déconnecté(e) de Second Life: <br /><br />#{reason}",
-			UnhandledMessage: "Message pas envoyé",
-			EventQueueFailure: "Le queue d'événements n'a pas pu être actualisé.",
-			GenericSendError: "Une erreur s'est produite pendant le transfert de donnés",
-			InventoryReceive: "#{name} t'a donné #{item}",
-			Error: "Erreur",
-			Disconnected: "Déconnecté(e)"
-		},
-		StatusBar: {
-			Money: "Argent",
-			LindenDollarSymbol: "L$",
-			Loading: "En train de charger..."
-		},
-		SpatialChat: {
-			ThirdPersonShout: "crie:",
-			SecondPersonShout: " cries:",
-			ThirdPersonSay: ":",
-			SecondPersonSay: ":",
-			ThirdPersonWhisper: " chuchote:",
-			SecondPersonWhisper: " chuchotes:",
-			You: "Tu",
-			Say: "Dire",
-			Whisper: "Chuchoter",
-			Shout: "Crier",
-			WindowTitle: "Tchatche local"
-		},
-		Toolbar: {
-			ChatButton: "Tchatche",
-			ChatTooltip: "Parler avec ceux qui se trouvent près de toi",
-			IMButton: "Messages instantanés",
-			IMTooltip: "Communiquer avec les personnes lointaines",
-			MapButton: "Carte",
-			MapTooltip: "Montrer la carte du monde",
-			LogoutButton: "Se déconnecter",
-			LogoutTitle: "Déconnection",
-			LogoutPrompt: "Tu es sûr(e) de vouloir te déconnecter?",
-			LogoutTooltip: "Se déconnecter de Second Life"
-		},
-		Widgets: {
-			Yes: "Oui",
-			No: "Non",
-			Accept: "Accepter",
-			Decline: "Décliner"
-		}
-	},
-	// Translated by Nexii Malthus.
-	de: {
-		Friends: {
-			OnlineNotification: "#{name} ist #{status}.",
-			Online: "online",
-			Offline: "offline"
-		},
-		InstantMessage: {
-			Typing: "#{name} ist am schreiben...",
-			OnlineFriends: "Online Freunde",
-			Send: "Sende",
-			WindowTitle: "Sofortige Nachrichten"
-		},
-		AjaxLife: {
-			Precaching: "Lade Pufferspeicher...",
-			MOTD: "Nachricht des Tages"
-		},
-		Map: {
-			TeleportConfirm: "Sind Sie sicher das Sie zu #{sim} (#{x}, #{y}) teleportien wollen?",
-			RegionLabel: "Region:",
-			PositionLabel: "Position:",
-			TeleportNoun: "Teleportation",
-			TeleportVerb: "teleportieren",
-			Teleporting: "teleportiere",
-			FocusYou: "Fokus auf dich",
-			Clear: "Freie",
-			FocusTarget: "Fokus auf Ziel",
-			HomeButton: "Geh Heim",
-			HomeConfirm: "Sind Sie sicher das Sie nachhause wollen?",
-			TeleportRequest: "#{name} hat dich ein Teleport angeboten:<br /><br />#{message}",
-			TeleportRequestTitle: "Teleport Angebot",
-			Teleportation: "Teleportation",
-			TeleportSuccess: "Sie haben erfolglicherweise zu #{sim} (#{x}, #{y}, #{z}) teleportiert.",
-			TeleportCancelled: "Ihr teleportation war beendet.",
-			TeleportError: "Ihr teleport war unglücklicherweise erfolglos. Bitte versuche nächstes mal.",
-			WindowTitle: "Karte",
-			NoRegionGiven: "Die region war erfolglos den namen zu geben."
-			
-		},
-		Network: {
-			LoggingOut: "Second Life loggt heraus...",
-			LogoutError: "Konnte nicht aus Second Life heraus loggen wegen eines Kommunikation Fehler.",
-			LogoutSuccess: "Sie waren aus Second Life herausgeloggt.",
-			LogoutForced: "Sie waren aus Second Life herausgeloggt:<br /><br />#{reason}",
-			UnhandledMessage: "Unhandled message",
-			EventQueueFailure: "The event queue could not be updated.",
-			GenericSendError: "Ein Fehler trat auf am senden der Dateien.",
-			InventoryReceive: "#{name} gab dich #{item}",
-			Error: "Fehler",
-			Disconnected: "Ausgeloggt"
-		},
-		StatusBar: {
-			Money: "Geld",
-			LindenDollarSymbol: "L$",
-			Loading: " laden..."
-		},
-		SpatialChat: {
-			ThirdPersonShout: " schautet:",
-			SecondPersonShout: " schautest:",
-			ThirdPersonSay: ":",
-			SecondPersonSay: ":",
-			ThirdPersonWhisper: " flüstert:",
-			SecondPersonWhisper: " flüstert:",
-			You: "Du",
-			Say: "Sage",
-			Whisper: "Flüstere",
-			Shout: "Schaute",
-			WindowTitle: "Lokaler Chat"
-		},
-		Toolbar: {
-			ChatButton: "Chat",
-			ChatTooltip: "Spreche zu Leute die nah sind",
-			IMButton: "Sofortige Nachrichten",
-			IMTooltip: "Kommuniziere mit Leute die weit weg sind",
-			MapButton: "Karte",
-			MapTooltip: "Zeige die Große Karte",
-			SearchButton: "Suche",
+			MapTooltip: "Mostrar a grade do mapa",
+			SearchButton: "Busca",
 			SearchTooltip: "",
-			LogoutButton: "Logge aus",
-			LogoutTitle: "Logge aus",
-			LogoutPrompt: "Sind Sie sicher das sie ausloggen wollen?",
-			LogoutTooltip: "Logge aus"
+			LogoutButton: "Sair",
+			LogoutTitle: "Sair",
+			LogoutPrompt: "Você tem certeza de que quer sair?",
+			LogoutTooltip: "Sair do Second Life",
+			NearbyButton: "Avatares Próximos",
+			NearbyTooltop: "Pessoas nas suas proximidades",
+			InventoryButton: "Inventário",
+			InventoryTooltip: "Acesso somente para leitura do inventário",
+			StatsButton: "Status",
+			StatsTooltip: ""
 		},
 		Widgets: {
-			Yes: "Ja",
-			No: "Nein",
-			Accept: "Akzeptiere",
-			Decline: "Abnahme",
+			Yes: "Sim",
+			No: "Não",
+			Accept: "Aceitar",
+			Decline: "Rejeitar",
 			OK: "OK",
-			Cancel: "Annullieren"
+			Cancel: "Cancelar"
 		},
 		Search: {
-			WindowTitle: "Suche",
-			Searching: "Suchen..."
+			WindowTitle: "Busca",
+			Searching: "Procurando...",
+			People: "Pessoas"
 		},
 		Profile: {
-			WindowTitle: "Profil - #{name}",
-			Loading: "Lade...",
-			JoinDate: "Verbunden: #{date}",
-			Account: "Konto:<br />#{type}",
-			PaymentInfoOnFile: "Zahlung Info auf Akte",
-			PaymentInfoUsed: "Zahlung Info benutzt",
-			LindenAccount: "Linden Lab Angestellter",
-			NoPaymentInfo: "Keine Zahlung Info",
-			Picks: "Auswähle",
-			SecondLife: "2nd Life",
-			FirstLife: "1st Life",
-			Groups: "Gruppen",
-			About: "Info über die Person"
-		}
-	},
-	//Translated by Mikka Hax da-dk
-	da: {
-		Friends: {
-			OnlineNotification: "#{name} er #{status}.",
-			Online: "online",
-			Offline: "offline"
+			WindowTitle: "Profile - #{name}",
+			Loading: "carregando...",
+			JoinDate: "Membro desde: #{date}",
+			Account: "Conta:<br />#{type}",
+			PaymentInfoOnFile: "Informação de pagamento em arquivo",
+			PaymentInfoUsed: "Informação de pagamento usada",
+			LindenAccount: "Empregado da Linden Lab",
+			NoPaymentInfo: "Sem informação de pagamento",
+			Picks: "Fotos",
+			Interests: "Interesses",
+			SecondLife: "2&ordf; Vida",
+			FirstLife: "1&ordf; Vida",
+			Groups: "Grupos",
+			About: "Sobre",
+			Name: "Nome: #{name}",
+			Online: "On-line",
+			Offline: "Off-line",
+			Partner: "Parceiro:<br />#{partner}",
+			None: "Nenhum",
+			IMButton: "Mensagem Instantânea",
+			PayButton: "Pagar",
+			PayDialogTitle: "Pagando #{first} #{last}",
+			PayDialogPrompt: "Quanto você que pagar para #{first} #{last}?",
+			InvalidAmount: "Essa quantia de pagamento é invalida!",
+			FriendButton: "Adicionar como Amigo",
+			ConfirmFriendAdd: "Tem certeza que quer adicionar #{first} #{last} como amigo?",
+			FriendshipOffered: "Você ofereceu amizade para #{first} #{last}.",
+			TeleportButton: "Oferecer Teleporte",
+			TeleportDialogTitle: "Teleportando #{first} #{last}",
+			TeleportDialogPrompt: "Adicione uma mensagem à sua oferta de teleporte:",
+			TeleportDefaultMessage: "Encontre-me em #{sim}!"
 		},
-		InstantMessage: {
-			Typing: "#{name} skriver...",
-			OnlineFriends: "Online Venner",
-			Send: "Send",
-			WindowTitle: "Privat Besked"
+		Texture: {
+			DownloadFailed: "Não foi possível baixar a textura."
 		},
-		AjaxLife: {
-			Precaching: "Buffer filer...", //Not sure with this one.
-			MOTD: "Dagens besked"
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
 		},
-		Map: {
-			TeleportConfirm: "Er du sikker på at du vil teleportere til #{sim} (#{x}, #{y})?",
-			RegionLabel: "Region:",
-			PositionLabel: "Position:",
-			TeleportNoun: "Teleport",
-			TeleportVerb: "Teleport",
-			Teleporting: "Teleportere",
-			FocusYou: "Fokuser på dig",
-			Clear: "Fjern",
-			FocusTarget: "Fokuser på målet",
-			HomeButton: "Gå hjem",
-			HomeConfirm: "Er du sikker på at du vil gå hjem?",
-			TeleportRequest: "#{name} har tilbudt dig en teleport:<br /><br />#{message}",
-			TeleportRequestTitle: "Teleport tilbudt",
-			Teleportation: "Teleportering",
-			TeleportSuccess: "Du blev teleporteret til #{sim} (#{x}, #{y}, #{z})",
-			TeleportCancelled: "Din teleport blev annulleret.",
-			TeleportError: "Din teleport fejlede. Prøv igen senere.",
-			WindowTitle: "Kort",
-			NoRegionGiven: "Serveren fejlede med at sende navnet af det sim du er i."
-			
+		AvatarsNear: {
+			WindowTitle: "Avatares Próximos"
 		},
-		Network: {
-			LoggingOut: "Logging out...",
-			LogoutError: "Kunne ikke logged ud af Second Life pga. kommunikations fejl.",
-			LogoutSuccess: "Du er blevet logget ud af Second Life.",
-			LogoutForced: "Du er blevet logget ud af Second Life:<br /><br />#{reason}",
-			UnhandledMessage: "Uhåndteret besked",
-			EventQueueFailure: "Begivenheden kunne ikke opdateres.",
-			GenericSendError: "Stødte på en fejl samtidigt med indlæsningen af data.",
-			InventoryReceive: "#{name} gav dig #{item}",
-			Error: "Fejl",
-			Disconnected: "Disconnected"
+		Inventory: {
+			WindowTitle: "Inventário"
 		},
-		StatusBar: {
-			Money: "Penge",
-			LindenDollarSymbol: "L$",
-			Loading: " Indlæser..."
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "Textura: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "Cartão: #{name}"
+			},
+			Script: {
+				WindowTitle: "Script: #{name}"
+			},
+			Landmark: {
+				Title: "Teleporte para local marcado",
+				Message: "Tem certeza de que quer teleportar-se para #{name}?"
+			}
 		},
-		SpatialChat: {
-			ThirdPersonShout: " råber:",
-			SecondPersonShout: " råber:",
-			ThirdPersonSay: ":",
-			SecondPersonSay: ":",
-			ThirdPersonWhisper: " hvisker:",
-			SecondPersonWhisper: " hvisker:",
-			You: "Dig",
-			Say: "Sig",
-			Whisper: "Hvisk",
-			Shout: "Råb",
-			WindowTitle: "Lokal chat"
-		},
-		Toolbar: {
-			ChatButton: "Chat",
-			ChatTooltip: "Snak med folk tæt ved dig",
-			IMButton: "Instant Messages",
-			IMTooltip: "Kommuniker med fjerne folk",
-			MapButton: "Kort",
-			MapTooltip: "Vis kortet",
-			SearchButton: "Søg",
-			SearchTooltip: "",
-			LogoutButton: "Log ud",
-			LogoutTitle: "Log ud",
-			LogoutPrompt: "Er du sikkker på at du vil logge af?",
-			LogoutTooltip: "Log ud af Second Life"
-		},
-		Widgets: {
-			Yes: "Ja",
-			No: "Nej",
-			Accept: "Accepter",
-			Decline: "Afvis",
-			OK: "OK",
-			Cancel: "Annuler"
-		},
-		Search: {
-			WindowTitle: "Søg",
-			Searching: "Søger..."
-		},
-		Profile: {
-			WindowTitle: "Profil - #{name}",
-			Loading: "Indlæser...",
-			JoinDate: "Tilmeldt: #{date}",
-			Account: "Bruger:<br />#{type}",
-			PaymentInfoOnFile: "Betalings info på fil",
-			PaymentInfoUsed: "Betalings info brugt",
-			LindenAccount: "Linden Lab Ansat",
-			NoPaymentInfo: "Ingen betalings info",
-			Picks: "Valgte",
-			Interests: "Interesser",
-			SecondLife: "2nd Life",
-			FirstLife: "1st Life",
-			Groups: "Grupper",
-			About: "Info om personen",
-			Name: "Navn: #{name}"
-		}
-	},
-	// Translated by Mondrian Lykin
-	it: {
-		Friends: {
-			OnlineNotification: "#{name} è #{status}.",
-			Online: "online",
-			Offline: "offline"
-		},
-		InstantMessage: {
-			Typing: "#{name} sta scrivendo...",
-			OnlineFriends: "Amici online",
-			Send: "Invia",
-			WindowTitle: "Messaggio instantaneo"
-		},
-		AjaxLife: {
-			Precaching: "Precaching...",
-			MOTD: "Messaggio del giorno"
-		},
-		Map: {
-			TeleportConfirm: "Sei sicuro che vuoi teletrasportarti a #{sim} (#{x}, #{y})?",
-			RegionLabel: "Regione:",
-			PositionLabel: "Posizione:",
-			TeleportNoun: "Teletrasporto",
-			TeleportVerb: "Teletrasporta",
-			Teleporting: "Teletrasporto",
-			FocusYou: "Focus on you",
-			Clear: "Clear",
-			FocusTarget: "Focus on target",
-			HomeButton: "Torna a casa",
-			HomeConfirm: "Sei sicuro che vuoi tornare a casa?",
-			TeleportRequest: "#{name} ti ha offerto di essere teletrasportato:<br /><br />#{message}",
-			TeleportRequestTitle: "Offerta di teletrasporto",
-			Teleportation: "Teletrasporto",
-			TeleportSuccess: "Sei stato teletrasportato con successo a #{sim} (#{x}, #{y}, #{z})",
-			TeleportCancelled: "Il teletrasporto è stato cancellato.",
-			TeleportError: "Teletrasporto non riuscito. Ti preghiamo di provare più.",
-			WindowTitle: "Mappa"
-			
-		},
-		Network: {
-			LoggingOut: "Disconnessione in corso...",
-			LogoutError: "Impossibile connettersi a Second Life a causa di un errore di connessione.",
-			LogoutSuccess: "You have logged out of Second Life.",
-			LogoutForced: "Sei stato disconnesso da Second Life:<br /><br />#{reason}",
-			UnhandledMessage: "Messaggio non processato",
-			EventQueueFailure: "Non è stato possibile aggiornare la coda degli eventi.",
-			GenericSendError: "Si è verificato un errore di trasmissione dei dati.",
-			InventoryReceive: "#{name} ti ha dato #{item}",
-			Error: "Errore",
-			Disconnected: "Disconnesso"
-		},
-		StatusBar: {
-			Money: "Soldi",
-			LindenDollarSymbol: "L$",
-			Loading: " sta caricando..."
-		},
-		SpatialChat: {
-			ThirdPersonShout: " urla:",
-			SecondPersonShout: " urli:",
-			ThirdPersonSay: ":",
-			SecondPersonSay: ":",
-			ThirdPersonWhisper: " sussurra:",
-			SecondPersonWhisper: " sussurri:",
-			You: "Tu",
-			Say: "Parla",
-			Whisper: "Sussurra",
-			Shout: "Urla",
-			WindowTitle: "Chat locale"
-		},
-		Toolbar: {
-			ChatButton: "Chat",
-			ChatTooltip: "Parla alle persone vicine a te",
-			IMButton: "Messaggi instantanei",
-			IMTooltip: "Comunica con persone distanti da te",
-			MapButton: "Mappa",
-			MapTooltip: "Mostra la mappa del grid",
-			LogoutButton: "Esci",
-			LogoutTitle: "Esci",
-			LogoutPrompt: "Sei sicuro di voler uscire?",
-			LogoutTooltip: "Esci da Second Life"
-		},
-		Widgets: {
-			Yes: "Sì",
-			No: "No",
-			Accept: "Accetta",
-			Decline: "Rifiuta"
+		Stats: {
+			WindowTitle: "Status",
+			Region: "Região",
+			FPS: "FPS",
+			TD: "Dilatação do Tempo",
+			ScriptIPS: "Script IPS",
+			Objects: "Objetos",
+			Scripts: "Scripts Ativos",
+			Agents: "Agentes",
+			ChildAgents: "Agentes Filhos",
+			ALServer: "Servidor AjaxLife",
+			Sessions: "Sessões"
 		}
 	}
 	// More translations here.
@@ -703,7 +794,7 @@ function _(str, args)
 	{
 		if(typeof(args[i]) == "string")
 		{
-			args[i] = args[i].escapeHTML();
+			args[i] = args[i].escapeHTML().gsub('\n','<br />');
 		}
 		else if(typeof(args[i]) == "function" || typeof(args[i]) == "object")
 		{

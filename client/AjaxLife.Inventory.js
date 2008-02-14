@@ -29,6 +29,7 @@
  	var Tree = Ext.tree;
  	var inventory = {};
  	var tree = false;
+ 	var editor = false;
  	var win = false;
  	var list = false;
  	var T = AjaxLife.Constants.Inventory.InventoryType;	
@@ -73,30 +74,47 @@
 		}
  	}
  	
+ 	function textchanged(node, text, oldtext)
+ 	{
+		if(node.leaf)
+		{
+			AjaxLife.Network.Send('RenameItem', {
+				Item: node.attributes.UUID,
+				TargetFolder: node.parentNode.attributes.UUID,
+				NewName: text
+			});
+		}
+		else
+		{
+			node.setText(oldtext);
+			AjaxLife.Widgets.Ext.msg("Error","Can't rename folders.");
+		}
+	}
+ 	
  	return {
  		// Public:
  		init: function() { 	
- 			// Create a new window and tree for the inventory.	
- 			win = new Ext.BasicDialog("dlg_inventory", {
-				width: '300px',
-				height: '400px',
+ 			// Create a new window and tree for the inventory.
+ 			win = new Ext.BasicDialog('dlg_inventory',{
+ 				autoCreate: true,
+				resizable: true,
+				proxyDrag: !AjaxLife.Fancy,
+				width: 300,
+				height: 400,
 				modal: false,
 				shadow: true,
-				autoCreate: true,
-				title: _("Inventory.WindowTitle"),
-				proxyDrag: !AjaxLife.Fancy
+				title: _("Inventory.WindowTitle")
 			});
-			var treeholder = document.createElement('div');
-			tree = new Tree.TreePanel(win.body.dom, {
-				animate: AjaxLife.Fancy,
-				enableDD: false,
-				'lines': false
-			});
+			var treeholder = Ext.get(document.createElement('div'));
+			treeholder.setStyle({overflow: 'auto'});
+ 			win.body.dom.appendChild(treeholder.dom);
+ 			
 			var root = new Tree.TreeNode({
 				text: 'My Inventory',
 				draggable: false,
-				icon: AjaxLife.STATIC_ROOT+'/images/inventory/folder_plain_closed.gif'
+				icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.gif'
 			});
+			
 			// Create a root node. The tree is set up to be analogous to the inventory tree
 			root.attributes.UUID = gInventoryRoot;
 			root.attributes.loaded = false;
@@ -105,10 +123,27 @@
 				text: 'Loading contents...',
 				draggable: false,
 				leaf: true,
-				icon: AjaxLife.STATIC_ROOT+'/images/s.gif'
+				icon: AjaxLife.STATIC_ROOT+'images/s.gif'
 			}));
 			inventory[gInventoryRoot] = root;
+			// Render the tree, now that we have a root node.
+			tree = new Tree.TreePanel(treeholder, {
+				animate: AjaxLife.Fancy,
+				enableDD: true,
+				ddGroup: 'InventoryDD',
+				//selModel: new Tree.MultiSelectionModel(), // This doesn't work yet.
+				'lines': false
+			});
 			tree.setRootNode(root);
+			editor = new Tree.TreeEditor(tree, {
+				allowBlank: false,
+				blankText: _("Inventory.NoBlankText"),
+				selectOnFocus: true,
+				cancelOnEsc: true,
+				completeOnEnter: true,
+				ignoreNoChange: true
+			});		
+			
 			// Handle double clicking of inventory items by opening the appriopriate type of window.
 			tree.on('dblclick', function(node) {
 				if(!node.attributes.InventoryType && node.attributes.InventoryType !== 0) return;
@@ -136,6 +171,7 @@
 					break;
 				}
 			});
+			
 			// Handle expanding folders by loading their contents.
 			tree.on('expand',function(node) {
 				if(!node.attributes.loaded && !node.attributes.loading)
@@ -146,9 +182,52 @@
 					});
 				}
 			});
+			
+			// Handle reorganisation
+			tree.on('nodedrop',function(event) { // That's "node drop", not "no de-drop" (I keep reading it as the latter).
+				var node = event.dropNode;
+				var newparent = (event.point == 'append') ? event.target : event.target.parentNode;
+				if(node.leaf)
+				{
+					AjaxLife.Network.Send('MoveItem', {
+						Item: node.attributes.UUID,
+						TargetFolder: newparent.attributes.UUID,
+						NewName: node.attributes.Name
+					});
+				}
+				else
+				{
+					AjaxLife.Network.Send('MoveFolder', {
+						Folder: node.attributes.UUID,
+						NewParent: newparent.attributes.UUID
+					});
+				}
+			});
+			
+			// Disable reordering - it won't do anything anyway.
+			tree.on('nodedragover', function(event) {
+				if(event.point == 'append')
+				{
+					if(event.target == event.dropNode.parentNode)
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
+				else if(event.dropNode.parentNode == event.target.parentNode)
+				{
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			});
 			// Show the tree.
 			tree.render();
- 			win.body.dom.appendChild(treeholder);
  			
  			// Handle incoming inventory data.
  			AjaxLife.Network.MessageQueue.RegisterCallback('FolderUpdated', function(data) {
@@ -173,21 +252,24 @@
 					var items = [];
 					data.each(function(item) {
 						if(inventory[item.UUID]) return; // equivilent to "continue;"
+						var newnode = false;
 						if(item.Type == "InventoryFolder")
 						{
 							var newnode = new Tree.TreeNode({
 								text: item.Name,
 								leaf: false,
-								icon: AjaxLife.STATIC_ROOT+'/images/inventory/folder_plain_closed.gif'
+								draggable: true,
+								icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.gif'
 							});
 							newnode.attributes.PreferredType = item.PreferredType;
 							newnode.attributes.OwnerID = item.OwnerID;
 							newnode.attributes.UUID = item.UUID;
+							newnode.attributes.Name = item.Name;
 							newnode.appendChild(new Tree.TreeNode({
 								text: 'Loading contents...',
 								draggable: false,
 								leaf: true,
-								icon: AjaxLife.STATIC_ROOT+'/images/s.gif'
+								icon: AjaxLife.STATIC_ROOT+'images/s.gif'
 							}));
 							inventory[item.UUID] = newnode;
 							folders.push(newnode);
@@ -197,9 +279,11 @@
 							var newnode = new Tree.TreeNode({
 								text: item.Name,
 								leaf: true,
-								icon: AjaxLife.STATIC_ROOT+'/images/inventory/'+getitemicon(item.InventoryType)
+								draggable: true,
+								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getitemicon(item.InventoryType)
 							});
-							newnode.attributes.InventoryUUID = item.UUID;
+							newnode.attributes.InventoryUUID = item.UUID; // Deprecated - use UUID instead of InventoryUUID.
+							newnode.attributes.UUID = item.UUID;
 							newnode.attributes.AssetType = item.AssetType;
 							newnode.attributes.AssetUUID = item.AssetUUID;
 							newnode.attributes.CreatorID = item.CreatorID;
@@ -207,10 +291,12 @@
 							newnode.attributes.Description = item.Description;
 							newnode.attributes.Flags = item.Flags;
 							newnode.attributes.InventoryType = item.InventoryType;
+							newnode.attributes.Name = item.Name;
 							newnode.attributes.Permissions = item.Permissions;
 							inventory[item.UUID] = newnode;
 							items.push(newnode);
 						}
+						newnode.on('textchange', textchanged);
 					});
 					folders.sortBy(function(item) {
 						return item.text;

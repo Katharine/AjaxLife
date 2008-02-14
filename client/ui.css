@@ -255,3 +255,16 @@ div.al-selectlist ul li.al-selectlist-highlighted {
 	top: 30px;
 }
 
+/* llDialog */
+
+.llDialog {
+	margin-left: 0%;
+	margin-bottom: 0%;
+	margin-right: 0px;
+	margin-top: -20px;
+	width: 100%;
+}
+
+.llDialog td {
+	text-align: center;
+}

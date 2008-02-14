@@ -97,6 +97,8 @@ AjaxLife.Widgets.Ext = function(){
 // Shows a localised confirm dialog.
 // DEPRECATED in favour of Ext.Msg.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
+	return Ext.Msg.confirm(title, message, callback);
+	/*
 	return Ext.Msg.show({
 		title: title,
 		closable: false,
@@ -108,6 +110,7 @@ AjaxLife.Widgets.Confirm = function(title, message, callback) {
 		},
 		fn: callback
 	});
+	*/
 };
 
 // This implements a select list with single-click, double-click callbacks,
@@ -140,18 +143,20 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 	// Create a div with list.
 	var div = Ext.get(document.createElement('div'));
 	div.addClass('al-selectlist');
-	div.setStyle({
-		width: (settings.width?settings.width:'250px'),
-		background: settings.background?settings.background:'#fff'
-	});
+	var style = {
+		width: (settings.width?settings.width:'250px')
+	};
+	if(settings.background)
+	{
+		style.background = settings.background;
+	}
 	if(settings.height)
 	{
-		div.setStyle({
-			'overflow-y': 'auto',
-			'overflow-x': 'hidden',
-			height: settings.height
-		});
+		style['overflow-y'] = 'auto';
+		style['overflow-x'] = 'hidden';
+		style.height = settings.height;
 	}
+	div.setStyle(style);
 	var list = Ext.get(document.createElement('ul'));
 	var elems = {};
 	var highlighted = false;

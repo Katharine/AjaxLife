@@ -329,6 +329,7 @@ AjaxLife.MiniMap = function() {
 			if(!canvas.getContext || !canvas.getContext('2d')) // No canvas support.
 			{
 				active = false;
+				AjaxLife.Network.MessageQueue.RegisterCallback('LandPatch',Prototype.emptyFunction); // Suppress "Unhandled message" notices.
 				return;
 			}
 			// Set everything up nicely.
@@ -340,7 +341,7 @@ AjaxLife.MiniMap = function() {
 				imgloaded = true;
 				drawSelf();
 			};
-			selfimg.src = AjaxLife.STATIC_ROOT+'/images/map_marker_you.png';
+			selfimg.src = AjaxLife.STATIC_ROOT+'images/map_marker_you.png';
 			pos = {sim: gRegion, x: gPosition.X, y: gPosition.Y, z: gPosition.Z};
 			// Setup callback
 			// This will be called when we have land data. If the water level has changed,

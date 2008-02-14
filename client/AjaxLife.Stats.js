@@ -194,7 +194,7 @@
 			row.appendChild(alsessionsfield);
 			// Cached Textures
 			row = $(document.createElement('tr'));
-			table.appendChild(row);
+			//table.appendChild(row);
 			el = document.createElement('th');
 			el.appendChild(document.createTextNode('Cached Textures'));
 			row.appendChild(el);
@@ -203,7 +203,7 @@
 			row.appendChild(texturecountfield);
 			// Texture Cache Size
 			row = $(document.createElement('tr'));
-			table.appendChild(row);
+			//table.appendChild(row);
 			el = document.createElement('th');
 			el.appendChild(document.createTextNode('Texture Cache Size'));
 			row.appendChild(el);

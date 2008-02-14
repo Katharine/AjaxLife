@@ -289,3 +289,44 @@ AjaxLife.Network.Send = function(message, opts) {
 	}
 	link.request(params);
 };
+
+AjaxLife.Network.GenericRequest = function(url, opts) {
+	var link = new Ext.data.Connection();
+	if(!opts)
+	{
+		opts = {};
+	}
+	var callbackf = false;
+	if(opts.callback)
+	{
+		callbackf = opts.callback;
+		opts.callback = null;
+	}
+	params = {
+		url: "differentorigin.kat?url="+escape(url),
+		method: "POST",
+		params: opts
+	};
+	if(callbackf)
+	{
+		params.callback = function(options, success, response) {
+			if(success)
+			{
+				try
+				{
+					var data = Ext.util.JSON.decode(response.responseText);
+					callbackf(data);
+				}
+				catch(e)
+				{
+					callbackf(response.responseText);
+				}
+			}
+			else
+			{
+				AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.GenericRequestError"));
+			}
+		};
+	}
+	link.request(params);
+};

@@ -24,7 +24,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
  
-AjaxLife.Texture = function(parent, width, height, texture) {
+AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsearch) {
 	var callbackid = 0;
 	var elem;
 	var loaded = false;
@@ -66,36 +66,43 @@ AjaxLife.Texture = function(parent, width, height, texture) {
 	if(texture == AjaxLife.Utils.UUID.Zero)
 	{
 		replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
-		return;
 	}
-	// Callback so we know when the image is downloaded, and what its URL is.
-	callbackid = AjaxLife.Network.MessageQueue.RegisterCallback('ImageDownloaded', function(data) {
-		if(data.UUID == texture)
+	else
+	{
+		if(slsearch && (forceslsearch || (width <= 320 && height <= 240)))
 		{
-			AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
-			if(data.Success)
-			{
-				replaceimage(data.URL);
-			}
-			else
-			{
-				replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
-				AjaxLife.Widgets.Ext.msg("",_("Texture.DownloadFailed"));
-			}
+			replaceimage("http://secondlife.com/app/image/"+texture+"/2");
 		}
-	});
-	// Request the texture download. If it's ready immediately, we'll get it in the URL part of
-	// the response, so replace the image with that.
-	AjaxLife.Network.Send("RequestTexture", {
-		ID: texture,
-		callback: function(data) {
-			if(data.Ready)
-			{
-				replaceimage(data.URL);
-				AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
-			}
+		else
+		{
+			// Callback so we know when the image is downloaded, and what its URL is.
+			callbackid = AjaxLife.Network.MessageQueue.RegisterCallback('ImageDownloaded', function(data) {
+				if(data.UUID == texture)
+				{
+					AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
+					if(data.Success)
+					{
+						replaceimage(data.URL);
+					}
+					else
+					{
+						replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
+						AjaxLife.Widgets.Ext.msg("",_("Texture.DownloadFailed"));
+					}
+				}
+			});
+			AjaxLife.Network.Send("RequestTexture", {
+				ID: texture,
+				callback: function(data) {
+					if(data.Ready)
+					{
+						replaceimage(data.URL);
+						AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
+					}
+				}
+			});
 		}
-	});
+	}
 	
 	return {
 		// Just resizes the image. This is used by the texture dialog.

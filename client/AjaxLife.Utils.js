@@ -83,7 +83,7 @@ AjaxLife.Utils.Clone = function(myObj) {
 // Formats a number.
 AjaxLife.Utils.FormatNumber = function(number) {
 	number = '' + number;
-	var comma = _("Number.Separator");
+	var comma = _("Number.ThousandSeparator");
 	if (number.length > 3)
 	{
 		var mod = number.length % 3;
