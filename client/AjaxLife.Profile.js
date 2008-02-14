@@ -107,7 +107,7 @@ AjaxLife.Profile = function(agentid) {
 	var div_partner = Ext.get($(document.createElement('div')));
 	div_partner.setStyle({
 		position: 'absolute',
-		top: '100px',
+		top: '130px',
 		left: '200px',
 		border: 'thin solid black'
 	});
@@ -353,12 +353,14 @@ AjaxLife.Profile = function(agentid) {
 	// Start up.
 	// When we're created we need to work out the name of whoever owns the profile.
 	// Once we've done so, we can get on with actually displaying it.
+	AjaxLife.Debug("Profile: Looking up the name for "+agentid);
 	AjaxLife.NameCache.Find(agentid,function(name) {
 		win.setTitle(_("Profile.WindowTitle",{name: name}));
 		div_name.dom.update(_("Profile.Name",{name: name}));
 		name = name.split(' ');
 		firstname = name[0];
 		lastname = name[1];
+		AjaxLife.Debug("Profile: Requesting agent data for "+agentid);
 		AjaxLife.Network.Send('GetAgentData', {AgentID: agentid});
 	});
 	return {

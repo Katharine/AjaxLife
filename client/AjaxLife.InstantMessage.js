@@ -139,6 +139,7 @@ AjaxLife.InstantMessage = function() {
 				return true;
 			}
 		}
+		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
 			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id,name,"",true),

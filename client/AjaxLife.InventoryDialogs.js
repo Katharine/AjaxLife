@@ -126,6 +126,8 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
 		// Bail out if this isn't what we were waiting for.
 		if(data.AssetID != notecardid) return;
+		
+		AjaxLife.Debug("InventoryDialogs: Received notecard asset "+data.AssetID);
 		// Unregister it - we aren't going to receive more than one, so leaving it registered
 		// is a waste of CPU time.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
@@ -170,7 +172,7 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	});
 	
 	// Actually download the texture.
-
+	AjaxLife.Debug("InventoryDialogs: Requesting notecard asset "+inventoryid);
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: notecardid,
 		InventoryID: inventoryid,
@@ -227,13 +229,17 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
 		// Ignore it if it's not ours.
 		if(data.TransferID != transferid) return;
+		
+		AjaxLife.Debug("InventoryDialogs: Received script asset "+inventoryid);
 		// Unregister the callback, since we don't need it any more.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
 		// Highlight and display the script. (Highlight function is further down in this file)
 		win.body.dom.update(AjaxLife.HighlightLSL(data.AssetData)).setStyle({backgroundColor: 'white'});
 	});
 	
-	// Request the aset download.
+	
+	AjaxLife.Debug("InventoryDialogs: Requesting script asset "+inventoryid);
+	// Request the asset download.
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: AjaxLife.Utils.UUID.Zero,
 		InventoryID: inventoryid,

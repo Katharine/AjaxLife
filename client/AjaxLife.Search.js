@@ -34,6 +34,7 @@ AjaxLife.Search = function() {
 	// We just send a FindPeople message with the search string.
 	function performlookup()
 	{
+		AjaxLife.Debug("Search: Searching for "+search+" in people.");
 		results_list.clear();
 		var search = search_box.dom.value;
 		AjaxLife.Network.Send("FindPeople", {
@@ -83,6 +84,7 @@ AjaxLife.Search = function() {
 			// Register for the DirPeopleReply message that carries the information we want.
 			// Add their name and key to the list.
 			AjaxLife.Network.MessageQueue.RegisterCallback('DirPeopleReply', function(data) {
+				AjaxLife.Debug("Search: Received search results.");
 				data.Results.each(function(item) {
 					AjaxLife.NameCache.Add(item.AgentID,item.FirstName+" "+item.LastName);
 					results_list.add(item.AgentID,item.FirstName+" "+item.LastName);

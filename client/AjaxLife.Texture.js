@@ -65,12 +65,14 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 	// If the UUID is null, we just stick the no-image image up.
 	if(texture == AjaxLife.Utils.UUID.Zero)
 	{
+		AjaxLife.Debug("Texture: Replacing null image with default texture");
 		replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
 	}
 	else
 	{
 		if(slsearch && (forceslsearch || (width <= 320 && height <= 240)))
 		{
+			AjaxLife.Debug("Texture: Using SL Search image for "+texture);
 			replaceimage("http://secondlife.com/app/image/"+texture+"/2");
 		}
 		else
@@ -82,20 +84,25 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 					AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
 					if(data.Success)
 					{
+						AjaxLife.Debug("Texture: Successfully downloaded "+data.UUID);
 						replaceimage(data.URL);
 					}
 					else
 					{
+						AjaxLife.Debug("Texture: Downloading "+data.UUID+" failed");
 						replaceimage(AjaxLife.STATIC_ROOT+'images/noimage.png');
 						AjaxLife.Widgets.Ext.msg("",_("Texture.DownloadFailed"));
 					}
 				}
 			});
+			
+			AjaxLife.Debug("Texture: Requesting "+texture);
 			AjaxLife.Network.Send("RequestTexture", {
 				ID: texture,
 				callback: function(data) {
 					if(data.Ready)
 					{
+						AjaxLife.Debug("Texture: "+texture+" was pre-cached; using cached image.");
 						replaceimage(data.URL);
 						AjaxLife.Network.MessageQueue.UnregisterCallback('ImageDownloaded', callbackid);
 					}

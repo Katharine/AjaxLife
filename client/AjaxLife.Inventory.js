@@ -78,6 +78,7 @@
  	{
 		if(node.leaf)
 		{
+			AjaxLife.Debug("Inventory: Renaming item "+node.attributes.UUID+" to "+text);
 			AjaxLife.Network.Send('RenameItem', {
 				Item: node.attributes.UUID,
 				TargetFolder: node.parentNode.attributes.UUID,
@@ -86,8 +87,13 @@
 		}
 		else
 		{
+			AjaxLife.Debug("Inventory: Reverting folder rename.");
 			node.setText(oldtext);
-			AjaxLife.Widgets.Ext.msg("Error","Can't rename folders.");
+			
+			// Have to do this to avoid "Too much recursion" type errors.
+			setTimeout(function() {
+				AjaxLife.Widgets.Ext.msg("Error","Can't rename folders.");
+			}, 100);
 		}
 	}
  	
@@ -106,7 +112,7 @@
 				title: _("Inventory.WindowTitle")
 			});
 			var treeholder = Ext.get(document.createElement('div'));
-			treeholder.setStyle({overflow: 'auto'});
+			treeholder.setStyle({overflow: 'scroll'});
  			win.body.dom.appendChild(treeholder.dom);
  			
 			var root = new Tree.TreeNode({
@@ -177,6 +183,7 @@
 				if(!node.attributes.loaded && !node.attributes.loading)
 				{
 					node.attributes.loading = true;
+					AjaxLife.Debug("Inventory: Loading folder "+node.attributes.UUID);
 					AjaxLife.Network.Send('LoadInventoryFolder', {
 						UUID: node.attributes.UUID
 					});
@@ -189,6 +196,7 @@
 				var newparent = (event.point == 'append') ? event.target : event.target.parentNode;
 				if(node.leaf)
 				{
+					AjaxLife.Debug("Moving "+node.attributes.UUID+" to folder "+newparent.attributes.UUID);
 					AjaxLife.Network.Send('MoveItem', {
 						Item: node.attributes.UUID,
 						TargetFolder: newparent.attributes.UUID,
@@ -197,6 +205,7 @@
 				}
 				else
 				{
+					AjaxLife.Debug("Moving "+node.attributes.UUID+" to folder "+newparent.attributes.UUID);
 					AjaxLife.Network.Send('MoveFolder', {
 						Folder: node.attributes.UUID,
 						NewParent: newparent.attributes.UUID
