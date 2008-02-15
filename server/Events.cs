@@ -546,9 +546,26 @@ namespace AjaxLife
 
         public void Assets_OnAssetReceived(AssetDownload transfer, Asset asset)
         {
-            if (transfer == null || asset == null)
+            if (asset == null && transfer != null)
             {
-                Console.WriteLine("Null transfer/asset");
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "AssetReceived");
+                hash.Add("Success", false);
+                if (transfer != null)
+                {
+                    hash.Add("TransferID", transfer.ID);
+                    hash.Add("AssetID", transfer.AssetID);
+                    hash.Add("Error", transfer.Status.ToString());
+                    hash.Add("AssetType", transfer.AssetType);
+                }
+                this.pending.Enqueue(hash);
+                return;
+            }
+            if (transfer == null)
+            {
+                Hashtable hash = new Hashtable();
+                hash.Add("MessageType", "NullTransfer");
+                this.pending.Enqueue(hash);
                 return;
             }
             try

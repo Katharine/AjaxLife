@@ -476,6 +476,7 @@ namespace AjaxLife.Html
                             {
                                 folderlist.Add(new LLUUID(folders[i]));
                             }
+                            client.Inventory.Remove(itemlist, folderlist);
                         }
                         break;
                     case "GiveInventory":
