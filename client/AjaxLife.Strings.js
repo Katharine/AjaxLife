@@ -178,7 +178,8 @@ AjaxLife.Strings = {
 			WindowTitle: "Nearby Avatars"
 		},
 		Inventory: {
-			WindowTitle: "Inventory"
+			WindowTitle: "Inventory",
+			NullAssetTransfer: "An asset request failed."
 		},
 		InventoryDialogs: {
 			Texture: {

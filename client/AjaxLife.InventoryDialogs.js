@@ -131,44 +131,53 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 		// Unregister it - we aren't going to receive more than one, so leaving it registered
 		// is a waste of CPU time.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
-		// This parses the Linden notecard format.
-		var text = data.AssetData;
-		// This is the number of items we're expecting.
-		// We don't actually use this for anything, yet.
-		var count = text.match(/count ([0-9]+?)/)[0];
-		var stack = -1;
-		// loop through until we reach the the end of the embedded blocks.
-		// This isn't particularly efficient, but these headers are always fairly short,
-		// so it doesn't really matter.
-		var i;
-		for(i = 0; i < text.length; ++i)
+		var text = '';
+		if(data.Success)
 		{
-			var char = text.substr(i,1);
-			if(char == '{')
+			// This parses the Linden notecard format.
+			text = data.AssetData;
+			// This is the number of items we're expecting.
+			// We don't actually use this for anything, yet.
+			var count = text.match(/count ([0-9]+?)/)[0];
+			var stack = -1;
+			// loop through until we reach the the end of the embedded blocks.
+			// This isn't particularly efficient, but these headers are always fairly short,
+			// so it doesn't really matter.
+			var i;
+			for(i = 0; i < text.length; ++i)
 			{
-				++stack;
-			}
-			else if(char == '}')
-			{
-				--stack;
-				if(stack <= 0)
+				var char = text.substr(i,1);
+				if(char == '{')
 				{
-					break;
+					++stack;
+				}
+				else if(char == '}')
+				{
+					--stack;
+					if(stack <= 0)
+					{
+						break;
+					}
 				}
 			}
+			// Cut off everything past that point.
+			text = text.substr(i+1);
+			// Work out how many characters we expect.
+			// Note that this number seems to be somewhat off, so we ignore it and proceed to
+			// just take the whole thing minus the last character.
+			var length = text.match(/Text length ([0-9]+)/)[0].strip();
+			text = text.replace(/Text length ([0-9]+)\w/,'').strip();
+			text = text.substr(0,text.length - 1);
+			win.body.dom.setStyle({backgroundColor: 'white'});
 		}
-		// Cut off everything past that point.
-		text = text.substr(i+1);
-		// Work out how many characters we expect.
-		// Note that this number seems to be somewhat off, so we ignore it and proceed to
-		// just take the whole thing minus the last character.
-		var length = text.match(/Text length ([0-9]+)/)[0].strip();
-		text = text.replace(/Text length ([0-9]+)\w/,'').strip();
-		text = text.substr(0,text.length - 1);
+		else
+		{
+			text = "Failed to download asset: "+data.Error.escapeHTML();
+		}
 		// Put the text into the window, replacing the placeholder.
 		// Oddly, IE doesn't mind the backgroundColor here.
 		//TODO: Figure out why IE likes this and not the previous attempt.
-		win.body.dom.update(AjaxLife.Utils.FixText(text)).setStyle({backgroundColor: 'white'});
+		win.body.dom.update(AjaxLife.Utils.FixText(text));
 	});
 	
 	// Actually download the texture.
@@ -233,8 +242,16 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 		AjaxLife.Debug("InventoryDialogs: Received script asset "+inventoryid);
 		// Unregister the callback, since we don't need it any more.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
-		// Highlight and display the script. (Highlight function is further down in this file)
-		win.body.dom.update(AjaxLife.HighlightLSL(data.AssetData)).setStyle({backgroundColor: 'white'});
+		
+		if(data.Success)
+		{
+			// Highlight and display the script. (Highlight function is further down in this file)
+			win.body.dom.update(AjaxLife.HighlightLSL(data.AssetData)).setStyle({backgroundColor: 'white'});
+		}
+		else
+		{
+			win.body.dom.update("Couldn't download script: "+data.Error.escapeHTML());
+		}
 	});
 	
 	
