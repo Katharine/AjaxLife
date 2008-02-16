@@ -1,4 +1,4 @@
-	/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2007, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,6 +81,8 @@ AjaxLife.Network.MessageQueue = function() {
 	var requesting = false;
 	var link = new Ext.data.Connection({timeout: 60000});
 	var callbacks = {};
+	var interval = false;
+	var lastmessage = false;
 	
 	// This function handled the incoming message queue, which should be an array.
 	function processqueue(queue) {
@@ -139,13 +141,14 @@ AjaxLife.Network.MessageQueue = function() {
 					var parsed = '';
 					for(var i in item)
 					{
-						parsed += i+': '+item[i]+'<br />';
+						parsed += i+': '+item[i]+'\n';
 					}
-					AjaxLife.Widgets.Ext.msg(_("Network.UnhandledMessage"),parsed);
+					AjaxLife.Debug("Unhandled message: "+parsed);
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Error in processqueue (state 'unhandled')",e.name+" - "+e.message);
+					// This should never happen. The number of things going wrong you'd have to have to get here is
+					// high enough that we can just ignore this - especially since no useful information can be gleaned anyway.
 				}
 			}
 		});
@@ -154,6 +157,7 @@ AjaxLife.Network.MessageQueue = function() {
 	// This function deals with incoming data from the queue.
 	function queuecallback(options, success, response)
 	{
+		lastmessage = new Date();
 		// This can sometimes be called after disconnecting. This results in strange inconsistencies,
 		// so ignore it.
 		if(!AjaxLife.Network.Connected) return;
@@ -184,6 +188,8 @@ AjaxLife.Network.MessageQueue = function() {
 			AjaxLife.Widgets.Ext.msg("Error in queuecallback",e.name+" - "+e.message);
 		}
 		requesting = false;
+		// We have to do this in case we were disconnected while processing the above - e.g. if we received a
+		// simulator crash message. It wouldn't hurt anything to do it again, but it would be a waste.
 		if(AjaxLife.Network.Connected) requestqueue();
 	}
 	
@@ -204,11 +210,26 @@ AjaxLife.Network.MessageQueue = function() {
 		});
 	};	
 	
+	function checkstatus() {
+		var now = new Date();
+		// If the time difference (measured in milliseconds) is greater than 30 seconds...
+		if(now.getTime() - lastmessage.getTime() > 35000)
+		{
+			AjaxLife.Widgets.Ext.msg("",__("Network.Reconnecting"));
+			AjaxLife.Network.MessageQueue.shutdown();
+			AjaxLife.Network.MessageQueue.init();
+		}
+	};
+	
 	return {
 		// Public
-		// Brings up the message queue. Called once the rest of the system is ready.
+		// Brings up the message queue. Called once the rest of the system is ready,
+		// in order to prevent the loss of any messages.
 		init: function() {
 			//timer = setInterval(requestqueue,1000);
+			// Set the time of last message.
+			lastmessage = new Date();
+			interval = setInterval(checkstatus,5000);
 			AjaxLife.Network.Connected = true;
 			requestqueue();
 		},
@@ -217,6 +238,7 @@ AjaxLife.Network.MessageQueue = function() {
 			//clearInterval(timer);
 			requesting = false;
 			AjaxLife.Network.Connected = false;
+			clearInterval(interval);
 			link.abort();
 		},
 		// Very important function - registers a callback for incoming data.
@@ -276,7 +298,7 @@ AjaxLife.Network.Send = function(message, opts) {
 				}
 				catch(e)
 				{
-					AjaxLife.Widgets.Ext.msg("Error in Network.Send",e.name+" - "+e.message+"<br />Message: "+message);
+					AjaxLife.Debug("Network: Error sending message: "+e.name+" - "+e.message);
 					AjaxLife.Widgets.Ext.msg("",response.responseText);
 				}
 			}

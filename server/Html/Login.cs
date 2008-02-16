@@ -84,6 +84,7 @@ namespace AjaxLife.Html
                 // Set the user session properties.
                 user.Client = client;
                 user.LastRequest = DateTime.Now;
+                user.Rotation = -Math.PI;
                 // Generate a single-use challenge key.
                 user.Challenge = RSACrypto.CreateChallengeString(AjaxLife.RSAp);
                 // Add the session to the users.
