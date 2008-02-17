@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -190,7 +190,8 @@ AjaxLife.MiniMap = function() {
 		context.fillStyle = "rgb(0,255,0)";
 		// Difference between our height and the other person's height.
 		var diff = mark.Z - pos.z;
-		if(Math.round(pos.x) == mark.X && Math.round(pos.y) == mark.Y && Math.round(pos.z) == mark.Z) return;
+		// Don't draw a green mark for ourselves.
+		if(Math.round(pos.x) == mark.X && Math.round(pos.y) == mark.Y) return;
 		if(!mark.Z) return;
 		// Everything is divided by scale to compensate for any resizing that has taken place.
 		// Draw the down-pointing version for more than 2.5m below us.

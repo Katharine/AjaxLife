@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -362,5 +362,12 @@ AjaxLife.Constants = {
 			Animation: 19,
 			Gesture: 20
 		}
+	},
+	Permissions: {
+		Transfer:	0x00002000,
+		Modify:		0x00004000,
+		Copy:		0x00008000,
+		Move:		0x00080000,
+		All:		0x7FFFFFFF
 	}
 };

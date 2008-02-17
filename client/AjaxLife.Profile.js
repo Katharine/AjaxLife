@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -237,6 +237,63 @@ AjaxLife.Profile = function(agentid) {
 		top: '385px',
 		left: '10px'
 	});
+	var dd_inventory = $(document.createElement('div'));
+	dd_inventory.setAttribute('id','dd_profile_'+agentid);
+	dd_inventory.setStyle({
+		top: '360px',
+		left: '220px',
+		position: 'absolute',
+		height: '44px',
+		width: '100px',
+		backgroundColor: '#ddd',
+		textAlign: 'center',
+		paddingTop: 'auto',
+		paddingBottom: 'auto',
+		borderWidth: '1px',
+		borderStyle: 'solid',
+		borderColor: '#000'
+	});
+	dd_inventory.appendChild(document.createTextNode("Drop inventory here"));
+	
+	var dd_inventory_dd = new Ext.dd.DropTarget(dd_inventory, {
+		ddGroup: "InventoryDD",
+		copy: true,
+		notifyDrop: function(dd, e, data) {
+			var node = data.node;
+			data = data.node.attributes;
+			if(!node.leaf)
+			{
+				AjaxLife.Widgets.Ext.msg("",_("Inventory.NoFolderTransfer", {item: data.Name}));
+				return false;
+			}
+			if(data.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Transfer)
+			{
+				var confirmation = _("Inventory.ConfirmNoCopyTransfer", {item: data.Name});
+				if(data.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Copy)
+				{
+					confirmation = _("Inventory.ConfirmTransfer", {item: data.Name, first: firstname, last: lastname});
+				}
+				Ext.Msg.confirm(_("Inventory.TransferConfirmTitle"), confirmation,function(btn) {
+					if(btn == 'yes')
+					{
+						AjaxLife.Network.Send("GiveInventory", {
+							ItemID: data.UUID,
+							ItemName: data.Name,
+							AssetType: data.AssetType,
+							Recipient: agentid
+						});
+					}
+				});
+				return true;
+			}
+			else
+			{
+				AjaxLife.Widgets.Ext.msg("",_("Inventory.NoNoTransferTransfer", {item: data.Name}));
+				return false;
+			}
+		}
+	});
+	
 	// Append...
 	tab_sl.bodyEl.addClass("profile 2ndlife");
 	tab_sl.bodyEl.dom.appendChild(div_name.dom);
@@ -249,6 +306,7 @@ AjaxLife.Profile = function(agentid) {
 	tab_sl.bodyEl.dom.appendChild(div_sl_about.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups_label.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups.dom);
+	tab_sl.bodyEl.dom.appendChild(dd_inventory);
 	tab_sl.activate();
 	// 1st Life
 	tab_fl = win.getTabs().addTab("profile_tab_"+agentid+"_1stlife",_("Profile.FirstLife"));
