@@ -40,35 +40,35 @@
  		switch(type)
  		{
 		case T.Texture:
-			return 'item_texture.gif';
+			return 'item_texture.png';
 		case T.Sound:
-			return 'item_sound.gif';
+			return 'item_sound.png';
 		case T.Animation:
-			return 'item_animation.gif';
+			return 'item_animation.png';
 		case T.CallingCard:
-			return 'item_callingcard_offline.gif';
+			return 'item_callingcard.png';
 		case T.Landmark:
-			return 'item_landmark.gif';
+			return 'item_landmark.png';
 		case T.LSL:
-			return 'item_script.gif';
+			return 'item_script.png';
 		case T.Wearable:
-			return 'item_clothing.gif';
+			return 'item_clothing.png';
 		case T.Object:
-			return 'item_object.gif';
+			return 'item_object.png';
 		case T.Notecard:
-			return 'item_notecard.gif';
+			return 'item_notecard.png';
 		case T.Category:
 		case T.Folder:
 		case T.RootCategory:
-			return 'folder_plain_closed.gif';
+			return 'folder_plain_closed.png';
 		case T.Snapshot:
-			return 'item_snapshot.gif';
+			return 'item_snapshot.png';
 		case T.Attachment:
-			return 'item_attach.gif';
+			return 'item_attach.png';
 		case T.Animation:
-			return 'item_animation.gif';
+			return 'item_animation.png';
 		case T.Gesture:
-			return 'item_gesture.gif';
+			return 'item_gesture.png';
 		default:
 			return '../s.gif';
 		}
