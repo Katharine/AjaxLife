@@ -74,6 +74,44 @@
 		}
  	}
  	
+ 	function getfoldericon(type)
+ 	{
+ 		// We don't have any nice constants for this one.
+ 		switch(type)
+ 		{
+ 			case 0:
+ 				return 'folder_texture.png';
+ 			case 3:
+ 				return 'folder_landmark.png';
+ 			case 6:
+ 				return 'folder_object.png';
+ 			case 13:
+ 				return 'folder_bodypart.png';
+ 			case 5:
+ 				return 'folder_clothing.png';
+ 			case 2:
+ 				return 'folder_callingcard.png';
+ 			case 15:
+ 				return 'folder_snapshot.png';
+ 			case 7:
+ 				return 'folder_notecard.png';
+ 			case 10:
+ 				return 'folder_script.png';
+ 			case 16:
+ 				return 'folder_lostandfound.png';
+ 			case 21:
+ 				return 'folder_gesture.png';
+ 			case 14:
+ 				return 'folder_trash.png';
+ 			case 20:
+ 				return 'folder_animation.png';
+ 			case 1:
+ 				return 'folder_sound.png';
+ 			default:
+ 				return 'folder_plain_closed.png';
+ 		}
+ 	}
+ 	
  	function textchanged(node, text, oldtext)
  	{
 		if(node.leaf)
@@ -115,7 +153,7 @@
 			var root = new Tree.TreeNode({
 				text: 'My Inventory',
 				draggable: false,
-				icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.gif'
+				icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.png'
 			});
 			
 			// Create a root node. The tree is set up to be analogous to the inventory tree
@@ -265,7 +303,7 @@
 								text: item.Name,
 								leaf: false,
 								draggable: true,
-								icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.gif'
+								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getfoldericon(item.PreferredType)
 							});
 							newnode.attributes.PreferredType = item.PreferredType;
 							newnode.attributes.OwnerID = item.OwnerID;
