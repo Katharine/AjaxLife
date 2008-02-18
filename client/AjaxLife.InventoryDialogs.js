@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -146,12 +146,12 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 			var i;
 			for(i = 0; i < text.length; ++i)
 			{
-				var char = text.substr(i,1);
-				if(char == '{')
+				var chr = text.substr(i,1);
+				if(chr == '{')
 				{
 					++stack;
 				}
-				else if(char == '}')
+				else if(chr == '}')
 				{
 					--stack;
 					if(stack <= 0)

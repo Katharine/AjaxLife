@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -104,8 +104,14 @@ AjaxLife.ScriptDialogs = function() {
 		
 		var table = $(document.createElement('table'));
 		table.addClassName('llDialog');
-		dlg.body.dom.appendChild(table);
 		var tr = false;
+		
+		var mkfunction = function(i, btn) {
+			return function() {
+				btnhandler(i, btn);
+			}
+		}
+		
 		for(var i = 0; i < buttons.length; ++i)
 		{
 			var btn = buttons[i];
@@ -116,11 +122,10 @@ AjaxLife.ScriptDialogs = function() {
 			}
 			var td = document.createElement('td');
 			tr.appendChild(td);
+			var f = mkfunction(i, btn);
 			new Ext.Button(td, {
 				text: btn,
-				handler: function() {
-					btnhandler(i, btn);	
-				}
+				handler: f
 			});
 		}
 		dlg.addButton("Ignore",function() {
@@ -138,6 +143,7 @@ AjaxLife.ScriptDialogs = function() {
 			message: data.Message
 		});
 		msgEl.innerHTML = text || '&#160;';
+		msgEl.appendChild(table);
 		dlg.show();
 		return dlg;
 	}
