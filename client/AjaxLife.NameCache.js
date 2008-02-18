@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,12 +72,11 @@ AjaxLife.NameCache = function () {
 		// Intialisation - sets up listener for keypair lookup responses.
 		init: function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {
-				for(var i in data.Names)
+				for(var key in data.Names)
 				{
 					// Hyphenate the key.
-					var key = i.substr(0,8)+"-"+i.substr(8,4)+"-"+i.substr(12,4)+"-"+i.substr(16,4)+"-"+i.substr(20);
-					AjaxLife.Debug("NameCache: Received key/name pair "+key+" => "+data.Names[i]);
-					add(key,data.Names[i]);
+					AjaxLife.Debug("NameCache: Received key/name pair "+key+" => "+data.Names[key]);
+					add(key,data.Names[key]);
 				}
 			});
 		}

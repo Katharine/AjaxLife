@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -179,7 +179,14 @@ AjaxLife.Strings = {
 		},
 		Inventory: {
 			WindowTitle: "Inventory",
-			NullAssetTransfer: "An asset request failed."
+			NullAssetTransfer: "An asset request failed.",
+			OfferAccepted: "#{name} accepted your inventory offer.",
+			OfferDeclined: "#{name} declined your inventory offer.",
+			NoFolderTransfer: "Unfortunately, giving folders is not yet supported.",
+			NoNoTransferTransfer: "'#{item}' is no transfer, so cannot be given away.",
+			ConfirmTransfer: "Are you sure you want to give #{item} to #{first} #{last}?",
+			ConfirmNoCopyTransfer: "#{item} is not copyable. If you give it away, you will lose your copy.<br /><br />Do you wish to give #{first} #{last} #{item}?",
+			ConfirmTransferTitle: "Inventory transfer"
 		},
 		InventoryDialogs: {
 			Texture: {

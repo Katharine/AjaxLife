@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@
  	var Tree = Ext.tree;
  	var inventory = {};
  	var tree = false;
- 	var editor = false;
  	var win = false;
  	var list = false;
  	var T = AjaxLife.Constants.Inventory.InventoryType;	
@@ -176,14 +175,6 @@
 				'lines': false
 			});
 			tree.setRootNode(root);
-			editor = new Tree.TreeEditor(tree, {
-				allowBlank: false,
-				blankText: _("Inventory.NoBlankText"),
-				selectOnFocus: true,
-				cancelOnEsc: true,
-				completeOnEnter: true,
-				ignoreNoChange: true
-			});		
 			
 			// Handle double clicking of inventory items by opening the appriopriate type of window.
 			tree.on('dblclick', function(node) {
@@ -370,6 +361,18 @@
  				AjaxLife.Widgets.Ext.msg("", _("Inventory.NullAssetTransfer"));
  			});
  			
+ 			// Handle accepted/declined inventory offers.
+ 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
+ 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryAccepted)
+ 				{
+ 					AjaxLife.Widgets.Ext.msg("", _("Inventory.OfferAccepted", {name: data.FromAgentName}));
+ 				}
+ 				else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.InventoryDeclined)
+ 				{
+ 					AjaxLife.Widgets.Ext.msg("", _("Inventory.OfferDeclined", {name: data.FromAgentName}));
+ 				}
+ 			});
+ 			
  		},
 		open: function(opener) {
 			if(opener)
@@ -392,6 +395,12 @@
 			else
 			{
 				this.close();
+			}
+		},
+		removenode: function(node) {
+			if(node && node.parentNode)
+			{
+				node.parentNode.removeChild(node);
 			}
 		}
  	};

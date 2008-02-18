@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -552,7 +552,7 @@ AjaxLife.Map = function() {
 								_("Map.TeleportSuccess", {sim: response.Sim, x: Math.round(response.Position.X), y: Math.round(response.Position.Y), z: Math.round(response.Position.Z)})
 							);
 							AjaxLife.Map.move(response.Sim, response.Position.X, response.Position.Y, response.Position.Z);
-							setTimeout('AjaxLife.Network.Send("SendAppearance",{})',1000);
+							setTimeout('AjaxLife.Network.Send("SendAppearance",{});AjaxLife.Network.Send("ReRotate",{});',1000);
 						}
 					});
 				}

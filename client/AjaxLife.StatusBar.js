@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,6 @@ AjaxLife.StatusBar = function() {
 			
 			// Register for the UsefulData in order to update the position shown in the top-left whenever possible.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
-				AjaxLife.Debug("StatusBar: Received UsefulData from "+data.YourRegion);
 				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+')');
 			});
 			

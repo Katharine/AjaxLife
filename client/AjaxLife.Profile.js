@@ -251,7 +251,8 @@ AjaxLife.Profile = function(agentid) {
 		paddingBottom: 'auto',
 		borderWidth: '1px',
 		borderStyle: 'solid',
-		borderColor: '#000'
+		borderColor: '#000',
+		cursor: 'pointer'
 	});
 	dd_inventory.appendChild(document.createTextNode("Drop inventory here"));
 	
@@ -268,12 +269,14 @@ AjaxLife.Profile = function(agentid) {
 			}
 			if(data.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Transfer)
 			{
-				var confirmation = _("Inventory.ConfirmNoCopyTransfer", {item: data.Name});
+				var confirmation = _("Inventory.ConfirmNoCopyTransfer", {item: data.Name, first: firstname, last: lastname});
+				var cancopy = false;
 				if(data.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Copy)
 				{
 					confirmation = _("Inventory.ConfirmTransfer", {item: data.Name, first: firstname, last: lastname});
+					cancopy = true;
 				}
-				Ext.Msg.confirm(_("Inventory.TransferConfirmTitle"), confirmation,function(btn) {
+				Ext.Msg.confirm(_("Inventory.ConfirmTransferTitle"), confirmation,function(btn) {
 					if(btn == 'yes')
 					{
 						AjaxLife.Network.Send("GiveInventory", {
@@ -282,6 +285,10 @@ AjaxLife.Profile = function(agentid) {
 							AssetType: data.AssetType,
 							Recipient: agentid
 						});
+						if(!cancopy)
+						{
+							AjaxLife.Inventory.removenode(node);
+						}
 					}
 				});
 				return true;
@@ -354,7 +361,7 @@ AjaxLife.Profile = function(agentid) {
 		if(!active || data.AvatarID != agentid) return;
 		
 		// 2nd Life
-		new AjaxLife.Texture(img_sl.dom,181,136,data.ProfileImage);
+		new AjaxLife.Texture(img_sl.dom,181,136,data.ProfileImage,true);
 		div_born.dom.update(_("Profile.JoinDate", {date: data.BornOn}));
 		div_online.dom.update(_(data.Online?"Profile.Online":"Profile.Offline"));
 		var payment = "";
