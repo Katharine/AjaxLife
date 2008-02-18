@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -481,8 +481,11 @@ namespace AjaxLife.Html
                         break;
                     case "GiveInventory":
                         {
-                            client.Inventory.GiveItem(new LLUUID(POST["ItemID"]), POST["ItemName"], (AssetType)int.Parse(POST["AssetType"]), new LLUUID("Recipient"), true);
+                            client.Inventory.GiveItem(new LLUUID(POST["ItemID"]), POST["ItemName"], (AssetType)int.Parse(POST["AssetType"]), new LLUUID(POST["Recipient"]), true);
                         }
+                        break;
+                    case "ReRotate":
+                        user.Rotation = -Math.PI;
                         break;
                 }
             }
