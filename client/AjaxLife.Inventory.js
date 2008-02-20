@@ -73,13 +73,21 @@
 		}
  	}
  	
- 	function getfoldericon(type)
+ 	function getfoldericon(type, name)
  	{
  		// We don't have any nice constants for this one.
  		switch(type)
  		{
  			case 0:
- 				return 'folder_texture.png';
+ 				// Fixes bug where all folders get the texture icon.
+ 				if(name == 'Textures')
+ 				{
+ 					return 'folder_texture.png';
+ 				}
+ 				else
+ 				{
+ 					return getfoldericon(-1);
+ 				}
  			case 3:
  				return 'folder_landmark.png';
  			case 6:
@@ -294,7 +302,7 @@
 								text: item.Name,
 								leaf: false,
 								draggable: true,
-								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getfoldericon(item.PreferredType)
+								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getfoldericon(item.PreferredType, item.Name)
 							});
 							newnode.attributes.PreferredType = item.PreferredType;
 							newnode.attributes.OwnerID = item.OwnerID;

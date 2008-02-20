@@ -184,8 +184,9 @@ AjaxLife.Profile = function(agentid) {
 		top: '360px',
 		left: '120px'
 	});
-	// The "add friend" button is only shown if this person isn't your friend already.
-	if(!AjaxLife.Friends.IsFriend(agentid))
+	// The "add friend" button is only shown if this person isn't your friend already,
+	// and you aren't viewing your own profile.
+	if(gAgentID != agentid && !AjaxLife.Friends.IsFriend(agentid))
 	{
 		var btn_friend = new Ext.Button(tab_sl.bodyEl.dom, {
 			handler: function() {
