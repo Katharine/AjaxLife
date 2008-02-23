@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -248,6 +248,7 @@ AjaxLife.InstantMessage = function() {
 			line.dom.appendChild(timestamp.dom);
 			line.dom.appendChild(document.createTextNode(" "+text));
 			chats[session].content.dom.appendChild(line.dom);
+			// Scroll to the end.
 			chats[session].content.dom.scrollTop = chats[session].content.dom.scrollHeight;
 		}
 		else
@@ -354,11 +355,15 @@ AjaxLife.InstantMessage = function() {
 					// Show typing note on StartTyping message, remove it on StopTyping.
 					if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.StartTyping)
 					{
+						// If it's already there higher up, remove it from there.
+						// This is arguably completely redundant.
 						if(chats[data.IMSessionID].div_typing.dom.parentNode)
 						{
 							chats[data.IMSessionID].div_typing.dom.parentNode.removeChild(chats[data.IMSessionID].div_typing.dom);
 						}
 						chats[data.IMSessionID].content.dom.appendChild(chats[data.IMSessionID].div_typing.dom);
+						// Scroll down to show it.
+						chats[data.IMSessionID].content.dom.scrollTop = chats[data.IMSessionID].content.dom.scrollHeight;
 					}
 					else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping)
 					{
