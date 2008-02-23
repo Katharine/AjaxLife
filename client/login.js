@@ -189,7 +189,7 @@ var md5 = function(s) {
 // Above license ends here.
 // -------------------------------------------------------------------------------
 
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -218,7 +218,7 @@ var md5 = function(s) {
 var submitexpected = false;
 var SUPPORTED_LANGUAGES = {
 	en: 'English',
-	he: 'Hebrew',
+	he: 'Hebrew (עברית)',
 	ja: 'Japanese',
 	pt_br: 'Portuguese (Brazil)'
 };

@@ -385,7 +385,15 @@ AjaxLife.Strings = {
 			WindowTitle: "דמויות קרובות"
 		},
 		Inventory: {
-			WindowTitle: "מלאי אישי"
+			WindowTitle: "מלאי אישי",
+			NullAssetTransfer: "התרחשה שגיאה בעת בקשת הנכס.",
+			OfferAccepted: "#{name} אישר את הצעת המלאי שלך.",
+			OfferDeclined: "#{name} סירב את הצעת המלאי שלך.",
+			NoFolderTransfer: "לצערנו, שליחת תיקיות אינה נתמכת כעת.",
+			NoNoTransferTransfer: "לצערנו, הפריט #{item} לא ניתן להעברה. כתוצאה מכך, הפריט שלך לא הועבר למשתמש.",
+			ConfirmTransfer: "האם אתה בטוח שברצונך לתת את הפריט #{item} למשתמש #{first} #{last}?",
+			ConfirmNoCopyTransfer: "#{item} לא ניתן להעתקה, אך ניתן להעברה. אם תמשיך בתהליך, העותק שלך ינתן למשתמש האחר.<br /><br />האם אתה בטוח שברצונך לתת למשתמש #{first} #{last} את הפריט #{item}?",
+			ConfirmTransferTitle: "העברת פריטים"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -414,6 +422,21 @@ AjaxLife.Strings = {
 			ChildAgents: "משתמשים בשרת שכן",
 			ALServer: "שרת תוכנה",
 			Sessions: "משתמשים בשרת תוכנה"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "הענקת רשות לקובץ תכנות",
+			PermissionRequestBody: "'#{object}', אובייקט אשר בעליו הם '#{owner}', רוצה לקבל את ההרשאה הבאה:<br /><br />#{permission}<br />לאשר?",
+			DialogMessage: "הפריט '#{object}' של #{first} #{last} אומר:<br />#{message}",
+			DialogTitle: "דיאלוג מקובץ תכנות"
+		},
+		Permissions: {
+			Debit: "לקחת כסף (L$) ממך",
+			TakeControls: "לדעת על אילו מקשי תנועה אתה לוחץ",
+			Animate: "להניע את הדמות שלך באמצעות אנימציה",
+			Attach: "להתחבר באופן פיזי לדמותך",
+			ChangeLinks: "לחבר ולהינתק מאובייקטים אחרים",
+			TrackCamera: "לעקוב אחרי זווית המצלמה שלך",
+			ControlCamera: "לשלוט בזווית המצלמה שלך"
 		}
 	},
 	// Translation by Alissa Sabre
