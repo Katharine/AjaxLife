@@ -74,8 +74,8 @@ AjaxLife.NameCache = function () {
 			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {
 				for(var key in data.Names)
 				{
-					// Hyphenate the key.
 					AjaxLife.Debug("NameCache: Received key/name pair "+key+" => "+data.Names[key]);
+					// Add it to the dictionary and run any required callbacks.
 					add(key,data.Names[key]);
 				}
 			});

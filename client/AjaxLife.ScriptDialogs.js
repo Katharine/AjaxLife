@@ -39,6 +39,7 @@ AjaxLife.ScriptDialogs = function() {
 	{
 		var p = AjaxLife.Constants.MainAvatar.ScriptPermission;
 		var permissions = "";
+		// Check the appropriate permissions and add to the list if needed.
 		if(data.Permissions & p.Debit) permissions += _('Permissions.Debit',{})+'\n';
 		if(data.Permissions & p.TakeControls) permissions += _('Permissions.TakeControls',{})+'\n';
 		if(data.Permissions & p.TriggerAnimation) permissions += _('Permissions.Animate',{})+'\n';
@@ -46,6 +47,7 @@ AjaxLife.ScriptDialogs = function() {
 		if(data.Permissions & p.ChangeLinks) permissions += _('Permissions.ChangeLinks',{})+'\n';
 		if(data.Permissions & p.TrackCamera) permissions += _('Permissions.TrackCamera',{})+'\n';
 		if(data.Permissions & p.ControlCamera) permissions += _('Permissions.ControlCamera',{})+'\n';
+		// Ask the question.
 		Ext.Msg.confirm(
 			_('ScriptDialogs.PermissionRequestTitle',{}),
 			_('ScriptDialogs.PermissionRequestBody',{
@@ -54,11 +56,14 @@ AjaxLife.ScriptDialogs = function() {
 				permission: permissions
 			}),
 			function(btn) {
+				// When we get a response, check what it was. If yes, grant the permissions.
+				// If no, grant 0 permissions (i.e. none).
 				var respperms = 0;
 				if(btn == 'yes')
 				{
 					respperms = data.Permissions;
 				}
+				// Send the permission response to the server.
 				AjaxLife.Network.Send('ScriptPermissionResponse', {
 					ItemID: data.ItemID,
 					TaskID: data.TaskID,
@@ -75,6 +80,7 @@ AjaxLife.ScriptDialogs = function() {
 			dlg.hide();
 		}
 		
+		// Create a window with a unique ID.
 		var dlg = new Ext.BasicDialog('dlg_lldialog_'+ AjaxLife.ScriptDialogCount, {	
 			width: '400px',
 			height: '300px',
@@ -88,12 +94,14 @@ AjaxLife.ScriptDialogs = function() {
 			}
 		});
 		
+		// Build some content for it.
 		var bodyEl = dlg.body.createChild({
 			html:'<span></span><br />'
 		});
 		
 		var msgEl = bodyEl.dom.firstChild;
 		
+		// Make the thing die when you destroy it.
 		dlg.on("hide", function() {
 			dlg.destroy(true);
 		});
@@ -102,6 +110,7 @@ AjaxLife.ScriptDialogs = function() {
 			dlg.hide();
 		});
 		
+		// Make a button table and style it appropriately.
 		var table = $(document.createElement('table'));
 		table.addClassName('llDialog');
 		var tr = false;
@@ -112,6 +121,9 @@ AjaxLife.ScriptDialogs = function() {
 			}
 		}
 		
+		// Loop through our buttons, adding them to the table.
+		// Every third button we add a new table row, resulting in a grid
+		// of buttons with rows of three.
 		for(var i = 0; i < buttons.length; ++i)
 		{
 			var btn = buttons[i];
@@ -128,6 +140,7 @@ AjaxLife.ScriptDialogs = function() {
 				handler: f
 			});
 		}
+		// Place an "Ignore" button at the bottom right.
 		dlg.addButton("Ignore",function() {
 			btnhandler(-1,"Ignore");
 		});
@@ -136,6 +149,7 @@ AjaxLife.ScriptDialogs = function() {
 			border: '0 none',
 			fontSize: '13px'
 		});
+		// Put the window together and show it.
 		var text = _("ScriptDialogs.DialogMessage", {
 			object: data.ObjectName,
 			first:  data.FirstName,
@@ -155,6 +169,8 @@ AjaxLife.ScriptDialogs = function() {
 			buttonobj[item] = item;
 		});
 		llDialog(data,data.Buttons,function(index, btn) {
+			// If the index isn't -1 (i.e. "Ignore") or the button blank, send back
+			// the response.
 			if(index == -1 || btn == '') return;
 			AjaxLife.Network.Send('ScriptDialogReply', {
 				ButtonIndex: index,
@@ -167,6 +183,7 @@ AjaxLife.ScriptDialogs = function() {
 
 	return {
 		init: function() {
+			// Register for the events that are triggered by llDialog and llRequestPermissions.
 			AjaxLife.Network.MessageQueue.RegisterCallback('ScriptPermissionRequest',permissionrequest);
 			AjaxLife.Network.MessageQueue.RegisterCallback('ScriptDialog',scriptdialog);
 		}
