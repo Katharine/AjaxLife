@@ -591,7 +591,15 @@ AjaxLife.Strings = {
 			WindowTitle: "近くの人々"
 		},
 		Inventory: {
-			WindowTitle: "持ち物"
+			WindowTitle: "持ち物",
+			NullAssetTransfer: "アセット要求が失敗しました。",
+			OfferAccepted: "#{name}がアイテムを受け取りました。",
+			OfferDeclined: "#{name}がアイテムを辞退しました。",
+			NoFolderTransfer: "今のところ、フォルダごと渡すことはできません。",
+			NoNoTransferTransfer: "#{item}は譲渡不可です。他人に渡すことはできません。",
+			ConfirmTransfer: "#{first} #{last}に#{item}を渡そうとしています。間違いありませんか?",
+			ConfirmNoCopyTransfer: "#{item}はコピー不可です。他人に渡すと、あなたの手元には残りません。<br /><br />#{first} #{last}に#{item}を渡していいですか?",
+			ConfirmTransferTitle: "持ち物を渡す"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -620,6 +628,21 @@ AjaxLife.Strings = {
 			ChildAgents: "子エージェント",
 			ALServer: "AjaxLifeサーバ",
 			Sessions: "セション"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "スクリプトの権限",
+			PermissionRequestBody: "'#{owner}'が所有する'#{object}'が、以下の権限を求めています:<br /><br />#{permission}<br />許可しますか?",
+			DialogMessage: "#{first} #{last}の'#{object}':<br />#{message}",
+			DialogTitle: "スクリプトからのメッセージ"
+		},
+		Permissions: {
+			Debit: "Lindenドル（L$）を徴収する",
+			TakeControls: "アバター操作介入する",
+			Animate: "アバターに動きをつける",
+			Attach: "アバターに装着したり外れたりする",
+			ChangeLinks: "他のオブジェクトとリンクしたり解除したりする",
+			TrackCamera: "カメラの状態を得る",
+			ControlCamera: "カメラを制御する"
 		}
 	},
 	// by Aurelio A. Heckert (http://aurium.cjb.net)
