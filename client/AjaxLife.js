@@ -114,14 +114,29 @@ AjaxLife.Startup = function() {
 		AjaxLife.Debug("AjaxLife: Startup complete.");
 	}, 3000);
 	// If someone leaves the page, and we're still connected, give them the chance to cancel and log out properly.
-	window.onbeforeunload = function() {
-		AjaxLife.Debug("AjaxLife: onbeforeunload fired.");
-		if(AjaxLife.Network.Connected)
-		{
-			AjaxLife.Debug("AjaxLife: pageleave prevented.");
-			return "Leaving this page now is not recommended.\nIf you're sure you want to leave, you should first use the Logout button below.";
-		}
-	};
-	AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");	
 	AjaxLife.Debug("AjaxLife: Waiting for precaching to complete.");
 }
+
+window.onbeforeunload = function() {
+	AjaxLife.Debug("AjaxLife: onbeforeunload fired.");
+	if(AjaxLife.Network.Connected)
+	{
+		AjaxLife.Debug("AjaxLife: pageleave prevented.");
+		return "Leaving this page now is not recommended.\nIf you're sure you want to leave, you should first use the Logout button below.";
+	}
+};
+
+if(window.parent)
+{
+	try
+	{
+		window.parent.onbeforeunload = window.onbeforeunload;
+		window.parent.AjaxLife = AjaxLife;
+	}
+	catch(e)
+	{
+		AjaxLife.Debug("AjaxLife: Unable to set onbeforeunload handler in parent.");
+	}
+}
+
+AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");	
