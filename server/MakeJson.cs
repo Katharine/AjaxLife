@@ -1,6 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!--
+#region License
 /* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
@@ -26,15 +24,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
--->
-	<head>
-		<title>AjaxLife</title>
-	</head>
-	<frameset rows="*, 60" border="0" frameborder="0" framespacing="0" id="frameset">
-		<noframes>
-			<p><a href="login.kat">Begin</a></p>
-		</noframes>
-	<frame id="loginpage" src="http://ajaxlife.net/login/" />
-	<frame id="loginform" src="ajaxlife.kat" noscroll="noscroll" />
-	</frameset>
-</html>
+#endregion
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Collections;
+using System.Text;
+using System.IO;
+using AjaxLife.Converters;
+
+namespace AjaxLife
+{
+    class MakeJson
+    {
+        public static string FromHashtable(Hashtable hash)
+        {
+            StringWriter textWriter = new StringWriter();
+            JsonWriter jsonWriter = new JsonWriter(textWriter);
+            JsonSerializer serializer = new JsonSerializer();
+            LLUUIDConverter UUID = new LLUUIDConverter();
+            serializer.Converters.Add(UUID);
+            serializer.Serialize(jsonWriter, hash);
+            jsonWriter.Flush();
+            string text = textWriter.ToString();
+            jsonWriter.Close();
+            textWriter.Dispose();
+            return text;
+        }
+    }
+}

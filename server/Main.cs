@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -224,14 +224,15 @@ namespace AjaxLife
             // as they don't need to deal with SL) the Users dictionary. Users is a reference object,
             // so changes are reflected in all the pages. The same goes for individual User objects.
             root.AddFile(new Html.Index("index.html", root));
-            root.AddFile(new Html.Login("login.kat", root, Users));
+            root.AddFile(new Html.MainPage("ajaxlife.kat", root, Users));
             root.AddFile(new Html.Connect("connect.kat", root, Users));
-            root.AddFile(new Html.UI("main.kat", root, Users));
+            root.AddFile(new Html.LoginDetails("details.kat", root, Users));
             root.AddFile(new Html.Logout("logout.kat", root, Users));
             root.AddFile(new Html.EventQueue("eventqueue.kat", root, Users));
             root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
             root.AddFile(new Html.Proxy("differentorigin.kat", root));
             root.AddFile(new Html.BasicStats("ping.kat", root, Users));
+            root.AddFile("robots.txt");
 			// textures/ is only used if we aren't using S3 for textures.
 			if(!UseS3)
 			{

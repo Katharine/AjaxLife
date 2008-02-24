@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,11 @@ using libsecondlife;
 
 namespace AjaxLife.Html
 {
-    public class UI : IFile
+    public class LoginDetails : IFile
     {
         #region IFile Members
 
-        public UI(string name, IDirectory parent, Dictionary<Guid, User> users)
+        public LoginDetails(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -65,7 +65,6 @@ namespace AjaxLife.Html
                 User user;
                 // Get the session.
                 Dictionary<string, string> POST = AjaxLife.PostDecode((new StreamReader(request.PostData)).ReadToEnd());
-                Console.WriteLine(POST["sid"]);
                 Guid sessionid = new Guid(POST["sid"]);
                 // Standard user stuff.
                 lock (users)
@@ -76,24 +75,19 @@ namespace AjaxLife.Html
                     // Clear the inventory cache to avoid confusion.
                     user.Events.ClearInventory();
                 }
-                // Set up the template.
-                Hashtable replacements = new Hashtable();
-                replacements.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
-                string param = "";
-                param += "\t\t\tvar gRegionCoords = {x: " + Math.Floor(client.Self.GlobalPosition.X / 256) + ", y:" + Math.Floor(client.Self.GlobalPosition.Y / 256) + "};\n";
-                param += "\t\t\tvar gRegion = " + AjaxLife.StringToJSON(client.Network.CurrentSim.Name) + ";\n";
-                param += "\t\t\tvar gPosition = " + Newtonsoft.Json.JavaScriptConvert.SerializeObject(client.Self.SimPosition) + ";\n";
-                param += "\t\t\tvar gMOTD = " + AjaxLife.StringToJSON(client.Network.LoginMessage) + ";\n";
-                param += "\t\t\tvar gSessionID = " + AjaxLife.StringToJSON(sessionid.ToString("D")) + ";\n";
-                param += "\t\t\tvar gUserName = " + AjaxLife.StringToJSON(client.Self.FirstName + " " + client.Self.LastName) + ";\n";
-                param += "\t\t\tvar gLanguageCode = " + AjaxLife.StringToJSON(POST.ContainsKey("lang")?POST["lang"]:"en") + ";\n";
-                param += "\t\t\tvar gAgentID = " + AjaxLife.StringToJSON(client.Self.AgentID.ToStringHyphenated()) + ";\n";
-                param += "\t\t\tvar gInventoryRoot = " + AjaxLife.StringToJSON(client.Inventory.Store.RootFolder.UUID.ToStringHyphenated()) + ";\n";
-                param += "\t\t\tvar gSearchRoot = " + AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT) + ";\n";
-                replacements.Add("INIT_PARAMS", param);
-                // Use the template.
-                Html.Template.Parser parser = new Html.Template.Parser(replacements);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/UI.html")));
+                Hashtable data = new Hashtable();
+                Dictionary<string, int> pos = new Dictionary<string, int>();
+                pos.Add("x", (int)Math.Floor(client.Self.GlobalPosition.X / 256));
+                pos.Add("y", (int)Math.Floor(client.Self.GlobalPosition.Y / 256));
+                data.Add("RegionCoords", pos);
+                data.Add("Region", client.Network.CurrentSim.Name);
+                data.Add("Position", client.Self.SimPosition);
+                data.Add("MOTD", client.Network.LoginMessage);
+                data.Add("UserName", client.Self.FirstName + " " + client.Self.LastName);
+                data.Add("AgentID", client.Self.AgentID);
+                data.Add("InventoryRoot", client.Inventory.Store.RootFolder.UUID);
+                writer.Write(MakeJson.FromHashtable(data));
+                writer.Flush();
             }
             catch (Exception e)
             {

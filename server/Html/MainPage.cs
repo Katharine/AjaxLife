@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ using libsecondlife;
 
 namespace AjaxLife.Html
 {
-    public class Login : IFile, IResource, IDisposable
+    public class MainPage : IFile, IResource, IDisposable
     {
         // Fields
         private string contenttype = "text/html; charset=utf-8";
@@ -45,7 +45,7 @@ namespace AjaxLife.Html
         private Dictionary<Guid, User> users;
 
         // Methods
-        public Login(string name, IDirectory parent, Dictionary<Guid, User> users)
+        public MainPage(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
@@ -105,9 +105,10 @@ namespace AjaxLife.Html
                         System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
                 }
                 hash.Add("GRID_OPTIONS", grids);
+                hash.Add("SEARCH_ROOT", AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT));
                 // Parse the template.
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/Login.html")));
+                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/AjaxLife.html")));
             }
             catch (Exception exception)
             {
