@@ -230,6 +230,20 @@ AjaxLife.Strings = {
 			ChangeLinks: "Link and delink from other objects",
 			TrackCamera: "Track your camera",
 			ControlCamera: "Control your camera"
+		},
+		Login: {
+			First: "First name",
+			Last: "Last name",
+			Password: "Password",
+			LogIn: "Log in",
+			Grid: "Grid",
+			Language: "Language",
+			LoadingSession: "Loading session data...",
+			SessionLoadFailed: "Error loading session data.",
+			Encrypting: "Encrypting login data...",
+			LoggingIn: "Logging in to Second Life...",
+			Error: "Error",
+			SomethingWrong: "Despite our best efforts, something has gone wrong.<br /><br />Please try again later."
 		}
 	},	
 	// Translate by Smiley Barry (TG)
@@ -437,6 +451,9 @@ AjaxLife.Strings = {
 			ChangeLinks: "לחבר ולהינתק מאובייקטים אחרים",
 			TrackCamera: "לעקוב אחרי זווית המצלמה שלך",
 			ControlCamera: "לשלוט בזווית המצלמה שלך"
+		},
+		Login: {
+			First: "שם פרטי"
 		}
 	},
 	// Translation by Alissa Sabre

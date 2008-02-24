@@ -238,6 +238,22 @@ function revertscreen()
 	}
 }
 
+function dolanguage()
+{
+	$('label_first').innerHTML = _("Login.First");
+	$('label_last').innerHTML = _("Login.Last");
+	$('label_pass').innerHTML = _("Login.Password");
+	$('label_grid').innerHTML = _("Login.Grid");
+	$('label_lang').innerHTML = _("Login.Language");
+	$('btn_login').value  = _("Login.LogIn");
+	Ext.MessageBox.buttonText = {
+		yes: _("Widgets.Yes"),
+		no: _("Widgets.No"),
+		ok: _("Widgets.OK"),
+		cancel: _("Widgets.Cancel")
+	};
+}
+
 // If not in a frameset, go to the index page, unless we're expecting to be standalone.
 if(!window.parent.document.getElementsByTagName('frameset').length && location.search != '?noframes=1')
 {
@@ -249,7 +265,7 @@ function initui()
 	AjaxLife.Debug("login: Switching visible screen.");
 	$('loginscreen').hide();
 	$('uiscreen').show();
-	var wait = Ext.Msg.wait("Loading session data...");
+	var wait = Ext.Msg.wait(_("Login.LoadingSession"));
 	var link = new Ext.data.Connection({timeout: 30000});
 	link.request({
 		url: "details.kat",
@@ -264,7 +280,7 @@ function initui()
 			wait = false;
 			if(!success)
 			{
-				Ext.Msg.alert("Loading session data failed.");
+				Ext.Msg.alert(_("Login.SessionLoadFailed"));
 				return;
 			}
 			var data = Ext.util.JSON.decode(response);
@@ -329,9 +345,10 @@ function handlelogin()
 			
 		}
 		// Put up a nice waiting dialog.
-		var hanging = Ext.Msg.wait("Encrypting login details...");
+		var hanging = Ext.Msg.wait(_("Login.Encrypting"));
 		var logindetails = Encrypt();
-		hanging.updateText("Logging in to Second Life...");
+		AjaxLife.Debug("login: Encrypted login: "+logindetails);
+		hanging.updateText(_("Login.LoggingIn"));
 		// Send the request and wait up to two minutes for a response.
 		// Pass on all data, and wait for the response.
 		var link = new Ext.data.Connection({timeout: 120000});
@@ -369,7 +386,7 @@ function handlelogin()
 				}
 				else
 				{
-					Ext.Msg.alert("Error","Despite our best efforts, something has gone wrong.<br /><br />Blah blah blah. Please try again later.",revertscreen);
+					Ext.Msg.alert(_("Login.Error"),_("Login.SomethingWrong"),revertscreen);
 				}
 				$('first').enable();
 				$('last').enable();
@@ -505,7 +522,12 @@ Ext.onReady(function() {
 			}
 			$('lang').appendChild(opt);
 		}
+		gLanguageCode = $('lang').getValue();
+		dolanguage();
+		$('lang').onchange = function() {
+			gLanguageCode = $('lang').getValue();
+			dolanguage();
+		}
 	}
-	
 	$('first').activate();
 });
