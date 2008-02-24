@@ -44,7 +44,7 @@ AjaxLife.Map = function() {
 	var marker_telehub_icons = false;
 	var marker_classified_icons = false;
 	var marker_for_sale_icons = false;
-	var marked_position = {sim: gRegion, x: gPosition.X, y: gPosition.Y, z: gPosition.Z};
+	var marked_position = false;
 	var position = {sim: "Nix", x: 0.0, y: 0.0, z: 0.0};
 	var zoom_slider = false;
 	var last_click = new Date();
@@ -272,6 +272,7 @@ AjaxLife.Map = function() {
 	// These methods are public.
 	return {
 		init: function() {
+			var marked_position = {sim: gRegion, x: gPosition.X, y: gPosition.Y, z: gPosition.Z};
 			// Set up all the icons on the map. Use the same size at each scale.
 			marker_you_img = new Icon(new Img(AjaxLife.STATIC_ROOT+"images/map_marker_you.png",16,16,true));
 			marker_you_icons = [marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img,marker_you_img];

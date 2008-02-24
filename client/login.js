@@ -7,7 +7,7 @@
  * See http://pajhome.org.uk/crypt/md5 for more info.
  */
 
-var md5 = function(s) { 
+function md5(s) { 
 	
 	var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
 	var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
@@ -244,6 +244,55 @@ if(!window.parent.document.getElementsByTagName('frameset').length && location.s
 	location.replace('index.html');
 }
 
+function initui()
+{
+	AjaxLife.Debug("login: Switching visible screen.");
+	$('loginscreen').hide();
+	$('uiscreen').show();
+	var wait = Ext.Msg.wait("Loading session data...");
+	var link = new Ext.data.Connection({timeout: 30000});
+	link.request({
+		url: "details.kat",
+		method: "POST",
+		params: {
+			sid: gSessionID
+		},
+		callback: function(options, success, response) {
+			response = response.responseText;
+			AjaxLife.Debug("login: sessiondata: "+response);
+			wait.hide();
+			wait = false;
+			if(!success)
+			{
+				Ext.Msg.alert("Loading session data failed.");
+				return;
+			}
+			var data = Ext.util.JSON.decode(response);
+			gRegionCoords = data.RegionCoords;
+			gRegion = data.Region;
+			gPosition = data.Position;
+			gMOTD = data.MOTD;
+			gUserName = data.UserName;
+			gAgentID = data.AgentID;
+			gInventoryRoot = data.InventoryRoot;
+			AjaxLife.Debug("login: Extracted session data.");
+			gLanguageCode = $('lang').getValue();
+			AjaxLife.Debug("login: Checking for login screen frame...");
+			if(window.parent && window.parent.document && window.parent.document.getElementById)
+			{
+				var node = window.parent.document.getElementById('loginpage');
+				if(node && node.parentNode)
+				{
+					AjaxLife.Debug('login: Removing login screen...');
+					node.parentNode.removeChild(node);
+				}
+			}
+			AjaxLife.Debug("login: Running AjaxLife init...");
+			AjaxLife.Startup();
+		}
+	});
+}
+
 // This function deals with logging in.
 function handlelogin()
 {
@@ -280,7 +329,9 @@ function handlelogin()
 			
 		}
 		// Put up a nice waiting dialog.
-		var hanging = Ext.Msg.wait("Connecting to Second Life...");
+		var hanging = Ext.Msg.wait("Encrypting login details...");
+		var logindetails = Encrypt();
+		hanging.updateText("Logging in to Second Life...");
 		// Send the request and wait up to two minutes for a response.
 		// Pass on all data, and wait for the response.
 		var link = new Ext.data.Connection({timeout: 120000});
@@ -288,7 +339,7 @@ function handlelogin()
 			url: "connect.kat",
 			method: "POST",
 			params: {
-				logindata: Encrypt(),
+				logindata: logindetails,
 				grid: $('grid').getValue(),
 				session: gSessionID
 			},
@@ -304,12 +355,7 @@ function handlelogin()
 						var response = Ext.util.JSON.decode(response.responseText);
 						if(response.success)
 						{
-							$('first').value = '';
-							$('last').value = '';
-							$('password').value = '';
-							submitexpected = true;
-							$('continue').submit();
-							submitexpected = false;
+							initui();
 						}
 						else
 						{
@@ -409,16 +455,12 @@ Ext.onReady(function() {
 	Ext.get('password').addListener('keyup', ret);
 
 	// Handle form submission.
-	$('continue').onsubmit = function(e) {
-		if(!submitexpected)
-		{
-			if (e && e.preventDefault) e.preventDefault();
-			else if (window.event && window.event.returnValue)
-			window.eventReturnValue = false;
-			handlelogin();
-			return false;
-		}
-		return true;
+	$('form_login').onsubmit = function(e) {
+		if (e && e.preventDefault) e.preventDefault();
+		else if (window.event && window.event.returnValue)
+		window.eventReturnValue = false;
+		handlelogin();
+		return false;
 	};
 	
 	if($('lang')) // Don't do any of this if #lang doesn't exist.
