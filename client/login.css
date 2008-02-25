@@ -15,6 +15,11 @@ body {
 	position: absolute;
 }
 
+body.rtl #advanced {
+	right: auto;
+	left: 5px;
+}
+
 #advanced td {
 	padding-left: 10px;
 	text-align: center;

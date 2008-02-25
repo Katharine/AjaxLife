@@ -92,13 +92,13 @@
 			table.appendChild(row);
 			var el = document.createElement('th');
 			el.setAttribute('colspan',2);
-			el.appendChild(document.createTextNode('Region'));
+			el.appendChild(document.createTextNode(_("Stats.Region")));
 			row.appendChild(el);
 			// FPS
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('FPS'));
+			el.appendChild(document.createTextNode(_("Stats.FPS")));
 			row.appendChild(el);
 			fpsfield = $(document.createElement('td'));
 			fpsfield.appendChild(document.createTextNode('Loading...'));
@@ -107,7 +107,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Time Dilation'));
+			el.appendChild(document.createTextNode(_("Stats.TD")));
 			row.appendChild(el);
 			tdfield = $(document.createElement('td'));
 			tdfield.appendChild(document.createTextNode('Loading...'));
@@ -116,7 +116,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Script IPS'));
+			el.appendChild(document.createTextNode(_("Stats.ScriptIPS")));
 			row.appendChild(el);
 			ipsfield = $(document.createElement('td'));
 			ipsfield.appendChild(document.createTextNode('Loading...'));
@@ -125,7 +125,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Objects'));
+			el.appendChild(document.createTextNode(_("Stats.Objects")));
 			row.appendChild(el);
 			objectfield = $(document.createElement('td'));
 			objectfield.appendChild(document.createTextNode('Loading...'));
@@ -134,7 +134,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Active Scripts'));
+			el.appendChild(document.createTextNode(_("Stats.Scripts")));
 			row.appendChild(el);
 			scriptfield = $(document.createElement('td'));
 			scriptfield.appendChild(document.createTextNode('Loading...'));
@@ -143,7 +143,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Agents'));
+			el.appendChild(document.createTextNode(_("Stats.Agents")));
 			row.appendChild(el);
 			agentfield = $(document.createElement('td'));
 			agentfield.appendChild(document.createTextNode('Loading...'));
@@ -152,7 +152,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Child Agents'));
+			el.appendChild(document.createTextNode(_("Stats.ChildAgents")));
 			row.appendChild(el);
 			childagentfield = $(document.createElement('td'));
 			childagentfield.appendChild(document.createTextNode('Loading...'));
@@ -163,7 +163,7 @@
 			table.appendChild(row);
 			el = document.createElement('th');
 			el.setAttribute('colspan',2);
-			el.appendChild(document.createTextNode('AjaxLife Server'));
+			el.appendChild(document.createTextNode(_("Stats.ALServer")));
 			row.appendChild(el);
 			// Memory Usage
 			row = $(document.createElement('tr'));
@@ -187,7 +187,7 @@
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
 			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Sessions'));
+			el.appendChild(document.createTextNode(_("Stats.Sessions")));
 			row.appendChild(el);
 			alsessionsfield = $(document.createElement('td'));
 			alsessionsfield.appendChild(document.createTextNode('Loading...'));

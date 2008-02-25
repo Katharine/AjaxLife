@@ -56,6 +56,7 @@ AjaxLife.Profile = function(agentid) {
 		resizable: false,
 		proxyDrag: !AjaxLife.Fancy
 	});
+	$(win.body.dom).addClassName("profile");
 	AjaxLife.ActiveProfileWindows[agentid] = win;
 	// When the window is closed, destroy it.
 	win.on('hide', function() {

@@ -38,6 +38,7 @@ AjaxLife.InstantMessage = function() {
 	var highlight = false;
 	var friendlist = false;
 	var noted_typing = false;
+	var ts_first = true;
 	
 	// Set a tab to flash
 	function highlighttab(sessionid)
@@ -158,6 +159,7 @@ AjaxLife.InstantMessage = function() {
 			}
 			chats[sessionid] = false;
 		});
+		chats[sessionid].tab.bodyEl.setStyle({'overflow': 'hidden'});
 		// Chat area
 		var content = Ext.get(document.createElement('div'));
 		content.setStyle({overflow: 'auto', width:'99%'});
@@ -169,6 +171,15 @@ AjaxLife.InstantMessage = function() {
 		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
 		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
 		// Button setup, callbacks and formatting.
+		var style = {position: 'absolute', bottom: '0px'};
+		if(ts_first)
+		{
+			style.right = '0px';
+		}
+		else
+		{
+			style.left = '48px';
+		}
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
@@ -176,13 +187,21 @@ AjaxLife.InstantMessage = function() {
 				entrybox.dom.focus();
 			},
 			text: _("InstantMessage.Send")
-		})).getEl().setStyle({position: 'absolute', bottom: '0px', right: '0px'});
+		})).getEl().setStyle(style);
+		if(ts_first)
+		{
+			style.right = '48px';
+		}
+		else
+		{
+			style.left = '0px';
+		}
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				new AjaxLife.Profile(chats[sessionid].target);
 			},
 			text: _("InstantMessage.Profile")
-		})).getEl().setStyle({position: 'absolute', bottom: '0px', right: '48px'});
+		})).getEl().setStyle(style);
 		div_typing = Ext.get(document.createElement('div'));
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));
@@ -260,6 +279,8 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
+			// Move timestamps to the right if we're reading right to left.
+			ts_first = (_("Language.Direction") != "rtl");
 			// Create the new window at 700x400, with a default tab for friendlist.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,

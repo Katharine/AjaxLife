@@ -27,6 +27,9 @@
 AjaxLife.Strings = {
 	// Default English translations
 	en: {
+		Language: {
+			Direction: "ltr"
+		},
 		Friends: {
 			OnlineNotification: "#{name} is #{status}.",
 			Online: "online",
@@ -246,8 +249,11 @@ AjaxLife.Strings = {
 			SomethingWrong: "Despite our best efforts, something has gone wrong.<br /><br />Please try again later."
 		}
 	},	
-	// Translate by Smiley Barry (TG)
+	// Translated by Smiley Barry (TG)
 	he: {
+		Language: {
+			Direction: "rtl"
+		},
 		Friends: {
 			OnlineNotification: "#{name} כרגע #{status}.",
 			Online: "מחובר",

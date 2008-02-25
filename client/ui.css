@@ -36,11 +36,26 @@ body {
 	/* Needed to fix the toolbar in IE6 */
 	_background:url(http:) fixed;
 }
+
+body.rtl {
+	direction: rtl;
+}
+
+.x-dlg-hd, .x-tree, .x-btn, #statusbar {
+	direction: ltr;
+}
+
+body.rtl input {
+	direction: rtl;
+}
+
 html {
 	overflow: hidden;
 	height: 100%,
 	width: 100%;
 }
+
+#dlg_im .x-tabs-body, .profile .x-tabs-body { overflow: hidden !important }
 
 #background {
 	width: 100%;

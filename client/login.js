@@ -252,6 +252,14 @@ function dolanguage()
 		ok: _("Widgets.OK"),
 		cancel: _("Widgets.Cancel")
 	};
+	if(_("Language.Direction") == "rtl")
+	{
+		$(document.getElementsByTagName('body')[0]).addClassName("rtl");
+	}
+	else
+	{
+		$(document.getElementsByTagName('body')[0]).removeClassName("rtl");
+	}
 }
 
 // If not in a frameset, go to the index page, unless we're expecting to be standalone.
@@ -363,6 +371,7 @@ function handlelogin()
 			// If the request was successful, submit the form containing the sessionid to the UI page.
 			// Otherwise show the error.
 			callback: function(options, success, response) {
+				AjaxLife.Debug("login: Received login response: "+response.responseText);
 				hanging.hide();
 				hanging = false;
 				if(success)
@@ -394,6 +403,7 @@ function handlelogin()
 				$('btn_login').enable();
 			}
 		});
+		AjaxLife.Debug("login: Made login request.");
 	}, 100);
 }
 
