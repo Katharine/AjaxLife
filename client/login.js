@@ -218,7 +218,7 @@ function md5(s) {
 var submitexpected = false;
 var SUPPORTED_LANGUAGES = {
 	en: 'English',
-	he: 'Hebrew (עברית)',
+	he: 'עברית (Hebrew)',
 	ja: 'Japanese',
 	pt_br: 'Portuguese (Brazil)'
 };

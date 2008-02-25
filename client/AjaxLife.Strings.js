@@ -453,8 +453,19 @@ AjaxLife.Strings = {
 			ControlCamera: "לשלוט בזווית המצלמה שלך"
 		},
 		Login: {
-			First: "שם פרטי"
-		}
+			First: "שם פרטי",
+			Last: "שם משפחה",
+			Password: "סיסמה",
+			LogIn: "התחבר",
+			Grid: "רשת",
+			Language: "שפת ממשק",
+			LoadingSession: "טוען את הנתונים שלך...",
+			SessionLoadFailed: "שגיאה בעת טעינת הנתונים שלך.",
+			Encrypting: "מצפין מידע...",
+			LoggingIn: "מתחבר...",
+			Error: "שגיאה",
+			SomethingWrong: "למרות כל נסיונותינו, משהו השתבש בעת החיבור.<br /><br />אנא נסה שנית מאוחר יותר."
+		}	
 	},
 	// Translation by Alissa Sabre
 	ja: {
@@ -660,6 +671,20 @@ AjaxLife.Strings = {
 			ChangeLinks: "他のオブジェクトとリンクしたり解除したりする",
 			TrackCamera: "カメラの状態を得る",
 			ControlCamera: "カメラを制御する"
+		},
+		Login: {
+			First: "ファーストネーム",
+			Last: "ラストネーム",
+			Password: "パスワード",
+			LogIn: "ログイン",
+			Grid: "グリッド",
+			Language: "言語",
+			LoadingSession: "セション情報を読込んでいます...",
+			SessionLoadFailed: "セション情報の読込みエラー",
+			Encrypting: "ログインデータの暗号処理中...",
+			LoggingIn: "Second Lifeに接続しています...",
+			Error: "エラー",
+			SomethingWrong: "全力を尽くしたのですが、何か問題が起きました。<br /><br />また後で試してください。"
 		}
 	},
 	// by Aurelio A. Heckert (http://aurium.cjb.net)
