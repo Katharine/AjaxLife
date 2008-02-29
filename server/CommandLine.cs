@@ -118,6 +118,7 @@ namespace AjaxLife
             }
         }
 
+        // Easy accessor
         public string this[string Param]
         {
             get
