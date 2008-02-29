@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -215,7 +215,7 @@ AjaxLife.Network.MessageQueue = function() {
 		// If the time difference (measured in milliseconds) is greater than 30 seconds...
 		if(now.getTime() - lastmessage.getTime() > 35000)
 		{
-			AjaxLife.Widgets.Ext.msg("",__("Network.Reconnecting"));
+			AjaxLife.Widgets.Ext.msg("",_("Network.Reconnecting"));
 			AjaxLife.Network.MessageQueue.shutdown();
 			AjaxLife.Network.MessageQueue.init();
 		}
