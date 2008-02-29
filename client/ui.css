@@ -45,11 +45,8 @@ body.rtl {
 	direction: rtl;
 }
 
-.x-dlg-hd, .x-tree, .x-btn, #statusbar {
-	direction: ltr;
-}
-
-input {
+.x-dlg-hd, .x-tree, .x-btn, /* These break when right-to-left */
+#statusbar, #dlg_chat, #dlg_im, #dlg_search, #dlg_nearby { /* These should not be right-to-left */
 	direction: ltr;
 }
 

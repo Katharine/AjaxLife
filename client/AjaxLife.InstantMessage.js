@@ -38,7 +38,6 @@ AjaxLife.InstantMessage = function() {
 	var highlight = false;
 	var friendlist = false;
 	var noted_typing = false;
-	var ts_first = true;
 	
 	// Set a tab to flash
 	function highlighttab(sessionid)
@@ -171,15 +170,7 @@ AjaxLife.InstantMessage = function() {
 		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
 		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
 		// Button setup, callbacks and formatting.
-		var style = {position: 'absolute', bottom: '0px'};
-		if(ts_first)
-		{
-			style.right = '0px';
-		}
-		else
-		{
-			style.left = '48px';
-		}
+		var style = {position: 'absolute', bottom: '0px', right: '0px'};
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
@@ -188,14 +179,7 @@ AjaxLife.InstantMessage = function() {
 			},
 			text: _("InstantMessage.Send")
 		})).getEl().setStyle(style);
-		if(ts_first)
-		{
-			style.right = '48px';
-		}
-		else
-		{
-			style.left = '0px';
-		}
+		style.right = '48px';
 		(new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				new AjaxLife.Profile(chats[sessionid].target);
@@ -279,8 +263,6 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
-			// Move timestamps to the right if we're reading right to left.
-			ts_first = (_("Language.Direction") != "rtl");
 			// Create the new window at 700x400, with a default tab for friendlist.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,
