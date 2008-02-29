@@ -227,7 +227,7 @@ var SUPPORTED_LANGUAGES = {
 function revertscreen()
 {
 	$(document.body).setStyle({backgroundColor: 'black', color: 'white'});
-	if(window.parent && window.parent.document && window.parent.document.getElementById)
+	try
 	{
 		window.parent.document.getElementById('frameset').rows = '*,60';
 		var node = window.parent.document.getElementById('loginpage');
@@ -235,6 +235,11 @@ function revertscreen()
 		{
 			node.parentNode.insertBefore(node,window.parent.document.getElementById('loginform'));
 		}
+	}
+	catch(e)
+	{
+		// Ignore it. We were probably missing a frameset.
+		// IE likes choking here.
 	}
 }
 
@@ -252,13 +257,15 @@ function dolanguage()
 		ok: _("Widgets.OK"),
 		cancel: _("Widgets.Cancel")
 	};
-	if(_("Language.Direction") == "rtl")
+	if(_("Language.Direction") == "rtl" && !Prototype.Browser.IE) // IE can't do right-to-left properly.
 	{
+		$(document.getElementsByTagName('body')[0]).removeClassName("ltr");
 		$(document.getElementsByTagName('body')[0]).addClassName("rtl");
 	}
 	else
 	{
 		$(document.getElementsByTagName('body')[0]).removeClassName("rtl");
+		$(document.getElementsByTagName('body')[0]).addClassName("ltr");
 	}
 }
 
@@ -311,6 +318,7 @@ function initui()
 					node.parentNode.removeChild(node);
 				}
 			}
+			$(document.body).addClassName("loggedin");
 			AjaxLife.Debug("login: Running AjaxLife init...");
 			AjaxLife.Startup();
 		}
@@ -533,11 +541,11 @@ Ext.onReady(function() {
 			$('lang').appendChild(opt);
 		}
 		gLanguageCode = $('lang').getValue();
-		dolanguage();
 		$('lang').onchange = function() {
 			gLanguageCode = $('lang').getValue();
 			dolanguage();
 		}
+		dolanguage();
 	}
 	$('first').activate();
 });

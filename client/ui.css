@@ -27,7 +27,7 @@
 /* Window decoration */
 
 /* IE6 position:fixed hack from http://annevankesteren.nl/test/examples/ie/position-fixed.html */
-body {
+body.loggedin {
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	height: 100%;
 	width: 100%;
@@ -35,6 +35,10 @@ body {
 	padding: 0px;	
 	/* Needed to fix the toolbar in IE6 */
 	_background:url(http:) fixed;
+}
+
+body.ltr {
+	direction: ltr;
 }
 
 body.rtl {
@@ -45,8 +49,8 @@ body.rtl {
 	direction: ltr;
 }
 
-body.rtl input {
-	direction: rtl;
+input {
+	direction: ltr;
 }
 
 html {

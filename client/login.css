@@ -10,13 +10,15 @@ body {
 }
 
 #advanced {
-	right: 5px;
 	top: 5px;
 	position: absolute;
 }
 
+body.ltr #advanced {
+	right: 5px;
+}
+
 body.rtl #advanced {
-	right: auto;
 	left: 5px;
 }
 
