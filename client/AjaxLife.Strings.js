@@ -846,7 +846,15 @@ AjaxLife.Strings = {
 			WindowTitle: "Avatares Próximos"
 		},
 		Inventory: {
-			WindowTitle: "Inventário"
+			WindowTitle: "Inventário",
+			NullAssetTransfer: "Uma requisição falhou.",
+			OfferAccepted: "#{name} aceitou a sua oferta de inventário.",
+			OfferDeclined: "#{name} rejeitou a sua oferta de inventário.",
+			NoFolderTransfer: "Infelizmente, as pastas selecionadas ainda não são suportadas.",
+			NoNoTransferTransfer: "#{item} não é transferível, portanto não pode ser dado.",
+			ConfirmTransfer: "Você tem certeza de que quer dar #{item} para #{first} #{last}?",
+			ConfirmNoCopyTransfer: "#{item} não é copiável. Se você der isso mesmo assim, você perderá sua cópia.<br /><br />Você gostaria de dar o item #{item} para #{first} #{last}?",
+			ConfirmTransferTitle: "Transferir inventário"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -875,6 +883,255 @@ AjaxLife.Strings = {
 			ChildAgents: "Agentes Filhos",
 			ALServer: "Servidor AjaxLife",
 			Sessions: "Sessões"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "Requisição de permissão para script",
+			PermissionRequestBody: "'#{object}', um objeto de '#{owner}', gostaria de:<br /><br />#{permission}<br />Ok para você?",
+			DialogMessage: "'#{object}' de #{first} #{last}:<br />#{message}",
+			DialogTitle: "Diálogo de Script"
+		},
+		Permissions: {
+			Debit: "Receber Linden Dollars (L$) de você",
+			TakeControls: "Agir em seus controles",
+			Animate: "Animar seu avatar",
+			Attach: "Anexar em seu avatar",
+			ChangeLinks: "Linkar e deslinkar de outros objetos",
+			TrackCamera: "Puxar sua câmera",
+			ControlCamera: "Controlar sua câmera"
+		},
+		Login: {
+			First: "Primeiro nome",
+			Last: "Último nome",
+			Password: "Senha",
+			LogIn: "Entrar",
+			Grid: "Grid",
+			Language: "Língua",
+			LoadingSession: "Carregando dados da sessão...",
+			SessionLoadFailed: "Erro ao carregar dados da sessão.",
+			Encrypting: "Encriptando dados de login...",
+			LoggingIn: "Entrando no Second Life...",
+			Error: "Erro",
+			SomethingWrong: "Apesar dos nossos esforços, algo correu de errado.<br /><br />Por favor, tente novamente mais tarde."
+		}
+	},
+	// Mariel Voyunicef
+	es: {
+		Friends: {
+			OnlineNotification: "#{name} se ha #{status}.",
+			Online: "conectado",
+			Offline: "desconectado",
+			FriendshipOffered: "#{name} te ha ofrecido su amistad. ¿Vas a aceptar?",
+			YouAccept: "Aceptaste a #{name} como un amigo.",
+			YouDecline: "Declinaste el ofrecimiento de amistad de #{name}."
+		},
+		InstantMessage: {
+			Typing: "#{name} está escribiendo...",
+			OnlineFriends: "Amigos conectados",
+			Send: "Enviar",
+			WindowTitle: "Mensajes instantáneos",
+			Profile: "Perfil"
+		},
+		AjaxLife: {
+			Precaching: "Preparando el precache...",
+			MOTD: "Mensaje del día"
+		},
+		Map: {
+			TeleportConfirm: "¿Estás seguro de querer teletransportarte a #{sim} (#{x}, #{y})?",
+			RegionLabel: "Región:",
+			PositionLabel: "Posición:",
+			TeleportNoun: "Teletransportación",
+			TeleportVerb: "Teletransportar",
+			Teleporting: "Teletransportando",
+			FocusYou: "Enfocar sobre ti",
+			Clear: "Limpiar",
+			FocusTarget: "Enfocar el destino",
+			HomeButton: "Ir a lugar de inicio",
+			HomeConfirm: "¿Estás seguro de querer ir a tu lugar de inicio?",
+			TeleportRequest: "#{name} te ha ofrecido teletransportarte:<br /><br />#{message}",
+			TeleportRequestTitle: "Ofrecimiento de teletransportación",
+			Teleportation: "Teletransportación",
+			TeleportSuccess: "Has sido teletransportado con éxito a #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "Tu teletransportación fue cancelada.",
+			TeleportError: "Tu teletransportación no tuvo éxito. Por favor intenta de nuevo más tarde.",
+			WindowTitle: "Mapa",
+			NoRegionGiven: "El servidor no mandó el nombre del simulador en el que estás."
+		},
+		Network: {
+			LoggingOut: "Desconectando...",
+			LogoutError: "No se pudo desconectar de Second Life por un error de comunicación.",
+			LogoutSuccess: "Te has desconectado de Second Life.",
+			LogoutForced: "Has sido desconectado de Second Life:<br /><br />#{reason}",
+			UnhandledMessage: "Mensaje no procesado",
+			EventQueueFailure: "La fila de eventos en espera no pudo ser actualizada.",
+			GenericSendError: "Un error ocurrió mientras se enviaba los datos.",
+			InventoryReceive: "#{name} te dio #{item}",
+			Error: "Error",
+			Disconnected: "Desconectado"
+		},
+		StatusBar: {
+			Money: "Dinero",
+			LindenDollarSymbol: "L$",
+			Loading: " cargando...",
+			MoneyReceived: "Fuiste pagado L$#{amount}.",
+			MoneyGiven: "Pagaste L$#{amount}."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " grita:",
+			SecondPersonShout: " gritas:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: " susurra:",
+			SecondPersonWhisper: " susurras:",
+			You: "Tú",
+			Say: "Decir",
+			Whisper: "Susurrar",
+			Shout: "Gritar",
+			WindowTitle: "Chat local"
+		},
+		Toolbar: {
+			ChatButton: "Chat",
+			ChatTooltip: "Hablar con la gente que se encuentra cerca",
+			IMButton: "Mensajes instantáneos",
+			IMTooltip: "Comunicarse con gente que no está cerca",
+			MapButton: "Mapa",
+			MapTooltip: "Mostrar el mapa de la grid",
+			SearchButton: "Buscar",
+			SearchTooltip: "",
+			LogoutButton: "Desconectar",
+			LogoutTitle: "Desconectar",
+			LogoutPrompt: "¿Estás seguro de querer desconectarte?",
+			LogoutTooltip: "Desconectarte de Second Life",
+			NearbyButton: "Avatars cercanos",
+			NearbyTooltop: "Gente que se encuentra cerca de ti.",
+			InventoryButton: "Inventario",
+			InventoryTooltip: "Inventario de sólo lectura",
+			StatsButton: "Estadísticas",
+			StatsTooltip: ""
+		},
+		Widgets: {
+			Yes: "Sí",
+			No: "No",
+			Accept: "Aceptar",
+			Decline: "Declinar",
+			OK: "OK",
+			Cancel: "Cancelar"
+		},
+		Search: {
+			WindowTitle: "Buscar",
+			Searching: "Buscando...",
+			People: "Gente"
+		},
+		Profile: {
+			WindowTitle: "Perfil - #{name}",
+			Loading: "Cargando...",
+			JoinDate: "Creación: #{date}",
+			Account: "Cuenta:<br />#{type}",
+			PaymentInfoOnFile: "Información de pago registrada",
+			PaymentInfoUsed: "Información de pago usada",
+			LindenAccount: "Empleado de Linden Lab",
+			NoPaymentInfo: "Sin información de pago",
+			Picks: "Favoritos",
+			Interests: "Intereses",
+			SecondLife: "2da vida",
+			FirstLife: "1a vida",
+			Groups: "Grupos",
+			About: "Acerca",
+			Name: "Nombre: #{name}",
+			Online: "Conectado",
+			Offline: "Desconectado",
+			Partner: "Pareja:<br />#{partner}",
+			None: "Ninguno",
+			IMButton: "Mensaje instantáneo",
+			PayButton: "Pagar",
+			PayDialogTitle: "Pagando #{first} #{last}",
+			PayDialogPrompt: "¿Cuánto le quieres pagar a #{first} #{last}?",
+			InvalidAmount: "¡Ésa es una cantidad a pagar inválida!",
+			FriendButton: "Agregar amigo",
+			ConfirmFriendAdd: "¿Estás seguro de que quieres agregar a #{first} #{last} como amigo?",
+			FriendshipOffered: "Le has ofrecido a #{first} #{last} tu amistad.",
+			TeleportButton: "Ofrecer TP",
+			TeleportDialogTitle: "Teletransportando a #{first} #{last}",
+			TeleportDialogPrompt: "Escribe un mensaje para agregar a tu ofrecimiento de teletransportación:",
+			TeleportDefaultMessage: "¡Ven conmigo a #{sim}!"
+		},
+		Texture: {
+			DownloadFailed: "No se pudo descargar la textura."
+		},
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
+		},
+		AvatarsNear: {
+			WindowTitle: "Avatars que están cerca"
+		},
+		Inventory: {
+			WindowTitle: "Inventario",
+			NullAssetTransfer: "El pedido de un recurso falló.",
+			OfferAccepted: "#{name} aceptó tu ofrecimiento de inventario.",
+			OfferDeclined: "#{name} declinó tu ofrecimiento de inventario.",
+			NoFolderTransfer: "Desafortunadamente, todavía no se puede dar carpetas enteras.",
+			NoNoTransferTransfer: "'#{item}' es de no transferencia, por lo que no lo puedes transferir.",
+			ConfirmTransfer: "¿Estás seguro de que quieres darle #{item} a #{first} #{last}?",
+			ConfirmNoCopyTransfer: "#{item} no se puede copiar. Si lo das, vas a perder tu copia.<br /><br />¿Le quieres dar a #{first} #{last} #{item}?",
+			ConfirmTransferTitle: "Transferencia de inventario"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "Textura: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "Nota: #{name}"
+			},
+			Script: {
+				WindowTitle: "Script: #{name}"
+			},
+			Landmark: {
+				Title: "Teletransportar a punto de referencia",
+				Message: "¿Estás seguro de querer teletransportarte a #{name}?"
+			}
+		},
+		Stats: {
+			WindowTitle: "Estadísticas",
+			Region: "Región",
+			FPS: "FPS",
+			TD: "Dilatación de tiempo",
+			ScriptIPS: "Script IPS",
+			Objects: "Objetos",
+			Scripts: "Scripts activos",
+			Agents: "Agentes",
+			ChildAgents: "Agents tipo child",
+			ALServer: "Servidor de AjaxLife",
+			Sessions: "Sesiones"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "Pedido de permiso de script",
+			PermissionRequestBody: "'#{object}', un objeto que pertenece a '#{owner}', quiere que:<br /><br />#{permission}<br />¿Está bien?",
+			DialogMessage: "El '#{object}' de #{first} #{last}:<br />#{message}",
+			DialogTitle: "Diálogo de script"
+		},
+		Permissions: {
+			Debit: "Tomar dólares Linden (L$) de tu cuenta",
+			TakeControls: "Actuar conforme a las entradas de control",
+			Animate: "Animar tu avatar",
+			Attach: "Adjuntar a tu avatar",
+			ChangeLinks: "Unir y separar de otros objetos",
+			TrackCamera: "Sigue a tu cámara",
+			ControlCamera: "Controla tu cámara"
+		},
+		Login: {
+			First: "Nombre",
+			Last: "Apellido",
+			Password: "Contraseña",
+			LogIn: "Conectar",
+			Grid: "Grid",
+			Language: "Idioma",
+			LoadingSession: "Cargando datos de sesión...",
+			SessionLoadFailed: "Error cargando datos de sesión.",
+			Encrypting: "Encriptando datos de sesión...",
+			LoggingIn: "Entrando a Second Life...",
+			Error: "Error",
+			SomethingWrong: "A pesar de nuestros más grandes esfuerzos, algo se equivocó.<br /><br />Por favor intenta de nuevo más tarde."
 		}
 	}
 	// More translations here.
