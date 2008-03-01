@@ -218,8 +218,8 @@ function md5(s) {
 var submitexpected = false;
 var SUPPORTED_LANGUAGES = {
 	en: 'English',
-	he: 'עברית (Hebrew)',
-	ja: 'Japanese',
+	he: 'עברית',
+	ja: '日本語',
 	pt_br: 'Portuguese (Brazil)'
 };
 
@@ -393,7 +393,8 @@ function handlelogin()
 						}
 						else
 						{
-							Ext.Msg.alert("Error",response.message.escapeHTML(),revertscreen);
+							AjaxLife.Debug("login: Login failure: "+response.message);
+							Ext.Msg.alert(_("Login.Error"),response.message.escapeHTML(),revertscreen);
 						}
 					}
 					catch(e)
