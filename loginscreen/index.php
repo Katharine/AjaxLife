@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2008, Katharine Berry
+/* Copyright (c) 2007, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,8 +28,9 @@
 // Place a Google Analytics tracking code of your choice here.
 // Leave blank to disable.
 define('GOOGLE_ANALYTICS', '');
+define('GOOGLE_ANALYTICS_DOMAIN', '');
 
-@$screen = file_get_contents('https://secondlife.com/app/login/splash.php');
+@$screen = file_get_contents('http://secondlife.com/app/login/');
 if($screen === false || strpos($screen,'<H2>The requested URL could not be retrieved</H2>') !== false)
 {
 	header("Content-Type: text/plain");
@@ -45,13 +46,21 @@ EOF
 $screen = preg_replace("/.*need_new_version.*/",<<<EOF
 <script type="text/javascript">
 <!-- 
-var os, version, DEFAULT_CHANNEL, reChannelVersion, reChannelVersionOld;
-var channel = "ajaxlife";
-function getVersion()
+var DEFAULT_CHANNEL, reChannelVersion, reChannelVersionOld;
+var channel = "";
+var os = "";
+var version = "";
+function show_learnbox()
 {
-	document.getElementById('learn_box').style.display = "block";
+	$("#update_box").load("learn_box.php");
 };
 // -->
+</script>
+EOF
+,$screen);
+$screen = preg_replace("~<script>.*?get_url.*?</script>~s",<<<EOF
+<script type="text/javascript">
+$(document).ready(show_learnbox);
 </script>
 EOF
 ,$screen);
@@ -94,8 +103,9 @@ src="login_ajaxlife.png">
 						</table>
 EOF
 ,$screen);
-$screen = str_replace('/app/login/','https://secure-web'.rand(0,13).'.secondlife.com/app/login/',$screen);
-$screen = str_replace('"/_img/','"https://secondlife.com/_img/',$screen);
+$screen = str_replace('/app/login/','http://secondlife.com/app/login/',$screen);
+$screen = str_replace('"/_img/','"http://secondlife.com/_img/',$screen);
+$screen = str_replace('"/_scripts/','"http://secondlife.com/_scripts/',$screen);
 if(!defined('GOOGLE_ANALYTICS') || GOOGLE_ANALYTICS == '')
 {
 	$screen = str_replace('document.write','//document.write',$screen);
@@ -104,6 +114,7 @@ if(!defined('GOOGLE_ANALYTICS') || GOOGLE_ANALYTICS == '')
 else
 {
 	$screen = preg_replace('~_gat\._getTracker\("UA-[0-9]+-[0-9]+"\)~','_gat._getTracker("'.GOOGLE_ANALYTICS.'")',$screen);
+	$screen = str_replace('pageTracker._setDomainName("secondlife.com");','pageTracker._setDomainName("'. GOOGLE_ANALYTICS_DOMAIN .'");',$screen);
 }
 print $screen;
 ?>
