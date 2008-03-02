@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,15 +44,17 @@ EOF
 	);
 }
 $screen = preg_replace("/.*need_new_version.*/",<<<EOF
+<script src="login_screens/bgImgRotate.js" type="text/javascript"></script>
 <script type="text/javascript">
 <!-- 
 var DEFAULT_CHANNEL, reChannelVersion, reChannelVersionOld;
 var channel = "";
 var os = "";
 var version = "";
-function show_learnbox()
+function run_onload()
 {
 	$("#update_box").load("learn_box.php");
+	bgImgRotate();
 };
 // -->
 </script>
@@ -68,39 +70,39 @@ $screen = preg_replace("/.*bgImgRotate.js.*/",'<script type="text/javascript" sr
 $screen = str_replace('/app/login/_css/main.css','css.php',$screen);
 $screen = preg_replace('~src="/app/login/_img/app_login_logo_horz.png".*?>~',<<<EOF
 src="login_ajaxlife.png">
-<br/>
-						<table cellpadding="0" cellspacing="0" border="0" width="298px" valign="top">
-							<tr>
-								<td align="center" valign="top">
-									<table cellspacing="0" cellpadding="0" border="0" width="100%" valign="top">
-										<tr>
-											<td class="box_black_tl"><img src="/_img/spacer.gif" width="5" height="5"></td>
-											<td class="box_black_t"><img src="/_img/spacer.gif" width="5" height="5"></td>
-											<td class="box_black_tr"><img src="/_img/spacer.gif" width="5" height="5"></td>
-										</tr>
-										<tr>
-											<td class="box_black_l"></td>
-											<td class="infobox_black_content" valign="top" align="left">
-												<img src="/app/login/_img/alert.png" align="absmiddle">&nbsp;<span class="gridstatus_OFFLINE">Unofficial Viewer: AjaxLife</span>
-												<div id="DEFAULT_content_divider" style="margin:3px 0 0 0;"><img src="/_img/spacer.gif" width="1" height="1"></div>
-												<table cellspacing="0" cellpadding="0"><tr><td>
-												<div id="statusmsg">
-													<strong>This unofficial viewer is connected to the MAIN LIVE GRID.</strong><br /> 
-													This is NOT a preview environment.<br /> 
-													All user information, L$, content, land and other transactions are REAL!
-												</div>
-												</td></tr></table>
-											</td>
-											<td class="box_black_r"></td>
-										</tr>
-											<td class="box_black_bl"></td>
-											<td class="box_black_b"></td>
-											<td class="box_black_br"></td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
+<div id="channel_alert">
+<table cellpadding="0" cellspacing="0" border="0" width="300px" valign="top">
+<tr>
+	<td align="center" valign="top">
+		<table cellspacing="0" cellpadding="0" border="0" width="100%" valign="top">
+			<tr>
+				<td class="box_by_tl"><img src="/app/login/_img/spacer.gif" width="5" height="5"></td>
+				<td class="box_by_t"><img src="/app/login/_img/spacer.gif" width="5" height="5"></td>
+				<td class="box_by_tr"><img src="/app/login/_img/spacer.gif" width="5" height="5"></td>
+			</tr>
+			<tr>
+				<td class="box_by_l"></td>
+				<td class="infobox_black_content" valign="top" align="left">
+					<img src="/app/login/_img/alert.png" align="absmiddle">&nbsp;<strong>Unofficial Viewer: AjaxLife</strong></span>
+					<div id="DEFAULT_content_divider" style="margin:3px 0 0 0;"><img src="/app/login/_img/spacer.gif" width="1" height="1"></div>
+					<div id="statusmsg">
+						<strong>This unofficial viewer is connected to the MAIN LIVE GRID.</strong><br />
+						This is NOT a preview environment.<br /> 
+						All user information, L$, content, land and other transactions are REAL!<br/>
+					</div>
+				</td>
+				<td class="box_by_r"></td>
+			</tr>
+				<td class="box_by_bl"></td>
+				<td class="box_by_b"></td>
+				<td class="box_by_br"></td>
+			</tr>
+		</table>
+	</td>
+</tr>
+</table>
+</div>
+
 EOF
 ,$screen);
 $screen = str_replace('/app/login/','http://secondlife.com/app/login/',$screen);
