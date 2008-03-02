@@ -1153,7 +1153,7 @@ AjaxLife.Strings = {
 			Profile: "Profil"
 		},
 		AjaxLife: {
-			Precaching: "Laden...",
+			Precaching: "Lädt...",
 			MOTD: "News des Tages"
 		},
 		Map: {
@@ -1162,7 +1162,7 @@ AjaxLife.Strings = {
 			PositionLabel: "Position:",
 			TeleportNoun: "Teleport",
 			TeleportVerb: "Teleport",
-			Teleporting: "teleportiert",
+			Teleporting: "Teleport",
 			FocusYou: "Meine Position",
 			Clear: "Löschen",
 			FocusTarget: "Ziel anzeigen",
@@ -1184,7 +1184,7 @@ AjaxLife.Strings = {
 			LogoutSuccess: "Du wurdest von Second Life abgemeldet.",
 			LogoutForced: "Du wurdest von Second Life abgemeldet:<br /><br />#{reason}",
 			UnhandledMessage: "Unhandled message",
-			EventQueueFailure: "Die Anfrage konte nicht aktualisiert werden.",
+			EventQueueFailure: "Die Anfrage konnte nicht aktualisiert werden.",
 			GenericSendError: "Ein Fehler während des Sendens der Daten.",
 			InventoryReceive: "#{name} gab Dir #{item}",
 			Error: "Fehler",
@@ -1200,14 +1200,14 @@ AjaxLife.Strings = {
 		SpatialChat: {
 			ThirdPersonShout: " schreit:",
 			SecondPersonShout: " schreist:",
-			ThirdPersonSay: " sagt:",
-			SecondPersonSay: " sagst:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
 			ThirdPersonWhisper: " flüstert:",
 			SecondPersonWhisper: " flüsterst:",
 			You: "Du",
-			Say: "Sag",
-			Whisper: "Flüster",
-			Shout: "Schrei",
+			Say: "sagen",
+			Whisper: "flüstern",
+			Shout: "schreien",
 			WindowTitle: "Chat Verlauf"
 		},
 		Toolbar: {
@@ -1223,8 +1223,8 @@ AjaxLife.Strings = {
 			LogoutTitle: "Abmelden",
 			LogoutPrompt: "Möchtest Du Dich wirklich abmelden?",
 			LogoutTooltip: "Ausloggen aus Second Life",
-			NearbyButton: "Avatare in Deiner Nähe.",
-			NearbyTooltop: "Avatare in Deiner Nähe.",
+			NearbyButton: "Avatare in Deiner Nähe",
+			NearbyTooltop: "Avatare in Deiner Nähe",
 			InventoryButton: "Inventar",
 			InventoryTooltip: "",
 			StatsButton: "Status",
