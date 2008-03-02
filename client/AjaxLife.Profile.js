@@ -254,9 +254,9 @@ AjaxLife.Profile = function(agentid) {
 		borderWidth: '1px',
 		borderStyle: 'solid',
 		borderColor: '#000',
-		cursor: 'pointer'
+		cursor: 'default'
 	});
-	dd_inventory.appendChild(document.createTextNode("Drop inventory here"));
+	dd_inventory.appendChild(document.createTextNode(_("Profile.DropInventory")));
 	
 	var dd_inventory_dd = new Ext.dd.DropTarget(dd_inventory, {
 		ddGroup: "InventoryDD",
@@ -305,6 +305,7 @@ AjaxLife.Profile = function(agentid) {
 	
 	// Append...
 	tab_sl.bodyEl.addClass("profile 2ndlife");
+	tab_sl.bodyEl.dom.appendChild(dd_inventory);
 	tab_sl.bodyEl.dom.appendChild(div_name.dom);
 	tab_sl.bodyEl.dom.appendChild(img_sl.dom);
 	tab_sl.bodyEl.dom.appendChild(div_born.dom);
@@ -315,7 +316,6 @@ AjaxLife.Profile = function(agentid) {
 	tab_sl.bodyEl.dom.appendChild(div_sl_about.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups_label.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups.dom);
-	tab_sl.bodyEl.dom.appendChild(dd_inventory);
 	tab_sl.activate();
 	// 1st Life
 	tab_fl = win.getTabs().addTab("profile_tab_"+agentid+"_1stlife",_("Profile.FirstLife"));

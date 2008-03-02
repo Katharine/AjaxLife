@@ -27,10 +27,11 @@
 var submitexpected = false;
 var SUPPORTED_LANGUAGES = {
 	en: 'English',
-	he: 'עברית',
-	ja: '日本語',
+	es: "Español",
+	de: "Deutsch",
 	pt_br: 'Portuguese (Brazil)',
-	es: "Español"
+	ja: '日本語',
+	he: 'עברית'
 };
 
 // Restores the login screen to its standard state.

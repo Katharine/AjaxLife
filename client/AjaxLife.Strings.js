@@ -167,7 +167,8 @@ AjaxLife.Strings = {
 			TeleportButton: "Offer Teleport",
 			TeleportDialogTitle: "Teleporting #{first} #{last}",
 			TeleportDialogPrompt: "Enter a message to send with your teleport offer:",
-			TeleportDefaultMessage: "Join me in #{sim}!"
+			TeleportDefaultMessage: "Join me in #{sim}!",
+			DropInventory: "Drop inventory here"
 		},
 		Texture: {
 			DownloadFailed: "Could not download texture."
@@ -1132,6 +1133,227 @@ AjaxLife.Strings = {
 			LoggingIn: "Entrando a Second Life...",
 			Error: "Error",
 			SomethingWrong: "A pesar de nuestros más grandes esfuerzos, algo se equivocó.<br /><br />Por favor intenta de nuevo más tarde."
+		}
+	},
+	// Arthur Kokcharov (www.secondforum.de)
+	de: {
+		Friends: {
+			OnlineNotification: "#{name} ist #{status}.",
+			Online: "online",
+			Offline: "offline",
+			FriendshipOffered: "#{name} bietet Dir Freundschaft an. Willst Du sie akzeptieren?",
+			YouAccept: "Du hast #{name} als Freund akzeptiert.",
+			YouDecline: "Du hast #{name} als Freund abgelehnt."
+		},
+		InstantMessage: {
+			Typing: "#{name} tippt...",
+			OnlineFriends: "Freunde online",
+			Send: "Senden",
+			WindowTitle: "Instant Messages",
+			Profile: "Profil"
+		},
+		AjaxLife: {
+			Precaching: "Laden...",
+			MOTD: "News des Tages"
+		},
+		Map: {
+			TeleportConfirm: "Möchtest Du Dich wirklich zum #{sim} (#{x}, #{y}) teleportieren?",
+			RegionLabel: "Region:",
+			PositionLabel: "Position:",
+			TeleportNoun: "Teleport",
+			TeleportVerb: "Teleport",
+			Teleporting: "teleportiert",
+			FocusYou: "Meine Position",
+			Clear: "Löschen",
+			FocusTarget: "Ziel anzeigen",
+			HomeButton: "Nach Hause",
+			HomeConfirm: "Möchtest Du wirklich nach Hause?",
+			TeleportRequest: "#{name} bietet Dir einen Teleport an:<br /><br />#{message}",
+			TeleportRequestTitle: "Teleport Angebot",
+			Teleportation: "Teleport",
+			TeleportSuccess: "Du wurdest erfolgreich nach #{sim} (#{x}, #{y}, #{z}) teleportiert",
+			TeleportCancelled: "Dein Teleport wurde leider abgebrochen.",
+			TeleportError: "Du konntest leider nicht teleporteirt werden. Bitte versuche es später nochmal.",
+			WindowTitle: "Karte",
+			NoRegionGiven: "Der Server konnte die Sim auf der Du Dich gerade befindest nicht ermitteln."
+			
+		},
+		Network: {
+			LoggingOut: "Meldet ab...",
+			LogoutError: "Du konntest Dich wegen einem Kommunikationsfehler nicht abmelden.",
+			LogoutSuccess: "Du wurdest von Second Life abgemeldet.",
+			LogoutForced: "Du wurdest von Second Life abgemeldet:<br /><br />#{reason}",
+			UnhandledMessage: "Unhandled message",
+			EventQueueFailure: "Die Anfrage konte nicht aktualisiert werden.",
+			GenericSendError: "Ein Fehler während des Sendens der Daten.",
+			InventoryReceive: "#{name} gab Dir #{item}",
+			Error: "Fehler",
+			Disconnected: "Verbindung wurde getrennt."
+		},
+		StatusBar: {
+			Money: "Geld",
+			LindenDollarSymbol: "L$",
+			Loading: " lädt...",
+			MoneyReceived: "Du hast L$#{amount} bekommen.",
+			MoneyGiven: "Du hast L$#{amount} bezahlt."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " schreit:",
+			SecondPersonShout: " schreist:",
+			ThirdPersonSay: " sagt:",
+			SecondPersonSay: " sagst:",
+			ThirdPersonWhisper: " flüstert:",
+			SecondPersonWhisper: " flüsterst:",
+			You: "Du",
+			Say: "Sag",
+			Whisper: "Flüster",
+			Shout: "Schrei",
+			WindowTitle: "Chat Verlauf"
+		},
+		Toolbar: {
+			ChatButton: "Chat",
+			ChatTooltip: "Sprech mit den Personen in Deiner Nähe.",
+			IMButton: "Unterhalten",
+			IMTooltip: "Kommuniziere mit Personen über Distanzen hinweg.",
+			MapButton: "Karte",
+			MapTooltip: "Zeigt Dir die Weltkarte.",
+			SearchButton: "Suchen",
+			SearchTooltip: "",
+			LogoutButton: "Abmelden",
+			LogoutTitle: "Abmelden",
+			LogoutPrompt: "Möchtest Du Dich wirklich abmelden?",
+			LogoutTooltip: "Ausloggen aus Second Life",
+			NearbyButton: "Avatare in Deiner Nähe.",
+			NearbyTooltop: "Avatare in Deiner Nähe.",
+			InventoryButton: "Inventar",
+			InventoryTooltip: "",
+			StatsButton: "Status",
+			StatsTooltip: "Status"
+		},
+		Widgets: {
+			Yes: "Ja",
+			No: "Nein",
+			Accept: "Akzeptiert",
+			Decline: "Abgelehnt",
+			OK: "OK",
+			Cancel: "Abbrechen"
+		},
+		Search: {
+			WindowTitle: "Suchen",
+			Searching: "Suchen...",
+			People: "Leute"
+		},
+		Profile: {
+			WindowTitle: "Profil - #{name}",
+			Loading: "Laden...",
+			JoinDate: "Geboren am: #{date}",
+			Account: "Konto:<br />#{type}",
+			PaymentInfoOnFile: "Zahlungsinfo verwendete",
+			PaymentInfoUsed: "Zahlungsinfo verwendet",
+			LindenAccount: "Linden Lab Mitarbeiter",
+			NoPaymentInfo: "Keine Zahlungsinfo verwendet",
+			Picks: "Foto",
+			Interests: "Interessen",
+			SecondLife: "2nd Life",
+			FirstLife: "1st Life",
+			Groups: "Gruppen",
+			About: "Info",
+			Name: "Name: #{name}",
+			Online: "Online",
+			Offline: "Offline",
+			Partner: "Partner:<br />#{partner}",
+			None: "",
+			IMButton: "Instant Message",
+			PayButton: "Zahlen",
+			PayDialogTitle: " Zahle #{first} #{last}",
+			PayDialogPrompt: "Wieviel möchtest Du #{first} #{last} bezahlen?",
+			InvalidAmount: "Die ist eine unzulässige Menge, zum bezahlen!",
+			FriendButton: "Als Freund hinzufügen",
+			ConfirmFriendAdd: "Bist Du Dir sicher, dass Du #{first} #{last} als Freund hinzufügen möchtest?",
+			FriendshipOffered: "Du hast #{first} #{last} die Freundscaft angebotren.",
+			TeleportButton: "Teleport anbieten",
+			TeleportDialogTitle: " #{first} #{last} einen Teleport anbieten.",
+			TeleportDialogPrompt: "Schreibe eine Message zu Deinem Teleport:",
+			TeleportDefaultMessage: "Besuche mich auf #{sim}!"
+		},
+		Texture: {
+			DownloadFailed: "Die Texture konnte nicht heruntergeladen werden."
+		},
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ",",
+			DecimalPoint: "."
+		},
+		AvatarsNear: {
+			WindowTitle: "Avatare in Deiner Nähe."
+		},
+		Inventory: {
+			WindowTitle: "Inventar",
+			NullAssetTransfer: "Eine betimmte Anfrage scheiterte.",
+			OfferAccepted: "#{name} hat ihr Inventarangebot angenommen.",
+			OfferDeclined: "#{name} hat ihr Inventarangebot abgelehnt.",
+			NoFolderTransfer: "Leider ist das Verschieben des Ordner momentan nicht möglich.",
+			NoNoTransferTransfer: "'#{item}' ist no transfer, so kann es nicht verschickt werden.",
+			ConfirmTransfer: "Bis Du Dir sicher, dass Du #{item} an #{first} #{last} geben möchtest?",
+			ConfirmNoCopyTransfer: "#{item} kann nicht kopiert werden. Wenn Du das Objekt hergibst verlierst Du Deine Kopie.<br /><br />Willst Du #{first} #{last} #{item} geben?",
+			ConfirmTransferTitle: "Inventar transfer"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "Textur: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "Notiz: #{name}"
+			},
+			Script: {
+				WindowTitle: "Skript: #{name}"
+			},
+			Landmark: {
+				Title: "Teleport zum Landmark",
+				Message: "Willst Du Dich wirklich nach #{name} teleportieren?"
+			}
+		},
+		Stats: {
+			WindowTitle: "Status",
+			Region: "Region",
+			FPS: "FPS",
+			TD: "Time Dilation",
+			ScriptIPS: "Script IPS",
+			Objects: "Objekte",
+			Scripts: "Active Skripte",
+			Agents: "Agenten",
+			ChildAgents: "Child Agenten",
+			ALServer: "AjaxLife Server",
+			Sessions: "Sessions"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "Script permission request",
+			PermissionRequestBody: "'#{object}', ein Objekt von '#{owner}', würde gerne:<br /><br />#{permission}<br />Ist das ok?",
+			DialogMessage: "#{first} #{last}'s '#{object}':<br />#{message}",
+			DialogTitle: "Script dialog"
+		},
+		Permissions: {
+			Debit: "Linden Dollars (L$) von Dir nehmen",
+			TakeControls: "Ihre Steuerelemente beeinflussen",
+			Animate: "Ihren Avatar animieren",
+			Attach: "sich an Ihrem Avatar festhalten",
+			ChangeLinks: "Verlinken von Objekten",
+			TrackCamera: "Kamera finden",
+			ControlCamera: "Kamera kontrollieren"
+		},
+		Login: {
+			First: "Vorname",
+			Last: "Nachname",
+			Password: "Passwort",
+			LogIn: "Einloggen",
+			Grid: "Grid",
+			Language: "Sprache",
+			LoadingSession: "Daten laden...",
+			SessionLoadFailed: "Fehler beim Laden der Daten.",
+			Encrypting: "Logindaten verschlüsseln...",
+			LoggingIn: "Logging in Second Life...",
+			Error: "Fehler",
+			SomethingWrong: "Wir haben unser Bestes versucht, aber etwas ging hier schief.<br /><br />Versuche es später noch einmal."
 		}
 	}
 	// More translations here.
