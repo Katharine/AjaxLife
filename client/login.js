@@ -29,6 +29,7 @@ var SUPPORTED_LANGUAGES = {
 	en: 'English',
 	es: "Español",
 	de: "Deutsch",
+	fr: 'Français',
 	pt_br: 'Portuguese (Brazil)',
 	ja: '日本語',
 	he: 'עברית'

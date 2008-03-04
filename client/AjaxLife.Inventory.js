@@ -29,6 +29,7 @@
  	var Tree = Ext.tree;
  	var inventory = {};
  	var tree = false;
+ 	var editor = false;
  	var win = false;
  	var list = false;
  	var T = AjaxLife.Constants.Inventory.InventoryType;	
@@ -124,21 +125,25 @@
 		if(node.leaf)
 		{
 			AjaxLife.Debug("Inventory: Renaming item "+node.attributes.UUID+" to "+text);
-			AjaxLife.Network.Send('RenameItem', {
-				Item: node.attributes.UUID,
-				TargetFolder: node.parentNode.attributes.UUID,
-				NewName: text
+			AjaxLife.Network.Send('UpdateItem', {
+				ItemID: node.attributes.UUID,
+				OwnerID: node.attributes.OwnerID,
+				Name: text
+			});
+		}
+		else if(node.parentNode)
+		{
+			AjaxLife.Debug("Inventory: Renaming folder "+node.attributes.UUID+" to "+text);
+			AjaxLife.Network.Send('UpdateFolder', {
+				FolderID: node.attributes.UUID,
+				ParentID: node.parentNode.attributes.UUID,
+				Type: node.attributes.PreferredType,
+				Name: text
 			});
 		}
 		else
 		{
-			AjaxLife.Debug("Inventory: Reverting folder rename.");
 			node.setText(oldtext);
-			
-			// Have to do this to avoid "Too much recursion"-type errors.
-			setTimeout(function() {
-				AjaxLife.Widgets.Ext.msg("Error","Can't rename folders.");
-			}, 100);
 		}
 	}
  	
@@ -153,6 +158,7 @@
 				width: 300,
 				height: 400,
 				modal: false,
+				autoScroll: true,
 				shadow: true,
 				title: _("Inventory.WindowTitle")
 			});
@@ -179,10 +185,21 @@
 				animate: AjaxLife.Fancy,
 				enableDD: true,
 				ddGroup: 'InventoryDD',
+				containerScroll: true,
+				fitToFrame: true,
 				//selModel: new Tree.MultiSelectionModel(), // This doesn't work yet.
 				'lines': false
 			});
 			tree.setRootNode(root);
+			
+			editor = new Tree.TreeEditor(tree, {
+				allowBlank: false,
+				blankText: _("Inventory.NoBlankText"),
+				selectOnFocus: true,
+				cancelOnEsc: true,
+				completeOnEnter: true,
+				ignoreNoChange: true
+			});
 			
 			// Handle double clicking of inventory items by opening the appriopriate type of window.
 			tree.on('dblclick', function(node) {
@@ -330,6 +347,7 @@
 							newnode.attributes.AssetType = item.AssetType;
 							newnode.attributes.AssetUUID = item.AssetUUID;
 							newnode.attributes.CreatorID = item.CreatorID;
+							newnode.attributes.OwnerID = item.OwnerID;
 							newnode.attributes.CreationDate = item.CreationDate;
 							newnode.attributes.Description = item.Description;
 							newnode.attributes.Flags = item.Flags;
@@ -354,6 +372,12 @@
 				{
 					node.removeChild(node.firstChild);
 				}
+ 			});
+ 			
+ 			tree.on('contextmenu', function(node, ev) {
+ 				ev.stopEvent();
+ 				tree.getSelectionModel().select(node);
+ 				if(node.leaf) return; // Nothing for leaf nodes here.
  			});
  			
  			// Handle incoming inventory.
