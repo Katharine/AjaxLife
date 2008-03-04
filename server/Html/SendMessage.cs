@@ -484,6 +484,31 @@ namespace AjaxLife.Html
                             client.Inventory.GiveItem(new LLUUID(POST["ItemID"]), POST["ItemName"], (AssetType)int.Parse(POST["AssetType"]), new LLUUID(POST["Recipient"]), true);
                         }
                         break;
+                    case "UpdateItem":
+                        {
+                            InventoryItem item = client.Inventory.FetchItem(new LLUUID(POST["ItemID"]), new LLUUID(POST["OwnerID"]), 1000);
+                            if (POST.ContainsKey("Name")) item.Name = POST["Name"];
+                            if (POST.ContainsKey("Description")) item.Description = POST["Description"];
+                            if (POST.ContainsKey("NextOwnerMask")) item.Permissions.NextOwnerMask = (PermissionMask)uint.Parse(POST["NextOwnerMask"]);
+                            if (POST.ContainsKey("SalePrice")) item.SalePrice = int.Parse(POST["SalePrice"]);
+                            if (POST.ContainsKey("SaleType")) item.SaleType = (SaleType)byte.Parse(POST["SaleType"]);
+                            client.Inventory.RequestUpdateItem(item);
+                        }
+                        break;
+                    case "UpdateFolder":
+                        {
+                            UpdateInventoryFolderPacket packet = new UpdateInventoryFolderPacket();
+                            packet.AgentData.AgentID = client.Self.AgentID;
+                            packet.AgentData.SessionID = client.Self.SessionID;
+                            packet.FolderData = new UpdateInventoryFolderPacket.FolderDataBlock[1];
+                            packet.FolderData[0] = new UpdateInventoryFolderPacket.FolderDataBlock();
+                            packet.FolderData[0].FolderID = new LLUUID(POST["FolderID"]);
+                            packet.FolderData[0].ParentID = new LLUUID(POST["ParentID"]);
+                            packet.FolderData[0].Type = sbyte.Parse(POST["Type"]);
+                            packet.FolderData[0].Name = Helpers.StringToField(POST["Name"]);
+                            client.Network.SendPacket((Packet)packet);
+                        }
+                        break;
                     case "ReRotate":
                         user.Rotation = -Math.PI;
                         break;

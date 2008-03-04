@@ -639,6 +639,7 @@ namespace AjaxLife
                         hash.Add("AssetType", item.AssetType);
                         hash.Add("AssetUUID", item.AssetUUID);
                         hash.Add("CreatorID", item.CreatorID);
+                        hash.Add("OwnerID", item.OwnerID);
                         hash.Add("CreationDate", item.CreationDate);
                         hash.Add("Description", item.Description);
                         hash.Add("Flags", item.Flags);
