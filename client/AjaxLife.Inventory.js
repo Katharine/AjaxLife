@@ -32,6 +32,7 @@
  	var editor = false;
  	var win = false;
  	var list = false;
+ 	var trashnode = false;
  	var T = AjaxLife.Constants.Inventory.InventoryType;	
  	
  	// Return the appropriate icon based on inventory type.
@@ -131,7 +132,7 @@
 				Name: text
 			});
 		}
-		else if(node.parentNode)
+		else if(node.getDepth() > 0)
 		{
 			AjaxLife.Debug("Inventory: Renaming folder "+node.attributes.UUID+" to "+text);
 			AjaxLife.Network.Send('UpdateFolder', {
@@ -145,6 +146,144 @@
 		{
 			node.setText(oldtext);
 		}
+	}
+	
+	function moveitem(node, newparent)
+	{
+		AjaxLife.Debug("Moving "+node.attributes.UUID+" to folder "+newparent.attributes.UUID);
+		if(node.leaf)
+		{
+			AjaxLife.Network.Send('MoveItem', {
+				Item: node.attributes.UUID,
+				TargetFolder: newparent.attributes.UUID,
+				NewName: node.attributes.Name
+			});
+		}
+		else
+		{
+			AjaxLife.Network.Send('MoveFolder', {
+				Folder: node.attributes.UUID,
+				NewParent: newparent.attributes.UUID
+			});
+		}
+	}
+	
+	function emptytrash()
+	{
+		var node = this;
+		Ext.Msg.confirm("", _("Inventory.ConfirmEmptyTrash"), function(btn) {
+			if(btn == 'yes')
+			{
+				AjaxLife.Debug("Inventory: Emptying trash...");
+				AjaxLife.Network.Send("EmptyTrash", {foo: 'bar', callback: function(data) {
+					alert(data);
+				}});
+				while(trashnode.childNodes.length)
+				{
+					try
+					{
+						trashnode.eachChild(function(thenode) {
+							if(!thenode || !thenode.attributes) return;
+							removeinventoryfromcache(thenode);
+							if(thenode != trashnode) trashnode.removeChild(thenode);
+						});
+					}
+					catch(e)
+					{
+						AjaxLife.Debug("Exception while deleting. Meh.");
+					}
+				}
+				AjaxLife.Debug("Inventory: Trash emptied.");
+			}
+		});
+	}
+	
+	function removeinventoryfromcache(node)
+	{
+		if(inventory[node.attributes.UUID])
+		{
+			delete inventory[node.attributes.UUID];
+		}
+		if(!node.leaf)
+		{
+			node.eachChild(removeinventoryfromcache);
+		}
+	}
+	
+	function inventorydelete()
+	{
+		var node = this;
+		if(node.isAncestor(trashnode))
+		{
+			Ext.Msg.confirm("", _("Inventory.ConfirmItemPurge", {item: node.attributes.Name}), function(btn) {
+				if(btn == 'yes')
+				{
+					if(node.leaf)
+					{
+						AjaxLife.Debug("Inventory: Sending DeleteItem("+node.attributes.UUID+")");
+						AjaxLife.Network.Send("DeleteItem", {Item: node.attributes.UUID});
+					}
+					else
+					{
+						AjaxLife.Debug("Inventory: Sending DeleteFolder("+node.attributes.UUID+")");
+						AjaxLife.Network.Send("DeleteFolder", {Folder: node.attributes.UUID});
+					}
+					removeinventoryfromcache(node);
+					node.parentNode.removeChild(node);
+					AjaxLife.Debug("Inventory: Deleted "+node.attributes.UUID+" from trash.");
+				}
+			});
+		}
+		else
+		{
+			moveitem(node, trashnode);
+			//this.parentNode.removeChild(node);
+			trashnode.appendChild(node);
+			AjaxLife.Debug("Inventory: Moved "+node.attributes.UUID+" to trash.");
+		}
+	}
+	
+	function inventoryproperties()
+	{
+	}
+	
+	function createfolder()
+	{
+		var node = this;
+		Ext.Msg.prompt("", _("Inventory.NewFolderName"), function(btn, text) {
+			if(btn != 'ok') return;
+			AjaxLife.Network.Send("CreateFolder", {
+				Parent: node.attributes.UUID,
+				Name: text,
+				callback: function(data) {
+					if(data.FolderID != "" && data.FolderID != AjaxLife.Utils.UUID.Zero)
+					{
+						var newnode = new Tree.TreeNode({
+							text: text,
+							leaf: false,
+							draggable: true,
+							icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getfoldericon(-1, text)
+						});
+						newnode.attributes.PreferredType = -1;
+						newnode.attributes.OwnerID = gAgentID;
+						newnode.attributes.UUID = data.FolderID;
+						newnode.attributes.Name = text;
+						newnode.attributes.loaded = true;
+						newnode.attributes.loading = false;
+						inventory[data.FolderID] = newnode;
+						node.appendChild(newnode);
+						newnode.ensureVisible();
+						newnode.select();
+						AjaxLife.Debug("Inventory: Newly created folder "+data.FolderID+" added to inventory.");
+					}
+					else
+					{
+						AjaxLife.Widgets.Ext.msg("",_("Inventory.FolderCreationFailed", {folder: text}));
+					}
+				}
+			});
+		});
+		AjaxLife.Debug("Inventory: Created folder beneath "+this.attributes.UUID);
 	}
  	
  	return {
@@ -245,23 +384,7 @@
 			tree.on('nodedrop',function(event) { // That's "node drop", not "no de-drop" (I keep reading it as the latter).
 				var node = event.dropNode;
 				var newparent = (event.point == 'append') ? event.target : event.target.parentNode;
-				if(node.leaf)
-				{
-					AjaxLife.Debug("Moving "+node.attributes.UUID+" to folder "+newparent.attributes.UUID);
-					AjaxLife.Network.Send('MoveItem', {
-						Item: node.attributes.UUID,
-						TargetFolder: newparent.attributes.UUID,
-						NewName: node.attributes.Name
-					});
-				}
-				else
-				{
-					AjaxLife.Debug("Moving "+node.attributes.UUID+" to folder "+newparent.attributes.UUID);
-					AjaxLife.Network.Send('MoveFolder', {
-						Folder: node.attributes.UUID,
-						NewParent: newparent.attributes.UUID
-					});
-				}
+				moveitem(node, newparent);
 			});
 			
 			// Disable reordering - it won't do anything anyway.
@@ -321,6 +444,11 @@
 								draggable: true,
 								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getfoldericon(item.PreferredType, item.Name)
 							});
+							// 14 is the trash.
+							if(item.PreferredType == 14)
+							{
+								trashnode = newnode;
+							}
 							newnode.attributes.PreferredType = item.PreferredType;
 							newnode.attributes.OwnerID = item.OwnerID;
 							newnode.attributes.UUID = item.UUID;
@@ -377,7 +505,32 @@
  			tree.on('contextmenu', function(node, ev) {
  				ev.stopEvent();
  				tree.getSelectionModel().select(node);
- 				if(node.leaf) return; // Nothing for leaf nodes here.
+ 				var menu = new Ext.menu.Menu({});
+ 				if(node.getDepth() > 0)
+ 				{
+					var delbtn = new Ext.menu.Item({text: _('Inventory.Delete')});
+					delbtn.on('click', inventorydelete, node);
+					menu.add(delbtn);
+				}
+				if(node.leaf)
+				{
+					var props = new Ext.menu.Item({text: _('Inventory.Properties')});
+					props.on('click', inventoryproperties, node);
+					menu.add(props);
+				}
+				else
+				{
+					var newfolder = new Ext.menu.Item({text: _('Inventory.CreateFolder')});
+					newfolder.on('click', createfolder, node);
+					menu.add(newfolder);
+					if(node == trashnode)
+					{
+						var trash = new Ext.menu.Item({text: _('Inventory.EmptyTrash')});
+						trash.on('click', emptytrash, node);
+						menu.add(trash);
+					}
+				}
+				menu.showAt(ev.getXY());
  			});
  			
  			// Handle incoming inventory.

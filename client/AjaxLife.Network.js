@@ -299,7 +299,7 @@ AjaxLife.Network.Send = function(message, opts) {
 				catch(e)
 				{
 					AjaxLife.Debug("Network: Error sending message: "+e.name+" - "+e.message);
-					AjaxLife.Widgets.Ext.msg("",response.responseText);
+					AjaxLife.Debug("Network: Response: "+response.responseText);
 				}
 			}
 			// No success. Either the server died or a timeout. Can't really tell.

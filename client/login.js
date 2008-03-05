@@ -130,7 +130,7 @@ function initui()
 					node.parentNode.removeChild(node);
 				}
 			}
-			$(document.body).addClassName("loggedin");
+			$(document.body).addClassName("loggedin").removeClassName("loggingin");
 			AjaxLife.Debug("login: Running AjaxLife init...");
 			AjaxLife.Startup();
 		}
@@ -287,6 +287,7 @@ function Encrypt()
 // When we're ready, set up the login handler and disable the default login action.
 // Place the cursor in the First Name box.
 Ext.onReady(function() {
+	$(document.body).addClassName("loggingin");
 	// Login button handler
 	Ext.get('btn_login').on('click',handlelogin);
 	

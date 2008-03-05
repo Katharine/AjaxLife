@@ -181,7 +181,7 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	});
 	
 	// Actually download the texture.
-	AjaxLife.Debug("InventoryDialogs: Requesting notecard asset "+inventoryid);
+	AjaxLife.Debug("InventoryDialogs: Requesting notecard asset "+notecardid);
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: notecardid,
 		InventoryID: inventoryid,
@@ -239,7 +239,7 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 		// Ignore it if it's not ours.
 		if(data.TransferID != transferid) return;
 		
-		AjaxLife.Debug("InventoryDialogs: Received script asset "+inventoryid);
+		AjaxLife.Debug("InventoryDialogs: Received script asset "+data.AssetID);
 		// Unregister the callback, since we don't need it any more.
 		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
 		
@@ -255,7 +255,7 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	});
 	
 	
-	AjaxLife.Debug("InventoryDialogs: Requesting script asset "+inventoryid);
+	AjaxLife.Debug("InventoryDialogs: Requesting script asset with inventoryid "+inventoryid);
 	// Request the asset download.
 	AjaxLife.Network.Send('RequestAsset', {
 		AssetID: AjaxLife.Utils.UUID.Zero,
