@@ -31,6 +31,11 @@ AjaxLife.InventoryDialogs = {};
 // This is bad because the ids are unique per object, not per window.
 AjaxLife.ActiveInventoryDialogs = {};
 
+// Properties dialog.
+AjaxLife.InventoryDialogs.Properties = function(data) {
+
+}
+
 // Texture display
 AjaxLife.ActiveInventoryDialogs.Texture = {};
 AjaxLife.InventoryDialogs.Texture = function(textureid, name) {

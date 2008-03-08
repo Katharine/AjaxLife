@@ -71,6 +71,10 @@ AjaxLife.Startup = function() {
 	// We're connected. Actually, we aren't, but this is close enough and things break if we leave it too long.
 	AjaxLife.Network.Connected = true;
 	// Start everything up.
+	AjaxLife.Debug("AjaxLife: NameCache init...");
+	AjaxLife.NameCache.init();
+	AjaxLife.Debug("AjaxLife: Friends init...");
+	AjaxLife.Friends.init()
 	AjaxLife.Debug("AjaxLife: InstantMessage init...");
 	AjaxLife.InstantMessage.init();
 	AjaxLife.Debug("AjaxLife: SpatialChat init...");
@@ -78,11 +82,7 @@ AjaxLife.Startup = function() {
 	AjaxLife.Debug("AjaxLife: Toolbar init....");
 	AjaxLife.Toolbar.init('toolbar');
 	AjaxLife.Debug("AjaxLife: StatusBar init....");
-	AjaxLife.StatusBar.init();
-	AjaxLife.Debug("AjaxLife: NameCache init...");
-	AjaxLife.NameCache.init();
-	AjaxLife.Debug("AjaxLife: Friends init...");
-	AjaxLife.Friends.init();
+	AjaxLife.StatusBar.init();;
 	AjaxLife.Debug("AjaxLife: Search init...");
 	AjaxLife.Search.init();
 	AjaxLife.Debug("AjaxLife: AvatarsNear init...");

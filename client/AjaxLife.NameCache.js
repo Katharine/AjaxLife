@@ -55,6 +55,7 @@ AjaxLife.NameCache = function () {
 			}
 			else
 			{
+				AjaxLife.Debug("NameCache: Looking up "+id);
 				if(!pending[id])
 				{
 					pending[id] = new Array();

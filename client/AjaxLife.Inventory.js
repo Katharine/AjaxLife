@@ -216,6 +216,7 @@
 	
 	function inventoryproperties()
 	{
+		new AjaxLife.InventoryDialogs.Properties(this.attributes);
 	}
 	
 	var uuidcopycount = 0;
@@ -589,24 +590,30 @@
 				}
 				if(node.leaf)
 				{
+					var P = AjaxLife.Constants.Permissions;
+					var perms = node.attributes.Permissions.OwnerMask;
+					
 					var props = new Ext.menu.Item({text: _('Inventory.Properties')});
 					props.on('click', inventoryproperties, node);
 					menu.add(props);
+					
 					var rename = new Ext.menu.Item({text: _('Inventory.Rename')});
 					rename.on('click', renameitem, node);
+					// Disable this if we don't have modify permissions. It won't work anyway.
+					if(~perms & P.Modify)
+					{		
+						rename.disable();
+					}
 					menu.add(rename);
+					
+					
 					var uuid = new Ext.menu.Item({text: _('Inventory.CopyUUID')});
+					uuid.on('click', copyuuid, node);
 					
 					// Only enable this if we have full permissions.
 					// This is JavaScript-enforced DRM. Yeah, right.
 					// Still. Best to keep the content creators happy.
-					var P = AjaxLife.Constants.Permissions;
-					var perms = node.attributes.Permissions.OwnerMask;
-					if((perms & P.Copy) && (perms & P.Modify) && (perms & P.Transfer))
-					{
-						uuid.on('click', copyuuid, node);
-					}
-					else
+					if((~perms & P.Copy) || (~perms & P.Modify) || (~perms & P.Transfer))
 					{
 						uuid.disable();
 					}

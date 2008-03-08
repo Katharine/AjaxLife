@@ -45,10 +45,10 @@ AjaxLife.Friends = function() {
 			}
 			else
 			{
-				// Friend wasn't probably known - probably login spam from the server. Handle it as a new friend.
+				// Friend wasn't known - probably login spam from the server. Handle it as a new friend.
 				added(friend);
 			}
-			// Mark as known.
+			// Update information.
 			friends[friend.ID] = friend;
 		}
 	}
@@ -92,13 +92,24 @@ AjaxLife.Friends = function() {
 				callback: function(data) {
 					if(data.each)
 					{
+						AjaxLife.Debug("Friends: Received friend list.");
 						data.each(function(friend) {
-							if(!friends[friend.ID])
+							if(friend.Name != '')
 							{
-								added(friend);
+								AjaxLife.NameCache.Add(friend.ID, friend.Name);
 							}
-							friends[friend.ID] = friend;
-							AjaxLife.NameCache.Add(friend.ID, friend.Name);
+							else
+							{
+								AjaxLife.Debug("Got friend "+friend.ID+" with null name.");
+							}
+							AjaxLife.NameCache.Find(friend.ID, function(name) {
+								friend.Name = name;
+								if(!friends[friend.ID])
+								{
+									added(friend);
+								}
+								friends[friend.ID] = friend;
+							});
 						});
 					}
 					else
@@ -131,10 +142,12 @@ AjaxLife.Friends = function() {
 		},
 		// Register for logon/logoff callback
 		AddStatusCallback: function(callback) {
+			AjaxLife.Debug("Friends: Registered status callback.");
 			onchangecallbacks[onchangecallbacks.length] = callback;
 		},
 		// Register for friend added callback.
 		AddNewFriendCallback: function(callback) {
+			AjaxLife.Debug("Friends: Registered new friend callback.");
 			onnewcallbacks[onnewcallbacks.length] = callback;
 		}
 	};

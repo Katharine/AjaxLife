@@ -85,15 +85,12 @@ AjaxLife.Widgets.Ext = function(){
         	if(growlid && cangrowl)
         	{
 				var options = {
-					message: s,
+					title: title,
+					description: s,
 					priority: 1,
 					sticky: false,
 					identifier: growlid
 				};
-				if(title != '')
-				{
-					options.title = title;
-				}
 				fluid.showGrowlNotification(options);
 			}
 			// If the notification doesn't want to be shown internally, don't.
