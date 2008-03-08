@@ -198,6 +198,12 @@ div.al-selectlist ul li.al-selectlist-highlighted {
 	width: 16px;
 }
 
+/* Properties */
+
+.properties {
+	font-size: 12px;
+}
+
 /* Notecard */
 
 .notecard {

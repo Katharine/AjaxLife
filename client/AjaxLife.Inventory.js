@@ -368,7 +368,7 @@
  				autoCreate: true,
 				resizable: true,
 				proxyDrag: !AjaxLife.Fancy,
-				width: 300,
+				width: 350,
 				height: 400,
 				modal: false,
 				//autoScroll: true, // This causes strange problems with scrolling.

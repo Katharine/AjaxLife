@@ -268,6 +268,11 @@ AjaxLife.Map = function() {
 		AjaxLife.Network.Send('GetSimStatus', {});
 	}
 	
+	function focusontarget()
+	{
+		map.centerAndZoomAtSLCoord(new SLPoint(marked_position.sim, marked_position.x, marked_position.y),1);
+		zoom_slider.setvalue(1);
+	}
 	
 	// These methods are public.
 	return {
@@ -478,10 +483,7 @@ AjaxLife.Map = function() {
 			clear_btn.getEl().setStyle({position: 'absolute', right: '5px', bottom: '35px'});
 			// Focus and zoom in on the target when this button's pressed.
 			target_focus_btn = new Ext.Button(buttonholder, {
-				handler: function() {
-					map.centerAndZoomAtSLCoord(new SLPoint(marked_position.sim, marked_position.x, marked_position.y),1);
-					zoom_slider.setvalue(1);
-				},
+				handler: focusontarget,
 				text: _("Map.FocusTarget"),
 				disabled: true
 			});

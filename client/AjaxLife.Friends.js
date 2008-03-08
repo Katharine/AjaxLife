@@ -34,22 +34,30 @@ AjaxLife.Friends = function() {
 		// Check if anything's actually changed.
 		if(!friends[friend.ID] || friends[friend.ID].Online !== friend.Online)
 		{
-			// If the friend was already known..
-			if(friends[friend.ID])
+			if(friend.Name == '' && friends[friend.ID] && friends[friend.ID].Name != '')
 			{
-				// Notification + run any applicable callbacks.
-				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}), "onoff");
-				onchangecallbacks.each(function(callback) {
-					callback(friend);
-				});
+				friend.Name = friends[friend.ID].Name;
 			}
-			else
-			{
-				// Friend wasn't known - probably login spam from the server. Handle it as a new friend.
-				added(friend);
-			}
-			// Update information.
-			friends[friend.ID] = friend;
+			// More anti-null code.
+			AjaxLife.NameCache.Find(friend.ID, function(name) {
+				friend.Name = name;
+				// If the friend was already known..
+				if(friends[friend.ID])
+				{
+					// Notification + run any applicable callbacks.
+					AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}), "onoff");
+					onchangecallbacks.each(function(callback) {
+						callback(friend);
+					});
+				}
+				else
+				{
+					// Friend wasn't known - probably login spam from the server. Handle it as a new friend.
+					added(friend);
+				}
+				// Update information.
+				friends[friend.ID] = friend;
+			});
 		}
 	}
 	
@@ -94,7 +102,7 @@ AjaxLife.Friends = function() {
 					{
 						AjaxLife.Debug("Friends: Received friend list.");
 						data.each(function(friend) {
-							if(friend.Name != '')
+							if(friend && friend.Name != '')
 							{
 								AjaxLife.NameCache.Add(friend.ID, friend.Name);
 							}

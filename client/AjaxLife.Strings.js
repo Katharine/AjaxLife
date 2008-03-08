@@ -105,23 +105,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Chat",
-			ChatTooltip: "Talk to people near you",
 			IMButton: "Instant Messages",
-			IMTooltip: "Communicate with distant people",
 			MapButton: "Map",
-			MapTooltip: "Show the grid map",
 			SearchButton: "Search",
-			SearchTooltip: "",
 			LogoutButton: "Log out",
 			LogoutTitle: "Log out",
 			LogoutPrompt: "Are you sure you want to log out?",
-			LogoutTooltip: "Log out of Second Life",
 			NearbyButton: "Nearby Avatars",
-			NearbyTooltop: "People in your general vicinity.",
 			InventoryButton: "Inventory",
-			InventoryTooltip: "Read-only inventory access",
-			StatsButton: "Stats",
-			StatsTooltip: ""
+			StatsButton: "Stats"
 		},
 		Widgets: {
 			Yes: "Yes",
@@ -217,6 +209,23 @@ AjaxLife.Strings = {
 			Landmark: {
 				Title: "Teleport to landmark",
 				Message: "Are you sure you want to teleport to #{name}?"
+			},
+			Properties: {
+				Title: "Properties - #{name}",
+				Name: "Name:",
+				Description: "Description:",
+				Creator: "Creator:",
+				Owner: "Owner:",
+				Acquired: "Acquired:",
+				OwnerCan: "Owner can:",
+				NextOwnerCan: "Next owner can:",
+				MarkItem: "Mark item:",
+				ForSale: "For sale",
+				Original: "Original",
+				Copy: "Copy",
+				Price: "Price:",
+				Profile: "Profile",
+				Unknown: "(unknown)"
 			}
 		},
 		Stats: {
@@ -350,23 +359,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "דבר",
-			ChatTooltip: "דבר לאנשים הקרובים אליך",
 			IMButton: "הודעות מיידיות",
-			IMTooltip: "דבר עם אנשים הרחוקים ממך",
 			MapButton: "מפה",
-			MapTooltip: "הראה את מפת העולם",
 			SearchButton: "חפש",
-			SearchTooltip: "חפש פריטים, אנשים, ועוד בעולם הוירטואלי",
 			LogoutButton: "התנתק",
 			LogoutTitle: "התנתק",
 			LogoutPrompt: "האם אתה בטוח שברצונך להתנתק?",
-			LogoutTooltip: "התנתק מהשרת",
 			NearbyButton: "דמויות קרובות",
-			NearbyTooltop: "אנשים בקרבתך.",
 			InventoryButton: "מאגר פריטים",
-			InventoryTooltip: "גישה למאגר הפריטים שלך (קריאה בלבד)",
-			StatsButton: "סטטיסטיקות",
-			StatsTooltip: "גלה מידע על האזור שבו אתה כעת, ומידע על שרת התוכנה."
+			StatsButton: "סטטיסטיקות"
 		},
 		Widgets: {
 			Yes: "כן",
@@ -570,23 +571,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "チャット",
-			ChatTooltip: "近くの人に向けて話す",
 			IMButton: "IM",
-			IMTooltip: "遠くの特定の人と話す",
 			MapButton: "地図",
-			MapTooltip: "グリッドの地図を表示",
 			SearchButton: "検索",
-			SearchTooltip: "",
 			LogoutButton: "ログアウト",
 			LogoutTitle: "ログアウト",
 			LogoutPrompt: "本当にログアウトしたいのですか?",
-			LogoutTooltip: "Second Lifeからログアウトする",
 			NearbyButton: "近くの人",
-			NearbyTooltop: "あなたの近くにいる人達",
 			InventoryButton: "持ち物",
-			InventoryTooltip: "持ち物を表示する (変更できません)",
-			StatsButton: "統計",
-			StatsTooltip: ""
+			StatsButton: "統計"
 		},
 		Widgets: {
 			Yes: "はい",
@@ -791,23 +784,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Conversa",
-			ChatTooltip: "Falar para as pessoas próximas a você",
 			IMButton: "Mensagens Instantâneas",
-			IMTooltip: "Comunicar-se com pessoas distantes",
 			MapButton: "Mapa",
-			MapTooltip: "Mostrar a grade do mapa",
 			SearchButton: "Busca",
-			SearchTooltip: "",
 			LogoutButton: "Sair",
 			LogoutTitle: "Sair",
 			LogoutPrompt: "Você tem certeza de que quer sair?",
-			LogoutTooltip: "Sair do Second Life",
 			NearbyButton: "Avatares Próximos",
-			NearbyTooltop: "Pessoas nas suas proximidades",
 			InventoryButton: "Inventário",
-			InventoryTooltip: "Acesso somente para leitura do inventário",
-			StatsButton: "Status",
-			StatsTooltip: ""
+			StatsButton: "Status"
 		},
 		Widgets: {
 			Yes: "Sim",
@@ -1011,23 +996,14 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Chat",
-			ChatTooltip: "Hablar con la gente que se encuentra cerca",
 			IMButton: "Mensajes instantáneos",
-			IMTooltip: "Comunicarse con gente que no está cerca",
 			MapButton: "Mapa",
-			MapTooltip: "Mostrar el mapa de la grid",
 			SearchButton: "Buscar",
-			SearchTooltip: "",
 			LogoutButton: "Desconectar",
-			LogoutTitle: "Desconectar",
 			LogoutPrompt: "¿Estás seguro de querer desconectarte?",
-			LogoutTooltip: "Desconectarte de Second Life",
 			NearbyButton: "Avatars cercanos",
-			NearbyTooltop: "Gente que se encuentra cerca de ti.",
 			InventoryButton: "Inventario",
-			InventoryTooltip: "Inventario de sólo lectura",
-			StatsButton: "Estadísticas",
-			StatsTooltip: ""
+			StatsButton: "Estadísticas"
 		},
 		Widgets: {
 			Yes: "Sí",
@@ -1232,23 +1208,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Chat",
-			ChatTooltip: "Sprech mit den Personen in Deiner Nähe.",
 			IMButton: "Unterhalten",
-			IMTooltip: "Kommuniziere mit Personen über Distanzen hinweg.",
 			MapButton: "Karte",
-			MapTooltip: "Zeigt Dir die Weltkarte.",
 			SearchButton: "Suchen",
-			SearchTooltip: "",
 			LogoutButton: "Abmelden",
 			LogoutTitle: "Abmelden",
 			LogoutPrompt: "Möchtest Du Dich wirklich abmelden?",
-			LogoutTooltip: "Ausloggen aus Second Life",
 			NearbyButton: "Avatare in Deiner Nähe",
-			NearbyTooltop: "Avatare in Deiner Nähe",
 			InventoryButton: "Inventar",
-			InventoryTooltip: "",
-			StatsButton: "Status",
-			StatsTooltip: "Status"
+			StatsButton: "Status"
 		},
 		Widgets: {
 			Yes: "Ja",
@@ -1452,23 +1420,15 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Chat",
-			ChatTooltip: "Parlez à des personnes près de vous",
 			IMButton: "Messagerie instantanée",
-			IMTooltip: "Communiquer avec des personnes distantes",
 			MapButton: "Carte",
-			MapTooltip: "Afficher la carte de la grille",
 			SearchButton: "Recherche",
-			SearchTooltip: "",
 			LogoutButton: "Déconnexion",
 			LogoutTitle: "Déconnexion",
 			LogoutPrompt: "Êtes vous sur de vouloir vous déconnecter ?",
-			LogoutTooltip: "Déconnexion de Second Life",
 			NearbyButton: "Avatars autour de vous",
-			NearbyTooltop: "Personnes se trouvant autour de vous.",
 			InventoryButton: "Inventaire",
-			InventoryTooltip: "Accès à l'inventaire en lecture seule",
-			StatsButton: "Stats",
-			StatsTooltip: ""
+			StatsButton: "Stats"
 		},
 		Widgets: {
 			Yes: "Oui",
@@ -1630,11 +1590,17 @@ function _(str, args)
 		{
 			if(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]])
 			{
-				if(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])
+				if(parts[2])
 				{
-					return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])).evaluate(args);
+					if(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])
+					{
+						return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]][parts[2]])).evaluate(args);
+					}
 				}
-				return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]])).evaluate(args);
+				else
+				{
+					return(new Template(AjaxLife.Strings[gLanguageCode][parts[0]][parts[1]])).evaluate(args);
+				}
 			}
 		}
 	}
@@ -1645,11 +1611,17 @@ function _(str, args)
 		{
 			if(AjaxLife.Strings.en[parts[0]][parts[1]])
 			{
-				if(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])
+				if(parts[2])
 				{
-					return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])).evaluate(args);
+					if(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])
+					{
+						return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]][parts[2]])).evaluate(args);
+					}
 				}
-				return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]])).evaluate(args);
+				else
+				{
+					return(new Template(AjaxLife.Strings.en[parts[0]][parts[1]])).evaluate(args);
+				}
 			}
 		}
 	}

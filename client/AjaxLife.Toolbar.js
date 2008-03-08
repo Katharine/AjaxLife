@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -93,45 +93,37 @@ AjaxLife.Toolbar = function() {
 			// Build lots of buttons.
 			chat_btn = new Ext.Button(div, {
 				handler: chat_btn_clicked,
-				text: _("Toolbar.ChatButton"),
-				tooltip: _("Toolbar.ChatTooltip")
+				text: _("Toolbar.ChatButton")
 			});
 			im_btn = new Ext.Button(div, {
 				handler: im_btn_clicked,
-				text: _("Toolbar.IMButton"),
-				tooltip: _("Toolbar.IMTooltip")
+				text: _("Toolbar.IMButton")
 			});
 			map_btn = new Ext.Button(div, {
 				handler: map_btn_clicked,
-				text: _("Toolbar.MapButton"),
-				tooltip: _("Toolbar.MapTooltip")
+				text: _("Toolbar.MapButton")
 			});
 			search_btn = new Ext.Button(div, {
 				handler: search_btn_clicked,
-				text: _("Toolbar.SearchButton"),
-				tooltip: _("Toolbar.SearchTooltip")
+				text: _("Toolbar.SearchButton")
 			});
 			nearby_btn = new Ext.Button(div, {
 				handler: nearby_btn_clicked,
-				text: _("Toolbar.NearbyButton"),
-				tooltip: _("Toolbar.NearbyTooltip")
+				text: _("Toolbar.NearbyButton")
 			});
 			inventory_btn = new Ext.Button(div, {
 				handler: inventory_btn_clicked,
-				text: _("Toolbar.InventoryButton"),
-				tooltip: _("Toolbar.InventoryTooltip")
+				text: _("Toolbar.InventoryButton")
 			});
 			// This is disabled in IE because it doesn't work.
 			stats_btn = new Ext.Button(div, {
 				handler: stats_btn_clicked,
 				text: _("Toolbar.StatsButton"),
-				tooltip: _("Toolbar.StatsTooltip"),
 				disabled: Prototype.Browser.IE
 			});
 			log_btn = new Ext.Button(div, {
 				handler: log_btn_clicked,
-				text: _("Toolbar.LogoutButton"),
-				tooltip: _("Toolbar.LogoutTooltip")
+				text: _("Toolbar.LogoutButton")
 			});
 		}
 	};
