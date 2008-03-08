@@ -218,6 +218,33 @@
 	{
 	}
 	
+	var uuidcopycount = 0;
+	
+	function copyuuid()
+	{
+		var uuid = (this.attributes.AssetUUID == AjaxLife.Utils.UUID.Zero) ? this.attributes.UUID : this.attributes.AssetUUID;
+		// In IE we just copy it.
+		if(window.clipboardData && window.clipboardData.setData)
+		{
+			window.clipboardData.setData('Text',uuid);
+		}
+		// For everything else we show a dialog.
+		else
+		{
+			++uuidcopycount;
+			Ext.Msg.alert("", "UUID: <span id='uuid-copy-"+uuidcopycount+"'>"+uuid+"</span>");
+			// And, if possible, we select the UUID.
+			// Don't have to support IE because we already got it out the way.
+			if(document.createRange && window.getSelection)
+			{
+				var range = document.createRange();
+				range.selectNode($('uuid-copy-'+uuidcopycount));
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+			}
+		}
+	}
+	
 	function renameitem()
 	{
 		var node = this;
@@ -568,6 +595,22 @@
 					var rename = new Ext.menu.Item({text: _('Inventory.Rename')});
 					rename.on('click', renameitem, node);
 					menu.add(rename);
+					var uuid = new Ext.menu.Item({text: _('Inventory.CopyUUID')});
+					
+					// Only enable this if we have full permissions.
+					// This is JavaScript-enforced DRM. Yeah, right.
+					// Still. Best to keep the content creators happy.
+					var P = AjaxLife.Constants.Permissions;
+					var perms = node.attributes.Permissions.OwnerMask;
+					if((perms & P.Copy) && (perms & P.Modify) && (perms & P.Transfer))
+					{
+						uuid.on('click', copyuuid, node);
+					}
+					else
+					{
+						uuid.disable();
+					}
+					menu.add(uuid);
 				}
 				else
 				{

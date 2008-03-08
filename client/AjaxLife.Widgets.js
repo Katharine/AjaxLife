@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,20 +76,40 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 // A div is created, inserted, then faded upwards and destoyed three seconds later.
 AjaxLife.Widgets.Ext = function(){
     var msgCt;
-    
+    // Can we do growling using Fluid (http://fluidapp.com)?
+    var cangrowl = !!(window.fluid && fluid.showGrowlNotification);
+    AjaxLife.Debug("Widgets: CanGrowl: "+cangrowl);
     return {
-        msg : function(title, format){
-            if(!msgCt){
-                msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
-            }
-            msgCt.alignTo(document, 't-t');
-            var s = String.format.apply(String, Array.prototype.slice.call(arguments, 1));
-            var m = Ext.DomHelper.append(msgCt, {html:['<div class="msg">',
-                '<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>',
-                '<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc"><h3>', title, '</h3>', s, '</div></div></div>',
-                '<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>',
-                '</div>'].join('')}, true);
-            m.slideIn('t').pause(3).ghost("t", {remove:true});
+        msg: function(title, s, growlid, onlygrowl) {
+        	// If we can, and the notification allows us to, do so.
+        	if(growlid && cangrowl)
+        	{
+				var options = {
+					message: s,
+					priority: 1,
+					sticky: false,
+					identifier: growlid
+				};
+				if(title != '')
+				{
+					options.title = title;
+				}
+				fluid.showGrowlNotification(options);
+			}
+			// If the notification doesn't want to be shown internally, don't.
+        	if(!onlygrowl)
+        	{
+				if(!msgCt){
+					msgCt = Ext.DomHelper.insertFirst(document.body, {id:'msg-div'}, true);
+				}
+				msgCt.alignTo(document, 't-t');
+				var m = Ext.DomHelper.append(msgCt, {html:['<div class="msg">',
+					'<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>',
+					'<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc"><h3>', title, '</h3>', s, '</div></div></div>',
+					'<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>',
+					'</div>'].join('')}, true);
+				m.slideIn('t').pause(3).ghost("t", {remove:true});
+			}
         }
     };
 }();
@@ -98,19 +118,6 @@ AjaxLife.Widgets.Ext = function(){
 // DEPRECATED in favour of Ext.Msg.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
 	return Ext.Msg.confirm(title, message, callback);
-	/*
-	return Ext.Msg.show({
-		title: title,
-		closable: false,
-		modal: true,
-		msg: message,
-		buttons: {
-			yes: _("Widgets.Yes"),
-			no: _("Widgets.No")
-		},
-		fn: callback
-	});
-	*/
 };
 
 // This implements a select list with single-click, double-click callbacks,

@@ -201,7 +201,8 @@ AjaxLife.Strings = {
 			ConfirmEmptyTrash: "Are you sure you want to empty the trash?",
 			Rename: "Rename",
 			RenameItem: "Enter a new name:",
-			ScriptRestricted: "You need more permissions to open this script."
+			ScriptRestricted: "You need more permissions to open this script.",
+			CopyUUID: "Copy UUID"
 		},
 		InventoryDialogs: {
 			Texture: {

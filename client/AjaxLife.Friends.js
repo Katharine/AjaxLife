@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ AjaxLife.Friends = function() {
 			if(friends[friend.ID])
 			{
 				// Notification + run any applicable callbacks.
-				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}));
+				AjaxLife.Widgets.Ext.msg("",_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}), "onoff");
 				onchangecallbacks.each(function(callback) {
 					callback(friend);
 				});
@@ -118,7 +118,7 @@ AjaxLife.Friends = function() {
 			}
 			else
 			{
-				alert("Failed AjaxLife.Friends.StatusChange operation while setting "+agentid+" to "+(online?"online":"offline"));
+				AjaxLife.Debug("Failed AjaxLife.Friends.StatusChange operation while setting "+agentid+" to "+(online?"online":"offline"));
 			}
 		},
 		// Get friend list
