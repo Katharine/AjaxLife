@@ -190,7 +190,18 @@ AjaxLife.Strings = {
 			NoNoTransferTransfer: "'#{item}' is no transfer, so cannot be given away.",
 			ConfirmTransfer: "Are you sure you want to give #{item} to #{first} #{last}?",
 			ConfirmNoCopyTransfer: "#{item} is not copyable. If you give it away, you will lose your copy.<br /><br />Do you wish to give #{first} #{last} #{item}?",
-			ConfirmTransferTitle: "Inventory transfer"
+			ConfirmTransferTitle: "Inventory transfer",
+			Delete: "Delete",
+			Properties: "Properties",
+			CreateFolder: "Create new folder",
+			EmptyTrash: "Empty trash",
+			NewFolderName: "Empty a name for the folder:",
+			FolderCreationFailed: "Could not create new folder.",
+			ConfirmItemPurge: "Are you sure you wish to permanently delete '#{item}'?",
+			ConfirmEmptyTrash: "Are you sure you want to empty the trash?",
+			Rename: "Rename",
+			RenameItem: "Enter a new name:",
+			ScriptRestricted: "You need more permissions to open this script."
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -234,6 +245,14 @@ AjaxLife.Strings = {
 			ChangeLinks: "Link and delink from other objects",
 			TrackCamera: "Track your camera",
 			ControlCamera: "Control your camera"
+		},
+		AssetPermissions: {
+			Copy: "Copy",
+			NoCopy: "No copy",
+			Transfer: "Transfer",
+			NoTransfer: "No transfer",
+			Modify: "Modify",
+			NoModify: "No modify"
 		},
 		Login: {
 			First: "First name",

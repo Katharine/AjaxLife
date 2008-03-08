@@ -29,7 +29,6 @@
  	var Tree = Ext.tree;
  	var inventory = {};
  	var tree = false;
- 	var editor = false;
  	var win = false;
  	var list = false;
  	var trashnode = false;
@@ -120,33 +119,6 @@
  				return 'folder_plain_closed.png';
  		}
  	}
- 	
- 	function textchanged(node, text, oldtext)
- 	{
-		if(node.leaf)
-		{
-			AjaxLife.Debug("Inventory: Renaming item "+node.attributes.UUID+" to "+text);
-			AjaxLife.Network.Send('UpdateItem', {
-				ItemID: node.attributes.UUID,
-				OwnerID: node.attributes.OwnerID,
-				Name: text
-			});
-		}
-		else if(node.getDepth() > 0)
-		{
-			AjaxLife.Debug("Inventory: Renaming folder "+node.attributes.UUID+" to "+text);
-			AjaxLife.Network.Send('UpdateFolder', {
-				FolderID: node.attributes.UUID,
-				ParentID: node.parentNode.attributes.UUID,
-				Type: node.attributes.PreferredType,
-				Name: text
-			});
-		}
-		else
-		{
-			node.setText(oldtext);
-		}
-	}
 	
 	function moveitem(node, newparent)
 	{
@@ -190,7 +162,7 @@
 					}
 					catch(e)
 					{
-						AjaxLife.Debug("Exception while deleting. Meh.");
+						AjaxLife.Debug("Exception while deleting. Going again.");
 					}
 				}
 				AjaxLife.Debug("Inventory: Trash emptied.");
@@ -237,7 +209,6 @@
 		else
 		{
 			moveitem(node, trashnode);
-			//this.parentNode.removeChild(node);
 			trashnode.appendChild(node);
 			AjaxLife.Debug("Inventory: Moved "+node.attributes.UUID+" to trash.");
 		}
@@ -247,11 +218,33 @@
 	{
 	}
 	
+	function renameitem()
+	{
+		var node = this;
+		Ext.Msg.show({
+			buttons: Ext.Msg.OKCANCEL,
+			closable: false,
+			msg: _("Inventory.RenameItem"),
+			prompt: true,
+			value: node.attributes.Name,
+			fn: function(btn, text) {
+				if(btn != 'ok' || text == '') return;
+				node.attributes.Name = text;
+				node.setText(text);
+				AjaxLife.Network.Send('UpdateItem', {
+					ItemID: node.attributes.UUID,
+					OwnerID: node.attributes.OwnerID,
+					Name: text
+				});
+			}
+		});
+	}
+	
 	function createfolder()
 	{
 		var node = this;
 		Ext.Msg.prompt("", _("Inventory.NewFolderName"), function(btn, text) {
-			if(btn != 'ok') return;
+			if(btn != 'ok' || text == '') return;
 			AjaxLife.Network.Send("CreateFolder", {
 				Parent: node.attributes.UUID,
 				Name: text,
@@ -285,6 +278,59 @@
 		});
 		AjaxLife.Debug("Inventory: Created folder beneath "+this.attributes.UUID);
 	}
+	
+	function perm2string(permissions)
+	{
+		var perms = '';
+		var P = AjaxLife.Constants.Permissions;
+		if(permissions & P.Copy)
+		{
+			perms += _('AssetPermissions.Copy');
+		}
+		else
+		{
+			perms += _('AssetPermissions.NoCopy');
+		}
+		perms += ', ';
+		if(permissions & P.Modify)
+		{
+			perms += _('AssetPermissions.Modify');
+		}
+		else
+		{
+			perms += _('AssetPermissions.NoModify');
+		}
+		perms += ', ';
+		if(permissions & P.Transfer)
+		{
+			perms += _('AssetPermissions.Transfer');
+		}
+		else
+		{
+			perms += _('AssetPermissions.NoTransfer');
+		}
+		return perms;
+	}
+	
+	function noperm2string(permissions)
+	{
+		var perms = [];
+		var P = AjaxLife.Constants.Permissions;
+		if(~permissions & P.Copy)
+		{
+			perms[perms.length] = _('AssetPermissions.NoCopy');
+		}
+		if(~permissions & P.Modify)
+		{
+			perms[perms.length] = _('AssetPermissions.NoModify');
+		}
+		if(~permissions & P.Transfer)
+		{
+			perms[perms.length] = _('AssetPermissions.NoTransfer');
+		}
+		perms = perms.join(', ');
+		return perms;
+	}
  	
  	return {
  		// Public:
@@ -297,7 +343,7 @@
 				width: 300,
 				height: 400,
 				modal: false,
-				autoScroll: true,
+				//autoScroll: true, // This causes strange problems with scrolling.
 				shadow: true,
 				title: _("Inventory.WindowTitle")
 			});
@@ -331,15 +377,6 @@
 			});
 			tree.setRootNode(root);
 			
-			editor = new Tree.TreeEditor(tree, {
-				allowBlank: false,
-				blankText: _("Inventory.NoBlankText"),
-				selectOnFocus: true,
-				cancelOnEsc: true,
-				completeOnEnter: true,
-				ignoreNoChange: true
-			});
-			
 			// Handle double clicking of inventory items by opening the appriopriate type of window.
 			tree.on('dblclick', function(node) {
 				if(!node.attributes.InventoryType && node.attributes.InventoryType !== 0) return;
@@ -348,16 +385,24 @@
 				{
 				case T.Texture:
 				case T.Snapshot:
-					new AjaxLife.InventoryDialogs.Texture(node.attributes.AssetUUID, node.text);
+					new AjaxLife.InventoryDialogs.Texture(node.attributes.AssetUUID, node.attributes.Name);
 					break;
 				case T.Notecard:
 					new AjaxLife.InventoryDialogs.Notecard(node.attributes.AssetUUID, node.attributes.InventoryUUID, node.text);
 					break;
 				case T.LSL:
-					new AjaxLife.InventoryDialogs.Script(node.attributes.InventoryUUID, node.text);
+					if((node.attributes.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Copy) &&
+						(node.attributes.Permissions.OwnerMask & AjaxLife.Constants.Permissions.Modify))
+					{
+						new AjaxLife.InventoryDialogs.Script(node.attributes.InventoryUUID, node.attributes.Name);
+					}
+					else
+					{
+						AjaxLife.Widgets.Ext.msg("", _("Inventory.ScriptRestricted"));
+					}
 					break;
 				case T.Landmark:
-					new AjaxLife.InventoryDialogs.Landmark(node.attributes.AssetUUID, node.text);
+					new AjaxLife.InventoryDialogs.Landmark(node.attributes.AssetUUID, node.attributes.Name);
 					break;
 				case T.CallingCard:
 					new AjaxLife.Profile(node.attributes.CreatorID);
@@ -453,12 +498,14 @@
 							newnode.attributes.OwnerID = item.OwnerID;
 							newnode.attributes.UUID = item.UUID;
 							newnode.attributes.Name = item.Name;
-							newnode.appendChild(new Tree.TreeNode({
+							var loadingnode = new Tree.TreeNode({
 								text: 'Loading contents...',
 								draggable: false,
 								leaf: true,
 								icon: AjaxLife.STATIC_ROOT+'images/s.gif'
-							}));
+							});
+							loadingnode.attributes.UUID = AjaxLife.Utils.UUID.Zero;
+							newnode.appendChild(loadingnode);
 							inventory[item.UUID] = newnode;
 							folders.push(newnode);
 						}
@@ -468,7 +515,8 @@
 								text: item.Name,
 								leaf: true,
 								draggable: true,
-								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getitemicon(item.InventoryType)
+								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getitemicon(item.InventoryType),
+								qtip: perm2string(item.Permissions.OwnerMask)
 							});
 							newnode.attributes.InventoryUUID = item.UUID; // Deprecated - use UUID instead of InventoryUUID.
 							newnode.attributes.UUID = item.UUID;
@@ -485,7 +533,6 @@
 							inventory[item.UUID] = newnode;
 							items.push(newnode);
 						}
-						newnode.on('textchange', textchanged);
 					});
 					folders.sortBy(function(item) {
 						return item.text;
@@ -504,9 +551,10 @@
  			
  			tree.on('contextmenu', function(node, ev) {
  				ev.stopEvent();
+ 				if(node.attributes.UUID == AjaxLife.Utils.UUID.Zero) return;
  				tree.getSelectionModel().select(node);
  				var menu = new Ext.menu.Menu({});
- 				if(node.getDepth() > 0)
+ 				if(node.getDepth() > 0 && (node.leaf || node.attributes.PreferredType <= 0))
  				{
 					var delbtn = new Ext.menu.Item({text: _('Inventory.Delete')});
 					delbtn.on('click', inventorydelete, node);
@@ -517,6 +565,9 @@
 					var props = new Ext.menu.Item({text: _('Inventory.Properties')});
 					props.on('click', inventoryproperties, node);
 					menu.add(props);
+					var rename = new Ext.menu.Item({text: _('Inventory.Rename')});
+					rename.on('click', renameitem, node);
+					menu.add(rename);
 				}
 				else
 				{

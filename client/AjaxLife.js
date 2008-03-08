@@ -1,4 +1,4 @@
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,8 @@ AjaxLife.Startup = function() {
 	// Should consider making this more thorough.
 	AjaxLife.Fancy = !Prototype.Browser.IE && !(window.opera && window.opera.wiiremote);
 	
-	
+	// Required to make hovertext render.
+	Ext.QuickTips.init();
 	
 	AjaxLife.Debug("Init starting");
 	// Fix the blank images.
