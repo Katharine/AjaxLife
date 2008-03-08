@@ -317,6 +317,7 @@ AjaxLife.InstantMessage = function() {
 					// Create a tab for them if we haven't already. Also play new IM sound.
 					if(!chats[data.IMSessionID])
 					{
+						AjaxLife.Widgets.Ext.msg("",_("InstantMessage.NewIMSession", {from: data.FromAgentName}), "newimsession", true);
 						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID);
 						if(!created)
 						{

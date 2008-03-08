@@ -182,9 +182,9 @@
 		}
 	}
 	
-	function inventorydelete()
+	function inventorydelete(n)
 	{
-		var node = this;
+		var node = n ? n : this;
 		if(node.isAncestor(trashnode))
 		{
 			Ext.Msg.confirm("", _("Inventory.ConfirmItemPurge", {item: node.attributes.Name}), function(btn) {
@@ -632,6 +632,15 @@
 					}
 				}
 				menu.showAt(ev.getXY());
+ 			});
+ 			
+ 			tree.getEl().addKeyListener(46, function(key, e) {
+ 				var node = tree.getSelectionModel().getSelectedNode();
+ 				if(node)
+ 				{
+ 					e.stopEvent();
+ 					inventorydelete(node);
+ 				}
  			});
  			
  			// Handle incoming inventory.

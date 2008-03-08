@@ -43,7 +43,8 @@ AjaxLife.Strings = {
 			OnlineFriends: "Online Friends",
 			Send: "Send",
 			WindowTitle: "Instant Messages",
-			Profile: "Profile"
+			Profile: "Profile",
+			NewIMSession: "#{from} has sent you a new instant message."
 		},
 		AjaxLife: {
 			Precaching: "Precaching...",

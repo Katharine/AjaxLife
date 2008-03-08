@@ -45,6 +45,7 @@ AjaxLife.Widgets = {};
 AjaxLife.Network = {};
 AjaxLife.Utils = {};
 AjaxLife.Strings = {};
+AjaxLife.Initialised = false;
 
 AjaxLife.Startup = function() {
 	AjaxLife.Debug("AjaxLife: Init running...");
@@ -58,7 +59,6 @@ AjaxLife.Startup = function() {
 	// Required to make hovertext render.
 	Ext.QuickTips.init();
 	
-	AjaxLife.Debug("Init starting");
 	// Fix the blank images.
 	Ext.BLANK_IMAGE_URL = AjaxLife.STATIC_ROOT+"images/s.gif";
 	// Set the button labels - this is important for the localisation.
@@ -82,7 +82,7 @@ AjaxLife.Startup = function() {
 	AjaxLife.Debug("AjaxLife: Toolbar init....");
 	AjaxLife.Toolbar.init('toolbar');
 	AjaxLife.Debug("AjaxLife: StatusBar init....");
-	AjaxLife.StatusBar.init();;
+	AjaxLife.StatusBar.init();
 	AjaxLife.Debug("AjaxLife: Search init...");
 	AjaxLife.Search.init();
 	AjaxLife.Debug("AjaxLife: AvatarsNear init...");
@@ -93,6 +93,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.Stats.init();
 	AjaxLife.Debug("AjaxLife: ScriptDialogs init...");
 	AjaxLife.ScriptDialogs.init();
+	AjaxLife.Debug("AjaxLife: Keyboard init...");
+	AjaxLife.Keyboard.init();
 	// Dummy to suppress messages from de-ruthing.
 	// These messages also apparently count as a "received asset"
 	AjaxLife.Debug("AjaxLife: Registering dummy AssetReceived handler...");
@@ -113,6 +115,7 @@ AjaxLife.Startup = function() {
 		AjaxLife.Debug("AjaxLife: Grabbing offline IMs");
 		AjaxLife.Network.Send("GetOfflineMessages",{});
 		AjaxLife.Debug("AjaxLife: Startup complete.");
+		AjaxLife.Initialised = true;
 	}, 3000);
 	// If someone leaves the page, and we're still connected, give them the chance to cancel and log out properly.
 	AjaxLife.Debug("AjaxLife: Waiting for precaching to complete.");
