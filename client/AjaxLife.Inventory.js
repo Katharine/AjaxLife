@@ -184,7 +184,7 @@
 	
 	function inventorydelete(n)
 	{
-		var node = n ? n : this;
+		var node = (n && n.attributes) ? n : this;
 		if(node.isAncestor(trashnode))
 		{
 			Ext.Msg.confirm("", _("Inventory.ConfirmItemPurge", {item: node.attributes.Name}), function(btn) {

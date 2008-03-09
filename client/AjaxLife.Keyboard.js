@@ -24,36 +24,60 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+function handlekeyboard(key, e)
+{
+	if(!AjaxLife.Initialised || !AjaxLife.Network.Connected) return;
+	AjaxLife.Debug("Keyboard: Got keycode "+key);
+	e.preventDefault();
+	switch(key)
+	{
+	case 72:
+		AjaxLife.SpatialChat.toggle();
+		break;
+	case 73:
+		AjaxLife.Inventory.toggle();
+		break;
+	case 84:
+		AjaxLife.InstantMessage.toggle();
+		break;
+	case 70:
+		AjaxLife.Search.toggle();
+		break;
+	case 77:
+		AjaxLife.Map.toggle();
+		break;
+	case 81:
+		AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
+			if(btn == 'yes')
+			{
+				AjaxLife.Network.logout();
+			}
+		});
+		break;
+	case 49:
+		if(!Prototype.Browser.IE) AjaxLife.Stats.toggle();
+	}
+}
+
 // Handle keyboard shortcuts.
 AjaxLife.Keyboard = function() {
 	return {
 		init: function() {
 			Ext.get(document.body).addKeyListener({
-					//   [h , i , t , f ]
-					key: [72, 73, 84, 70],
+				//   [h , i , t , f , m , q ]
+				key: [72, 73, 84, 70, 77, 81],
+				ctrl: true,
+				shift: false,
+				alt: false
+				}, handlekeyboard
+			);
+			Ext.get(document.body).addKeyListener({
+					//   1
+					key: 49,
 					ctrl: true,
-					shift: false,
+					shift: true,
 					alt: false
-				}, function(key, e) {
-					if(!AjaxLife.Initialised || !AjaxLife.Network.Connected) return;
-					AjaxLife.Debug("Keyboard: Got keycode "+key);
-					e.preventDefault();
-					switch(key)
-					{
-					case 72:
-						AjaxLife.SpatialChat.toggle();
-						break;
-					case 73:
-						AjaxLife.Inventory.toggle();
-						break;
-					case 84:
-						AjaxLife.InstantMessage.toggle();
-						break;
-					case 70:
-						AjaxLife.Search.toggle();
-						break;
-					}
-				}
+				}, handlekeyboard
 			);
 		}
 	}	
