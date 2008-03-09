@@ -100,7 +100,7 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	label_owner.setStyle({
 		position: 'absolute',
 		top: '50px',
-		left: '10px',
+		left: '10px'
 	});
 	var value_owner = $(document.createElement('div'));
 	AjaxLife.NameCache.Find(data.OwnerID, function(name) {
@@ -130,7 +130,7 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	label_creator.setStyle({
 		position: 'absolute',
 		top: '75px',
-		left: '10px',
+		left: '10px'
 	});
 	var value_creator = $(document.createElement('div'));
 	if(data.CreatorID == AjaxLife.Utils.UUID.Zero)

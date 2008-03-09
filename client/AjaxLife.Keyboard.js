@@ -24,43 +24,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
-function handlekeyboard(key, e)
-{
-	if(!AjaxLife.Initialised || !AjaxLife.Network.Connected) return;
-	AjaxLife.Debug("Keyboard: Got keycode "+key);
-	e.preventDefault();
-	switch(key)
-	{
-	case 72:
-		AjaxLife.SpatialChat.toggle();
-		break;
-	case 73:
-		AjaxLife.Inventory.toggle();
-		break;
-	case 84:
-		AjaxLife.InstantMessage.toggle();
-		break;
-	case 70:
-		AjaxLife.Search.toggle();
-		break;
-	case 77:
-		AjaxLife.Map.toggle();
-		break;
-	case 81:
-		AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
-			if(btn == 'yes')
-			{
-				AjaxLife.Network.logout();
-			}
-		});
-		break;
-	case 49:
-		if(!Prototype.Browser.IE) AjaxLife.Stats.toggle();
-	}
-}
-
 // Handle keyboard shortcuts.
 AjaxLife.Keyboard = function() {
+
+	function handlekeyboard(key, e)
+	{
+		if(!AjaxLife.Initialised || !AjaxLife.Network.Connected) return;
+		AjaxLife.Debug("Keyboard: Got keycode "+key);
+		e.preventDefault();
+		switch(key)
+		{
+		case 72:
+			AjaxLife.SpatialChat.toggle();
+			break;
+		case 73:
+			AjaxLife.Inventory.toggle();
+			break;
+		case 84:
+			AjaxLife.InstantMessage.toggle();
+			break;
+		case 70:
+			AjaxLife.Search.toggle();
+			break;
+		case 77:
+			AjaxLife.Map.toggle();
+			break;
+		case 81:
+			AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
+				if(btn == 'yes')
+				{
+					AjaxLife.Network.logout();
+				}
+			});
+			break;
+		case 49:
+			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle();
+		}
+	}
+
 	return {
 		init: function() {
 			Ext.get(document.body).addKeyListener({
