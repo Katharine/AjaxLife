@@ -723,7 +723,8 @@ AjaxLife.Strings = {
 			OnlineFriends: "Amigos On-line",
 			Send: "Enviar",
 			WindowTitle: "Mensagens Instantâneas",
-			Profile: "Profile"
+			Profile: "Profile",
+			NewIMSession: "#{from} lhe enviou uma nova mensagem instantânea."
 		},
 		AjaxLife: {
 			Precaching: "Pré cache...",
@@ -839,7 +840,8 @@ AjaxLife.Strings = {
 			TeleportButton: "Oferecer Teleporte",
 			TeleportDialogTitle: "Teleportando #{first} #{last}",
 			TeleportDialogPrompt: "Adicione uma mensagem à sua oferta de teleporte:",
-			TeleportDefaultMessage: "Encontre-me em #{sim}!"
+			TeleportDefaultMessage: "Encontre-me em #{sim}!",
+			DropInventory: "Solte o inventário aqui"
 		},
 		Texture: {
 			DownloadFailed: "Não foi possível baixar a textura."
@@ -861,7 +863,19 @@ AjaxLife.Strings = {
 			NoNoTransferTransfer: "#{item} não é transferível, portanto não pode ser dado.",
 			ConfirmTransfer: "Você tem certeza de que quer dar #{item} para #{first} #{last}?",
 			ConfirmNoCopyTransfer: "#{item} não é copiável. Se você der isso mesmo assim, você perderá sua cópia.<br /><br />Você gostaria de dar o item #{item} para #{first} #{last}?",
-			ConfirmTransferTitle: "Transferir inventário"
+			ConfirmTransferTitle: "Transferir inventário",
+			Delete: "Delete",
+			Properties: "Propiedades",
+			CreateFolder: "Criar nova pasta",
+			EmptyTrash: "Esvaziar lixeira",
+			NewFolderName: "Insira um nome para a pasta:",
+			FolderCreationFailed: "Não foi possível criar a nova pasta.",
+			ConfirmItemPurge: "Você tem certeza de que quer apagar '#{item}' permanentemente?",
+			ConfirmEmptyTrash: "Você tem certeza de que quer apagar a lixeira?",
+			Rename: "Renomear",
+			RenameItem: "Insira um novo nome:",
+			ScriptRestricted: "Você precisa de mais permissões para abrir esse script.",
+			CopyUUID: "Copiar UUID"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -876,6 +890,23 @@ AjaxLife.Strings = {
 			Landmark: {
 				Title: "Teleporte para local marcado",
 				Message: "Tem certeza de que quer teleportar-se para #{name}?"
+			},
+			Properties: {
+				Title: "Propriedades - #{name}",
+				Name: "Nome:",
+				Description: "Descrição:",
+				Creator: "Criador:",
+				Owner: "Dono:",
+				Acquired: "Adquirido:",
+				OwnerCan: "Dono pode:",
+				NextOwnerCan: "Próximo dono poderá:",
+				MarkItem: "Fazer item:",
+				ForSale: "A venda",
+				Original: "Original",
+				Copy: "Copia",
+				Price: "Preço:",
+				Profile: "Profile",
+				Unknown: "(desconhecido)"
 			}
 		},
 		Stats: {
@@ -919,6 +950,14 @@ AjaxLife.Strings = {
 			LoggingIn: "Entrando no Second Life...",
 			Error: "Erro",
 			SomethingWrong: "Apesar dos nossos esforços, algo correu de errado.<br /><br />Por favor, tente novamente mais tarde."
+		},
+		AssetPermissions: {
+			Copy: "Copiar",
+			NoCopy: "Não copiar",
+			Transfer: "Transferir",
+			NoTransfer: "Não transferir",
+			Modify: "Modificar",
+			NoModify: "Não modificar"
 		}
 	},
 	// Mariel Voyunicef
