@@ -26,11 +26,11 @@
  ******************************************************************************/
  
 header("Content-Type: text/css");
-$css = @file_get_contents("https://secondlife.com/app/login/_css/main.css?i={$_GET['i']}");
+$css = @file_get_contents("http://secondlife.com/app/login/_css/main.css?i={$_GET['i']}");
 if($css === false || strpos($css,'<H2>The requested URL could not be retrieved</H2>') !== false)
 {
 	die("");
 }
-$css = str_replace("/app/login/","https://secondlife.com/app/login/",$css);
+$css = str_replace("/app/login/","http://secondlife.com/app/login/",$css);
 print $css;
 ?>
