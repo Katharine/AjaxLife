@@ -38,7 +38,7 @@ curl_setopt($curl, CURLOPT_SSL_VERIFYPEER,false);
 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST,false);
 $output = curl_exec($curl);
 // Replace bad XML with good XML.
-$output = preg_replace("~<member><name>name</name><value><i4>(.+?)</i4></value></member>~","<member><name>name</name><value><string>$1</string></value></member>~",$output)
+$output = preg_replace("~<member><name>name</name><value><i4>(.+?)</i4></value></member>~","<member><name>name</name><value><string>$1</string></value></member>",$output)
 print $output;
 curl_close($curl);
 ?>
