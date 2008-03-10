@@ -173,7 +173,7 @@ AjaxLife.Profile = function(agentid) {
 					}
 					else
 					{
-						Ext.msg.alert("",_("Profile.InvalidAmount"));
+						Ext.Msg.alert("",_("Profile.InvalidAmount"));
 					}
 				}
 			});
