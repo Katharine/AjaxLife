@@ -134,3 +134,51 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 		}
 	};
 };
+
+// Texture display.
+
+AjaxLife.ActiveInventoryDialogs.Texture = {};
+AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
+	// If the requested texture is already being displayed, just focus the window.
+	if(AjaxLife.ActiveInventoryDialogs.Texture[textureid])
+	{
+		AjaxLife.ActiveInventoryDialogs.Texture[texture].focus();
+		return;
+	}
+	// Private
+	var texture = false;
+	var win = false;
+	
+	// Create window - internal dimensions are 256x256
+	win = new Ext.BasicDialog("dlg_texture_"+textureid, {
+		width: '272px',
+		height: '292px',
+		modal: false,
+		shadow: true,
+		autoCreate: true,
+		title: _("InventoryDialogs.Texture.WindowTitle",{name: name}),
+		resizable: true,
+		proxyDrag: !AjaxLife.Fancy
+	});
+	win.body.setStyle({
+		padding: '0px',
+		margin: '0px',
+		overflow: 'hidden'
+	});
+	// Log the existence of this window
+	AjaxLife.ActiveInventoryDialogs.Texture[textureid] = win;
+	// Remove this window when it's closed.
+	win.on('hide', function() {
+		delete AjaxLife.ActiveInventoryDialogs.Texture[textureid];
+		win.destroy(true);
+	});
+	
+	// Create new texture object at 256x256.
+	texture = new AjaxLife.Texture(win.body.dom, 256, 256, textureid);
+	// Resize the texture when the window is resized, ensuring it always fills the window.
+	win.on('resize', function(thewin, width, height) {
+		texture.resize(width - 16, height - 36);
+	});
+	
+	win.show();
+};

@@ -45,6 +45,8 @@ AjaxLife.Widgets = {};
 AjaxLife.Network = {};
 AjaxLife.Utils = {};
 AjaxLife.Strings = {};
+AjaxLife.InventoryDialogs = {};
+AjaxLife.ActiveInventoryDialogs = {};
 AjaxLife.Initialised = false;
 
 AjaxLife.Startup = function() {
