@@ -697,6 +697,16 @@
 			{
 				node.parentNode.removeChild(node);
 			}
+			if(node && node.attributes && inventory[node.attributes.UUID])
+			{
+				delete inventory[node.attributes.UUID];
+			}
+		},
+		GetNode: function(inventoryid) {
+			if(inventory[inventoryid])
+			{
+				return inventory[inventoryid];
+			}
 		}
  	};
  }();
