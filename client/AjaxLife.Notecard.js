@@ -24,6 +24,125 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload) {
+	var rawtext = '';
+	var parsedtext = '';
+	var length = 0;
+	var attachments = 0;
+	var loaded = false;
+	var success = false;
+	var callbackid = false;
+	
+	function parsenote(text)
+	{
+		rawtext = text;
+		attachments = text.match(/count ([0-9]+?)/)[0];
+		var stack = -1;
+		// loop through until we reach the the end of the embedded blocks.
+		// This isn't particularly efficient, but these headers are always fairly short,
+		// so it doesn't really matter.
+		var i;
+		for(i = 0; i < text.length; ++i)
+		{
+			var chr = text.substr(i,1);
+			if(chr == '{')
+			{
+				++stack;
+			}
+			else if(chr == '}')
+			{
+				--stack;
+				if(stack <= 0)
+				{
+					break;
+				}
+			}
+		}
+		// Cut off everything past that point.
+		text = text.substr(i+1);
+		// Work out how many characters we expect.
+		// Note that this number seems to be somewhat off, so we ignore it and proceed to
+		// just take the whole thing minus the last character.
+		length = text.match(/Text length ([0-9]+)/)[0].strip();
+		text = text.replace(/Text length ([0-9]+)\w/,'').strip();
+		text = text.substr(0,text.length - 1);
+		parsedtext = text;
+		return text;
+	}
+	
+	function loadnote() {
+		AjaxLife.Debug("InventoryDialogs: Requesting notecard asset "+notecardid);
+		AjaxLife.Network.Send('RequestAsset', {
+			AssetID: notecardid,
+			InventoryID: inventoryid,
+			OwnerID: ownerid,
+			AssetType: AjaxLife.Constants.Inventory.InventoryType.Notecard
+		});
+	}
+	
+	function handleincomingnote(data) {
+		if(data.AssetID != notecardid) return;
+		AjaxLife.Debug("InventoryDialogs: Received notecard asset "+data.AssetID);
+		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived',callbackid);
+		if(data.Success)
+		{
+			success = true;
+			parsenote(data.AssetData);
+		}
+		try
+		{
+			if(onnoteload && typeof onnoteload == 'function')
+			{
+				onnoteload(this, success ? parsedtext : data.Error);
+			}
+		}
+		catch(e) { };
+	}
+	
+	callbackid = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', handleincomingnote);
+	if(notecardid && inventoryid && ownerid)
+	{
+		loadnote();
+	}
+	
+	return {
+		SetLoadHandler: function(handler) {
+			onnoteload = handler;
+		},
+		GetText: function() {
+			if(loaded)
+			{
+				return parsedtext;
+			}
+			else
+			{
+				return false;
+			}
+		},
+		GetRawText: function() {
+			return rawtext;
+		},
+		GetAttachmentCount: function() {
+			return count;
+		},
+		GetNotecardID: function() {
+			return notecardid;
+		},
+		IsLoaded: function() {
+			return loaded;
+		},
+		UnsetLoadHandler: function() {
+			onnoteload = false;
+		},
+		Load: function(note, inv, owner) {
+			notecardid = note;
+			inventoryid = inv;
+			ownerid = owner;
+			loadnote();
+		}
+	}
+}
+
 AjaxLife.ActiveInventoryDialogs.Notecard = {};
 AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	// If this window already exists, focus it and quit.
@@ -32,9 +151,8 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 		AjaxLife.ActiveInventoryDialogs.Notecard[notecardid].focus();
 		return;
 	}
-	var notecard = false;
+	var note = false;
 	var win = false;
-	var callback = false;
 	// Create the window.
 	win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
 		width: '500px',
@@ -58,79 +176,16 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	// Set up the window with initial data and note its existence.
 	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading notecard, please wait...');
 	AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
-	// When the window is closed, destroy it and unregister the event handlers.
+	// When the window is closed, destroy it.
 	win.on('hide', function() {
 		delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
-		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
 		win.destroy(true);
 	});
 	
-	// Register a callback for the AssetReceived callback.
-	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
-		// Bail out if this isn't what we were waiting for.
-		if(data.AssetID != notecardid) return;
-		
-		AjaxLife.Debug("InventoryDialogs: Received notecard asset "+data.AssetID);
-		// Unregister it - we aren't going to receive more than one, so leaving it registered
-		// is a waste of CPU time.
-		AjaxLife.Network.MessageQueue.UnregisterCallback('AssetReceived', callback);
-		var text = '';
-		if(data.Success)
-		{
-			// This parses the Linden notecard format.
-			text = data.AssetData;
-			// This is the number of items we're expecting.
-			// We don't actually use this for anything, yet.
-			var count = text.match(/count ([0-9]+?)/)[0];
-			var stack = -1;
-			// loop through until we reach the the end of the embedded blocks.
-			// This isn't particularly efficient, but these headers are always fairly short,
-			// so it doesn't really matter.
-			var i;
-			for(i = 0; i < text.length; ++i)
-			{
-				var chr = text.substr(i,1);
-				if(chr == '{')
-				{
-					++stack;
-				}
-				else if(chr == '}')
-				{
-					--stack;
-					if(stack <= 0)
-					{
-						break;
-					}
-				}
-			}
-			// Cut off everything past that point.
-			text = text.substr(i+1);
-			// Work out how many characters we expect.
-			// Note that this number seems to be somewhat off, so we ignore it and proceed to
-			// just take the whole thing minus the last character.
-			var length = text.match(/Text length ([0-9]+)/)[0].strip();
-			text = text.replace(/Text length ([0-9]+)\w/,'').strip();
-			text = text.substr(0,text.length - 1);
-			win.body.dom.setStyle({backgroundColor: 'white'});
-		}
-		else
-		{
-			text = "Failed to download asset: "+data.Error.escapeHTML();
-		}
-		// Put the text into the window, replacing the placeholder.
-		// Oddly, IE doesn't mind the backgroundColor here.
-		//TODO: Figure out why IE likes this and not the previous attempt.
-		win.body.dom.update(AjaxLife.Utils.FixText(text));
+	new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
+		win.body.dom.setStyle({backgroundColor: 'white'}).update(AjaxLife.Utils.FixText(text));
 	});
 	
-	// Actually download the texture.
-	AjaxLife.Debug("InventoryDialogs: Requesting notecard asset "+notecardid);
-	AjaxLife.Network.Send('RequestAsset', {
-		AssetID: notecardid,
-		InventoryID: inventoryid,
-		OwnerID: gAgentID,
-		AssetType: AjaxLife.Constants.Inventory.InventoryType.Notecard
-	});
 	// Display the thing.
 	win.show();
 };
