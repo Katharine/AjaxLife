@@ -31,13 +31,14 @@ AjaxLife.StatusBar = function() {
 	
 	return {
 		init: function() {
+			var rtl = (_("Language.Direction") == "rtl");
 			// Builds and styles the statusbar.
 			div_ld = $(document.createElement('div'));
-			div_ld.setStyle({'float': 'right', color: '#00e752'});
+			div_ld.setStyle({'float': (rtl?'left':'right'), color: '#00e752'});
 			div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
 			$('statusbar').appendChild(div_ld);
 			div_position = $(document.createElement('div'));
-			div_position.setStyle({'float':'left', color: 'white'});
+			div_position.setStyle({'float': (rtl?'right':'left'), color: 'white'});
 			div_position.appendChild(document.createTextNode('Unknown (0, 0, 0)'));
 			$('statusbar').appendChild(div_position);
 			

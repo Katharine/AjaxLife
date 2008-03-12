@@ -70,9 +70,16 @@ html {
 /* Button fix */
 
 table.x-btn {
-	float: left;
 	margin-left: 5px;
 	margin-right: 5px;
+}
+
+body.ltr table.x-btn {
+	float: left
+}
+
+body.rtl table.x-btn {
+	float: right;
 }
 
 /* Toolbar*/
@@ -273,8 +280,15 @@ div.al-selectlist ul li.al-selectlist-highlighted {
 	border-width: 1px;
 	border-style: solid;
 	position: absolute;
-	right: 0px;
 	top: 30px;
+}
+
+body.ltr #minimap {
+	right: 0px;
+}
+
+body.rtl #minimap {
+	left: 0px;
 }
 
 /* llDialog */

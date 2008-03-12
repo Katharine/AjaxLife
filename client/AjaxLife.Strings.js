@@ -82,7 +82,8 @@ AjaxLife.Strings = {
 			GenericSendError: "An error occured while sending the data.",
 			InventoryReceive: "#{name} gave you #{item}",
 			Error: "Error",
-			Disconnected: "Disconnected"
+			Disconnected: "Disconnected",
+			Reconnecting: "Attempting to reconnect to server..."
 		},
 		StatusBar: {
 			Money: "Money",
@@ -188,7 +189,7 @@ AjaxLife.Strings = {
 			Properties: "Properties",
 			CreateFolder: "Create new folder",
 			EmptyTrash: "Empty trash",
-			NewFolderName: "Empty a name for the folder:",
+			NewFolderName: "Please enter a name for the folder:",
 			FolderCreationFailed: "Could not create new folder.",
 			ConfirmItemPurge: "Are you sure you wish to permanently delete '#{item}'?",
 			ConfirmEmptyTrash: "Are you sure you want to empty the trash?",
@@ -298,7 +299,8 @@ AjaxLife.Strings = {
 			OnlineFriends: "חברים מחוברים",
 			Send: "שלח",
 			WindowTitle: "הודעות מיידיות",
-			Profile: "פרופיל"
+			Profile: "פרופיל",
+			NewIMSession: "#{from} שלח לך הודעה מיידית חדשה."
 		},
 		AjaxLife: {
 			Precaching: "טוען מטמון...",
@@ -414,7 +416,8 @@ AjaxLife.Strings = {
 			TeleportButton: "הצע שיגור",
 			TeleportDialogTitle: "משגר #{first} #{last}",
 			TeleportDialogPrompt: "הכנס הודעה לכלול עם הצעת השיגור שלך:",
-			TeleportDefaultMessage: "הצטרף אליי ב#{sim}!"
+			TeleportDefaultMessage: "הצטרף אליי ב#{sim}!",
+			DropInventory: "גרור פריט לפה"
 		},
 		Texture: {
 			DownloadFailed: "לא ניתן להוריד את הטקסטורה."
@@ -436,7 +439,19 @@ AjaxLife.Strings = {
 			NoNoTransferTransfer: "לצערנו, הפריט #{item} לא ניתן להעברה. כתוצאה מכך, הפריט שלך לא הועבר למשתמש.",
 			ConfirmTransfer: "האם אתה בטוח שברצונך לתת את הפריט #{item} למשתמש #{first} #{last}?",
 			ConfirmNoCopyTransfer: "#{item} לא ניתן להעתקה, אך ניתן להעברה. אם תמשיך בתהליך, העותק שלך ינתן למשתמש האחר.<br /><br />האם אתה בטוח שברצונך לתת למשתמש #{first} #{last} את הפריט #{item}?",
-			ConfirmTransferTitle: "העברת פריטים"
+			ConfirmTransferTitle: "העברת פריטים",
+			Delete: "מחק",
+			Properties: "מאפיינים",
+			CreateFolder: "צור תיקיה חדשה",
+			EmptyTrash: "רוקן אשפה",
+			NewFolderName: "הכנס שם לתיקיה החדשה:",
+			FolderCreationFailed: "שגיאה התרחשה בעת יצירת התיקיה החדשה.",
+			ConfirmItemPurge: "האם אתה בטוח כי ברצונך למחוק לצמיתות את הפריט '#{item}'? לא תיתכן אפשרות שיחזור אם תמשיך.",
+			ConfirmEmptyTrash: "האם אתה בטוח כי ברצונך לרוקן את האשפה?",
+			Rename: "שנה שם",
+			RenameItem: "הכנס שם חדש:",
+			ScriptRestricted: "אתה צריך רשות שינוי בכדי לראות את קובץ התכנות הזה.",
+			CopyUUID: "העתק מזהה (UUID)"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -451,6 +466,23 @@ AjaxLife.Strings = {
 			Landmark: {
 				Title: "שגר את דמותך למיקום",
 				Message: "האם אתה בטוח שברצונך לשגר את דמותך אל #{name}?"
+			},
+			Properties: {
+				Title: "מאפיינים - #{name}",
+				Name: "שם:",
+				Description: "תקציר:",
+				Creator: "יוצר:",
+				Owner: "בעלים:",
+				Acquired: "הושג:",
+				OwnerCan: "הבעלים יכול...:",
+				NextOwnerCan: "הבעלים הבאים יכולים...:",
+				MarkItem: "סמן פריט:",
+				ForSale: "למכירה",
+				Original: "מקורי",
+				Copy: "העתק",
+				Price: "מחיר:",
+				Profile: "פרופיל",
+				Unknown: "(לא ידוע)" 
 			}
 		},
 		Stats: {
@@ -494,7 +526,15 @@ AjaxLife.Strings = {
 			LoggingIn: "מתחבר...",
 			Error: "שגיאה",
 			SomethingWrong: "למרות כל נסיונותינו, משהו השתבש בעת החיבור.<br /><br />אנא נסה שנית מאוחר יותר."
-		}	
+		},
+		AssetPermissions: {
+			Copy: "מותר להעתיק",
+			NoCopy: "אסור להעתיק",
+			Transfer: "מותר להעביר",
+			NoTransfer: "אסור להעביר",
+			Modify: "מותר לשנות",
+			NoModify: "אסור לשנות"
+		}
 	},
 	// Translation by Alissa Sabre
 	ja: {
@@ -511,7 +551,8 @@ AjaxLife.Strings = {
 			OnlineFriends: "オンラインのフレンド",
 			Send: "送る",
 			WindowTitle: "IM (インスタントメッセージ)",
-			Profile: "プロフィール"
+			Profile: "プロフィール",
+			NewIMSession: "#{from}からIMが来ました。"
 		},
 		AjaxLife: {
 			Precaching: "読み込み中...",
@@ -626,7 +667,8 @@ AjaxLife.Strings = {
 			TeleportButton: "テレポートに誘う",
 			TeleportDialogTitle: "#{first} #{last}をテレポートに誘う",
 			TeleportDialogPrompt: "テレポートを誘う一言:",
-			TeleportDefaultMessage: "Join me in #{sim}! / 私がいる#{sim}に来てください!"
+			TeleportDefaultMessage: "Join me in #{sim}! / 私がいる#{sim}に来てください!",
+			DropInventory: "ここに持ち物をドロップ"
 		},
 		Texture: {
 			DownloadFailed: "テクスチャをダウンロードできませんでした。"
@@ -648,7 +690,19 @@ AjaxLife.Strings = {
 			NoNoTransferTransfer: "#{item}は譲渡不可です。他人に渡すことはできません。",
 			ConfirmTransfer: "#{first} #{last}に#{item}を渡そうとしています。間違いありませんか?",
 			ConfirmNoCopyTransfer: "#{item}はコピー不可です。他人に渡すと、あなたの手元には残りません。<br /><br />#{first} #{last}に#{item}を渡していいですか?",
-			ConfirmTransferTitle: "持ち物を渡す"
+			ConfirmTransferTitle: "持ち物を渡す",
+			Delete: "削除",
+			Properties: "プロパティ",
+			CreateFolder: "新しいフォルダを作る",
+			EmptyTrash: "ごみ箱を空にする",
+			NewFolderName: "フォルダの名前:",
+			FolderCreationFailed: "フォルダを作れませんでした。",
+			ConfirmItemPurge: "'#{item}'を完全に削除します。いいですか?",
+			ConfirmEmptyTrash: "ごみ箱の中のものを完全に削除します。いいですか?",
+			Rename: "名前の変更",
+			RenameItem: "新しい名前:",
+			ScriptRestricted: "このスクリプトを開くための許可が不足しています。",
+			CopyUUID: "UUIDをコピー"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -663,6 +717,23 @@ AjaxLife.Strings = {
 			Landmark: {
 				Title: "ランドマークにテレポート",
 				Message: "#{name}にテレポートしますか?"
+			},
+			Properties: {
+				Title: "#{name}のプロパティ",
+				Name: "名前:",
+				Description: "説明:",
+				Creator: "クリエーター:",
+				Owner: "オーナー:",
+				Acquired: "入手:",
+				OwnerCan: "できること:",
+				NextOwnerCan: "次のオーナーができること:",
+				MarkItem: "アイテムにマーク:",
+				ForSale: "販売用",
+				Original: "オリジナル",
+				Copy: "コピー",
+				Price: "料金:",
+				Profile: "プロフィール",
+				Unknown: "(不明)"
 			}
 		},
 		Stats: {
@@ -706,6 +777,14 @@ AjaxLife.Strings = {
 			LoggingIn: "Second Lifeに接続しています...",
 			Error: "エラー",
 			SomethingWrong: "全力を尽くしたのですが、何か問題が起きました。<br /><br />また後で試してください。"
+		},
+		AssetPermissions: {
+			Copy: "コピー可",
+			NoCopy: "コピー不可",
+			Transfer: "再販/プレゼント可",
+			NoTransfer: "再販/プレゼント不可",
+			Modify: "修正可",
+			NoModify: "修正不可"
 		}
 	},
 	// by Aurelio A. Heckert (http://aurium.cjb.net)
@@ -1186,7 +1265,8 @@ AjaxLife.Strings = {
 			OnlineFriends: "Freunde online",
 			Send: "Senden",
 			WindowTitle: "Instant Messages",
-			Profile: "Profil"
+			Profile: "Profil",
+			NewIMSession: "#{from} hat Dir eine neue Nachricht."
 		},
 		AjaxLife: {
 			Precaching: "Lädt...",
@@ -1302,7 +1382,8 @@ AjaxLife.Strings = {
 			TeleportButton: "Teleport anbieten",
 			TeleportDialogTitle: " #{first} #{last} einen Teleport anbieten.",
 			TeleportDialogPrompt: "Schreibe eine Message zu Deinem Teleport:",
-			TeleportDefaultMessage: "Besuche mich auf #{sim}!"
+			TeleportDefaultMessage: "Besuche mich auf #{sim}!",
+			DropInventory: "Inventar hier absetzen"
 		},
 		Texture: {
 			DownloadFailed: "Die Texture konnte nicht heruntergeladen werden."
@@ -1324,7 +1405,19 @@ AjaxLife.Strings = {
 			NoNoTransferTransfer: "'#{item}' ist no transfer, so kann es nicht verschickt werden.",
 			ConfirmTransfer: "Bis Du Dir sicher, dass Du #{item} an #{first} #{last} geben möchtest?",
 			ConfirmNoCopyTransfer: "#{item} kann nicht kopiert werden. Wenn Du das Objekt hergibst verlierst Du Deine Kopie.<br /><br />Willst Du #{first} #{last} #{item} geben?",
-			ConfirmTransferTitle: "Inventar transfer"
+			ConfirmTransferTitle: "Inventar transfer",
+			Delete: "Löschen",
+			Properties: "Eigenschaften",
+			CreateFolder: "Neuen Ordner erstellen",
+			EmptyTrash: "Mülleimer leeren",
+			NewFolderName: "Name des neuen Ordners:",
+			FolderCreationFailed: "Es konnte kein neuer Ordner erstellt werden.",
+			ConfirmItemPurge: "Bist Du sicher, dass Du '#{item} permanent löschen möchtest'?",
+			ConfirmEmptyTrash: "Bist Du sicher, dass Du den Mülleimer leeren möchtest?",
+			Rename: "Umbennen",
+			RenameItem: "Trage den neuen Namen ein:",
+			ScriptRestricted: "Du hast nicht genügend Rechte das Skript zu öffnen.",
+			CopyUUID: "Kopiere die UUID"
 		},
 		InventoryDialogs: {
 			Texture: {
@@ -1339,6 +1432,23 @@ AjaxLife.Strings = {
 			Landmark: {
 				Title: "Teleport zum Landmark",
 				Message: "Willst Du Dich wirklich nach #{name} teleportieren?"
+			},
+			Properties: {
+				Title: "Eigenschaften - #{name}",
+				Name: "Name:",
+				Description: "Beschreibung:",
+				Creator: "Ersteller:",
+				Owner: "Eigentümer:",
+				Acquired: "Gruppe:",
+				OwnerCan: "Der Eigentümer kann:",
+				NextOwnerCan: "Der nächste Eigentümer kann:",
+				MarkItem: "Objekt merken:",
+				ForSale: "Zu verkaufen",
+				Original: "Original",
+				Copy: "Kopie",
+				Price: "Preis:",
+				Profile: "Profil",
+				Unknown: "(unbekannt)" 
 			}
 		},
 		Stats: {
