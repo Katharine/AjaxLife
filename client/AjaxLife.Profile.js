@@ -369,7 +369,14 @@ AjaxLife.Profile = function(agentid) {
 		var payment = "";
 		if(lastname == "Linden")
 		{
-			payment = _("Profile.LindenAccount");
+			if(firstname == "Philip")
+			{
+				payment = "El Presidente";
+			}
+			else
+			{
+				payment = _("Profile.LindenAccount");
+			}
 		}
 		else if(data.Identified && data.Transacted)
 		{
