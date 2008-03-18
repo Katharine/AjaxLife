@@ -1704,6 +1704,261 @@ AjaxLife.Strings = {
 			LoggingIn: "Connexion à Second Life...",
 			Error: "Erreur",
 			SomethingWrong: "Malgré tous nos efforts, quelquechose ne fonctionne pas.<br /><br />Veuillez essayer plus tard."
+		},
+	},
+	// Translated by Roc Furse
+	nl: {
+		Language: {
+			Direction: "ltr"
+		},
+		Friends: {
+			OnlineNotification: "#{name} is #{status}.",
+			Online: "online",
+			Offline: "offline",
+			FriendshipOffered: "#{name} heeft vriendschap aangeboden. Wil je het aanbod accepteren?",
+			YouAccept: "Je hebt #{name} geaccepteerd als vriend.",
+			YouDecline: "Je hebt #{name}'s aanbod voor vriendschap afgewezen."
+		},
+		InstantMessage: {
+			Typing: "#{name} is aan het typen...",
+			OnlineFriends: "Online vrienden",
+			Send: "Versturen",
+			WindowTitle: "Berichten",
+			Profile: "Profiel",
+			NewIMSession: "#{from} heeft je een bericht gestuurd."
+		},
+		AjaxLife: {
+			Precaching: "Buffer vullen...",
+			MOTD: "Bericht van de dag"
+		},
+		Map: {
+			TeleportConfirm: "Weet je zeker dat je wilt teleporteren naar #{sim} (#{x}, #{y})?",
+			RegionLabel: "Gebied:",
+			PositionLabel: "Positie:",
+			TeleportNoun: "Teleport",
+			TeleportVerb: "Teleporteren",
+			Teleporting: "Teleporteren",
+			FocusYou: "Toon jou",
+			Clear: "Wissen",
+			FocusTarget: "Toon doel",
+			HomeButton: "Ga naar huis",
+			HomeConfirm: "Weet je zeker dat je naar huis wilt teleporteren?",
+			TeleportRequest: "#{name} heeft je een teleport aangeboden:<br /><br />#{message}",
+			TeleportRequestTitle: "Teleport aanbod",
+			Teleportation: "Teleportatie",
+			TeleportSuccess: "Je bent succesvol geteleporteerd naar #{sim} (#{x}, #{y}, #{z})",
+			TeleportCancelled: "Je teleport is afgebroken.",
+			TeleportError: "Je teleport is niet gelukt. Probeer het later nog eens.",
+			WindowTitle: "Kaart",
+			NoRegionGiven: "De naam van de huidige sim is niet ontvangen van de server."
+			
+		},
+		Network: {
+			LoggingOut: "Bezig met uitloggen...",
+			LogoutError: "Kon Second Life niet verlaten vanwege een communicatie fout.",
+			LogoutSuccess: "Je hebt Second Life verlaten.",
+			LogoutForced: "Je hebt Second Life verlaten:<br /><br />#{reason}",
+			UnhandledMessage: "Niet verwerkbaar bericht",
+			EventQueueFailure: "De gebeurtenis-wachtrij kon niet worden bijgewerkt.",
+			GenericSendError: "Bij het versturen van gegevens is een fout opgetreden.",
+			InventoryReceive: "#{name} gaf je #{item}",
+			Error: "Fout",
+			Disconnected: "Verbinding verbroken"
+		},
+		StatusBar: {
+			Money: "Geld",
+			LindenDollarSymbol: "L$",
+			Loading: " laden...",
+			MoneyReceived: "Je hebt L$#{amount} ontvangen.",
+			MoneyGiven: "Je hebt L$#{amount} betaald."
+		},
+		SpatialChat: {
+			ThirdPersonShout: " roept:",
+			SecondPersonShout: " roept:",
+			ThirdPersonSay: ":",
+			SecondPersonSay: ":",
+			ThirdPersonWhisper: " fluistert:",
+			SecondPersonWhisper: " fluistert:",
+			You: "Jij",
+			Say: "Zeg",
+			Whisper: "Fluister",
+			Shout: "Roep",
+			WindowTitle: "Gesprekken om je heen"
+		},
+		Toolbar: {
+			ChatButton: "Gesprek",
+			IMButton: "Berichten",
+			MapButton: "Kaart",
+			SearchButton: "Zoek",
+			LogoutButton: "Log uit",
+			LogoutTitle: "Log uit",
+			LogoutPrompt: "Weet je zeker dat je wilt uitloggen?",
+			NearbyButton: "Avatars vlakbij",
+			InventoryButton: "Inventaris",
+			StatsButton: "Status"
+		},
+		Widgets: {
+			Yes: "Ja",
+			No: "Nee",
+			Accept: "Accepteren",
+			Decline: "Weigeren",
+			OK: "OK",
+			Cancel: "Annuleren"
+		},
+		Search: {
+			WindowTitle: "Zoeken",
+			Searching: "Zoeken...",
+			People: "Personen"
+		},
+		Profile: {
+			WindowTitle: "Profiel - #{name}",
+			Loading: "Laden...",
+			JoinDate: "Lid sinds: #{date}",
+			Account: "Account:<br />#{type}",
+			PaymentInfoOnFile: "Betalings gegevens bekend",
+			PaymentInfoUsed: "Betalings gegevens gebruikt",
+			LindenAccount: "Linden Lab medewerker",
+			NoPaymentInfo: "Geen betalings gegevens",
+			Picks: "Favorieten",
+			Interests: "Interesses",
+			SecondLife: "2nd Life",
+			FirstLife: "1st Life",
+			Groups: "Groepen",
+			About: "Over",
+			Name: "Naam: #{name}",
+			Online: "Online",
+			Offline: "Offline",
+			Partner: "Partner:<br />#{partner}",
+			None: "Geen",
+			IMButton: "Stuur bericht",
+			PayButton: "Betaal",
+			PayDialogTitle: "Betaal #{first} #{last}",
+			PayDialogPrompt: "Hoeveel wil je #{first} #{last} betalen?",
+			InvalidAmount: "Dat is geen geldig bedrag!",
+			FriendButton: "Vriend toevoegen",
+			ConfirmFriendAdd: "Weet je zeker dat je #{first} #{last} als vriend wilt toevoegen?",
+			FriendshipOffered: "Je hebt vriendschap aangeboden aan #{first} #{last}.",
+			TeleportButton: "Teleport aanbieden",
+			TeleportDialogTitle: "Bezig #{first} #{last} te teleporteren",
+			TeleportDialogPrompt: "Voer een bericht in om bij je teleport uitnodiging te versturen:",
+			TeleportDefaultMessage: "Kom ook naar #{sim}!",
+			DropInventory: "Sleep hier inventaris heen"
+		},
+		Texture: {
+			DownloadFailed: "Kon texture niet downloaden."
+		},
+		Number: {
+			ThousandSeparatorInterval: 3,
+			ThousandSeparator: ".",
+			DecimalPoint: ","
+		},
+		AvatarsNear: {
+			WindowTitle: "Avatars vlakbij"
+		},
+		Inventory: {
+			WindowTitle: "Inventaris",
+			NullAssetTransfer: "Kon inventaris verzoek niet uitvoeren.",
+			OfferAccepted: "#{name} heeft je inventaris aanbod geaccepteerd.",
+			OfferDeclined: "#{name} heeft je inventaris aanbod geweigerd.",
+			NoFolderTransfer: "Helaas, het geven van mappen wordt nog niet ondersteund.",
+			NoNoTransferTransfer: "'#{item}' is niet overdraagbaar, dus kan niet worden gegeven.",
+			ConfirmTransfer: "Weet je zeker dat je  #{item} aan #{first} #{last} wilt geven?",
+			ConfirmNoCopyTransfer: "#{item} is niet kopieerbaar. Als je het weggeeft, ben je jouw exemplaar kwijt.<br /><br />Wil je #{item} aan #{first} #{last} geven?",
+			ConfirmTransferTitle: "Inventaris transactie",
+			Delete: "Verwijderen",
+			Properties: "Eigenschappen",
+			CreateFolder: "Maak nieuwe map",
+			EmptyTrash: "Prullenbak legen",
+			NewFolderName: "Voer naam voor de map in:",
+			FolderCreationFailed: "Kon geen nieuwe map maken.",
+			ConfirmItemPurge: "Weet je zeker dat je '#{item}' definitief wilt verwijderen?",
+			ConfirmEmptyTrash: "Weet je zeker dat je de prullenbak wilt legen?",
+			Rename: "Naam wijzigen",
+			RenameItem: "Voer een nieuwe naam in:",
+			ScriptRestricted: "Je hebt meer bevoegdheden nodig om dit script te openen.",
+			CopyUUID: "Kopieer UUID"
+		},
+		InventoryDialogs: {
+			Texture: {
+				WindowTitle: "Texture: #{name}"
+			},
+			Notecard: {
+				WindowTitle: "Notitie: #{name}"
+			},
+			Script: {
+				WindowTitle: "Script: #{name}"
+			},
+			Landmark: {
+				Title: "Teleport naar landmark",
+				Message: "Weet je zeker dat je naar #{name} wilt teleporteren?"
+			},
+			Properties: {
+				Title: "Eigenschappen - #{name}",
+				Name: "Naam:",
+				Description: "Omschrijving:",
+				Creator: "Maker:",
+				Owner: "Eigenaar:",
+				Acquired: "In bezit sinds:",
+				OwnerCan: "Eigenaar kan:",
+				NextOwnerCan: "Volgende eigenaar kan:",
+				MarkItem: "Item markeren:",
+				ForSale: "Te koop",
+				Original: "Origineel",
+				Copy: "Kopi&euml;ren",
+				Price: "Prijs:",
+				Profile: "Profiel",
+				Unknown: "(onbekend)"
+			}
+		},
+		Stats: {
+			WindowTitle: "Status",
+			Region: "Gebied",
+			FPS: "FPS",
+			TD: "Tijd vertraging",
+			ScriptIPS: "Script IPS",
+			Objects: "Voorwerpen",
+			Scripts: "Actieve Scripts",
+			Agents: "Agents",
+			ChildAgents: "Child Agents",
+			ALServer: "AjaxLife Server",
+			Sessions: "Sessies"
+		},
+		ScriptDialogs: {
+			PermissionRequestTitle: "Verzoek om script toestemming",
+			PermissionRequestBody: "'#{object}', een voorwerp van '#{owner}', wil:<br /><br />#{permission}<br />Is dat goed?",
+			DialogMessage: "#{first} #{last}'s '#{object}':<br />#{message}",
+			DialogTitle: "Script dialoog"
+		},
+		Permissions: {
+			Debit: "Linden Dollars (L$) van je account afboeken",
+			TakeControls: "Reageren op jouw besturings invoer",
+			Animate: "Je avatar bewegen",
+			Attach: "Zich koppelen aan jouw avatar",
+			ChangeLinks: "Zich koppelen aan of ontkoppelen van andere voorwerpen",
+			TrackCamera: "Je camera standpunt volgen",
+			ControlCamera: "Je camera bedienen"
+		},
+		AssetPermissions: {
+			Copy: "Kopieerbaar",
+			NoCopy: "Niet kopieerbaar",
+			Transfer: "Overdraagbaarr",
+			NoTransfer: "Niet overdraagbaar",
+			Modify: "Wijzigbaar",
+			NoModify: "Niet wijzigbaar"
+		},
+		Login: {
+			First: "Voornaam",
+			Last: "Achternaam",
+			Password: "Password",
+			LogIn: "Log in",
+			Grid: "Grid",
+			Language: "Taal",
+			LoadingSession: "Sessie data wordt geladen...",
+			SessionLoadFailed: "Fout bij laden van sessie data.",
+			Encrypting: "Login data wordt versleuteld...",
+			LoggingIn: "Bezig met inloggen op Second Life...",
+			Error: "Fout",
+			SomethingWrong: "Er is helaas iets mis gegaan.<br /><br />Probeer het later alsjeblieft nog eens."
 		}
 	}
 	// More translations here.

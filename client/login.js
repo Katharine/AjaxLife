@@ -27,8 +27,9 @@
 var submitexpected = false;
 var SUPPORTED_LANGUAGES = {
 	en: 'English',
-	es: "Español",
-	de: "Deutsch",
+	es: 'Español',
+	de: 'Deutsch',
+	nl: 'Nederlands',
 	//fr: 'Français',
 	pt_br: 'Portuguese (Brazil)',
 	ja: '日本語',
