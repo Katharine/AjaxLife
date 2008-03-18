@@ -220,14 +220,14 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	var win = false;
 	// Create the window.
 	win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
-			width: '500px',
-			height: '520px',
-			modal: false,
-			shadow: true,
-			autoCreate: true,
-			title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
-			resizable: true,
-			proxyDrag: !AjaxLife.Fancy
+		width: '500px',
+		height: '520px',
+		modal: false,
+		shadow: true,
+		autoCreate: true,
+		title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
+		resizable: true,
+		proxyDrag: !AjaxLife.Fancy
 	});
 	var style = {};
 	// For reasons I don't understand, this breaks IE.
@@ -236,19 +236,19 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	//TODO: Try and find a workaround.
 	if(!Prototype.Browser.IE)
 	{
-			style.backgroundColor = 'grey';
+		style.backgroundColor = 'grey';
 	}
 	// Set up the window with initial data and note its existence.
 	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading notecard, please wait...');
 	AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
 	// When the window is closed, destroy it.
 	win.on('hide', function() {
-			delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
-			win.destroy(true);
+		delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
+		win.destroy(true);
 	});
 	
 	new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
-			win.body.dom.setStyle({backgroundColor: 'white'}).update(AjaxLife.Utils.FixText(text));
+		win.body.dom.setStyle({backgroundColor: 'white'}).update(AjaxLife.Utils.FixText(text));
 	});
 	
 	// Display the thing.
