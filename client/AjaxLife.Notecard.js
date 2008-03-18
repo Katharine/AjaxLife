@@ -220,63 +220,35 @@ AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
 	var win = false;
 	// Create the window.
 	win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
-		width: '500px',
-		height: '520px',
-		modal: false,
-		shadow: true,
-		autoCreate: true,
-		title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
-		resizable: true,
-		proxyDrag: !AjaxLife.Fancy
+			width: '500px',
+			height: '520px',
+			modal: false,
+			shadow: true,
+			autoCreate: true,
+			title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
+			resizable: true,
+			proxyDrag: !AjaxLife.Fancy
 	});
-	var text_note = $(document.createElement('textarea'));
-	text_note.value =  _('Notecard.Loading');	
-	text_note.disable();
-	text_note.setStyle({
-		width: '100%',
-		height: '455px'
-	});
-	win.on('resize', function(winn, x, y) {
-		text_note.setStyle({
-			height: (y - 65)+'px'
-		});
-	});
-	$(win.body.dom).setStyle({overflow: 'hidden'});
-	
-	win.body.dom.appendChild(text_note);
-	var btn_save = new Ext.Button(win.body, {
-		disabled: true,
-		text: _("Notecard.Save"),
-		handler: function() {
-			btn_save.disable();
-			text_note.disable();
-			note.Save();
-		}
-	});
-	
-	$(win.body.dom).addClassName('notecard');
+	var style = {};
+	// For reasons I don't understand, this breaks IE.
+	// As such. we omit it if you're using IE. Sorry.
+	// I doubt you'll mind the lack of an artfully shaded box.
+	//TODO: Try and find a workaround.
+	if(!Prototype.Browser.IE)
+	{
+			style.backgroundColor = 'grey';
+	}
+	// Set up the window with initial data and note its existence.
+	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading notecard, please wait...');
 	AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
 	// When the window is closed, destroy it.
 	win.on('hide', function() {
-		delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
-		win.destroy(true);
+			delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
+			win.destroy(true);
 	});
 	
-	note = new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
-		text_note.value = text;
-		text_note.enable();
-		if(note.GetAttachmentCount() == 0)
-		{
-			AjaxLife.Debug("Notecard: 0 attachments, enabling btn_save.");
-			btn_save.enable();
-		}
-		else
-		{
-			AjaxLife.Debug("Notecard: "+note.GetAttachmentCount()+" attachments. No saving supported.");
-		}
-	}, function(data) {
-		text_note.enable();
-		btn_save.enable();
+	new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
+			win.body.dom.setStyle({backgroundColor: 'white'}).update(AjaxLife.Utils.FixText(text));
 	});
 	
 	// Display the thing.
