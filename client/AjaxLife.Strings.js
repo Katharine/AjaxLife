@@ -1704,7 +1704,7 @@ AjaxLife.Strings = {
 			LoggingIn: "Connexion à Second Life...",
 			Error: "Erreur",
 			SomethingWrong: "Malgré tous nos efforts, quelquechose ne fonctionne pas.<br /><br />Veuillez essayer plus tard."
-		},
+		}
 	},
 	// Translated by Roc Furse
 	nl: {
