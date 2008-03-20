@@ -78,12 +78,7 @@ namespace AjaxLife.Html
                 // The session doesn't exist. Get upset.
                 if (!this.users.ContainsKey(key))
                 {
-                    Hashtable response = new Hashtable();
-                    response.Add("success", false);
-                    response.Add("message", "The session '" + key.ToString("D") + "' does not exist.\nTry reloading the page.");
-                    JsonSerializer s = new JsonSerializer();
-                    s.Serialize(textWriter, response);
-                    textWriter.Flush();
+                    this.invalidSessionID(key, textWriter);
                     return;
                 }
                 lock (this.users)
@@ -217,6 +212,17 @@ namespace AjaxLife.Html
             {
                 return this.parent;
             }
+        }
+
+        private void invalidSessionID(Guid key, StreamWriter textWriter)
+        {
+            Hashtable response = new Hashtable();
+            response.Add("success", false);
+            // Guid::ToString("D") outputs the Guid in standard printable format:
+            // 00000000-0000-0000-0000-000000000000
+            response.Add("message", "The session '" + key.ToString("D") + "' does not exist.\nTry reloading the page.");
+            textWriter.Write(MakeJson.FromHashtable(response));
+            textWriter.Flush();
         }
     }
 }
