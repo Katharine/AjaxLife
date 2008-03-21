@@ -126,7 +126,6 @@ namespace AjaxLife
         
         public void Avatars_OnAvatarGroups(LLUUID avatarID, AvatarGroupsReplyPacket.GroupDataBlock[] groups)
         {
-            if (!active) return;
             List<Hashtable> list = new List<Hashtable>();
             foreach (AvatarGroupsReplyPacket.GroupDataBlock block in groups)
             {
@@ -148,7 +147,6 @@ namespace AjaxLife
 
         public void Avatars_OnAvatarInterests(LLUUID avatarID, Avatar.Interests interests)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarInterests");
             item.Add("AvatarID", avatarID);
@@ -162,7 +160,6 @@ namespace AjaxLife
 
         public void Avatars_OnAvatarNames(Dictionary<LLUUID, string> names)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarNames");
             Dictionary<string, string> namedict = new Dictionary<string, string>();
@@ -176,7 +173,6 @@ namespace AjaxLife
 
         public void Avatars_OnAvatarProperties(Packet packet, Simulator sim)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)packet;
             item.Add("MessageType",     "AvatarProperties");
@@ -199,7 +195,6 @@ namespace AjaxLife
 
         public void Avatars_OnFriendNotification(LLUUID agentID, bool online)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "FriendNotification");
             item.Add("AgentID", agentID);
@@ -207,9 +202,17 @@ namespace AjaxLife
             this.pending.Enqueue(item);
         }
 
+        public void Friends_OnFriendFound(LLUUID agentID, ulong regionHandle, LLVector3 location)
+        {
+            Hashtable item = new Hashtable();
+            item.Add("MessageType", "FriendFound");
+            item.Add("Location", location);
+            item.Add("RegionHandle", regionHandle.ToString()); // String to avoid upsetting JavaScript.
+            this.pending.Enqueue(item);
+        }
+
         public void Directory_OnDirPeopleReply(LLUUID queryID, List<DirectoryManager.AgentSearchData> matchedPeople)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirPeopleReply");
             List<Hashtable> results = new List<Hashtable>();
@@ -245,7 +248,6 @@ namespace AjaxLife
 
         public void Network_OnDisconnected(NetworkManager.DisconnectType reason, string message)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Disconnected");
             item.Add("Reason", reason);
@@ -255,7 +257,6 @@ namespace AjaxLife
 
         public void Self_OnBalanceUpdated(int balance)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "BalanceUpdated");
             item.Add("Balance", balance);
@@ -263,7 +264,6 @@ namespace AjaxLife
         }
         public void Self_OnChat(string message, ChatAudibleLevel audible, ChatType type, ChatSourceType sourceType, string fromName, LLUUID id, LLUUID ownerid, LLVector3 position)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "SpatialChat");
             item.Add("Message", message);
@@ -278,7 +278,6 @@ namespace AjaxLife
         }
         public void Self_OnInstantMessage(InstantMessage im, Simulator simulator)
         {
-            if (!active) return;
             LLUUID fromAgentID = im.FromAgentID;
             string fromAgentName = im.FromAgentName;
             //LLUUID toAgentID = im.ToAgentID;
@@ -311,7 +310,6 @@ namespace AjaxLife
 
         public void Self_OnMoneyBalanceReplyReceived(LLUUID transactionID, bool transactionSuccess, int balance, int metersCredit, int metersCommitted, string description)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "MoneyBalanceReplyReceived");
             item.Add("TransactionID", transactionID);
@@ -325,7 +323,6 @@ namespace AjaxLife
 
         public void Self_OnScriptDialog(string message, string objectName, LLUUID imageID, LLUUID objectID, string firstName, string lastName, int chatChannel, List<string> buttons)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptDialog");
             item.Add("Message", message);
@@ -341,7 +338,6 @@ namespace AjaxLife
 
         public void Self_OnScriptQuestion(Simulator simulator, LLUUID taskID, LLUUID itemID, string objectName, string objectOwner, ScriptPermission questions)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptPermissionRequest");
             item.Add("TaskID", taskID);
@@ -354,7 +350,6 @@ namespace AjaxLife
 
         public void Self_OnTeleport(string message, AgentManager.TeleportStatus status, AgentManager.TeleportFlags flags)
         {
-            if (!active) return;
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Teleport");
             item.Add("Status", status);
@@ -368,11 +363,11 @@ namespace AjaxLife
 
         public void Packet_MapBlockReply(Packet packet, Simulator sim)
         {
-            if (!active) return;
             MapBlockReplyPacket reply = (MapBlockReplyPacket)packet;
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "MapBlocks");
             Hashtable blocks = new Hashtable();
+            float temp1, temp2; // Neither of these do anything, really. Just to make Helpers.GlobalPosToRegionHandle happy.
             foreach (MapBlockReplyPacket.DataBlock data in reply.Data)
             {
                 string name = Helpers.FieldToUTF8String(data.Name);
@@ -387,6 +382,8 @@ namespace AjaxLife
                 simhash.Add("X", data.X);
                 simhash.Add("Y", data.Y);
                 simhash.Add("Flags", data.RegionFlags);
+                // Convert the regionhandle to a string - JavaScript is likely to get upset over long integers.
+                simhash.Add("RegionHandle", Helpers.GlobalPosToRegionHandle(data.X*256, data.Y*256, out temp1, out temp2).ToString());
                 blocks.Add(Helpers.FieldToUTF8String(data.Name).ToLowerInvariant(), simhash);
             }
             hash.Add("Blocks", blocks);
@@ -395,7 +392,6 @@ namespace AjaxLife
 
         public void Packet_MapItemReply(Packet packet, Simulator sim)
         {
-            if (!active) return;
             MapItemReplyPacket reply = (MapItemReplyPacket)packet;
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "MapItems");
@@ -706,6 +702,50 @@ namespace AjaxLife
             hash.Add("ID", upload.ID);
             hash.Add("Success", upload.Success);
             this.pending.Enqueue(hash);
+        }
+
+        public void Groups_OnGroupProfile(GroupProfile group)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("MessageType", "GroupProfile");
+            hash.Add("ID", group.ID);
+            hash.Add("Name", group.Name);
+            hash.Add("Charter", group.Charter);
+            hash.Add("Founder", group.FounderID);
+            hash.Add("Insignia", group.InsigniaID);
+            hash.Add("MemberCount", group.GroupMembershipCount);
+            hash.Add("OwnerRole", group.OwnerRole);
+            hash.Add("MemberTitle", group.MemberTitle);
+            hash.Add("Money", group.Money);
+            hash.Add("MembershipFee", group.MembershipFee);
+            hash.Add("OpenEnrollment", group.OpenEnrollment);
+            hash.Add("ShowInList", group.ShowInList);
+            hash.Add("AcceptNotices", group.AcceptNotices);
+            hash.Add("Contribution", group.Contribution);
+            this.pending.Enqueue(hash);
+        }
+
+        // You know, some way of telling which group this is for would be nice.
+        public void Groups_OnGroupMembers(Dictionary<LLUUID, GroupMember> members)
+        {
+            List<Hashtable> list = new List<Hashtable>();
+            foreach (KeyValuePair<LLUUID,GroupMember> memberpair in members)
+            {
+                GroupMember member = memberpair.Value;
+                Hashtable hash = new Hashtable();
+                hash.Add("LLUUID", memberpair.Key);
+                hash.Add("Contribution", member.Contribution);
+                hash.Add("ID", member.ID); // Maybe this is the group ID?
+                hash.Add("IsOwner", member.IsOwner);
+                hash.Add("OnlineStatus", member.OnlineStatus);
+                hash.Add("Powers", member.Powers);
+                hash.Add("Title", member.Title);
+                list.Add(hash);
+            }
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "GroupMembers");
+            message.Add("MemberList", list);
+            this.pending.Enqueue(message);
         }
     }
 }

@@ -1,3 +1,4 @@
-https://ajaxlife.net/loginproxy/agni.php Main Grid "Agni" (Linden Lab)
-https://ajaxlife.net/loginproxy/aditi.php Beta Grid "Aditi" (Linden Lab)
-http://osgrid.org:8002/ OSGrid (Unofficial)
+https://login.agni.lindenlab.com/cgi-bin/login.cgi Main Grid "Agni" (Linden Lab)
+https://login.aditi.lindenlab.com/cgi-bin/login-llsd.cgi Beta Grid "Aditi" (Linden Lab)
+http://osgrid.org:8002/ OSGrid (Non-LL)
+http://logingrid.net:8002/ OpenLifeGrid (Non-LL)

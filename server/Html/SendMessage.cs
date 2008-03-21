@@ -48,6 +48,14 @@ namespace AjaxLife.Html
         private Dictionary<Guid, User> users;
 
         // Methods
+
+        private FriendInfo FindFriend(SecondLife client, LLUUID friend)
+        {
+            return client.Friends.FriendsList().Find(delegate(FriendInfo info) {
+                return info.UUID == friend;
+            });
+        }
+
         public SendMessage(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
@@ -226,7 +234,7 @@ namespace AjaxLife.Html
                         client.Self.AnimationStop(new LLUUID(POST["Animation"]), true);
                         break;
                     case "SendAppearance":
-						// This apparently crashes OpenSim, so disable it there.
+                        // This apparently crashes OpenSim, so disable it there.
                         client.Appearance.SetPreviousAppearance(false);
                         break;
                     case "GetMapItems":
@@ -292,6 +300,21 @@ namespace AjaxLife.Html
                             (new JsonSerializer()).Serialize(textwriter, friendlist);
                         }
                         break;
+                    case "ChangeRights":
+                        {
+                            LLUUID uuid = new LLUUID(POST["Friend"]);
+                            // Huh. Declaring random anonymous functions in the middle of my code.
+                            // I blame JavaScript.
+                            FriendInfo friend = this.FindFriend(client, uuid);
+                            friend.TheirFriendRights = (FriendRights)int.Parse(POST["Rights"]);
+                            // The two sentences of documentation on the subject imply that this will
+                            // send friend.TheirFriendRights to the server. I think.
+                            client.Friends.GrantRights(uuid);
+                        }
+                        break;
+                    case "RequestLocation":
+                        client.Friends.MapFriend(new LLUUID(POST["Friend"]));
+                        break;
                     case "RequestTexture":
                         {
                             // This one's confusing, so it gets some comments.
@@ -307,29 +330,29 @@ namespace AjaxLife.Html
                             }
                             else
                             {
-                            	// If we're using S3, check the S3 bucket
-                            	if(AjaxLife.USE_S3)
-                            	{
-					// Otherwise, make that HEAD request and find out.
-					try
-					{
-						IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
-						Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToString() + ".png");
-						s3request.Method = "HEAD";
-						Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
-						if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
-						{
-							exists = true;
-						}
-						s3response.DataStream.Close();
-					}
-					catch { }
-				}
-				// If we aren't using S3, just check the texture cache.
-				else
-				{
-					exists = File.Exists(AjaxLife.TEXTURE_CACHE + image.ToString() + ".png");
-				}
+                                // If we're using S3, check the S3 bucket
+                                if(AjaxLife.USE_S3)
+                                {
+                    // Otherwise, make that HEAD request and find out.
+                                    try
+                                    {
+                                        IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
+                                        Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToString() + ".png");
+                                        s3request.Method = "HEAD";
+                                        Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
+                                        if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
+                                        {
+                                            exists = true;
+                                        }
+                                        s3response.DataStream.Close();
+                                    }
+                                    catch { }
+                                }
+                                // If we aren't using S3, just check the texture cache.
+                                else
+                                {
+                                    exists = File.Exists(AjaxLife.TEXTURE_CACHE + image.ToString() + ".png");
+                                }
                             }
                             // If it exists, reply with Ready = true and the URL to find it at.
                             if (exists)
@@ -418,7 +441,7 @@ namespace AjaxLife.Html
                     case "SaveTextAsset":
                         {
                             LLUUID xferID = client.Assets.RequestUpload((AssetType)int.Parse(POST["AssetType"]), Helpers.StringToField(POST["AssetData"]), false, false, true);
-                            textwriter.Write("{TranferID: \"" + xferID + "\"}");
+                            textwriter.Write("{TransferID: \"" + xferID + "\"}");
                         }
                         break;
                     case "CreateFolder":
@@ -511,6 +534,24 @@ namespace AjaxLife.Html
                         break;
                     case "ReRotate":
                         user.Rotation = -Math.PI;
+                        break;
+                    case "SendGroupIM":
+                        client.Self.InstantMessageGroup(new LLUUID(POST["Group"]), POST["Message"]);
+                        break;
+                    case "RequestGroupProfile":
+                        client.Groups.RequestGroupProfile(new LLUUID(POST["Group"]));
+                        break;
+                    case "RequestGroupMembers":
+                        client.Groups.RequestGroupMembers(new LLUUID(POST["Group"]));
+                        break;
+                    case "RequestGroupName":
+                        client.Groups.RequestGroupName(new LLUUID("Group"));
+                        break;
+                    case "JoinGroup":
+                        client.Groups.RequestJoinGroup(new LLUUID("Group"));
+                        break;
+                    case "LeaveGroup":
+                        client.Groups.LeaveGroup(new LLUUID("group"));
                         break;
                 }
             }

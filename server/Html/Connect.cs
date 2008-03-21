@@ -148,9 +148,11 @@ namespace AjaxLife.Html
                     client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
                     client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
                     client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
+                    client.Friends.OnFriendFound += new FriendsManager.FriendFoundEvent(events.Friends_OnFriendFound);
+                    client.Groups.OnGroupProfile += new GroupManager.GroupProfileCallback(events.Groups_OnGroupProfile);
+                    client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
 
                     // AvatarTracker event callbacks.
-                    // Also not needed by the iPhone interface.
                     avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
                     avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);
                     avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
