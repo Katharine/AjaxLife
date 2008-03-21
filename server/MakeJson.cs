@@ -37,14 +37,40 @@ namespace AjaxLife
 {
     class MakeJson
     {
-        public static string FromHashtable(Hashtable hash)
+        public static string FromObject(object obj)
         {
             StringWriter textWriter = new StringWriter();
             JsonWriter jsonWriter = new JsonWriter(textWriter);
             JsonSerializer serializer = new JsonSerializer();
             LLUUIDConverter UUID = new LLUUIDConverter();
             serializer.Converters.Add(UUID);
-            serializer.Serialize(jsonWriter, hash);
+            serializer.Serialize(jsonWriter, obj);
+            jsonWriter.Flush();
+            string text = textWriter.ToString();
+            jsonWriter.Close();
+            textWriter.Dispose();
+            return text;
+        }
+
+        public static string FromHashtable(Hashtable hash)
+        {
+            return FromObject(hash);
+        }
+
+        public static string FromHashtableQueue(Queue<Hashtable> queue)
+        {
+            StringWriter textWriter = new StringWriter();
+            JsonWriter jsonWriter = new JsonWriter(textWriter);
+            jsonWriter.WriteStartArray();
+            JsonSerializer serializer = new JsonSerializer();
+            LLUUIDConverter UUID = new LLUUIDConverter();
+            serializer.Converters.Add(UUID);
+            while (queue.Count > 0)
+            {
+                Hashtable hashtable = queue.Dequeue();
+                serializer.Serialize(jsonWriter, hashtable);
+            }
+            jsonWriter.WriteEndArray();
             jsonWriter.Flush();
             string text = textWriter.ToString();
             jsonWriter.Close();

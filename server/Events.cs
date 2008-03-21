@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,28 +60,11 @@ namespace AjaxLife
             return this.pending.Count;
         }
 
-        // Returns the event queue in JSON format, with our custom converters (e.g.
-        // LLUUIDConverter) active.
+        // Returns the event queue in JSON format.
         public string GetPendingJson(SecondLife client)
         {
-            StringWriter textWriter = new StringWriter();
-            JsonWriter jsonWriter = new JsonWriter(textWriter);
-            jsonWriter.WriteStartArray();
-            JsonSerializer serializer = new JsonSerializer();
-            LLUUIDConverter UUID = new LLUUIDConverter();
-            serializer.Converters.Add(UUID);
             this.pending.Enqueue(this.GetFooter(client));
-            while (this.pending.Count > 0)
-            {
-                Hashtable hashtable = this.pending.Dequeue();
-                serializer.Serialize(jsonWriter, hashtable);
-            }
-            jsonWriter.WriteEndArray();
-            jsonWriter.Flush();
-            string text = textWriter.ToString();
-            jsonWriter.Close();
-            textWriter.Dispose();
-            return text;
+            return MakeJson.FromHashtableQueue(this.pending);
         }
         
         
@@ -222,6 +205,23 @@ namespace AjaxLife
                 result.Add("AgentID", person.AgentID);
                 result.Add("FirstName", person.FirstName);
                 result.Add("LastName", person.LastName);
+                results.Add(result);
+            }
+            item.Add("Results", results);
+            this.pending.Enqueue(item);
+        }
+
+        public void Directory_OnDirGroupsReply(LLUUID queryID, List<DirectoryManager.GroupSearchData> matchedGroups)
+        {
+            Hashtable item = new Hashtable();
+            item.Add("MessageType", "DirGroupsReply");
+            List<Hashtable> results = new List<Hashtable>();
+            foreach (DirectoryManager.GroupSearchData group in matchedGroups)
+            {
+                Hashtable result = new Hashtable();
+                result.Add("GroupID", group.GroupID);
+                result.Add("Name", group.GroupName);
+                result.Add("MemberCount", group.Members);
                 results.Add(result);
             }
             item.Add("Results", results);
