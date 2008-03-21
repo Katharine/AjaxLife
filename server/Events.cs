@@ -168,7 +168,7 @@ namespace AjaxLife
             Dictionary<string, string> namedict = new Dictionary<string, string>();
             foreach (KeyValuePair<LLUUID, string> name in names)
             {
-                namedict.Add(name.Key.ToStringHyphenated(), name.Value);
+                namedict.Add(name.Key.ToString(), name.Value);
             }
             item.Add("Names", namedict);
             this.pending.Enqueue(item);
@@ -420,7 +420,7 @@ namespace AjaxLife
         {
             if (image.NotFound)
             {
-                Console.WriteLine("Failed to download " + image.ID.ToStringHyphenated() + " - not found.");
+                Console.WriteLine("Failed to download " + image.ID + " - not found.");
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
                 hash.Add("UUID", image.ID);
@@ -431,7 +431,7 @@ namespace AjaxLife
             else if (image.Success)
             {
                 bool success = true;
-                string key = image.ID.ToStringHyphenated();
+                string key = image.ID.ToString();
                 byte[] img = OpenJPEGNet.OpenJPEG.DecodeToTGA(image.AssetData);
                 File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
                 Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".tga " + AjaxLife.TEXTURE_CACHE + key + ".png");
@@ -486,26 +486,26 @@ namespace AjaxLife
             this.pending.Enqueue(hash);
         }
 
-        public void Friends_OnFriendRights(FriendsManager.FriendInfo friend)
+        public void Friends_OnFriendRights(FriendInfo friend)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendRightsChanged");
             hash.Add("Name", friend.Name);
             hash.Add("ID", friend.UUID);
-            hash.Add("TheirRights", friend.TheirRightsFlags);
-            hash.Add("MyRights", friend.MyRightsFlags);
+            hash.Add("TheirRights", friend.TheirFriendRights);
+            hash.Add("MyRights", friend.MyFriendRights);
             hash.Add("Online", friend.IsOnline);
             this.pending.Enqueue(hash);
         }
 
-        public void Friends_OnOnOffline(FriendsManager.FriendInfo friend)
+        public void Friends_OnOnOffline(FriendInfo friend)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendOnOffline");
             hash.Add("Name", friend.Name);
             hash.Add("ID", friend.UUID);
-            hash.Add("TheirRights", friend.TheirRightsFlags);
-            hash.Add("MyRights", friend.MyRightsFlags);
+            hash.Add("TheirRights", friend.TheirFriendRights);
+            hash.Add("MyRights", friend.MyFriendRights);
             hash.Add("Online", friend.IsOnline);
             this.pending.Enqueue(hash);
         }
@@ -626,8 +626,8 @@ namespace AjaxLife
                         hash.Add("Type", "InventoryFolder");
                         hash.Add("Name", folder.Name);
                         hash.Add("PreferredType", folder.PreferredType);
-                        hash.Add("OwnerID", folder.OwnerID.ToStringHyphenated());
-                        hash.Add("UUID", folder.UUID.ToStringHyphenated());
+                        hash.Add("OwnerID", folder.OwnerID);
+                        hash.Add("UUID", folder.UUID);
                         response.Add(hash);
                     }
                     else if (o is InventoryItem)

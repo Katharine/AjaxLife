@@ -104,7 +104,7 @@ namespace AjaxLife.Html
                 first = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[1]));
                 last = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[2]));
                 pass = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[3]));
-                NetworkManager.LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
+                LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
                 login.Platform = "web";
                 login.Channel = "AjaxLife";
                 // Pick the correct loginuri.

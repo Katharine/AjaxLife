@@ -82,6 +82,7 @@
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Contributors.txt" />
     <Content Include="Grids.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

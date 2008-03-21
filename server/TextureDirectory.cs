@@ -63,9 +63,9 @@ namespace AjaxLife
             {
                 if (!filename.EndsWith(".png")) return null;
                 LLUUID key = new LLUUID(filename.Substring(0, filename.Length - 4));
-                if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + key.ToStringHyphenated() + ".png"))
+                if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + key + ".png"))
                 {
-                    return new DriveFile(AjaxLife.TEXTURE_CACHE + key.ToStringHyphenated() + ".png", this);
+                    return new DriveFile(AjaxLife.TEXTURE_CACHE + key + ".png", this);
                 }
                 return null;
             }

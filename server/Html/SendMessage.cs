@@ -211,7 +211,7 @@ namespace AjaxLife.Html
                     case "FindPeople":
                         {
                             Hashtable hash = new Hashtable();
-                            hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.People, POST["Search"], int.Parse(POST["Start"])).ToStringHyphenated());
+                            hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.People, POST["Search"], int.Parse(POST["Start"])).ToString());
                             textwriter.WriteLine(JavaScriptConvert.SerializeObject(hash));
                             goto flushwriter;
                         }
@@ -220,10 +220,10 @@ namespace AjaxLife.Html
                         goto flushwriter;
 
                     case "StartAnimation":
-                        client.Self.AnimationStart(new LLUUID(POST["Animation"]));
+                        client.Self.AnimationStart(new LLUUID(POST["Animation"]),false);
                         break;
                     case "StopAnimation":
-                        client.Self.AnimationStop(new LLUUID(POST["Animation"]));
+                        client.Self.AnimationStop(new LLUUID(POST["Animation"]), true);
                         break;
                     case "SendAppearance":
 						// This apparently crashes OpenSim, so disable it there.
@@ -277,16 +277,16 @@ namespace AjaxLife.Html
                         break;
                     case "GetFriendList":
                         {
-                            List<FriendsManager.FriendInfo> friends = client.Friends.FriendsList();
+                            List<FriendInfo> friends = client.Friends.FriendsList();
                             List<Hashtable> friendlist = new List<Hashtable>();
-                            foreach (FriendsManager.FriendInfo friend in friends)
+                            foreach (FriendInfo friend in friends)
                             {
                                 Hashtable friendhash = new Hashtable();
-                                friendhash.Add("ID", friend.UUID.ToStringHyphenated());
+                                friendhash.Add("ID", friend.UUID.ToString());
                                 friendhash.Add("Name", friend.Name);
                                 friendhash.Add("Online", friend.IsOnline);
-                                friendhash.Add("MyRights", friend.MyRightsFlags);
-                                friendhash.Add("TheirRights", friend.TheirRightsFlags);
+                                friendhash.Add("MyRights", friend.MyFriendRights);
+                                friendhash.Add("TheirRights", friend.TheirFriendRights);
                                 friendlist.Add(friendhash);
                             }
                             (new JsonSerializer()).Serialize(textwriter, friendlist);
@@ -314,7 +314,7 @@ namespace AjaxLife.Html
 					try
 					{
 						IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
-						Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToStringHyphenated() + ".png");
+						Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToString() + ".png");
 						s3request.Method = "HEAD";
 						Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
 						if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -328,13 +328,13 @@ namespace AjaxLife.Html
 				// If we aren't using S3, just check the texture cache.
 				else
 				{
-					exists = File.Exists(AjaxLife.TEXTURE_CACHE + image.ToStringHyphenated() + ".png");
+					exists = File.Exists(AjaxLife.TEXTURE_CACHE + image.ToString() + ".png");
 				}
                             }
                             // If it exists, reply with Ready = true and the URL to find it at.
                             if (exists)
                             {
-                                textwriter.Write("{Ready: true, URL: \"" + AjaxLife.TEXTURE_ROOT + image.ToStringHyphenated() + ".png\"}");
+                                textwriter.Write("{Ready: true, URL: \"" + AjaxLife.TEXTURE_ROOT + image + ".png\"}");
                             }
                             // If it doesn't, request the image from SL and note its lack of readiness.
                             // Notification will arrive later in the message queue.
@@ -369,7 +369,7 @@ namespace AjaxLife.Html
                                 Avatar avatar = pair.Value;
                                 Hashtable hash = new Hashtable();
                                 hash.Add("Name", avatar.Name);
-                                hash.Add("ID", avatar.ID.ToStringHyphenated());
+                                hash.Add("ID", avatar.ID.ToString());
                                 hash.Add("LocalID", avatar.LocalID);
                                 hash.Add("Position", avatar.Position);
                                 hash.Add("Rotation", avatar.Rotation);
@@ -389,7 +389,7 @@ namespace AjaxLife.Html
                             {
                                 LLUUID transferid = client.Assets.RequestInventoryAsset(new LLUUID(POST["AssetID"]), new LLUUID(POST["InventoryID"]),
                                     LLUUID.Zero, new LLUUID(POST["OwnerID"]), (AssetType)int.Parse(POST["AssetType"]), false);
-                                textwriter.Write("{TransferID: \"" + transferid.ToStringHyphenated() + "\"}");
+                                textwriter.Write("{TransferID: \"" + transferid + "\"}");
                             }
                             catch // Try catching the error that sometimes gets thrown... but sometimes doesn't.
                             {
@@ -418,13 +418,13 @@ namespace AjaxLife.Html
                     case "SaveTextAsset":
                         {
                             LLUUID xferID = client.Assets.RequestUpload((AssetType)int.Parse(POST["AssetType"]), Helpers.StringToField(POST["AssetData"]), false, false, true);
-                            textwriter.Write("{TranferID: \"" + xferID.ToStringHyphenated() + "\"}");
+                            textwriter.Write("{TranferID: \"" + xferID + "\"}");
                         }
                         break;
                     case "CreateFolder":
                         {
                             LLUUID folder = client.Inventory.CreateFolder(new LLUUID(POST["Parent"]), POST["Name"]);
-                            textwriter.Write("{FolderID: \"" + folder.ToStringHyphenated() + "\"}");
+                            textwriter.Write("{FolderID: \"" + folder + "\"}");
                         }
                         break;
                     case "EmptyTrash":

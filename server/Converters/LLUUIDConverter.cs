@@ -39,7 +39,7 @@ namespace AjaxLife.Converters
         // 00000000-0000-0000-0000-000000000000
         public override void WriteJson(JsonWriter writer, object value)
         {
-            base.WriteJson(writer, ((libsecondlife.LLUUID)value).ToStringHyphenated());
+            base.WriteJson(writer, ((libsecondlife.LLUUID)value).ToString());
         }
 
         // Check if we can created an LLUUID from whatever we're being given.
