@@ -314,6 +314,7 @@ AjaxLife.InstantMessage = function() {
 				// Ensure it's something to display
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent)
 				{
+					if(data.GroupIM) return; // We don't deal with these properly yet.
 					// Create a tab for them if we haven't already. Also play new IM sound.
 					if(!chats[data.IMSessionID])
 					{
