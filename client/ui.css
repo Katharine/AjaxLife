@@ -56,7 +56,15 @@ html {
 	width: 100%;
 }
 
-#dlg_im .x-tabs-body, .profile .x-tabs-body { overflow: hidden !important }
+.x-tabs-item-body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+#im-default-tab, #search_tab_people { /* Sigh. I wish I wasn't so inconsistent in my naming. */ 
+	overflow: auto;
+}
 
 #background {
 	width: 100%;

@@ -533,6 +533,15 @@ AjaxLife.Map = function() {
 						}
 					});
 				}
+				else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.Lure911)
+				{
+					Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
+					teleport_dialog(true);
+					AjaxLife.Network.Send("TeleportLureRespond", {
+						RequesterID: data.FromAgentID,
+						Accept: true
+					});
+				}
 			});
 			
 			// Handle teleport status updates.
