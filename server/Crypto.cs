@@ -42,7 +42,7 @@ namespace AjaxLife
             return _sp.ExportParameters(includePrivateParameters);
         }
 
-        // Use 1,024 bit encryption.
+        // Use 1,024 bit encryption by default.
         public void InitCrypto()
         {
             InitCrypto(1024);

@@ -106,6 +106,31 @@ namespace AjaxLife.Html
                 }
                 hash.Add("GRID_OPTIONS", grids);
                 hash.Add("SEARCH_ROOT", AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT));
+                if (AjaxLife.HANDLE_CONTENT_ENCODING)
+                {
+                    // S3 doesn't support Accept-Encoding, so we do it ourselves.
+                    if (request.Headers["Accept-Encoding"] != null)
+                    {
+                        string[] accept = request.Headers["Accept-Encoding"].Split(',');
+                        foreach (string encoding in accept)
+                        {
+                            string parsedencoding = encoding.Split(';')[0];
+                            if (parsedencoding == "gzip" || parsedencoding == "*") // Should we really honour "*"? Specs aside, it's never going to be true.
+                            {
+                                hash.Add("SPECIAL", "gzip");
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        hash.Add("SPECIAL", "plain");
+                    }
+                }
+                else
+                {
+                    hash.Add("SPECIAL", "plain");
+                }
                 // Parse the template.
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
                 writer.Write(parser.Parse(File.ReadAllText("Html/Templates/AjaxLife.html")));

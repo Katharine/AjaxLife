@@ -191,10 +191,9 @@ namespace AjaxLife.Html
             client.Assets.OnAssetUploaded += new AssetManager.AssetUploadedCallback(events.Assets_OnAssetUploaded);
 
             // Packet callbacks
-            // We register these because there's no LibSL function dor doing it easily.
+            // We register these because there's no LibSL function for doing it easily.
             client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
-            // Manual map handler. I hear rumours that the next libsl will have its own
-            // map support. 
+            // Manual map handler.
             client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
             client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
         }

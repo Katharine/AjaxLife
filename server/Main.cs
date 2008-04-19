@@ -50,6 +50,7 @@ namespace AjaxLife
         public static string STATIC_ROOT { get { return StaticRoot; } }
         public static string SEARCH_ROOT { get { return SearchRoot; } }
 		public static bool USE_S3 { get { return UseS3; } }
+        public static bool HANDLE_CONTENT_ENCODING { get { return HandleContentEncoding; } }
 
         // Constant - the number of seconds before the session times out and logs you off.
         // This handles people losing their internet connection or closing the window without
@@ -66,6 +67,7 @@ namespace AjaxLife
         private static string PrivateAccessKey = "";
         private static string TextureCache = "texturecache/";
         private static string SearchRoot = "http://services.katharineberry.co.uk/search/"; // Unused, currently.
+        private static bool HandleContentEncoding = false;
 		private static bool UseS3 = false;
         
         public static int TextureCacheCount = 0; // Temporarily completely unused.
@@ -157,6 +159,7 @@ namespace AjaxLife
 			{
 				TextureRoot = args["textureroot"];
 			}
+            HandleContentEncoding = (args["doencoding"] != null);
             // Create an empty dictionary for the users. This is defined as public further up.
             Users = new Dictionary<Guid, User>();
             
@@ -250,50 +253,7 @@ namespace AjaxLife
             // Sleep forever. Note that this means nothing after this line ever gets executed.
             // We do this because no more processing takes place in this thread.
             System.Threading.Thread.Sleep(System.Threading.Timeout.Infinite);
-            //TODO: Move this into another function and come up with a secure way of calling it.
-            timer.Stop();
-            Console.WriteLine("Initiating shutdown sequence.");
-            timer.Dispose();
-            Console.WriteLine("Notifying clients...");
-            // Loop through each user.
-            foreach (KeyValuePair<Guid,User> entry in Users)
-            {
-                try
-                {
-                    User user = entry.Value;
-                    if (user.Events != null)
-                    {
-                        // Manually send the OnDisconnected event.
-                        user.Events.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "The AjaxLife server is shutting down.\n");
-                    }
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine("Failed to transmit a logout notice: "+e.Message);
-                }
-            }
-            Console.WriteLine("Waiting a bit...");
-            System.Threading.Thread.Sleep(10000); // Sleep for ten seconds while clients work out they're out.
-            Console.WriteLine("Disconnecting agents...");
-            // Loop through again and log them out.
-            foreach (KeyValuePair<Guid,User> user in Users)
-            {
-                try
-                {
-                    SecondLife sl = user.Value.Client;
-                    if (sl.Network.Connected)
-                    {
-                        sl.Network.Logout();
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Failed to log out an agent.");
-                }
-            }
-            // Gracefully stop the webserver.
-            webserver.Stop();
-            // RTS ;)
+            // We never get past this point, so all code past here has been deleted for now.
         }
 
         // Loop through each user and mark them for deletion if they haven't made a request
