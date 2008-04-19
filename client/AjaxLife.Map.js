@@ -533,9 +533,10 @@ AjaxLife.Map = function() {
 						}
 					});
 				}
-				else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.Lure911)
+				// This bit handles teleports from Lindens. You don't get any chances here.
+				else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.GodLikeRequestTeleport)
 				{
-					Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
+					AjaxLife.Widgets.Ext.msg("", _("Map.GodLikeTeleportRequest"), "godliketeleportrequest", true);
 					teleport_dialog(true);
 					AjaxLife.Network.Send("TeleportLureRespond", {
 						RequesterID: data.FromAgentID,
