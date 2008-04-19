@@ -51,6 +51,7 @@ namespace AjaxLife
         public static string SEARCH_ROOT { get { return SearchRoot; } }
 		public static bool USE_S3 { get { return UseS3; } }
         public static bool HANDLE_CONTENT_ENCODING { get { return HandleContentEncoding; } }
+        public static bool DEBUG_MODE { get { return DebugMode; } }
 
         // Constant - the number of seconds before the session times out and logs you off.
         // This handles people losing their internet connection or closing the window without
@@ -69,6 +70,7 @@ namespace AjaxLife
         private static string SearchRoot = "http://services.katharineberry.co.uk/search/"; // Unused, currently.
         private static bool HandleContentEncoding = false;
 		private static bool UseS3 = false;
+        private static bool DebugMode = false;
         
         public static int TextureCacheCount = 0; // Temporarily completely unused.
         public static long TextureCacheSize = 0; // Temporarily completely unused.
@@ -160,6 +162,7 @@ namespace AjaxLife
 				TextureRoot = args["textureroot"];
 			}
             HandleContentEncoding = (args["doencoding"] != null);
+            DebugMode = (args["doencoding"] != null);
             // Create an empty dictionary for the users. This is defined as public further up.
             Users = new Dictionary<Guid, User>();
             
@@ -169,7 +172,7 @@ namespace AjaxLife
             {
                 // If the "private" CLI argument was specified, make it private by making us only
                 // listen to the loopback address (127.0.0.0)
-                if (args["private"] != null && bool.Parse(args["private"]))
+                if (args["private"] != null)
                 {
                     webserver.LocalAddress = System.Net.IPAddress.Loopback;
                     Console.WriteLine("Using private mode.");

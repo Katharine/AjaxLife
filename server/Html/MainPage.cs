@@ -71,7 +71,7 @@ namespace AjaxLife.Html
                 client.Settings.MULTIPLE_SIMS = false;
                 client.Settings.ENABLE_SIMSTATS = true;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
-                client.Settings.DEBUG = false;
+                client.Settings.DEBUG = AjaxLife.DEBUG_MODE;
                 client.Settings.LOG_RESENDS = false;
                 client.Throttle.Cloud = 0;
                 client.Throttle.Task = 0;
@@ -108,28 +108,21 @@ namespace AjaxLife.Html
                 hash.Add("SEARCH_ROOT", AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT));
                 if (AjaxLife.HANDLE_CONTENT_ENCODING)
                 {
+                    hash.Add("ENCODING", "identity");
                     // S3 doesn't support Accept-Encoding, so we do it ourselves.
                     if (request.Headers["Accept-Encoding"] != null)
                     {
                         string[] accept = request.Headers["Accept-Encoding"].Split(',');
                         foreach (string encoding in accept)
                         {
-                            string parsedencoding = encoding.Split(';')[0];
+                            string parsedencoding = encoding.Split(';')[0].Trim();
                             if (parsedencoding == "gzip" || parsedencoding == "*") // Should we really honour "*"? Specs aside, it's never going to be true.
                             {
-                                hash.Add("SPECIAL", "gzip");
+                                hash["ENCODING"] = "gzip";
                                 break;
                             }
                         }
                     }
-                    else
-                    {
-                        hash.Add("SPECIAL", "plain");
-                    }
-                }
-                else
-                {
-                    hash.Add("SPECIAL", "plain");
                 }
                 // Parse the template.
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
