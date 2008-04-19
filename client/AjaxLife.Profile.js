@@ -196,7 +196,7 @@ AjaxLife.Profile = function(agentid) {
 				Ext.Msg.confirm("",_("Profile.ConfirmFriendAdd",{first: firstname, last: lastname}), function(btn) {
 					if(btn == 'yes')
 					{
-						AjaxLife.Network.Send("OfferFriendship", {Target: agentid});
+						AjaxLife.Friends.OfferFriendship(agentid);
 						AjaxLife.Widgets.Ext.msg("",_("Profile.FriendshipOffered", {first: firstname, last: lastname}));
 					}
 				});

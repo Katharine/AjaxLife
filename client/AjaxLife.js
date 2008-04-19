@@ -89,6 +89,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.Search.init();
 	AjaxLife.Debug("AjaxLife: AvatarsNear init...");
 	AjaxLife.AvatarsNear.init();
+	AjaxLife.Debug("AjaxLife: FriendList init...");
+	AjaxLife.FriendList.init();
 	AjaxLife.Debug("AjaxLife: Inventory init...");
 	AjaxLife.Inventory.init();
 	AjaxLife.Debug("AjaxLife: Stats init...");

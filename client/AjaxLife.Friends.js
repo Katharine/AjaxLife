@@ -69,6 +69,41 @@ AjaxLife.Friends = function() {
 		});
 	}
 	
+	function loadlist()
+	{
+		AjaxLife.Debug("Friends: Requesting friend list.");
+		AjaxLife.Network.Send("GetFriendList",{
+			callback: function(data) {
+				if(data.each)
+				{
+					AjaxLife.Debug("Friends: Received friend list.");
+					data.each(function(friend) {
+						if(friend && friend.Name != '')
+						{
+							AjaxLife.NameCache.Add(friend.ID, friend.Name);
+						}
+						else
+						{
+							AjaxLife.Debug("Got friend "+friend.ID+" with null name.");
+						}
+						AjaxLife.NameCache.Find(friend.ID, function(name) {
+							friend.Name = name;
+							if(!friends[friend.ID])
+							{
+								added(friend);
+							}
+							friends[friend.ID] = friend;
+						});
+					});
+				}
+				else
+				{
+					alert(data);
+				}
+			}
+		});
+	}
+	
 	return {
 		// Init function. Register for network events.
 		init: function() {
@@ -96,36 +131,7 @@ AjaxLife.Friends = function() {
 			});
 			
 			// Loads and displays the friendlist.
-			AjaxLife.Network.Send("GetFriendList",{
-				callback: function(data) {
-					if(data.each)
-					{
-						AjaxLife.Debug("Friends: Received friend list.");
-						data.each(function(friend) {
-							if(friend && friend.Name != '')
-							{
-								AjaxLife.NameCache.Add(friend.ID, friend.Name);
-							}
-							else
-							{
-								AjaxLife.Debug("Got friend "+friend.ID+" with null name.");
-							}
-							AjaxLife.NameCache.Find(friend.ID, function(name) {
-								friend.Name = name;
-								if(!friends[friend.ID])
-								{
-									added(friend);
-								}
-								friends[friend.ID] = friend;
-							});
-						});
-					}
-					else
-					{
-						alert(data);
-					}
-				}
-			});
+			loadlist();
 		},
 		// Used to force a status change
 		StatusChange: function(agentid, online)	{
@@ -157,6 +163,18 @@ AjaxLife.Friends = function() {
 		AddNewFriendCallback: function(callback) {
 			AjaxLife.Debug("Friends: Registered new friend callback.");
 			onnewcallbacks[onnewcallbacks.length] = callback;
+		},
+		ReloadFriendList: function() {
+			loadlist();
+		},
+		OfferFriendship: function(agentid) {
+			AjaxLife.Network.Send("OfferFriendship", {Target: agentid});
+		},
+		TerminateFriendship: function(agentid) {
+			AjaxLife.Network.Send("TerminateFriendship", {Target: agentid});
+		},
+		GrantRights: function(agentid, rights) {
+			AjaxLife.Network.Send("ChangeRights", {Friend: agentid, Rights: rights});
 		}
 	};
 }();

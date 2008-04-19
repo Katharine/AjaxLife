@@ -27,13 +27,13 @@
 AjaxLife.Constants = {
 	MainAvatar: {
 		AgentFlags: {
-			None: 0,
-			HideTitle: 1
+			None:		0x00000000,
+			HideTitle:	0x00000001
 		},
 		AgentState: {
-			None: 0,
-			Typing: 4,
-			Editing: 16
+			None:		0x00000000,
+			Typing:		0x00000004,
+			Editing:	0x00000010
 		},
 		ChatAudibleLevel: {
 			Not: -1,
@@ -79,7 +79,6 @@ AjaxLife.Constants = {
 			AcceptTeleport: 23,
 			DenyTeleport: 24,
 			GodLikeRequestTeleport: 25,
-			CurrentlyUnused: 26,
 			GotoUrl: 28,
 			Session911Start: 29,
 			Lure911: 30,
@@ -120,35 +119,35 @@ AjaxLife.Constants = {
 			Clear: 3
 		},
 		ScriptPermission: {
-			None: 0,
-			Debit: 2,
-			TakeControls: 4,
-			RemapControls: 8,
-			TriggerAnimation: 16,
-			Attach: 32,
-			ReleaseOwnership: 64,
-			ChangeLinks: 128,
-			ChangeJoints: 256,
-			ChangePermissions: 512,
-			TrackCamera: 1024,
-			ControlCamera: 2048
+			None:				0x00000000,
+			Debit:				0x00000002,
+			TakeControls:		0x00000004,
+			RemapControls:		0x00000008,
+			TriggerAnimation:	0x00000010,
+			Attach:				0x00000020,
+			ReleaseOwnership:	0x00000040,
+			ChangeLinks:		0x00000080,
+			ChangeJoints:		0x00000100,
+			ChangePermissions:	0x00000200,
+			TrackCamera:		0x00000400,
+			ControlCamera:		0x00000800
 		},
 		TeleportFlags: {
-			Default: 0,
-			SetHomeToTarget: 1,
-			SetLastToTarget: 2,
-			ViaLure: 4,
-			ViaLandmark: 8,
-			ViaLocation: 16,
-			ViaHome: 32,
-			ViaTelehub: 64,
-			ViaLogin: 128,
-			ViaGodlikeLure: 256,
-			Godlike: 512,
-			NineOneOne: 1024,
-			DisableCancel: 2048,
-			ViaRegionID: 4096,
-			IsFlying: 8192
+			Default:			0x00000000,
+			SetHomeToTarget:	0x00000001,
+			SetLastToTarget:	0x00000002,
+			ViaLure:			0x00000004,
+			ViaLandmark:		0x00000008,
+			ViaLocation:		0x00000010,
+			ViaHome:			0x00000020,
+			ViaTelehub:			0x00000040,
+			ViaLogin:			0x00000080,
+			ViaGodlikeLure:		0x00000100,
+			Godlike:			0x00000200,
+			NineOneOne:			0x00000400,
+			DisableCancel:		0x00000800,
+			ViaRegionID:		0x00001000,
+			IsFlying:			0x00002000
 		},
 		TeleportLureFlags: {
 			NormalLure: 0,
@@ -237,5 +236,11 @@ AjaxLife.Constants = {
 		Copy:		0x00008000,
 		Move:		0x00080000,
 		All:		0x7FFFFFFF
+	},
+	FriendRights: {
+		None: 				0x00000000,
+		CanSeeOnline:		0x00000001,
+		CanSeeOnMap:		0x00000002,
+		CanModifyObjects:	0x00000004
 	}
 };
