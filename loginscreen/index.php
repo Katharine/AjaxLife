@@ -108,6 +108,7 @@ EOF
 $screen = str_replace('/app/login/','http://secondlife.com/app/login/',$screen);
 $screen = str_replace('"/_img/','"http://secondlife.com/_img/',$screen);
 $screen = str_replace('"/_scripts/','"http://secondlife.com/_scripts/',$screen);
+$screen = str_replace('scrolling="auto"','scrolling="no"',$screen);
 if(!defined('GOOGLE_ANALYTICS') || GOOGLE_ANALYTICS == '')
 {
 	$screen = str_replace('document.write','//document.write',$screen);
