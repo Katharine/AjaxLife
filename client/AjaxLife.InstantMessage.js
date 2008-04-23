@@ -126,12 +126,12 @@ AjaxLife.InstantMessage = function() {
 	// Creates a new IM session with agent "id" who is called "name".
 	// Session ID should be generated such that all IMs with the target will have the same ID,
 	// but IMs from different people to the same agent, or the same person to different agents, will not.
-	function createTab(id, name, sessionid)
+	function createTab(id, name, sessionid, groupIM)
 	{
 		// Check that we don't have a chat open already.
 		for(var i in chats)
 		{
-			if(chats[i].target == id)
+			if(chats[i].target == id && chats[i].groupIM == groupIM)
 			{
 				chats[i].tab.activate();
 				chats[i].session = sessionid;
@@ -139,7 +139,7 @@ AjaxLife.InstantMessage = function() {
 				return true;
 			}
 		}
-		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+")");
+		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
 			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id,name,"",true),
@@ -149,7 +149,8 @@ AjaxLife.InstantMessage = function() {
 			entrybox: false,
 			sendbtn: false,
 			div_typing: false,
-			session: sessionid
+			session: sessionid,
+			groupIM: groupIM
 		};
 		chats[sessionid].tab.on('close',function() {
 			if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == chats[sessionid].tab.id)
@@ -314,12 +315,11 @@ AjaxLife.InstantMessage = function() {
 				// Ensure it's something to display
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent)
 				{
-					if(data.GroupIM) return; // We don't deal with these properly yet.
 					// Create a tab for them if we haven't already. Also play new IM sound.
 					if(!chats[data.IMSessionID])
 					{
 						AjaxLife.Widgets.Ext.msg("",_("InstantMessage.NewIMSession", {from: data.FromAgentName}), "newimsession", true);
-						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID);
+						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID, data.GroupIM);
 						if(!created)
 						{
 							AjaxLife.Widgets.Ext.msg("Lost Instant Message","From: {0}<br />Message: {1}",data.FromAgentName,data.Message);

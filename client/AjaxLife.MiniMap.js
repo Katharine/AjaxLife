@@ -33,6 +33,7 @@ AjaxLife.MiniMap = function() {
 	var bufferc;
 	var marks = {};
 	var pos = {sim: '', x: 0, y: 0, z: 0};
+	var target = false;
 	var scale = 1.0;
 	var selfimg = new Image();
 	var imgloaded = false;
@@ -183,11 +184,20 @@ AjaxLife.MiniMap = function() {
 	// This draws the position of others in the sim.
 	// They're drawn as circles if they're within five metres of us, otherwise
 	// pointing in the right direction.
-	function drawMark(mark)
+	function drawMark(mark,r,g,b)
 	{
-		// Green.
-		context.strokeStyle = "rgb(0,255,0)";
-		context.fillStyle = "rgb(0,255,0)";
+		// If no colour is specified, assume green.
+		if(!b && b !== 0)
+		{
+			// Green.
+			context.strokeStyle = "rgb(0,255,0)";
+			context.fillStyle = "rgb(0,255,0)";
+		}
+		else
+		{
+			context.strokeStyle = "rgb("+r+","+g+","+b+")";
+			context.fillStyle = "rgb("+r+","+g+","+b+")";
+		}
 		// Difference between our height and the other person's height.
 		var diff = mark.Z - pos.z;
 		// Don't draw a green mark for ourselves.
@@ -237,6 +247,15 @@ AjaxLife.MiniMap = function() {
 		context.drawImage(selfimg, pos.x, 256-pos.y, 8/scale,8/scale);
 	}
 	
+	// Draw our target, if any, on the map.
+	function drawTarget()
+	{
+		if(target && target.sim == pos.sim)
+		{
+			drawMark({X: target.x, Y: target.y, Z: target.z}, 255, 0, 0);
+		}
+	}
+	
 	// Wipe the canvas and draw the whole map on it.
 	function redraw()
 	{
@@ -247,6 +266,7 @@ AjaxLife.MiniMap = function() {
 		{
 			drawMark(marks[i]);
 		}
+		drawTarget();
 		drawSelf();
 	}
 	
@@ -357,7 +377,7 @@ AjaxLife.MiniMap = function() {
 					heights[water*0.75] = {red: 0, green: 0, blue: 255};
 					heights[water] = {red: 0, green: 128, blue: 255};
 					heights[water+1] = {red: 240, green: 240, blue: 64};
-					available = [0,water*0.75,water,water+1,24/*,70*/,100,120];
+					available = [0,water*0.75,water,water+1,24,100,120];
 					heightcache = []; // We could probably do a more selective clean on this.
 				}
 				var land = [];
@@ -371,6 +391,10 @@ AjaxLife.MiniMap = function() {
 			// Update our position on the map whenever we receiving our position.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
 				AjaxLife.MiniMap.PersonUpdate(data.Positions);
+			});
+			AjaxLife.Map.OnMarkChanged(function(newmark) {
+				target = newmark;
+				redraw();
 			});
 			emptyland();
 			// Use a size of 150x150 by default.
