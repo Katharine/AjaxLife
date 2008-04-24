@@ -163,11 +163,19 @@ AjaxLife.InstantMessage = function() {
 			});
 		}
 		chats[sessionid].tab.on('close',function() {
+			// Send message informing that we have left the conversation.
+			AjaxLife.Network.Send('GenericInstantMessage', {
+				Message: "",
+				Target: id,
+				IMSessionID: sessionid,
+				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
+				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionDrop
+			});
 			if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == chats[sessionid].tab.id)
 			{
 				activesession = false;
 			}
-			chats[sessionid] = false;
+			delete chats[sessionid];
 		});
 		chats[sessionid].tab.bodyEl.setStyle({'overflow': 'hidden'});
 		// Chat area
@@ -278,7 +286,6 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
-			AjaxLife.Debug("The new script has loaded.");
 			// Create the new window at 700x400, with a default tab for friendlist.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,
