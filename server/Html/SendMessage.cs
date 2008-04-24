@@ -199,6 +199,19 @@ namespace AjaxLife.Html
                 case "TeleportLureRespond":
                     client.Self.TeleportLureRespond(new LLUUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
                     break;
+                case "GodlikeTeleportLureRespond":
+                    {
+                        LLUUID lurer = new LLUUID(POST["RequesterID"]);
+                        LLUUID session = new LLUUID(POST["SessionID"]);
+                        client.Self.InstantMessage(client.Self.Name, lurer, "", LLUUID.Random(), InstantMessageDialog.AcceptTeleport, InstantMessageOnline.Offline, client.Self.SimPosition, LLUUID.Zero, new byte[0]);
+                        TeleportLureRequestPacket lure = new TeleportLureRequestPacket();
+                        lure.Info.AgentID = client.Self.AgentID;
+                        lure.Info.SessionID = client.Self.SessionID;
+                        lure.Info.LureID = session;
+                        lure.Info.TeleportFlags = (uint)AgentManager.TeleportFlags.ViaGodlikeLure;
+                        client.Network.SendPacket(lure);
+                    }
+                    break;
                 case "FindPeople":
                     {
                         Hashtable hash = new Hashtable();
@@ -534,13 +547,13 @@ namespace AjaxLife.Html
                     client.Groups.RequestGroupMembers(new LLUUID(POST["Group"]));
                     break;
                 case "RequestGroupName":
-                    client.Groups.RequestGroupName(new LLUUID("Group"));
+                    client.Groups.RequestGroupName(new LLUUID(POST["ID"]));
                     break;
                 case "JoinGroup":
-                    client.Groups.RequestJoinGroup(new LLUUID("Group"));
+                    client.Groups.RequestJoinGroup(new LLUUID(POST["Group"]));
                     break;
                 case "LeaveGroup":
-                    client.Groups.LeaveGroup(new LLUUID("group"));
+                    client.Groups.LeaveGroup(new LLUUID(POST["Group"]));
                     break;
             }
             textwriter.Flush();

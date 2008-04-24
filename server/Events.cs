@@ -145,12 +145,7 @@ namespace AjaxLife
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarNames");
-            Dictionary<string, string> namedict = new Dictionary<string, string>();
-            foreach (KeyValuePair<LLUUID, string> name in names)
-            {
-                namedict.Add(name.Key.ToString(), name.Value);
-            }
-            item.Add("Names", namedict);
+            item.Add("Names", names);
             this.pending.Enqueue(item);
         }
 
@@ -745,6 +740,15 @@ namespace AjaxLife
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupMembers");
             message.Add("MemberList", list);
+            this.pending.Enqueue(message);
+        }
+
+        public void Groups_OnGroupNames(Dictionary<LLUUID, string> groupNames)
+        {
+            AjaxLife.Debug("OnGroupNames", "OnGroupNames arrived.");
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "GroupNames");
+            message.Add("Names", groupNames);
             this.pending.Enqueue(message);
         }
     }

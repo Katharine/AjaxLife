@@ -182,6 +182,7 @@ namespace AjaxLife.Html
             client.Friends.OnFriendFound += new FriendsManager.FriendFoundEvent(events.Friends_OnFriendFound);
             client.Groups.OnGroupProfile += new GroupManager.GroupProfileCallback(events.Groups_OnGroupProfile);
             client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
+            client.Groups.OnGroupNames += new GroupManager.GroupNamesCallback(events.Groups_OnGroupNames);
 
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);

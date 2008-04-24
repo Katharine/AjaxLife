@@ -162,7 +162,8 @@ namespace AjaxLife
 				TextureRoot = args["textureroot"];
 			}
             HandleContentEncoding = (args["doencoding"] != null);
-            DebugMode = (args["doencoding"] != null);
+            DebugMode = (args["debug"] != null);
+            Console.WriteLine("Debug mode: " + (DEBUG_MODE ? "On" : "Off"));
             // Create an empty dictionary for the users. This is defined as public further up.
             Users = new Dictionary<Guid, User>();
             
@@ -340,6 +341,14 @@ namespace AjaxLife
             str = str.Replace("'", "\\'");
             str = str.Replace("\n", "\\n");
             return "\""+str+"\"";
+        }
+
+        public static void Debug(string module, string message)
+        {
+            if (AjaxLife.DEBUG_MODE)
+            {
+                Console.WriteLine(module + ": " + message);
+            }
         }
     }
 }
