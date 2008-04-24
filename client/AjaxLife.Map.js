@@ -588,10 +588,9 @@ AjaxLife.Map = function() {
 				else if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.GodLikeRequestTeleport)
 				{
 					AjaxLife.Widgets.Ext.msg("", _("Map.GodLikeTeleportRequest"), "godliketeleportrequest");
-					teleport_dialog(true);
-					AjaxLife.Network.Send("TeleportLureRespond", {
+					AjaxLife.Network.Send("GodLikeTeleportLureRespond", {
 						RequesterID: data.FromAgentID,
-						Accept: true
+						SessionID: data.IMSessionID
 					});
 				}
 			});

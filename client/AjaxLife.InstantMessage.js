@@ -128,6 +128,7 @@ AjaxLife.InstantMessage = function() {
 	// but IMs from different people to the same agent, or the same person to different agents, will not.
 	function createTab(id, name, sessionid, groupIM)
 	{
+		if(!groupIM) groupIM = false; // Avoid differences between false and undefined.
 		// Check that we don't have a chat open already.
 		for(var i in chats)
 		{
@@ -142,7 +143,7 @@ AjaxLife.InstantMessage = function() {
 		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
-			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id,name,"",true),
+			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id, (groupIM ? "(hippos)" : name), "", true),
 			name: name,
 			target: id,
 			content: false,
@@ -152,6 +153,15 @@ AjaxLife.InstantMessage = function() {
 			session: sessionid,
 			groupIM: groupIM
 		};
+		if(groupIM)
+		{
+			AjaxLife.Debug("InstantMessage: Looking up group "+sessionid+"...");
+			AjaxLife.NameCache.FindGroup(sessionid, function(groupname) {
+				AjaxLife.Debug("InstantMessage: Found group name: "+groupname);
+				chats[sessionid].name = groupname;
+				chats[sessionid].tab.setText(groupname);
+			});
+		}
 		chats[sessionid].tab.on('close',function() {
 			if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == chats[sessionid].tab.id)
 			{
@@ -191,32 +201,36 @@ AjaxLife.InstantMessage = function() {
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));
 		chats[sessionid].div_typing = div_typing;
-		// Called two seconds after the last key is pressed. Sends not typing notification.
-		var delayed_stop_typing = new Ext.util.DelayedTask(function() {
-			AjaxLife.Network.Send('GenericInstantMessage', {
-				Message: "none",
-				Target: chats[sessionid].target,
-				IMSessionID: chats[sessionid].session,
-				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
-				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
-			});
-			noted_typing = false;
-		});
-		// Sends typing notification and sets timeout for above function to two seconds.
-		entrybox.on('keypress',function(e) {
-			if(!noted_typing)
-			{
-				noted_typing = true;
+		// None of the "... is typing" stuff works in group IMs.
+		if(!groupIM)
+		{
+			// Called two seconds after the last key is pressed. Sends not typing notification.
+			var delayed_stop_typing = new Ext.util.DelayedTask(function() {
 				AjaxLife.Network.Send('GenericInstantMessage', {
 					Message: "none",
 					Target: chats[sessionid].target,
 					IMSessionID: chats[sessionid].session,
 					Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
-					Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StartTyping
+					Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
 				});
-			}
-			delayed_stop_typing.delay(2000);
-		});
+				noted_typing = false;
+			});
+			// Sends typing notification and sets timeout for above function to two seconds.
+			entrybox.on('keypress',function(e) {
+				if(!noted_typing)
+				{
+					noted_typing = true;
+					AjaxLife.Network.Send('GenericInstantMessage', {
+						Message: "none",
+						Target: chats[sessionid].target,
+						IMSessionID: chats[sessionid].session,
+						Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
+						Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StartTyping
+					});
+				}
+				delayed_stop_typing.delay(2000);
+			});
+		}
 		entrybox.on('keyup',function(e) {
 			if(e.keyCode == 13 || e.which == 13)
 			{
@@ -264,6 +278,7 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
+			AjaxLife.Debug("The new script has loaded.");
 			// Create the new window at 700x400, with a default tab for friendlist.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,
