@@ -26,12 +26,56 @@
 
 AjaxLife.ActiveInventoryDialogs.Properties = {};
 AjaxLife.InventoryDialogs.Properties = function(data) {
+	var P = AjaxLife.Constants.Permissions;
+	function updatepermissions()
+	{
+		var newperms = 0;
+		if(check_nextownermod.checked) newperms |= P.Modify;
+		if(check_nextownercopy.checked) newperms |= P.Copy;
+		if(check_nextownertrans.checked) newperms |= P.Transfer;
+		data.Permissions.NextOwnerMask = newperms;
+		AjaxLife.Network.Send("UpdateItem", {
+			ItemID: data.UUID,
+			OwnerID: data.OwnerID,
+			NextOwnerMask: newperms
+		});
+		AjaxLife.Debug("InventoryProperties: Transmitting new NextOwnerMask for "+data.UUID+" (\""+data.Name+"\"): "+newperms);
+	}
+	
+	function changename()
+	{
+		var newname = input_name.value.strip();
+		if(newname == '') return;
+		var node = AjaxLife.Inventory.GetNode(data.UUID);
+		if(!node) return;
+		node.setText(newname);
+		data.Name = newname;
+		AjaxLife.Network.Send("UpdateItem", {
+			ItemID: data.UUID,
+			OwnerID: data.OwnerID,
+			Name: newname
+		});
+		AjaxLife.Debug("InventoryProperties: Renaming "+data.UUID+" to \""+newname+"\"");
+	}
+	
+	function changedesc()
+	{
+		var newdesc = input_description.value;
+		data.Description = newdesc;
+		AjaxLife.Network.Send("UpdateItem", {
+			ItemID: data.UUID,
+			OwnerID: data.OwnerID,
+			Description: newdesc
+		});
+		AjaxLife.Debug("InventoryProperties: Changing description for "+data.UUID+" to \""+newdesc+"\"");
+	}
+
+
 	if(AjaxLife.ActiveInventoryDialogs.Properties[data.UUID])
 	{
 		AjaxLife.ActiveInventoryDialogs.Properties[data.UUID].focus();
 		return;
 	}
-	
 	
 	var win = new Ext.BasicDialog("dlg_inv_properties_"+data.UUID, {
 		width: 350,
@@ -47,8 +91,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	AjaxLife.ActiveInventoryDialogs.Properties[data.UUID] = win;
 	
 	win.on('hide', function() {
-		delete AjaxLife.ActiveInventoryDialogs.Texture[textureid];
 		win.destroy(true);
+		delete AjaxLife.ActiveInventoryDialogs.Properties[data.UUID];
 	});
 	
 	$(win.body.dom).addClassName("properties");
@@ -67,7 +111,15 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		width: '230px'
 	});
 	input_name.value = data.Name;
-	input_name.disable();
+	// We can only change the name and description with modify permissions.
+	if(data.Permissions.OwnerMask & P.Modify)
+	{
+		Ext.get(input_name).on('change', changename);
+	}
+	else
+	{
+		input_name.disable();
+	}
 	
 	var label_description = $(document.createElement('div'));
 	label_description.appendChild(document.createTextNode(_("InventoryDialogs.Properties.Description")));
@@ -85,7 +137,14 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		width: '230px'
 	});
 	input_description.value = data.Description;
-	input_description.disable();
+	if(data.Permissions.OwnerMask & P.Modify)
+	{
+		Ext.get(input_description).on('change', changedesc);
+	}
+	else
+	{
+		input_description.disable();
+	}
 	
 	var label_owner = $(document.createElement('div'));
 	label_owner.appendChild(document.createTextNode(_("InventoryDialogs.Properties.Owner")));
@@ -163,8 +222,6 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		left: '10px'
 	});
 	
-	var P = AjaxLife.Constants.Permissions;
-	
 	var check_ownermod = $(document.createElement('input'));
 	check_ownermod.setAttribute('type','checkbox');
 	check_ownermod.disable();
@@ -225,7 +282,7 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		left: '205px'
 	});
 	
-		
+	// We want to allow changing of these ones, but only under specific conditions.
 	var label_nextownercan = $(document.createElement('div'));
 	label_nextownercan.appendChild(document.createTextNode(_("InventoryDialogs.Properties.NextOwnerCan")));
 	label_nextownercan.setStyle({
@@ -236,11 +293,16 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	
 	var check_nextownermod = $(document.createElement('input'));
 	check_nextownermod.setAttribute('type','checkbox');
-	check_nextownermod.disable();
 	if(data.Permissions.NextOwnerMask & P.Modify)
 	{
 		check_nextownermod.setAttribute('checked','checked');
 	}
+	else if(~data.Permissions.OwnerMask & P.Modify)
+	{
+		AjaxLife.Debug("IntentoryProperties: Modify disabled.");
+		check_nextownermod.disable();
+	}
+	Ext.get(check_nextownermod).on('change', updatepermissions);
 	check_nextownermod.setStyle({
 		position: 'absolute',
 		top: '146px',
@@ -253,14 +315,32 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		top: '145px',
 		left: '25px'
 	});
-	
 	var check_nextownercopy = $(document.createElement('input'));
 	check_nextownercopy.setAttribute('type','checkbox');
-	check_nextownercopy.disable();
 	if(data.Permissions.NextOwnerMask & P.Copy)
 	{
 		check_nextownercopy.setAttribute('checked','checked');
 	}
+	if((~data.Permissions.OwnerMask & P.Copy) || (~data.Permissions.NextOwnerMask & P.Transfer))
+	{
+		AjaxLife.Debug("IntentoryProperties: Copy disabled.");
+		check_nextownercopy.disable();
+	}
+	Ext.get(check_nextownercopy).on('change', function() {
+		if(check_nextownercopy.checked)
+		{
+			if(data.Permissions.OwnerMask & P.Transfer)
+			{
+				check_nextownertrans.enable();
+			}
+		}
+		else
+		{
+			check_nextownertrans.checked = true;
+			check_nextownertrans.disable();
+		}
+		updatepermissions();
+	});
 	check_nextownercopy.setStyle({
 		position: 'absolute',
 		top: '146px',
@@ -276,11 +356,30 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	
 	var check_nextownertrans = $(document.createElement('input'));
 	check_nextownertrans.setAttribute('type','checkbox');
-	check_nextownertrans.disable();
 	if(data.Permissions.NextOwnerMask & P.Transfer)
 	{
 		check_nextownertrans.setAttribute('checked','checked');
 	}
+	if((~data.Permissions.OwnerMask & P.Transfer) || (~data.Permissions.NextOwnerMask & P.Copy))
+	{
+		AjaxLife.Debug("IntentoryProperties: Transfer disabled.");
+		check_nextownertrans.disable();
+	}
+	Ext.get(check_nextownertrans).on('change', function() {
+		if(check_nextownertrans.checked)
+		{
+			if(data.Permissions.OwnerMask & P.Copy)
+			{
+				check_nextownercopy.enable();
+			}
+		}
+		else
+		{
+			check_nextownercopy.checked = true;
+			check_nextownercopy.disable();
+		}
+		updatepermissions();
+	});
 	check_nextownertrans.setStyle({
 		position: 'absolute',
 		top: '146px',
