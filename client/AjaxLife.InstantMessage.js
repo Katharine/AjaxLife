@@ -38,6 +38,19 @@ AjaxLife.InstantMessage = function() {
 	var highlight = false;
 	var friendlist = false;
 	var noted_typing = false;
+	var grouplist = false;
+	var groups = {};
+	
+	function fillgroups(data)
+	{
+		for(var key in data.Groups)
+		{
+			var group = data.Groups[key];
+			groups[key] = group;
+			AjaxLife.NameCache.AddGroup(key,group.Name);
+			grouplist.add(key,group.Name);
+		}
+	}
 	
 	// Set a tab to flash
 	function highlighttab(sessionid)
@@ -97,15 +110,19 @@ AjaxLife.InstantMessage = function() {
 		{
 			sessionid = AjaxLife.Utils.UUID.Random();
 		}
-		// Notify other person that typing has stopped. Fixes SL bug.
-		AjaxLife.Network.Send('GenericInstantMessage', {
-			Message: "none",
-			Target: chats[sessionid].target,
-			IMSessionID: sessionid,
-			Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
-			Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
-		});
+		// Notify other person that typing has stopped (unless we're in a group chat)
+		if(!chats[sessionid].groupIM)
+		{
+			AjaxLife.Network.Send('GenericInstantMessage', {
+				Message: "none",
+				Target: chats[sessionid].target,
+				IMSessionID: sessionid,
+				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
+				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
+			});
+		}
 		noted_typing = false;
+		// We need to start a group IM before doing anything else.
 		AjaxLife.Network.Send("SimpleInstantMessage", {
 			IMSessionID: sessionid,
 			Target: target,
@@ -199,12 +216,16 @@ AjaxLife.InstantMessage = function() {
 			text: _("InstantMessage.Send")
 		})).getEl().setStyle(style);
 		style.right = '48px';
-		(new Ext.Button(chats[sessionid].tab.bodyEl, {
-			handler: function() {
-				new AjaxLife.Profile(chats[sessionid].target);
-			},
-			text: _("InstantMessage.Profile")
-		})).getEl().setStyle(style);
+		// We can't do group profiles yet.
+		if(!groupIM)
+		{
+			(new Ext.Button(chats[sessionid].tab.bodyEl, {
+				handler: function() {
+					new AjaxLife.Profile(chats[sessionid].target);
+				},
+				text: _("InstantMessage.Profile")
+			})).getEl().setStyle(style);
+		}
 		div_typing = Ext.get(document.createElement('div'));
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));
@@ -299,7 +320,7 @@ AjaxLife.InstantMessage = function() {
 				proxyDrag: !AjaxLife.Fancy
 			});
 			dialog.getTabs().addTab("im-default-tab",_("InstantMessage.OnlineFriends"),"",false).activate();
-			friendlist = new AjaxLife.Widgets.SelectList('im-friendlist',dialog.getTabs().getActiveTab().bodyEl.dom,{
+			friendlist = new AjaxLife.Widgets.SelectList('im-friend-list',dialog.getTabs().getActiveTab().bodyEl.dom,{
 				width: '99%',
 				callback: function(key) {
 					AjaxLife.NameCache.Find(key, function(name) {
@@ -332,6 +353,16 @@ AjaxLife.InstantMessage = function() {
 				height = h;
 				fixtab(activesession);
 			});
+			
+			var grouptab = dialog.getTabs().addTab("im-group-tab",_("InstantMessage.Groups"), "", false);
+			grouplist = new AjaxLife.Widgets.SelectList("im-group-list", grouptab.bodyEl.dom, {
+				width: '99%',
+				callback: function(key) {
+					AjaxLife.Network.Send("StartGroupIM", {Group: key});
+					createTab(gAgentID, gUserName, key, true);
+				}
+			});
+			
 			// Handle incoming IMs.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
 				// Ensure it's something to display
@@ -403,6 +434,8 @@ AjaxLife.InstantMessage = function() {
 					}
 				}
 			});
+			AjaxLife.Network.MessageQueue.RegisterCallback('CurrentGroups', fillgroups);
+			AjaxLife.Network.Send("RequestCurrentGroups",{});
 			// Highlighted tabs to flash every half second.
 			setInterval(processhighlight,500);
 		},

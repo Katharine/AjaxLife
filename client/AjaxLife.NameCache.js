@@ -95,6 +95,9 @@ AjaxLife.NameCache = function () {
 		Add: function(id, name) {
 			addname(id, name);
 		},
+		AddGroup: function(id, name) {
+			addgroup(id, name);
+		},
 		// Intialisation - sets up listener for keypair lookup responses.
 		init: function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {

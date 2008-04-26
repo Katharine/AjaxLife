@@ -62,7 +62,8 @@ html {
 	overflow: hidden;
 }
 
-#im-default-tab, #search_tab_people { /* Sigh. I wish I wasn't so inconsistent in my naming. */ 
+/* Add tabs here to make sure they can be scrolled - by default, they can't be. */
+#im-default-tab, #im-group-tab, #search-people-tab { 
 	overflow: auto;
 }
 

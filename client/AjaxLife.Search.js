@@ -57,7 +57,7 @@ AjaxLife.Search = function() {
 				proxyDrag: !AjaxLife.Fancy
 			});
 			// Build the UI
-			people_tab = search_win.getTabs().addTab("search_tab_people",_("Search.People"));
+			people_tab = search_win.getTabs().addTab("search-people-tab",_("Search.People"));
 			people_tab.activate();
 			var div_people_search = Ext.get(document.createElement('div'));
 			div_people_search.dom.setAttribute('id','search_div_people_search');

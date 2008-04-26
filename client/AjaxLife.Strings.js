@@ -41,6 +41,7 @@ AjaxLife.Strings = {
 		InstantMessage: {
 			Typing: "#{name} is typing...",
 			OnlineFriends: "Online Friends",
+			Groups: "Groups",
 			Send: "Send",
 			WindowTitle: "Instant Messages",
 			Profile: "Profile",
