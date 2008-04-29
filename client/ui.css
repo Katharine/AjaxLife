@@ -62,6 +62,10 @@ html {
 	overflow: hidden;
 }
 
+.x-dlg .x-tabs-body, .x-dlg-bd .x-tabs-top {
+	overflow: hidden !important;
+}
+
 /* Add tabs here to make sure they can be scrolled - by default, they can't be. */
 #im-default-tab, #im-group-tab, #search-people-tab { 
 	overflow: auto;
