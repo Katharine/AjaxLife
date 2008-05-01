@@ -751,5 +751,24 @@ namespace AjaxLife
             message.Add("Names", groupNames);
             this.pending.Enqueue(message);
         }
+
+        public void Groups_OnCurrentGroups(Dictionary<LLUUID, Group> groups)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "CurrentGroups");
+            message.Add("Groups", groups);
+            this.pending.Enqueue(message);
+        }
+
+        public void Self_OnGroupChatJoin(LLUUID groupChatSessionID, LLUUID tmpSessionID, bool success)
+        {
+            AjaxLife.Debug("Events","OnGroupChatJoin(" + groupChatSessionID + ", " + tmpSessionID + ", " + success.ToString() + ")");
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "GroupChatJoin");
+            message.Add("GroupChatSessionID", groupChatSessionID);
+            message.Add("TmpSessionID", tmpSessionID);
+            message.Add("Success", success);
+            this.pending.Enqueue(message);
+        }
     }
 }

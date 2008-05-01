@@ -158,31 +158,31 @@ namespace AjaxLife.Html
             client.Self.OnScriptDialog += new AgentManager.ScriptDialogCallback(events.Self_OnScriptDialog);
             client.Self.OnInstantMessage += new AgentManager.InstantMessageCallback(events.Self_OnInstantMessage);
             client.Self.OnChat += new AgentManager.ChatCallback(events.Self_OnChat);
+            client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
+            client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
+            client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
+            client.Self.OnGroupChatJoin += new AgentManager.GroupChatJoined(events.Self_OnGroupChatJoin);
             client.Friends.OnFriendOnline += new FriendsManager.FriendOnlineEvent(events.Friends_OnOnOffline);
             client.Friends.OnFriendOffline += new FriendsManager.FriendOfflineEvent(events.Friends_OnOnOffline);
             client.Friends.OnFriendRights += new FriendsManager.FriendRightsEvent(events.Friends_OnFriendRights);
             client.Friends.OnFriendshipOffered += new FriendsManager.FriendshipOfferedEvent(events.Friends_OnFriendshipOffered);
+            client.Friends.OnFriendFound += new FriendsManager.FriendFoundEvent(events.Friends_OnFriendFound);
             client.Avatars.OnAvatarNames += new AvatarManager.AvatarNamesCallback(events.Avatars_OnAvatarNames);
+            client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
+            client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
             client.Directory.OnDirPeopleReply += new DirectoryManager.DirPeopleReplyCallback(events.Directory_OnDirPeopleReply);
             client.Directory.OnDirGroupsReply += new DirectoryManager.DirGroupsReplyCallback(events.Directory_OnDirGroupsReply);
             client.Network.OnDisconnected += new NetworkManager.DisconnectedCallback(events.Network_OnDisconnected);
-            client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
-            client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
-            client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
-            client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
-            client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
-            // LibSL screwed this one up, so it's implemented manually.
-            //client.Avatars.OnAvatarProperties += new AvatarManager.AvatarPropertiesCallback(events.Avatars_OnAvatarProperties);
             // We shouldn't really be using this... it forces us to immediately accept inventory.
             client.Inventory.OnObjectOffered += new InventoryManager.ObjectOfferedCallback(events.Inventory_OnObjectOffered);
+            client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
             client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
             client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
-            client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
             client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
-            client.Friends.OnFriendFound += new FriendsManager.FriendFoundEvent(events.Friends_OnFriendFound);
             client.Groups.OnGroupProfile += new GroupManager.GroupProfileCallback(events.Groups_OnGroupProfile);
             client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
             client.Groups.OnGroupNames += new GroupManager.GroupNamesCallback(events.Groups_OnGroupNames);
+            client.Groups.OnCurrentGroups += new GroupManager.CurrentGroupsCallback(events.Groups_OnCurrentGroups);
 
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);

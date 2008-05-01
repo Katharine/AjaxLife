@@ -347,7 +347,7 @@ namespace AjaxLife
         {
             if (AjaxLife.DEBUG_MODE)
             {
-                Console.WriteLine(module + ": " + message);
+                Console.WriteLine("DEBUG [" + module + "]: " + message);
             }
         }
     }

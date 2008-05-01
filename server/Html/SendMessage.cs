@@ -537,7 +537,11 @@ namespace AjaxLife.Html
                 case "ReRotate":
                     user.Rotation = -Math.PI;
                     break;
-                case "SendGroupIM":
+                case "StartGroupIM":
+                    AjaxLife.Debug("SendMessage", "RequestJoinGroupChat(" + POST["Group"] + ")");
+                    client.Self.RequestJoinGroupChat(new LLUUID(POST["Group"]));
+                    break;
+                case "GroupInstantMessage":
                     client.Self.InstantMessageGroup(new LLUUID(POST["Group"]), POST["Message"]);
                     break;
                 case "RequestGroupProfile":
@@ -554,6 +558,9 @@ namespace AjaxLife.Html
                     break;
                 case "LeaveGroup":
                     client.Groups.LeaveGroup(new LLUUID(POST["Group"]));
+                    break;
+                case "RequestCurrentGroups":
+                    client.Groups.RequestCurrentGroups();
                     break;
             }
             textwriter.Flush();
