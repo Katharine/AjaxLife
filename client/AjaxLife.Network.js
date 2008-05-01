@@ -298,7 +298,6 @@ AjaxLife.Network.Send = function(message, opts) {
 				}
 				catch(e)
 				{
-					AjaxLife.Debug("Network: Error sending message: "+e.name+" - "+e.message);
 					AjaxLife.Debug("Network: Response: "+response.responseText);
 				}
 			}

@@ -45,7 +45,8 @@ AjaxLife.Strings = {
 			Send: "Send",
 			WindowTitle: "Instant Messages",
 			Profile: "Profile",
-			NewIMSession: "#{from} has sent you a new instant message."
+			NewIMSession: "#{from} has sent you a new instant message.",
+			SessionCreateFailed: "Couldn't create new group chat session."
 		},
 		AjaxLife: {
 			Precaching: "Precaching...",

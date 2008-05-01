@@ -120,24 +120,30 @@ AjaxLife.InstantMessage = function() {
 				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
 				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
 			});
-		}
-		noted_typing = false;
-		// We need to start a group IM before doing anything else.
-		AjaxLife.Network.Send("SimpleInstantMessage", {
-			IMSessionID: sessionid,
-			Target: target,
-			Message: message
-		});
-		// Add the IM to your own window, being sure to handle /me correctly.
-		if(message.substr(0,3) == "/me")
-		{
-			message = gUserName+message.substr(3);
+			AjaxLife.Network.Send("SimpleInstantMessage", {
+				IMSessionID: sessionid,
+				Target: chats[sessionid].groupIM ? sessionid : target,
+				Message: message
+			});
+			// Add the IM to your own window, being sure to handle /me correctly.
+			if(message.substr(0,3) == "/me")
+			{
+				message = gUserName+message.substr(3);
+			}
+			else
+			{
+				message = gUserName+": "+message;
+			}
+			appendline(sessionid,message);
 		}
 		else
 		{
-			message = gUserName+": "+message;
+			AjaxLife.Network.Send("GroupInstantMessage", {
+				Message: message,
+				Group: sessionid
+			});
 		}
-		appendline(sessionid,message);
+		noted_typing = false;
 	};
 	
 	// Creates a new IM session with agent "id" who is called "name".
@@ -274,7 +280,9 @@ AjaxLife.InstantMessage = function() {
 			fixtab(sessionid);
 			entrybox.dom.focus();
 		});
-		if(dialog.getTabs().getActiveTab().id == 'im-default-tab')
+		var currenttab = dialog.getTabs().getActiveTab().id;
+		// These are essentially contentless, so switch IM window if we're activated and on one of these.
+		if(currenttab == 'im-default-tab' || currenttab == 'im-group-tab')
 		{
 			chats[sessionid].tab.activate();
 		}
@@ -358,15 +366,40 @@ AjaxLife.InstantMessage = function() {
 			grouplist = new AjaxLife.Widgets.SelectList("im-group-list", grouptab.bodyEl.dom, {
 				width: '99%',
 				callback: function(key) {
-					AjaxLife.Network.Send("StartGroupIM", {Group: key});
-					createTab(gAgentID, gUserName, key, true);
+					AjaxLife.Network.Send("GenericInstantMessage", {
+						Message: "",
+						Target: key,
+						IMSessionID: key,
+						Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
+						Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionGroupStart
+					});
+					createTab(key, key, key, true);
+					chats[key].entrybox.dom.enabled = false;
+					chats[key].sendbtn.dom.enabled = false;
+				}
+			});
+			
+			// Handle successfully started chats.
+			AjaxLife.Network.MessageQueue.RegisterCallback('ChatGroupJoin', function(data) {
+				var group = data.GroupChatSessionID;
+				if(chats[group] && !chats[group].entrybox.dom.enabled)
+				{
+					if(data.Success)
+					{
+						chats[group].entrybox.dom.enabled = true;
+						chats[group].sentbtn.dom.enabled = true;
+					}
+					else
+					{
+						appendline(group, _("InstantMessage.SessionCreateFailed"));
+					}
 				}
 			});
 			
 			// Handle incoming IMs.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
 				// Ensure it's something to display
-				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent)
+				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent || data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionSend)
 				{
 					// Create a tab for them if we haven't already. Also play new IM sound.
 					if(!chats[data.IMSessionID])
