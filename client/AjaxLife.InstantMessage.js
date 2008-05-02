@@ -166,7 +166,7 @@ AjaxLife.InstantMessage = function() {
 		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
-			tab: dialog.getTabs().addTab("im-"+sessionid+'-'+id, (groupIM ? "(hippos)" : name), "", true),
+			tab: dialog.getTabs().addTab("im-"+sessionid, (groupIM ? "(hippos)" : name), "", true),
 			name: name,
 			target: id,
 			content: false,
@@ -213,14 +213,15 @@ AjaxLife.InstantMessage = function() {
 		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
 		// Button setup, callbacks and formatting.
 		var style = {position: 'absolute', bottom: '0px', right: '0px'};
-		(new Ext.Button(chats[sessionid].tab.bodyEl, {
+		chats[sessionid].sendbtn = new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
 				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
 				entrybox.dom.value = '';
 				entrybox.dom.focus();
 			},
 			text: _("InstantMessage.Send")
-		})).getEl().setStyle(style);
+		});
+		chats[sessionid].sendbtn.getEl().setStyle(style);
 		style.right = '48px';
 		// We can't do group profiles yet.
 		if(!groupIM)
@@ -312,6 +313,17 @@ AjaxLife.InstantMessage = function() {
 		}
 	};
 	
+	function joingroupchat(group)
+	{		
+		AjaxLife.Network.Send("GenericInstantMessage", {
+			Message: "",
+			Target: group,
+			IMSessionID: group,
+			Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
+			Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionGroupStart
+		});
+	}
+	
 	return {
 		// Public
 		init: function () {
@@ -366,16 +378,10 @@ AjaxLife.InstantMessage = function() {
 			grouplist = new AjaxLife.Widgets.SelectList("im-group-list", grouptab.bodyEl.dom, {
 				width: '99%',
 				callback: function(key) {
-					AjaxLife.Network.Send("GenericInstantMessage", {
-						Message: "",
-						Target: key,
-						IMSessionID: key,
-						Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
-						Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionGroupStart
-					});
+					joingroupchat(key);
 					createTab(key, key, key, true);
 					chats[key].entrybox.dom.enabled = false;
-					chats[key].sendbtn.dom.enabled = false;
+					chats[key].sendbtn.getEl().dom.enabled = false;
 				}
 			});
 			
@@ -405,6 +411,7 @@ AjaxLife.InstantMessage = function() {
 					if(!chats[data.IMSessionID])
 					{
 						AjaxLife.Widgets.Ext.msg("",_("InstantMessage.NewIMSession", {from: data.FromAgentName}), "newimsession", true);
+						if(data.GroupIM) joingroupchat(data.IMSessionID);
 						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID, data.GroupIM);
 						if(!created)
 						{
@@ -435,7 +442,7 @@ AjaxLife.InstantMessage = function() {
 					// Actually add the line.
 					appendline(data.IMSessionID, message);
 					// If the tab is not active, make it flash.
-					if(dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID+'-'+data.FromAgentID)
+					if(dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
 					{
 						highlighttab(data.IMSessionID);
 					}
