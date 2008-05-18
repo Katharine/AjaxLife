@@ -284,6 +284,7 @@ AjaxLife.InstantMessage = function() {
 	{
 		if(chats[session] && chats[session].content)
 		{
+			text = AjaxLife.Utils.LinkURLs(text);
 			var line = Ext.get(document.createElement('div'));
 			line.addClass(["agentmessage","chatline"]);
 			var timestamp = Ext.get(document.createElement('span'));
@@ -291,7 +292,10 @@ AjaxLife.InstantMessage = function() {
 			var time = new Date();
 			timestamp.dom.appendChild(document.createTextNode("["+time.getHours()+":"+((time.getMinutes()<10)?("0"+time.getMinutes()):time.getMinutes())+"]"));
 			line.dom.appendChild(timestamp.dom);
-			line.dom.appendChild(document.createTextNode(" "+text));
+			line.dom.appendChild(document.createTextNode(" "));
+			var span = document.createElement('span');
+			span.innerHTML = text;
+			line.dom.appendChild(span);
 			chats[session].content.dom.appendChild(line.dom);
 			// Scroll to the end.
 			chats[session].content.dom.scrollTop = chats[session].content.dom.scrollHeight;

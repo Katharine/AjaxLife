@@ -86,6 +86,7 @@ AjaxLife.SpatialChat = function() {
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
 	function add(text, sourcetype)
 	{
+		text = AjaxLife.Utils.LinkURLs(text);
 		// Make a div to put this in.
 		var line = Ext.get(document.createElement('div'));
 		line.addClass("chatline");
@@ -111,7 +112,10 @@ AjaxLife.SpatialChat = function() {
 		// Put the timestamp at the beginning of the line.
 		line.dom.appendChild(timestamp.dom);
 		// Add the actual text.
-		line.dom.appendChild(document.createTextNode(" "+text));
+		line.dom.appendChild(document.createTextNode(" "));
+		var span = document.createElement('span');
+		span.innerHTML = text;
+		line.dom.appendChild(span);
 		// Add the line to the chat log.
 		div_chat_history.dom.appendChild(line.dom);
 		// Scroll the chatlog down to the new entry.

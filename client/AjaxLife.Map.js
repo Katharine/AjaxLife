@@ -48,6 +48,7 @@ AjaxLife.Map = function() {
 	var marker_for_sale_icons = false;
 	var marked_position = false;
 	var position = {sim: "Nix", x: 0.0, y: 0.0, z: 0.0};
+	var position_before_teleport;
 	var zoom_slider = false;
 	var last_click = new Date();
 	var region_load_timeout = false;
@@ -600,6 +601,7 @@ AjaxLife.Map = function() {
 				// If we're starting a teleport, play the teleport noise and show the progress bar.
 				if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Start)
 				{
+					position_before_teleport = AjaxLife.Utils.Clone(position);
 					Sound.play(AjaxLife.STATIC_ROOT+"sounds/teleport.wav");
 					teleport_dialog(true);
 				}
@@ -607,7 +609,10 @@ AjaxLife.Map = function() {
 				// Also show a message noting our arrival.
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Finished)
 				{
+					// Remove the dialogue.
 					teleport_dialog(false);
+					// Put a message in the chat history showing where we just came from.
+					AjaxLife.SpatialChat.systemmessage(_("Map.TeleportCompleteMessage", {url: "http://slurl.com/secondlife/"+escape(position_before_teleport.sim)+"/"+Math.round(position_before_teleport.x)+"/"+Math.round(position_before_teleport.y)+"/"+Math.round(position_before_teleport.z)}));
 					AjaxLife.Network.Send("GetPosition", {
 						callback: function(response) {
 							AjaxLife.Widgets.Ext.msg(
@@ -777,6 +782,15 @@ AjaxLife.Map = function() {
 		// Register a callback so that another module can know when the mark is moved.
 		OnMarkChanged: function(fn) {
 			markchangecallbacks[markchangecallbacks.length] = fn;
+		},
+		// Called onclick by certain links.
+		HandleLink: function(sim, x, y, z, el) {
+			// Because this is a URL, unescape the sim name.
+			sim = unescape(sim);
+			this.open(el);
+			if(z == '') z = position.z; // If z wasn't specified, use our own height.
+			settargetpos(sim, {x: x*1, y: y*1, z: z*1}, true); // Multiply by one to convert to int.
+			return false; // Abort the navigation.
 		}
 	}
 }();

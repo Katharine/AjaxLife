@@ -72,7 +72,8 @@ AjaxLife.Strings = {
 			TeleportError: "Your teleport was not successful. Please try again later.",
 			WindowTitle: "Map",
 			NoRegionGiven: "The server has failed to send the name of the sim you are in.",
-			GodLikeTeleportRequest: "You are being forced to teleport to a Linden."
+			GodLikeTeleportRequest: "You are being forced to teleport to a Linden.",
+			TeleportCompleteMessage: "Completed teleport from #{url}"
 			
 		},
 		Network: {

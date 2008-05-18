@@ -317,3 +317,13 @@ body.rtl #minimap {
 .llDialog td {
 	text-align: center;
 }
+
+a:link, a:visited {
+	text-decoration: none;
+	color: #0000ff;
+}
+
+a:link:hover, a:visited:hover {
+	text-decoration: underline;
+}
+
