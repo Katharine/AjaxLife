@@ -400,6 +400,7 @@ AjaxLife.InstantMessage = function() {
 			// Handle incoming IMs.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
 				// Ensure it's something to display
+				if(data.IMSessionID == AjaxLife.Utils.UUID.Zero) return; // Estate messages have null sessions.
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent || data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionSend)
 				{
 					// Create a tab for them if we haven't already. Also play new IM sound.

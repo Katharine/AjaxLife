@@ -68,6 +68,14 @@ AjaxLife.StatusBar = function() {
 				balance = data.Balance;
 			});
 			
+			// Handle global and estate messages - that is, any received IM with a null session.
+			// Note that this is technically incorrect behaviour (maybe?), and may result in some libsl bots playing up.
+			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
+				if(data.IMSessionID != AjaxLife.Utils.UUID.Zero || data.Dialog != AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent) return;
+				AjaxLife.Widgets.Ext.msg(data.FromAgentName, data.Message, 'estate-message-'+data.FromAgentID);
+				AjaxLife.SpatialChat.systemmessage(data.FromAgentName+": "+data.Message);
+			});
+			
 			// Request the initial balance on loading.
 			AjaxLife.Debug("StatusBar: Requesting L$ balance");
 			AjaxLife.Network.Send('RequestBalance', {});
