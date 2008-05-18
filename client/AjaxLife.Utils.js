@@ -42,20 +42,79 @@ AjaxLife.Utils.UUID = function() {
 			return ret;
 		},
 		// Merges two UUIDs such that you always get the same output when given the same input.
+		// This function essentially implements binary XOR on 32 character hex strings.
 		Combine: function(uuid1, uuid2) {
-			var uuid = '';
-			for(var i = 0; i < 36; ++i)
+			var binary = {
+				'0': '0000',
+				'1': '0001',
+				'2': '0010',
+				'3': '0011',
+				'4': '0100',
+				'5': '0101',
+				'6': '0110',
+				'7': '0111',
+				'8': '1000',
+				'9': '1001',
+				'a': '1010',
+				'b': '1011',
+				'c': '1100',
+				'd': '1101',
+				'e': '1110',
+				'f': '1111'
+			};
+			var hex = {
+				'0000': '0',
+				'0001': '1',
+				'0010': '2',
+				'0011': '3',
+				'0100': '4',
+				'0101': '5',
+				'0110': '6',
+				'0111': '7',
+				'1000': '8',
+				'1001': '9',
+				'1010': 'a',
+				'1011': 'b',
+				'1100': 'c',
+				'1101': 'd',
+				'1110': 'e',
+				'1111': 'f'
+			};
+			uuid1 = uuid1.gsub('-','');
+			uuid2 = uuid2.gsub('-','');
+			var bin1 = '';
+			var bin2 = '';
+			for(var i = 0; i < 32; ++i)
 			{
-				if(i%2)
+				bin1 += binary[uuid1.charAt(i)];
+				bin2 += binary[uuid2.charAt(i)];
+			}
+			var mergedbin = '';
+			for(var i = 0; i < 128; ++i)
+			{
+				if(bin1.charAt(i) == '1' || bin2.charAt(i) == '1')
 				{
-					uuid += uuid1.substr(i,1);
+					if(bin1.charAt(i) == '1' && bin2.charAt(i) == '1')
+					{
+						mergedbin += '0';
+					}
+					else
+					{
+						mergedbin += '1';
+					}
 				}
 				else
 				{
-					uuid += uuid2.substr(i,1);
+					mergedbin += '0';
 				}
 			}
-			return uuid;
+			var mergeduuid = '';
+			for(var i = 0; i < 128; i += 4)
+			{
+				mergeduuid += hex[mergedbin.substr(i,4)];
+			}
+			mergeduuid = mergeduuid.substr(0,8) + "-" + mergeduuid.substr(8,4) + "-" + mergeduuid.substr(12,4) + "-" + mergeduuid.substr(16,4) + "-" + mergeduuid.substr(20,12);
+			return mergeduuid;
 		},
 		// NULL_KEY
 		Zero: '00000000-0000-0000-0000-000000000000'

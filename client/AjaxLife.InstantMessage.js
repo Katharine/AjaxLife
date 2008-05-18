@@ -152,17 +152,6 @@ AjaxLife.InstantMessage = function() {
 	function createTab(id, name, sessionid, groupIM)
 	{
 		if(!groupIM) groupIM = false; // Avoid differences between false and undefined.
-		// Check that we don't have a chat open already.
-		for(var i in chats)
-		{
-			if(chats[i].target == id && chats[i].groupIM == groupIM)
-			{
-				chats[i].tab.activate();
-				chats[i].session = sessionid;
-				chats[sessionid] = chats[i];
-				return true;
-			}
-		}
 		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
@@ -339,6 +328,7 @@ AjaxLife.InstantMessage = function() {
 				title: _("InstantMessage.WindowTitle"),
 				proxyDrag: !AjaxLife.Fancy
 			});
+			
 			dialog.getTabs().addTab("im-default-tab",_("InstantMessage.OnlineFriends"),"",false).activate();
 			friendlist = new AjaxLife.Widgets.SelectList('im-friend-list',dialog.getTabs().getActiveTab().bodyEl.dom,{
 				width: '99%',
@@ -375,6 +365,7 @@ AjaxLife.InstantMessage = function() {
 			});
 			
 			var grouptab = dialog.getTabs().addTab("im-group-tab",_("InstantMessage.Groups"), "", false);
+			
 			grouplist = new AjaxLife.Widgets.SelectList("im-group-list", grouptab.bodyEl.dom, {
 				width: '99%',
 				callback: function(key) {

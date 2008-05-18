@@ -34,7 +34,7 @@ AjaxLife.Search = function() {
 	// We just send a FindPeople message with the search string.
 	function performlookup()
 	{
-		AjaxLife.Debug("Search: Searching for "+search+" in people.");
+		AjaxLife.Debug("Search: Searching for '"+search+"' in people.");
 		results_list.clear();
 		var search = search_box.dom.value;
 		AjaxLife.Network.Send("FindPeople", {
@@ -67,6 +67,9 @@ AjaxLife.Search = function() {
 			search_box.dom.setAttribute('type','text');
 			div_people_search.dom.appendChild(search_box.dom);
 			people_tab.bodyEl.dom.appendChild(div_people_search.dom);
+			// This will cause the performlookup function to be executed whenever the
+			// delay.delay() function is called, and the number of milliseconds
+			// it specifies have passed.
 			var delay = new Ext.util.DelayedTask(performlookup);
 			// Set the performlookup task to happen 0.75 seconds after the key is pressed.
 			// This is reset every time a key is pressed, thus waiting until the user

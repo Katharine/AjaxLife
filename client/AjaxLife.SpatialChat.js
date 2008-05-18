@@ -86,8 +86,10 @@ AjaxLife.SpatialChat = function() {
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
 	function add(text, sourcetype)
 	{
+		// Make a div to put this in.
 		var line = Ext.get(document.createElement('div'));
 		line.addClass("chatline");
+		// Give the line the appropriate class for the type of message it is.
 		if(sourcetype == AjaxLife.Constants.MainAvatar.ChatSourceType.System)
 		{
 			line.addClass("systemmessage");
@@ -101,12 +103,18 @@ AjaxLife.SpatialChat = function() {
 			line.addClass("objectmessage");
 		}
 		var timestamp = Ext.get(document.createElement('span'));
+		// Make a timestamp in the user's timezone
 		timestamp.addClass("chattimestamp");
 		var time = new Date();
-		timestamp.dom.appendChild(document.createTextNode("["+time.getHours()+":"+((time.getMinutes()<10)?("0"+time.getMinutes()):time.getMinutes())+"]"));
+		// Build the timestamp into an actual string and put it into an HTML node.
+		timestamp.dom.appendChild(document.createTextNode("[" + time.getHours() + ":" + ((time.getMinutes() < 10) ? ("0" + time.getMinutes()) : time.getMinutes()) + "]"));
+		// Put the timestamp at the beginning of the line.
 		line.dom.appendChild(timestamp.dom);
+		// Add the actual text.
 		line.dom.appendChild(document.createTextNode(" "+text));
+		// Add the line to the chat log.
 		div_chat_history.dom.appendChild(line.dom);
+		// Scroll the chatlog down to the new entry.
 		div_chat_history.dom.scrollTop = div_chat_history.dom.scrollHeight;
 	}
 	
@@ -116,12 +124,15 @@ AjaxLife.SpatialChat = function() {
 	// (i.e. if they're shouting or whispering)
 	function incomingline (name, message, sourcetype, type)
 	{
+		// Ignore blank lines.
 		if(message.blank())
 		{
 			return;
 		}
+		// Only do this processing if it's not a system message.
 		if(sourcetype != AjaxLife.Constants.MainAvatar.ChatSourceType.System)
 		{
+			// If it's a /me, strip the "/me" and combine the name and message.
 			if(message.substr(0,3) == "/me")
 			{
 				message = name+message.substr(3);
@@ -129,25 +140,30 @@ AjaxLife.SpatialChat = function() {
 			else
 			{
 				var you = false;
+				// If we said it.
 				if(name == gUserName)
 				{
 					name = _("SpatialChat.You");
 					you = true;
 				}
+				// Say it was shouted if it was shouted.
 				if(type == AjaxLife.Constants.MainAvatar.ChatType.Shout)
 				{
 					message = name+(you?_("SpatialChat.SecondPersonShout"):_("SpatialChat.ThirdPersonShout"))+" "+message;
 				}
+				// Say it was whispered if it was whispered.
 				else if(type == AjaxLife.Constants.MainAvatar.ChatType.Whisper)
 				{
 					message = name+(you?_("SpatialChat.SecondPersonWhisper"):_("SpatialChat.ThirdPersonWhisper"))+" "+message;
 				}
+				// Otherwise just use a colon.
 				else
 				{
 					message = name+(you?_("SpatialChat.SecondPersonSay"):_("SpatialChat.ThirdPersonSay"))+" "+message;
 				}
 			}
 		}
+		// Add it do the display.
 		add(message, sourcetype);
 	}
 	
@@ -286,6 +302,7 @@ AjaxLife.SpatialChat = function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('SpatialChat', function(data) {
 				if(data.Audible > -1)
 				{
+					// Check that it is actually a displayable chat message.
 					if(data.Type == AjaxLife.Constants.MainAvatar.ChatType.Whisper	|| 
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.Shout	||
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.Normal	||
@@ -298,6 +315,7 @@ AjaxLife.SpatialChat = function() {
 			// We subscribe to the InstantMessage event in order to take account of objects
 			// using the llInstantMessage function. We simply handle this as normal object chat.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
+				// Only do anything if this message comes from an object.
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromObject)
 				{
 					incomingline(data.FromAgentName, data.Message, AjaxLife.Constants.MainAvatar.ChatSourceType.Object, AjaxLife.Constants.MainAvatar.ChatType.Normal);
