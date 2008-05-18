@@ -269,3 +269,102 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 		}
 	};
 };
+
+// Provides a single-line input that can go through previous messages using the arrow keys.
+AjaxLife.Widgets.ChatEntryBox = function(parent, id, onreturn, style) {
+	var input = $(document.createElement('input'));
+	var extput = Ext.get(input);
+	var chat_history = [];
+	var history_pointer = 0;
+	
+	// Move to the bottom of the history, append the line to the history, and blank it.
+	function resetline()
+	{
+		if(history_pointer < chat_history.length)
+		{
+			history_pointer = chat_history.length - 1;
+		}
+		chat_history[history_pointer] = input.value;
+		++history_pointer;
+		AjaxLife.Debug("ChatEntryBox["+id+"]: Added to chat_history. Length = "+chat_history.length+", history_pointer = "+history_pointer);
+		input.value = '';
+		input.focus();
+	}
+	
+	// If we were given a style, apply it.
+	if(style)
+	{
+		input.setStyle(style);
+	}
+	// Set basic attributes.
+	input.setAttribute('type','text');
+	input.setAttribute('id',id);
+	// Append to the parent.
+	$(parent).appendChild(input);
+	// Handle up/down key presses.
+	extput.addListener('keypress', function(event) {
+		if(event.keyCode == 38 || event.which == 38)
+		{
+			if(history_pointer == chat_history.length)
+			{
+				AjaxLife.Debug("ChatEntryBox["+id+"]: Added current line to chat_history.");
+				chat_history[history_pointer] = input.value;
+			}
+			if(history_pointer > 0)
+			{
+				input.value = chat_history[--history_pointer];
+				AjaxLife.Debug("ChatEntryBox["+id+"]: Scrolled up a line. history_pointer = "+history_pointer);
+			}
+		}
+		else if(event.keyCode == 40 || event.which == 40)
+		{
+			if(history_pointer < chat_history.length - 1)
+			{
+				input.value = chat_history[++history_pointer];
+				AjaxLife.Debug("ChatEntryBox["+id+"]: Scrolled down a line. history_pointer = "+history_pointer);
+				if(history_pointer == chat_history.length - 1)
+				{
+					chat_history.splice(history_pointer, 1);
+					AjaxLife.Debug("ChatEntryBox["+id+"]: Removed last entry from chat_history. Length = "+chat_history.length+", history_pointer = "+history_pointer);
+				}
+			}
+		}
+	});
+	
+	// Inform the creator if the return key is pressed.
+	extput.addListener('keyup', function(event) {
+		if(input.value.strip() == '') return;
+		if(event.keyCode == 13 || event.which == 13)
+		{
+			onreturn(input.value);
+			resetline();
+		}
+	});
+	
+	return {
+		setStyle: function(style) {
+			input.setStyle(style);
+		},
+		addListener: function(forwhat, thenwhat) {
+			extput.addListener(forwhat, thenwhat);
+		},
+		getValue: function() {
+			return input.getValue();
+		},
+		resetLine: function() {
+			resetline();
+		},
+		focus: function() {
+			input.focus();
+		},
+		isEnabled: function() {
+			return input.enabled;
+		},
+		enable: function() {
+			input.enabled = true;
+		},
+		disable: function() {
+			input.enabled = false;
+		}
+	}
+}

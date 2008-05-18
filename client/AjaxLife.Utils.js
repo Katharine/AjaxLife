@@ -161,10 +161,17 @@ AjaxLife.Utils.FormatNumber = function(number) {
 
 AjaxLife.Utils.LinkURLs = function(text) {
 	// Make URLs into links
-	text = text.gsub(/(http:\/\/[a-zA-Z0-0-.]+(\/[^ ;)"]*)?)/,'<a href="#{1}" target="_blank" class="loglink">#{1}</a>');
+	text = text.gsub(/(http:\/\/[a-zA-Z0-9.-]+(\/[^ ;)"]*)?)/,'<a href="#{1}" target="_blank" class="loglink">#{1}</a>');
 	// Catch SLurl™ links.
 	text = text.gsub(/<a href="(http:\/\/t?slurl\.com\/secondlife\/(.+?)\/([0-9.]+)\/([0-9.]+)\/?([0-9.]+)?)"/, '<a href="#{1}" onclick="AjaxLife.Map.HandleLink(&quot;#{2}&quot;,\'#{3}\',\'#{4}\',\'#{5}\',this);return false"');
 	// Make secondlife:/// links clickable.
 	text = text.gsub(/(secondlife:\/\/\/?([^ ;)/"]+)\/([0-9.]+)\/([0-9.]+)\/?([0-9.]+)?)/, '<a href="#{1}" onclick="AjaxLife.Map.HandleLink(&quot;#{2}&quot;,\'#{3}\',\'#{4}\',\'#{5}\',this);return false" target="_blank" class="loglink">#{1}</a>');
+	return text;
+}
+
+AjaxLife.Utils.LinkifyText = function(text) {
+	text = text.gsub('<','&lt;').gsub('>','&gt;');
+	text = AjaxLife.Utils.LinkURLs(text);
+	text = text.gsub('&','&amp;').gsub(/&amp;(lt|gt)/,'&#{1}');
 	return text;
 }

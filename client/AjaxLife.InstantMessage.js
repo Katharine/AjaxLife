@@ -194,19 +194,19 @@ AjaxLife.InstantMessage = function() {
 		var content = Ext.get(document.createElement('div'));
 		content.setStyle({overflow: 'auto', width:'99%'});
 		chats[sessionid].content = content;
-		var entrybox = Ext.get(document.createElement('input'));
-		entrybox.setHeight(20);
+		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
+		
+		var entrybox = new AjaxLife.Widgets.ChatEntryBox(chats[sessionid].tab.bodyEl.dom, 'im-input-'+sessionid, function(text) { sendmessage(id, text, sessionid); }, {height: '20px'});
+		
 		chats[sessionid].entrybox = entrybox;
 		chats[sessionid].tab.bodyEl.setStyle({overflow: 'hidden'});
-		chats[sessionid].tab.bodyEl.dom.appendChild(content.dom);
-		chats[sessionid].tab.bodyEl.dom.appendChild(entrybox.dom);
+		
 		// Button setup, callbacks and formatting.
 		var style = {position: 'absolute', bottom: '0px', right: '0px'};
 		chats[sessionid].sendbtn = new Ext.Button(chats[sessionid].tab.bodyEl, {
 			handler: function() {
-				sendmessage(id, entrybox.dom.value, chats[sessionid].session);
-				entrybox.dom.value = '';
-				entrybox.dom.focus();
+				sendmessage(id, entrybox.getValue(), chats[sessionid].session);
+				entrybox.resetLine();
 			},
 			text: _("InstantMessage.Send")
 		});
@@ -231,6 +231,8 @@ AjaxLife.InstantMessage = function() {
 		{
 			// Called two seconds after the last key is pressed. Sends not typing notification.
 			var delayed_stop_typing = new Ext.util.DelayedTask(function() {
+				// Make sure that this session still exists first.
+				if(!chats[sessionid]) return;
 				AjaxLife.Network.Send('GenericInstantMessage', {
 					Message: "none",
 					Target: chats[sessionid].target,
@@ -241,7 +243,7 @@ AjaxLife.InstantMessage = function() {
 				noted_typing = false;
 			});
 			// Sends typing notification and sets timeout for above function to two seconds.
-			entrybox.on('keypress',function(e) {
+			entrybox.addListener('keypress',function(e) {
 				if(!noted_typing)
 				{
 					noted_typing = true;
@@ -256,19 +258,12 @@ AjaxLife.InstantMessage = function() {
 				delayed_stop_typing.delay(2000);
 			});
 		}
-		entrybox.on('keyup',function(e) {
-			if(e.keyCode == 13 || e.which == 13)
-			{
-				sendmessage(id, entrybox.dom.value, sessionid);
-				entrybox.dom.value = '';
-				entrybox.dom.focus();
-			}
-		});
+		
 		chats[sessionid].tab.on('activate',function() {
 			unhighlight(sessionid);
 			activesession = sessionid;
 			fixtab(sessionid);
-			entrybox.dom.focus();
+			entrybox.focus();
 		});
 		var currenttab = dialog.getTabs().getActiveTab().id;
 		// These are essentially contentless, so switch IM window if we're activated and on one of these.
@@ -284,7 +279,7 @@ AjaxLife.InstantMessage = function() {
 	{
 		if(chats[session] && chats[session].content)
 		{
-			text = AjaxLife.Utils.LinkURLs(text.escapeHTML());
+			text = AjaxLife.Utils.LinkifyText(text);
 			var line = Ext.get(document.createElement('div'));
 			line.addClass(["agentmessage","chatline"]);
 			var timestamp = Ext.get(document.createElement('span'));
@@ -375,7 +370,7 @@ AjaxLife.InstantMessage = function() {
 				callback: function(key) {
 					joingroupchat(key);
 					createTab(key, key, key, true);
-					chats[key].entrybox.dom.enabled = false;
+					chats[key].entrybox.disable();
 					chats[key].sendbtn.getEl().dom.enabled = false;
 				}
 			});
@@ -383,11 +378,11 @@ AjaxLife.InstantMessage = function() {
 			// Handle successfully started chats.
 			AjaxLife.Network.MessageQueue.RegisterCallback('ChatGroupJoin', function(data) {
 				var group = data.GroupChatSessionID;
-				if(chats[group] && !chats[group].entrybox.dom.enabled)
+				if(chats[group] && !chats[group].entrybox.isEnabled())
 				{
 					if(data.Success)
 					{
-						chats[group].entrybox.dom.enabled = true;
+						chats[group].entrybox.enable();
 						chats[group].sentbtn.dom.enabled = true;
 					}
 					else

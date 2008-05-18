@@ -86,7 +86,7 @@ AjaxLife.SpatialChat = function() {
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
 	function add(text, sourcetype)
 	{
-		text = AjaxLife.Utils.LinkURLs(text.escapeHTML());
+		text = AjaxLife.Utils.LinkifyText(text);
 		// Make a div to put this in.
 		var line = Ext.get(document.createElement('div'));
 		line.addClass("chatline");
@@ -187,25 +187,33 @@ AjaxLife.SpatialChat = function() {
 			chat_win.body.setStyle({overflow: 'hidden'});
 			div_chat_history = Ext.get(document.createElement('div'));
 			div_chat_history.setStyle({height: '241px', width: '99%', overflow: 'auto'});
-			box_chat_entry = Ext.get(document.createElement('input'));
-			box_chat_entry.dom.setAttribute('type','text');
-			box_chat_entry.setStyle({width: '310px', height: '15px', 'float': 'left'});
+			chat_win.body.dom.appendChild(div_chat_history.dom);
+			
+			box_chat_entry = new AjaxLife.Widgets.ChatEntryBox(chat_win.body.dom, 'chat-input', function(text) {
+				AjaxLife.Network.Send("StopAnimation", {
+					Animation: AjaxLife.Constants.Animations.avatar_type
+				});
+				AjaxLife.Network.Send("SpatialChat", {
+					Message: "a",
+					Channel: 0,
+					Type: AjaxLife.Constants.MainAvatar.ChatType.StopTyping
+				});
+				anim_started = false;
+				sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Normal,text);
+			}, {width: '310px', height: '15px', 'float': 'left'});
+			
 			// Resize the chatlog and input line when the window is resized.
 			chat_win.on('resize',function(win, width, height) {
 				div_chat_history.setStyle({height: (height-59)+'px'});
 				box_chat_entry.setStyle({width: (width-190)+'px'});
 				div_chat_history.dom.scrollTop = div_chat_history.dom.scrollHeight;
 			});
-			
-			chat_win.body.dom.appendChild(div_chat_history.dom);
-			chat_win.body.dom.appendChild(box_chat_entry.dom);
 			// All of these buttons do exactly the same thing, but use a differing ChatType.
 			// They clear the input box, focus it, and send the message. Not in that order.
 			btn_say = new Ext.Button(chat_win.body, {
 				handler: function() {
-					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Normal,box_chat_entry.dom.value);
-					box_chat_entry.dom.value = '';
-					box_chat_entry.dom.focus();
+					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Normal,box_chat_entry.getValue());
+					box_chat_entry.resetLine();
 				},
 				text: _("SpatialChat.Say"),
 				height: '12px'
@@ -213,9 +221,8 @@ AjaxLife.SpatialChat = function() {
 			btn_say.getEl().setStyle({position: 'absolute', right: '125px', bottom: '2px'});
 			btn_whisper = new Ext.Button(chat_win.body, {
 				handler: function() {
-					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Whisper,box_chat_entry.dom.value);
-					box_chat_entry.dom.value = '';
-					box_chat_entry.dom.focus();
+					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Whisper,box_chat_entry.getValue());
+					box_chat_entry.resetLine();
 				},
 				text: _("SpatialChat.Whisper"),
 				height: '12px'
@@ -223,38 +230,13 @@ AjaxLife.SpatialChat = function() {
 			btn_whisper.getEl().setStyle({position: 'absolute', right: '59px', bottom: '2px'});
 			btn_shout = new Ext.Button(chat_win.body, {
 				handler: function() {
-					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Shout,box_chat_entry.dom.value);
-					box_chat_entry.dom.value = '';
-					box_chat_entry.dom.focus();
+					sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Shout,box_chat_entry.getValue());
+					box_chat_entry.resetLine();
 				},
 				text: _("SpatialChat.Shout"),
 				height: '12px'
 			});
 			btn_shout.getEl().setStyle({position: 'absolute', right: '5px', bottom: '2px'});
-			// This captures keys pressed in the chatbox. If the key was the return key,
-			// we send the message and stop the typing animation. The remainder is handled by
-			// the keypress event later on, as that accounts for holding keys down. This isn't there
-			// because we don't want the message to be sent repeatedly.
-			box_chat_entry.addListener('keyup', function(event) {
-				if(event.keyCode == 13 || event.which == 13)
-				{
-					if(box_chat_entry.dom.value != '')
-					{
-						AjaxLife.Network.Send("StopAnimation", {
-							Animation: AjaxLife.Constants.Animations.avatar_type
-						});
-						AjaxLife.Network.Send("SpatialChat", {
-							Message: "a",
-							Channel: 0,
-							Type: AjaxLife.Constants.MainAvatar.ChatType.StopTyping
-						});
-						anim_started = false;
-						sendmessage(AjaxLife.Constants.MainAvatar.ChatType.Normal,box_chat_entry.dom.value);
-						box_chat_entry.dom.value = '';
-						box_chat_entry.dom.focus();
-					}
-				}
-			});
 			// This is set by the keypress event in the chatbox. It stops the typing animation
 			// and sends the StopTyping message.
 			var chat_stop_task = new Ext.util.DelayedTask(function() {
@@ -274,7 +256,7 @@ AjaxLife.SpatialChat = function() {
 			// message and starts the typing animation, if this hasn't already been done.
 			// After two seconds of not typing, the chat_stop_task function will be fired.
 			box_chat_entry.addListener('keypress', function(event) {
-				if(!anim_started && box_chat_entry.dom.value.substr(0,1) != '/')
+				if(!anim_started && box_chat_entry.getValue().substr(0,1) != '/')
 				{
 					anim_started = true;
 					AjaxLife.Network.Send("StartAnimation", {
@@ -285,13 +267,9 @@ AjaxLife.SpatialChat = function() {
 						Channel: 0,
 						Type: AjaxLife.Constants.MainAvatar.ChatType.StartTyping
 					});
+					chat_stop_task.delay(2000);
 				}
-				chat_stop_task.delay(2000);
 			});
-			
-			//chat_win.on('open', function() {
-			//	box_chat_entry.dom.focus();						 
-			//});
 			
 			// Friend notifications.
 			// This just adds an online/offline note to the chatlog when friends log on or off.
