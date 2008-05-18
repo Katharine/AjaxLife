@@ -200,7 +200,9 @@ AjaxLife.Strings = {
 			Rename: "Rename",
 			RenameItem: "Enter a new name:",
 			ScriptRestricted: "You need more permissions to open this script.",
-			CopyUUID: "Copy UUID"
+			CopyUUID: "Copy UUID",
+			Loading: "Loading contents...",
+			MyInventory: "My Inventory"
 		},
 		InventoryDialogs: {
 			Texture: {

@@ -377,7 +377,7 @@
 			});
  			
 			var root = new Tree.TreeNode({
-				text: 'My Inventory',
+				text: _("Inventory.MyInventory"),
 				draggable: false,
 				icon: AjaxLife.STATIC_ROOT+'images/inventory/folder_plain_closed.png'
 			});
@@ -387,7 +387,7 @@
 			root.attributes.loaded = false;
 			root.attributes.folder = true;
 			root.appendChild(new Tree.TreeNode({
-				text: 'Loading contents...',
+				text: _("Inventory.Loading"),
 				draggable: false,
 				leaf: true,
 				icon: AjaxLife.STATIC_ROOT+'images/s.gif'
@@ -527,7 +527,7 @@
 							newnode.attributes.UUID = item.UUID;
 							newnode.attributes.Name = item.Name;
 							var loadingnode = new Tree.TreeNode({
-								text: 'Loading contents...',
+								text: _("Inventory.Loading"),
 								draggable: false,
 								leaf: true,
 								icon: AjaxLife.STATIC_ROOT+'images/s.gif'

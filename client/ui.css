@@ -318,12 +318,12 @@ body.rtl #minimap {
 	text-align: center;
 }
 
-a:link, a:visited {
+a.loglink:link, a.loglink:visited {
 	text-decoration: none;
 	color: #0000ff;
 }
 
-a:link:hover, a:visited:hover {
+a.loglink:link:hover, a.loglink:visited:hover {
 	text-decoration: underline;
 }
 

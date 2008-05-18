@@ -82,8 +82,11 @@ function dolanguage()
 	}
 }
 
+// Put parsed query params into query.
+var query = location.search.toQueryParams();
+
 // If not in a frameset, go to the index page, unless we're expecting to be standalone.
-if(!window.parent.document.getElementsByTagName('frameset').length && location.search != '?noframes=1')
+if(!window.parent.document.getElementsByTagName('frameset').length && !(query.noframes == true || query.noframes == 'true' || query.noframes == undefined))
 {
 	location.replace('index.html');
 }
