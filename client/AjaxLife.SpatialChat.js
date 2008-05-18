@@ -86,7 +86,7 @@ AjaxLife.SpatialChat = function() {
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
 	function add(text, sourcetype)
 	{
-		text = AjaxLife.Utils.LinkURLs(text);
+		text = AjaxLife.Utils.LinkURLs(text.escapeHTML());
 		// Make a div to put this in.
 		var line = Ext.get(document.createElement('div'));
 		line.addClass("chatline");

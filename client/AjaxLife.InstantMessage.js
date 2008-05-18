@@ -284,7 +284,7 @@ AjaxLife.InstantMessage = function() {
 	{
 		if(chats[session] && chats[session].content)
 		{
-			text = AjaxLife.Utils.LinkURLs(text);
+			text = AjaxLife.Utils.LinkURLs(text.escapeHTML());
 			var line = Ext.get(document.createElement('div'));
 			line.addClass(["agentmessage","chatline"]);
 			var timestamp = Ext.get(document.createElement('span'));
