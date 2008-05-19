@@ -785,9 +785,10 @@ AjaxLife.Map = function() {
 		},
 		// Called onclick by certain links.
 		HandleLink: function(sim, x, y, z, el) {
+			AjaxLife.Debug("HandleLink: "+sim+", "+x+", "+y+", "+z+", "+el);
 			// Because this is a URL, unescape the sim name.
 			sim = unescape(sim);
-			this.open(el);
+			this.open();
 			if(z == '') z = position.z; // If z wasn't specified, use our own height.
 			settargetpos(sim, {x: x*1, y: y*1, z: z*1}, true); // Multiply by one to convert to int.
 			return false; // Abort the navigation.
