@@ -230,16 +230,17 @@ AjaxLife.HighlightLSL = function(text) {
 		'PARCEL_MEDIA_COMMAND_AUTO_ALIGN','PAY_HIDE','PAY_DEFAULT',
 		'TRUE', 'FALSE',
 		'HTTP_METHOD', 'HTTP_MIMETYPE', 'HTTP_VERIFY_CERT',
-		'HTTP_BODY_MAXLENGTH', 'HTTP_BODY_TRUNCATED'
+		'HTTP_BODY_MAXLENGTH', 'HTTP_BODY_TRUNCATED',
+		'TEXTURE_BLANK', 'TEXTURE_DEFAULT', 'TEXTURE_PLYWOOD', 'TEXTURE_TRANSPARENT'
 	];
 	
 	// String constants.
-	var LSLconstants2 = [
+	var LSLconstantstrings = [
 		'NULL_KEY', 'EOF'
 	];
 	
 	// 3D-space constants.
-	var LSLconstants3 = [
+	var LSLconstantnumbers = [
 		'ZERO_VECTOR', 'ZERO_ROTATION'
 	];
 	// Various useful numbers.
@@ -338,9 +339,9 @@ AjaxLife.HighlightLSL = function(text) {
 			// This fixes a bug whereby some stuff would be inadvertantly highlighted as a string.
 			// Wait until we actually reach a quote to colour things in.
 			var prematch = '';
-			while(match.substr(0,1) != '"')
+			while(match.charAt(0) != '"')
 			{
-				prematch += match.substr(0,1);
+				prematch += match.charAt(0);
 				match = match.substr(1);
 			}
 			return prematch+'<span style="color: #00A000;">'+match+'</span>';
@@ -367,8 +368,8 @@ AjaxLife.HighlightLSL = function(text) {
 			else if(LSLtypes.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #070;">'+match+'</span></a>';
 			else if(LSLevents.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.capitalize()+'" target="_blank"><span style="color: #00A0A0;">'+match+'</span></a>';
 			else if(LSLconstants.indexOf(match) !== -1) return '<span style="color: #0000A0;">'+match+'</span>';
-			else if(LSLconstants2.indexOf(match) !== -1) return '<span style="color: #87CEFA;">'+match+'</span>';
-			else if(LSLconstants3.indexOf(match) !== -1) return '<span style="color: #BC8F8F;">'+match+'</span>';
+			else if(LSLconstantstrings.indexOf(match) !== -1) return '<span style="color: #87CEFA;">'+match+'</span>';
+			else if(LSLconstantnumbers.indexOf(match) !== -1) return '<span style="color: #BC8F8F;">'+match+'</span>';
 			else if(LSLmathconstants.indexOf(match) !== -1) return '<span style="color: #8A2BE2;">'+match+'</span>';
 			else if(LSLfunctions.indexOf(match) !== -1) return '<a href="http://wiki.secondlife.com/wiki/'+match.substr(0,1).toUpperCase()+match.substr(1)+'" target="_blank"><span style="color: #A00000;">'+match+'</span></a>';
 			else return match;

@@ -84,9 +84,13 @@ AjaxLife.SpatialChat = function() {
 	
 	// Add a line to the chatlog. Formatting is applied based on the sourcetype,
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
-	function add(text, sourcetype)
+	function add(text, sourcetype, agent)
 	{
 		text = AjaxLife.Utils.LinkifyText(text);
+		if(agent && agent.name && agent.id && agent.id != AjaxLife.Utils.UUID.Zero)
+		{
+			text = text.sub(agent.name, '<span class="name clickable" onclick="new AjaxLife.Profile(\''+agent.id+'\');">'+agent.name+'</span>');
+		}
 		// Make a div to put this in.
 		var line = Ext.get(document.createElement('div'));
 		line.addClass("chatline");
@@ -126,7 +130,7 @@ AjaxLife.SpatialChat = function() {
 	// processing to deal with formatting it in the first person, use of "/me"
 	// (which requres removal of the colon), and to add the appropriate verb to the line
 	// (i.e. if they're shouting or whispering)
-	function incomingline (name, message, sourcetype, type)
+	function incomingline(name, id, message, sourcetype, type)
 	{
 		// Ignore blank lines.
 		if(message.blank())
@@ -168,7 +172,7 @@ AjaxLife.SpatialChat = function() {
 			}
 		}
 		// Add it do the display.
-		add(message, sourcetype);
+		add(message, sourcetype, {name: name, id: id});
 	}
 	
 	return {
@@ -274,7 +278,7 @@ AjaxLife.SpatialChat = function() {
 			// Friend notifications.
 			// This just adds an online/offline note to the chatlog when friends log on or off.
 			AjaxLife.Friends.AddStatusCallback(function(friend) {
-				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System);
+				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System, {name: friend.Name, id: friend.ID});
 			});
 			
 			// Incoming chat.
@@ -290,7 +294,8 @@ AjaxLife.SpatialChat = function() {
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.Normal	||
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.OwnerSay)
 					{
-						incomingline(data.FromName, data.Message,data.SourceType, data.Type);
+						// We use the owner ID because avatars own themselves, and it's nice to know who owns an object.
+						incomingline(data.FromName, data.OwnerID, data.Message,data.SourceType, data.Type);
 					}
 				}
 			});
@@ -300,14 +305,15 @@ AjaxLife.SpatialChat = function() {
 				// Only do anything if this message comes from an object.
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromObject)
 				{
-					incomingline(data.FromAgentName, data.Message, AjaxLife.Constants.MainAvatar.ChatSourceType.Object, AjaxLife.Constants.MainAvatar.ChatType.Normal);
+					// The "false" is because we can't link to object profiles, and there's no easy way to get the owner.
+					incomingline(data.FromAgentName, false, data.Message, AjaxLife.Constants.MainAvatar.ChatSourceType.Object, AjaxLife.Constants.MainAvatar.ChatType.Normal);
 				}
 			});
 		},
 		
 		// Manually add a line to the chatlog
-		addline: function(name, message, sourcetype, type) {
-			incomingline(name, message, sourcetype, type);
+		addline: function(name, id, message, sourcetype, type) {
+			incomingline(name, id, message, sourcetype, type);
 		},
 		// Add a system message to the chatlog.
 		systemmessage: function(message) {

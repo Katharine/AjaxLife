@@ -134,7 +134,7 @@ AjaxLife.InstantMessage = function() {
 			{
 				message = gUserName+": "+message;
 			}
-			appendline(sessionid,message);
+			appendline(sessionid, message, {name: gUserName, id: gAgentID});
 		}
 		else
 		{
@@ -275,11 +275,15 @@ AjaxLife.InstantMessage = function() {
 	};
 	
 	// Append a line to the box with a timestamp.
-	function appendline(session, text)
+	function appendline(session, text, agent)
 	{
 		if(chats[session] && chats[session].content)
 		{
 			text = AjaxLife.Utils.LinkifyText(text);
+			if(agent && agent.name && agent.id && agent.id != AjaxLife.Utils.UUID.Zero)
+			{
+				text = text.sub(agent.name, '<span class="name clickable" onclick="new AjaxLife.Profile(\''+agent.id+'\');">'+agent.name+'</span>');
+			}
 			var line = Ext.get(document.createElement('div'));
 			line.addClass(["agentmessage","chatline"]);
 			var timestamp = Ext.get(document.createElement('span'));
@@ -431,7 +435,7 @@ AjaxLife.InstantMessage = function() {
 						chats[data.IMSessionID].div_typing.dom.parentNode.removeChild(chats[data.IMSessionID].div_typing.dom);
 					}
 					// Actually add the line.
-					appendline(data.IMSessionID, message);
+					appendline(data.IMSessionID, message, {name: data.FromAgentName, id: data.FromAgentID});
 					// If the tab is not active, make it flash.
 					if(dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
 					{

@@ -169,6 +169,10 @@ body.rtl table.x-btn {
 	color: #aeaeae;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 /* EXT message boxes */
 
 #msg-div {
