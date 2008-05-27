@@ -46,6 +46,32 @@ namespace AjaxLife.Html
         private string name;
         private IDirectory parent;
         private Dictionary<Guid, User> users;
+        private System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
+        private Comparer insensitive = new Comparer(System.Globalization.CultureInfo.InvariantCulture);
+
+        // Anything in this list must be signed to be accepted. 
+        // Should match (or be a subset of) the list in client/AjaxLife.Network.js.
+        private string[] REQUIRED_SIGNATURES = {
+            "AcceptFriendship",
+            "DeclineFriendship",
+            "OfferFriendship",
+            "TerminateFriendship", 
+            "SendAgentMoney",
+            "EmptyTrash",
+            "MoveItem",
+            "MoveFolder",
+            "MoveItems",
+            "MoveFolders",
+            "DeleteItem",
+            "DeleteFolder",
+            "DeleteMultiple",
+            "GiveInventory",
+            "UpdateItem",
+            "UpdateFolder",
+            "JoinGroup",
+            "LeaveGroup",
+            "ScriptPermissionResponse"
+        };
 
         // Methods
 
@@ -54,6 +80,37 @@ namespace AjaxLife.Html
             return client.Friends.FriendsList().Find(delegate(FriendInfo info) {
                 return info.UUID == friend;
             });
+        }
+
+        private bool VerifySignature(User user, Dictionary<string, string> POST)
+        {
+            if (!POST.ContainsKey("hash")) return false;
+            string hash = POST["hash"];
+            // Exclude the hash from the calculation.
+            POST.Remove("hash");
+
+            // All this does the same job as the following on the client side:
+            // var tohash = (++AjaxLife.SignedCallCount).toString() + Object.values(opts).sort().join('') + AjaxLife.Signature;
+            // var hash = md5(tohash);
+            Dictionary<string, string>.ValueCollection collection = POST.Values;
+            string[] values = new string[POST.Count];
+            collection.CopyTo(values, 0);
+            Array.Sort(values, insensitive);
+            ++user.SignedCallCount;
+            string tohash = user.SignedCallCount.ToString();
+            // Array.Join? Anyone there?
+            foreach (string value in values)
+            {
+                tohash += value;
+            }
+            tohash += user.Signature;
+            // This MD5s the hash.
+            string expectedhash = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(tohash))).Replace("-", "").ToLower();
+
+            AjaxLife.Debug("SendMessage", "VerifySignature: Received hash " + hash + ", expected " + expectedhash + " (based on '" + tohash + "')");
+            // Check if they're equal. Dear god that was tedious.
+            return (hash == expectedhash);
+
         }
 
         public SendMessage(string name, IDirectory parent, Dictionary<Guid, User> users)
@@ -102,6 +159,17 @@ namespace AjaxLife.Html
             }
             // Get the message type.
             string messagetype = POST["MessageType"];
+
+            // Check that the message is signed if it should be.
+            if (Array.IndexOf(REQUIRED_SIGNATURES, messagetype) > -1)
+            {
+                if (!VerifySignature(user, POST))
+                {
+                    textwriter.WriteLine("Error: Received hash and expected hash do not match.");
+                    textwriter.Flush();
+                    return;
+                }
+            }
             
             // Right. This file is fun. It takes information in POST paramaters and sends them to 
             // the server in the appropriate format. Some will return data immediately, some will return
@@ -305,8 +373,6 @@ namespace AjaxLife.Html
                 case "ChangeRights":
                     {
                         LLUUID uuid = new LLUUID(POST["Friend"]);
-                        // Huh. Declaring random anonymous functions in the middle of my code.
-                        // I blame JavaScript.
                         FriendInfo friend = this.FindFriend(client, uuid);
                         friend.TheirFriendRights = (FriendRights)int.Parse(POST["Rights"]);
                         // The two sentences of documentation on the subject imply that this will

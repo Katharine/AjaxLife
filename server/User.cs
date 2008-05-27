@@ -43,5 +43,7 @@ namespace AjaxLife
         public string Challenge;
         public double Rotation;
 		public bool LindenGrid;
+        public int SignedCallCount = 0;
+        public string Signature = "";
     }
 }

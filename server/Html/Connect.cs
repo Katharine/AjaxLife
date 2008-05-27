@@ -102,7 +102,8 @@ namespace AjaxLife.Html
                 // Decode the login data.
                 first = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[1]));
                 last = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[2]));
-                pass = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[3]));
+                pass = data[3];
+                user.Signature = data[4];
                 LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
                 login.Platform = "web";
                 login.Channel = "AjaxLife";
