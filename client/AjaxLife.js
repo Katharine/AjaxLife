@@ -48,6 +48,9 @@ AjaxLife.Strings = {};
 AjaxLife.InventoryDialogs = {};
 AjaxLife.ActiveInventoryDialogs = {};
 AjaxLife.Initialised = false;
+AjaxLife.SignedCallCount = 0;
+AjaxLife.Signature = Math.random().toString().substr(2);
+AjaxLife.Debug("AjaxLife: Generated signature: "+AjaxLife.Signature);
 
 AjaxLife.Startup = function() {
 	AjaxLife.Debug("AjaxLife: Init running...");

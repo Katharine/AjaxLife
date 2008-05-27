@@ -261,6 +261,31 @@ AjaxLife.Network.MessageQueue = function() {
 	};
 }();
 
+// This list should match the list in server/Html/SendMessage.cs.
+// Extra messages are harmless. Missing messages will not work (unless the
+// caller of Network.Send sets opts.signed to true.
+AjaxLife.Network.SignedMessages = {
+	AcceptFriendship: true,
+	DeclineFriendship: true,
+	OfferFriendship: true,
+	TerminateFriendship: true, 
+	SendAgentMoney: true,
+	EmptyTrash: true,
+	MoveItem: true,
+	MoveFolder: true,
+	MoveItems: true,
+	MoveFolders: true,
+	DeleteItem: true,
+	DeleteFolder: true,
+	DeleteMultiple: true,
+	GiveInventory: true,
+	UpdateItem: true,
+	UpdateFolder: true,
+	JoinGroup: true,
+	LeaveGroup: true,
+	ScriptPermissionResponse: true
+};
+
 // Sends a standard message through sendmessage.kat, if we're connected.
 // Optionally, a callback can be specified, in which case it will be called
 // once the server responds to the request.
@@ -277,33 +302,55 @@ AjaxLife.Network.Send = function(message, opts) {
 	if(opts.callback)
 	{
 		callbackf = opts.callback;
-		opts.callback = null;
+		delete opts.callback;
+	}
+	// Used to ensure that you can't impersonate someone by grabbing the SID -
+	// at least for important messages.
+	if(opts.signed || (AjaxLife.Network.SignedMessages[message] && opts.signed !== false))
+	{
+		if(opts.signed) delete opts.signed;
+		var tohash = (++AjaxLife.SignedCallCount).toString() + Object.values(opts).sort().join('') + AjaxLife.Signature;
+		var hash = md5(tohash);
+		AjaxLife.Debug("Network: Signing '"+message+"' message with '"+hash+"' (from '"+tohash+"')");
+		opts.hash = hash;
+	}
+	else if(opts.signed === false)
+	{
+		delete opts.signed;
 	}
 	params = {
 		url: "sendmessage.kat",
 		method: "POST",
 		params: opts
 	};
-	if(callbackf)
+	if(callbackf || opts.hash)
 	{
 		params.callback = function(options, success, response) {
 			if(success)
 			{
-				// If the exception is thrown by the first line we didn't have valid JSON.
-				// Otherwise something's wrong with the callback.
-				try
+				if(callbackf)
 				{
-					var data = Ext.util.JSON.decode(response.responseText);
-					callbackf(data);
-				}
-				catch(e)
-				{
-					AjaxLife.Debug("Network: Response: "+response.responseText);
+					// If the exception is thrown by the first line we didn't have valid JSON.
+					// Otherwise something's wrong with the callback.
+					try
+					{
+						var data = Ext.util.JSON.decode(response.responseText);
+						callbackf(data);
+					}
+					catch(e)
+					{
+						AjaxLife.Debug("Network: Response: "+response.responseText);
+					}
 				}
 			}
 			// No success. Either the server died or a timeout. Can't really tell.
 			else
 			{
+				// If the send failed the server presumably didn't get the message, so knock this down one to make sure they still match.
+				if(opts.hash)
+				{
+					--AjaxLife.SignedCallCount;
+				}
 				AjaxLife.Widgets.Ext.msg(_("Network.Error"),_("Network.GenericSendError"));
 			}
 		};

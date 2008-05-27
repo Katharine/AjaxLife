@@ -284,7 +284,8 @@ function Encrypt()
 	encrypted = encryptedString(key, CHALLENGE + "\\" 
 				+ base64encode(Ext.get('first').dom.value) + "\\" 
 				+ base64encode(Ext.get('last').dom.value) + "\\"
-				+ base64encode('$1$'+md5(Ext.get('password').dom.value)));
+				+ '$1$'+md5(Ext.get('password').dom.value) + "\\"
+				+ AjaxLife.Signature);
 	return encrypted;
 }
 
