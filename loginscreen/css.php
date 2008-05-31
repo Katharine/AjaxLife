@@ -32,6 +32,7 @@ if($css === false || strpos($css,'<H2>The requested URL could not be retrieved</
 	die("");
 }
 $css = str_replace("/app/login/","http://secondlife.com/app/login/",$css);
+$css = str_replace('url(/_img/','url(http://secondlife.com/_img/',$css);
 // Undo some ugly changes LL made.
 $css = preg_replace('~(img#mainImage.+)top:[0-9]+px;(.+)height:[0-9]+%;(.+)~', '$1top:0px;$2height:90%;$3', $css);
 print $css;

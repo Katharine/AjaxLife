@@ -54,6 +54,7 @@ var version = "";
 function run_onload()
 {
 	$("#update_box").load("learn_box.php");
+	$("#blog_box").show();
 	bgImgRotate();
 };
 // -->
