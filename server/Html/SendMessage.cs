@@ -82,34 +82,29 @@ namespace AjaxLife.Html
             });
         }
 
-        private bool VerifySignature(User user, Dictionary<string, string> POST)
+        private bool VerifySignature(User user, string querystring)
         {
-            if (!POST.ContainsKey("hash")) return false;
-            string hash = POST["hash"];
-            // Exclude the hash from the calculation.
-            POST.Remove("hash");
+            // Check that we have enough characters to avoid an ArgumentOutOfRangeException.
+            // If we don't have at least this many, there's certainly no hash anyway.
+            if (querystring.Length < 38) return false;
 
             // All this does the same job as the following on the client side:
-            // var tohash = (++AjaxLife.SignedCallCount).toString() + Object.values(opts).sort().join('') + AjaxLife.Signature;
+            // var tohash = (++AjaxLife.SignedCallCount).toString() + querystring + AjaxLife.Signature;
             // var hash = md5(tohash);
-            Dictionary<string, string>.ValueCollection collection = POST.Values;
-            string[] values = new string[POST.Count];
-            collection.CopyTo(values, 0);
-            Array.Sort(values, insensitive);
-            ++user.SignedCallCount;
-            string tohash = user.SignedCallCount.ToString();
-            // Array.Join? Anyone there?
-            foreach (string value in values)
-            {
-                tohash += value;
-            }
-            tohash += user.Signature;
-            // This MD5s the hash.
-            string expectedhash = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(tohash))).Replace("-", "").ToLower();
+            
+            // First we have to remove the hash from the incoming string. We may assume the has is always at the end.
+            // This makes the job easy - we just chop the end off. No parsing required.
+            // MD5s are 128 bits, or 32 hex characters, so we chop off "&hash=00000000000000000000000000000000", which is
+            // 38 characters.
+            string receivedhash = querystring.Substring(querystring.Length - 32); // Grab the last 32 characters.
+            querystring = querystring.Remove(querystring.Length - 38); // Strip the hash off.
+            ++user.SignedCallCount; // Increment the call count to ensure the same hash can't be used multiple times.
+            string tohash = user.SignedCallCount.ToString() + querystring + user.Signature; // Build the to hash string.
+            string expectedhash = BitConverter.ToString(md5.ComputeHash(UTF8Encoding.UTF8.GetBytes(tohash))).Replace("-", "").ToLower(); // Actually hash it.
 
-            AjaxLife.Debug("SendMessage", "VerifySignature: Received hash " + hash + ", expected " + expectedhash + " (based on '" + tohash + "')");
-            // Check if they're equal. Dear god that was tedious.
-            return (hash == expectedhash);
+            AjaxLife.Debug("SendMessage", "VerifySignature: Received hash " + receivedhash + ", expected " + expectedhash + " (based on '" + tohash + "')");
+            // Check if they're equal.
+            return (receivedhash == expectedhash);
 
         }
 
@@ -163,7 +158,7 @@ namespace AjaxLife.Html
             // Check that the message is signed if it should be.
             if (Array.IndexOf(REQUIRED_SIGNATURES, messagetype) > -1)
             {
-                if (!VerifySignature(user, POST))
+                if (!VerifySignature(user, qstring))
                 {
                     textwriter.WriteLine("Error: Received hash and expected hash do not match.");
                     textwriter.Flush();
