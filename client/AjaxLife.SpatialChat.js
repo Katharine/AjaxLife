@@ -294,8 +294,7 @@ AjaxLife.SpatialChat = function() {
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.Normal	||
 						data.Type == AjaxLife.Constants.MainAvatar.ChatType.OwnerSay)
 					{
-						// We use the owner ID because avatars own themselves, and it's nice to know who owns an object.
-						incomingline(data.FromName, data.OwnerID, data.Message,data.SourceType, data.Type);
+						incomingline(data.FromName, (data.SourceType == AjaxLife.Constants.MainAvatar.ChatSourceType.Agent) ? data.ID : false, data.Message,data.SourceType, data.Type);
 					}
 				}
 			});

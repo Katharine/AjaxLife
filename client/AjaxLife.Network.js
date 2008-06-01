@@ -304,26 +304,28 @@ AjaxLife.Network.Send = function(message, opts) {
 		callbackf = opts.callback;
 		delete opts.callback;
 	}
+	// We have to do any alterations to the query before querystring is defined.
+	var signed = opts.signed;
+	delete opts.signed; // This doesn't throw errors, even if the opts.signed never existed.
+	var querystring = Hash.toQueryString(opts); // This is deprecated in Prototype 1.6 - if we upgrade, change to Object.toQueryString().
 	// Used to ensure that you can't impersonate someone by grabbing the SID -
 	// at least for important messages.
-	if(opts.signed || (AjaxLife.Network.SignedMessages[message] && opts.signed !== false))
+	// This signs messages where signed is true, or the message is in the list of messages to sign,
+	// unless signed is explicitly false.
+	if(signed || (AjaxLife.Network.SignedMessages[message] && signed !== false))
 	{
-		if(opts.signed) delete opts.signed;
-		var tohash = (++AjaxLife.SignedCallCount).toString() + Object.values(opts).sort().join('') + AjaxLife.Signature;
+		querystring = Hash.toQueryString(opts); // Do it again without the signed: true part.
+		var tohash = (++AjaxLife.SignedCallCount).toString() + querystring + AjaxLife.Signature;
 		var hash = md5(tohash);
 		AjaxLife.Debug("Network: Signing '"+message+"' message with '"+hash+"' (from '"+tohash+"')");
-		opts.hash = hash;
-	}
-	else if(opts.signed === false)
-	{
-		delete opts.signed;
+		querystring += '&hash='+hash;
 	}
 	params = {
 		url: "sendmessage.kat",
 		method: "POST",
-		params: opts
+		params: querystring
 	};
-	if(callbackf || opts.hash)
+	if(callbackf || signed)
 	{
 		params.callback = function(options, success, response) {
 			if(success)
@@ -347,7 +349,7 @@ AjaxLife.Network.Send = function(message, opts) {
 			else
 			{
 				// If the send failed the server presumably didn't get the message, so knock this down one to make sure they still match.
-				if(opts.hash)
+				if(signed)
 				{
 					--AjaxLife.SignedCallCount;
 				}
