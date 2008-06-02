@@ -48,7 +48,8 @@ namespace AjaxLife
         public static string TEXTURE_ROOT { get { return TextureRoot; } }
         public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
-        public static string SEARCH_ROOT { get { return SearchRoot; } }
+        public static string MAC_ADDRESS { get { return MacAddress; } }
+        public static string ID0 { get { return Id0; } }
 		public static bool USE_S3 { get { return UseS3; } }
         public static bool HANDLE_CONTENT_ENCODING { get { return HandleContentEncoding; } }
         public static bool DEBUG_MODE { get { return DebugMode; } }
@@ -67,7 +68,8 @@ namespace AjaxLife
         private static string AccessKey = "";
         private static string PrivateAccessKey = "";
         private static string TextureCache = "texturecache/";
-        private static string SearchRoot = "http://services.katharineberry.co.uk/search/"; // Unused, currently.
+        private static string MacAddress = "00:00:00:00:00:00";
+        public static string Id0 = "";
         private static bool HandleContentEncoding = false;
 		private static bool UseS3 = false;
         private static bool DebugMode = false;
@@ -104,10 +106,6 @@ namespace AjaxLife
             // Parse the command line arguments. See CommandLine.cs.
             CommandLineArgs args = new CommandLineArgs(arg);
             // Set various options if they're specified.
-            if (args["searchroot"] != null)
-            {
-                SearchRoot = args["searchroot"];
-            }
             string gridfile = "Grids.txt";
             if (args["gridfile"] != null)
             {
@@ -144,6 +142,7 @@ namespace AjaxLife
             {
                 StaticRoot += "/";
             }
+            Console.WriteLine("Static root: " + STATIC_ROOT);
             if (args["texturecache"] != null)
             {
                 TextureCache = args["texturecache"];
@@ -161,7 +160,18 @@ namespace AjaxLife
 			{
 				TextureRoot = args["textureroot"];
 			}
+            if (args["mac"] != null)
+            {
+                MacAddress = args["mac"];
+            }
+            Console.WriteLine("Using MAC address: " + MAC_ADDRESS);
+            if (args["id0"] != null)
+            {
+                Id0 = args["id0"];
+            }
+            Console.WriteLine("Using id0: " + (ID0 == "" ? "[blank]" : ID0));
             HandleContentEncoding = (args["doencoding"] != null);
+            Console.WriteLine("Handling content encoding: " + (HANDLE_CONTENT_ENCODING ? "Yes" : "No"));
             DebugMode = (args["debug"] != null);
             Console.WriteLine("Debug mode: " + (DEBUG_MODE ? "On" : "Off"));
             // Create an empty dictionary for the users. This is defined as public further up.
@@ -221,7 +231,20 @@ namespace AjaxLife
 				return;
 			}
 			UseS3 = (TextureBucket != ""); // We're using S3 if TextureBucket is not blank.
-			if(!UseS3) TextureRoot = "textures/"; // Set the texture root to ourselves if not using S3.
+            if (UseS3)
+            {
+                Console.WriteLine("Texture root: " + TEXTURE_ROOT);
+                Console.WriteLine("Using Amazon S3 for textures:");
+                Console.WriteLine("\tBucket: " + TEXTURE_BUCKET);
+                Console.WriteLine("\tAccess key: " + S3Config.AwsAccessKeyID);
+                Console.WriteLine("\tSecret: ".PadRight(S3Config.AwsSecretAccessKey.Length + 10, '*'));
+            }
+            else
+            {
+                TextureRoot = "textures/"; // Set the texture root to ourselves if not using S3.
+                Console.WriteLine("Using internal server for textures:");
+                Console.WriteLine("\tTexture root: " + TEXTURE_ROOT);
+            }
 			Console.WriteLine("Setting up pages...");
             // Set up the root.
             VirtualDirectory root = new VirtualDirectory();

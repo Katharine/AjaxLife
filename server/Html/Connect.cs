@@ -107,6 +107,8 @@ namespace AjaxLife.Html
                 LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
                 login.Platform = "web";
                 login.Channel = "AjaxLife";
+                login.MAC = AjaxLife.MAC_ADDRESS;
+                login.id0 = AjaxLife.ID0;
                 // Pick the correct loginuri.
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;

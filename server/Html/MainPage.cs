@@ -105,7 +105,6 @@ namespace AjaxLife.Html
                         System.Web.HttpUtility.HtmlEncode(server) + "</option>\n";
                 }
                 hash.Add("GRID_OPTIONS", grids);
-                hash.Add("SEARCH_ROOT", AjaxLife.StringToJSON(AjaxLife.SEARCH_ROOT));
                 if (AjaxLife.HANDLE_CONTENT_ENCODING)
                 {
                     hash.Add("ENCODING", "identity");
