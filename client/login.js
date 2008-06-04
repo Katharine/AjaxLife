@@ -39,6 +39,10 @@ var SUPPORTED_LANGUAGES = {
 // Restores the login screen to its standard state.
 function revertscreen()
 {
+	$('first').enable();
+	$('last').enable();
+	$('password').enable();
+	$('btn_login').enable();
 	$(document.body).setStyle({backgroundColor: 'black', color: 'white'});
 	try
 	{
@@ -222,10 +226,6 @@ function handlelogin()
 				{
 					Ext.Msg.alert(_("Login.Error"),_("Login.SomethingWrong"),revertscreen);
 				}
-				$('first').enable();
-				$('last').enable();
-				$('password').enable();
-				$('btn_login').enable();
 			}
 		});
 		AjaxLife.Debug("login: Made login request.");
