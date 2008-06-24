@@ -43,6 +43,8 @@ function revertscreen()
 	$('last').enable();
 	$('password').enable();
 	$('btn_login').enable();
+	$('location').enable();
+	$('grid').enable();
 	$(document.body).setStyle({backgroundColor: 'black', color: 'white'});
 	try
 	{
@@ -67,7 +69,14 @@ function dolanguage()
 	$('label_pass').innerHTML = _("Login.Password");
 	$('label_grid').innerHTML = _("Login.Grid");
 	$('label_lang').innerHTML = _("Login.Language");
-	$('btn_login').value  = _("Login.LogIn");
+	if($('location'))
+	{
+		$('label_loginlocation').innerHTML = _("Login.Location");
+		$('location').options[0].text = _('Login.Home'); // 'home' option.
+		$('location').options[1].text = _('Login.LastPlace'); // 'last' option.
+		$('location').options[2].text = _('Login.ArbitraryPlace'); // 'arbitrary' option.
+		$('btn_login').value  = _("Login.LogIn");
+	}
 	Ext.MessageBox.buttonText = {
 		yes: _("Widgets.Yes"),
 		no: _("Widgets.No"),
@@ -152,6 +161,8 @@ function handlelogin()
 	$('last').disable();
 	$('password').disable();
 	$('btn_login').disable();
+	$('location').disable();
+	$('grid').disable();
 	// If we have a parent, set this frame to be the whole screen.
 	if(window.parent && window.parent.document && window.parent.document.getElementById)
 	{
@@ -194,6 +205,8 @@ function handlelogin()
 			params: {
 				logindata: logindetails,
 				grid: $('grid').getValue(),
+				location: $('location').getValue(),
+				sim: $('loginsim').value, 
 				session: gSessionID
 			},
 			// If the request was successful, submit the form containing the sessionid to the UI page.
@@ -365,6 +378,23 @@ Ext.onReady(function() {
 			dolanguage();
 		}
 		dolanguage();
+	}
+	if($('location'))
+	{
+		$('location').onchange = function() {
+			if($('location').getValue() == 'arbitrary')
+			{
+				$('loginsim').show().activate();
+			}
+			else
+			{
+				$('loginsim').hide();
+			}
+		}
+		Ext.get('loginsim').addListener('keyup', ret);
+		$('loginsim').onkeyup = function() {
+			$('location').options[2].text = $('loginsim').value.blank() ? _("Login.ArbitraryPlace") : $('loginsim').value;
+		}
 	}
 	$('first').activate();
 });

@@ -112,10 +112,89 @@ AjaxLife.Widgets.Ext = function(){
 }();
 
 // Shows a localised confirm dialog.
-// DEPRECATED in favour of Ext.Msg.confirm (which takes the same arguments)
+// DEPRECATED in favour of Ext.Widgets.Modal.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
+	//return Ext.Widgets.Modal.confirm(title, message, callback); // Not implemented yet.
 	return Ext.Msg.confirm(title, message, callback);
 };
+
+// This is a wraper to the Ext.Msg stuff that ensures that messages don't overwrite eachother.
+// Not finished yet.
+/*
+AjaxLife.Widgets.Modal = function() {
+	var queue = {};
+	var queue_pointer = 0;
+	var next_space = 0;
+	var next = false;
+	
+	function callback(btn)
+	{
+		delete queue[queue_pointer];
+		if(typeof next.callback == 'function')
+		{
+			try
+			{
+				next.callback(btn);
+			}
+			catch(e)
+			{
+				// Ignore it. We just catch it to ensure we get to the cleanup.
+				AjaxLife.Debug("Modal: Callback: Exception raised.");
+			}
+			if(!shownext()) enablekeyboard();
+		}
+	}
+	
+	function show(dialog)
+	{
+		var ret = false;
+		switch(dialog.type)
+		{
+		case 'confirm':
+			ret = Ext.Msg.confirm(dialog.title, dialog.message, callback);
+			break;
+		case 'alert':
+			ret = Ext.Msg.alert(dialog.title, dialog.message, callback);
+			break;
+		default:
+			AjaxLife.Debug("Modal: unknown dialogue type '"+dialog.type+"'");
+			shownext();
+			return;
+		}
+	}
+	
+	function shownext()
+	{
+		if(!queue[++queue_pointer])
+		{
+			next = false;
+			return false;
+		}
+		else
+		{
+			next = queue[queue_pointer];
+			return show(next);
+		}
+	}
+	
+	function add(dialog)
+	{
+		queue[next_space++] = dialog;
+		if(!next) shownext();	
+	}
+	
+	return {
+		alert: function(title, message, callback) {
+			add({title: title, message: message, callback: callback, type: 'alert'});
+			return next_space;
+		},
+		confirm: function(title, message, callback) {
+			add({title: title, message: message, callback: callback, type: 'confirm'});
+			return next_space;
+		}
+	};
+}();
+*/
 
 // This implements a select list with single-click, double-click callbacks,
 // highlighting of elements with the mouse over, etc.

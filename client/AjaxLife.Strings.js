@@ -284,7 +284,11 @@ AjaxLife.Strings = {
 			Encrypting: "Encrypting login data...",
 			LoggingIn: "Logging in to Second Life...",
 			Error: "Error",
-			SomethingWrong: "Despite our best efforts, something has gone wrong.<br /><br />Please try again later."
+			SomethingWrong: "Despite our best efforts, something has gone wrong.<br /><br />Please try again later.",
+			Location: "Start Location",
+			Home: "My Home",
+			LastPlace: "My Last Location",
+			ArbitraryPlace: "<Type region name>" // HTML encoding not needed for the location list.
 		}
 	},	
 	// Translated by Smiley Barry (TG)

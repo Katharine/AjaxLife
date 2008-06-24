@@ -30,3 +30,31 @@ body.rtl #advanced {
 #loginstuff {
 	padding-left: 20px;
 }
+
+#loginlocation {
+	padding-left: 20px;
+	float: left;
+}
+
+#logingrid {
+	float: right;
+	padding-right: 7px;
+}
+
+body.rtl #loginlocation {
+	padding-left: 10px; /* Compensate for body padding */
+}
+
+body.rtl #logingrid {
+	padding-right: 
+}
+
+#login_secondrow {
+	padding-top: 5px;
+}
+
+#loginsim {
+	position: absolute;
+	top: -1000px;
+	left: -1000px;
+}
