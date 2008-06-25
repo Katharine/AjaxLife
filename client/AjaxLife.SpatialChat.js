@@ -267,7 +267,7 @@ AjaxLife.SpatialChat = function() {
 						Animation: AjaxLife.Constants.Animations.avatar_type
 					});
 					AjaxLife.Network.Send("SpatialChat", {
-						Message: "a",
+						Message: "",
 						Channel: 0,
 						Type: AjaxLife.Constants.MainAvatar.ChatType.StartTyping
 					});

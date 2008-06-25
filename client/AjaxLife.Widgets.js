@@ -114,50 +114,68 @@ AjaxLife.Widgets.Ext = function(){
 // Shows a localised confirm dialog.
 // DEPRECATED in favour of Ext.Widgets.Modal.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
-	//return Ext.Widgets.Modal.confirm(title, message, callback); // Not implemented yet.
-	return Ext.Msg.confirm(title, message, callback);
+	return AjaxLife.Widgets.Modal.confirm(title, message, callback); // Not implemented yet.
+	//return Ext.Msg.confirm(title, message, callback);
 };
 
 // This is a wraper to the Ext.Msg stuff that ensures that messages don't overwrite eachother.
 // Not finished yet.
-/*
+
 AjaxLife.Widgets.Modal = function() {
 	var queue = {};
 	var queue_pointer = 0;
 	var next_space = 0;
 	var next = false;
+	var dialog = false;
 	
-	function callback(btn)
+	function disablekeyboard()
 	{
-		delete queue[queue_pointer];
-		if(typeof next.callback == 'function')
+		AjaxLife.Keyboard.disable();
+	}
+	
+	function enablekeyboard()
+	{
+		AjaxLife.Keyboard.enable();
+	}
+	
+	function callback(btn, text)
+	{
+		delete queue[queue_pointer - 1];
+		if(next.callback && typeof next.callback == 'function')
 		{
 			try
 			{
-				next.callback(btn);
+				next.callback(btn, text);
 			}
 			catch(e)
 			{
 				// Ignore it. We just catch it to ensure we get to the cleanup.
 				AjaxLife.Debug("Modal: Callback: Exception raised.");
 			}
-			if(!shownext()) enablekeyboard();
 		}
+		if(!shownext()) enablekeyboard();
 	}
 	
 	function show(dialog)
 	{
-		var ret = false;
+		disablekeyboard();
 		switch(dialog.type)
 		{
 		case 'confirm':
-			ret = Ext.Msg.confirm(dialog.title, dialog.message, callback);
+			dialog = Ext.Msg.confirm(dialog.title, dialog.message, callback);
 			break;
 		case 'alert':
-			ret = Ext.Msg.alert(dialog.title, dialog.message, callback);
+			dialog = Ext.Msg.alert(dialog.title, dialog.message, callback);
+			break;
+		case 'prompt':
+			dialog = Ext.Msg.prompt(dialog.title, dialog.message, callback);
+			break;
+		case 'show':
+			dialog = Ext.Msg.show(dialog.opts);
 			break;
 		default:
 			AjaxLife.Debug("Modal: unknown dialogue type '"+dialog.type+"'");
+			enablekeyboard();
 			shownext();
 			return;
 		}
@@ -165,15 +183,16 @@ AjaxLife.Widgets.Modal = function() {
 	
 	function shownext()
 	{
-		if(!queue[++queue_pointer])
+		if(!queue[queue_pointer])
 		{
 			next = false;
 			return false;
 		}
 		else
 		{
-			next = queue[queue_pointer];
-			return show(next);
+			next = queue[queue_pointer++];
+			show(next);
+			return true;
 		}
 	}
 	
@@ -186,15 +205,43 @@ AjaxLife.Widgets.Modal = function() {
 	return {
 		alert: function(title, message, callback) {
 			add({title: title, message: message, callback: callback, type: 'alert'});
-			return next_space;
 		},
 		confirm: function(title, message, callback) {
 			add({title: title, message: message, callback: callback, type: 'confirm'});
-			return next_space;
+		},
+		wait: function(message, title) {
+			// This overrides whatever was already there.
+			var wait = Ext.Msg.wait(message, title);
+			return {
+				updateText: function(text) {
+					if(wait)
+					{
+						wait.updateText(text);
+					}
+				},
+				hide: function() {
+					if(wait)
+					{
+						wait.hide();
+						wait = false;
+						if(next) show(next); // Restore whatever was there before, if anything.
+						else next = false; // Just to be sure...
+					}
+				},
+				isVisible: function() {
+					return !!wait;
+				}
+			};
+		},
+		prompt: function(title, message, callback) {
+			add({message: message, title: title, callback: callback, type: 'prompt'});
+		},
+		show: function(opts) {
+			add({opts: opts, type: 'show'});
 		}
 	};
 }();
-*/
+
 
 // This implements a select list with single-click, double-click callbacks,
 // highlighting of elements with the mouse over, etc.

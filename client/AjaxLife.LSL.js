@@ -102,7 +102,7 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 // Landmark display
 AjaxLife.InventoryDialogs.Landmark = function(landmark, name) {
 	// This is easy - we just prompt for confirmation and initiate the teleport on an affirmative response.
-	Ext.Msg.confirm(_("InventoryDialogs.Landmark.Title"), _("InventoryDialogs.Landmark.Message", {name: name}), function(btn) {
+	AjaxLife.Widgets.Modal.confirm(_("InventoryDialogs.Landmark.Title"), _("InventoryDialogs.Landmark.Message", {name: name}), function(btn) {
 		if(btn == 'yes')
 		{
 			AjaxLife.Map.TPDialog();
@@ -231,7 +231,8 @@ AjaxLife.HighlightLSL = function(text) {
 		'TRUE', 'FALSE',
 		'HTTP_METHOD', 'HTTP_MIMETYPE', 'HTTP_VERIFY_CERT',
 		'HTTP_BODY_MAXLENGTH', 'HTTP_BODY_TRUNCATED',
-		'TEXTURE_BLANK', 'TEXTURE_DEFAULT', 'TEXTURE_PLYWOOD', 'TEXTURE_TRANSPARENT'
+		'TEXTURE_BLANK', 'TEXTURE_DEFAULT', 'TEXTURE_PLYWOOD',
+		'TEXTURE_TRANSPARENT', 'TEXTURE_MEDIA'
 	];
 	
 	// String constants.

@@ -27,9 +27,11 @@
 // Handle keyboard shortcuts.
 AjaxLife.Keyboard = function() {
 
+	var enabled = false;
+
 	function handlekeyboard(key, e)
 	{
-		if(!AjaxLife.Initialised || !AjaxLife.Network.Connected) return;
+		if(!AjaxLife.Initialised || !AjaxLife.Network.Connected || !enabled) return;
 		AjaxLife.Debug("Keyboard: Got keycode "+key);
 		e.preventDefault();
 		switch(key)
@@ -61,15 +63,21 @@ AjaxLife.Keyboard = function() {
 			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle();
 		}
 	}
+	
+	function blocktab(key, e)
+	{
+		if(enabled) return; // This is not a typo. Keyboard enabled = block disabled.
+		e.preventDefault();
+	}
 
 	return {
 		init: function() {
 			Ext.get(document.body).addKeyListener({
-				//   [h , i , t , f , m , q ]
-				key: [72, 73, 84, 70, 77, 81],
-				ctrl: true,
-				shift: false,
-				alt: false
+					//   [h , i , t , f , m , q ]
+					key: [72, 73, 84, 70, 77, 81],
+					ctrl: true,
+					shift: false,
+					alt: false
 				}, handlekeyboard
 			);
 			Ext.get(document.body).addKeyListener({
@@ -80,6 +88,18 @@ AjaxLife.Keyboard = function() {
 					alt: false
 				}, handlekeyboard
 			);
+			Ext.get(document.body).addKeyListener({
+					key: 9
+				}, blocktab
+			);
+			
+			enabled = true;
+		},
+		disable: function() {
+			enabled = false;
+		},
+		enable: function() {
+			enabled = true;
 		}
 	}	
 }();

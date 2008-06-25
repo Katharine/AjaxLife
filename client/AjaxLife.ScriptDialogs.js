@@ -48,7 +48,7 @@ AjaxLife.ScriptDialogs = function() {
 		if(data.Permissions & p.TrackCamera) permissions += _('Permissions.TrackCamera',{})+'\n';
 		if(data.Permissions & p.ControlCamera) permissions += _('Permissions.ControlCamera',{})+'\n';
 		// Ask the question.
-		Ext.Msg.confirm(
+		AjaxLife.Widgets.Modal.confirm(
 			_('ScriptDialogs.PermissionRequestTitle',{}),
 			_('ScriptDialogs.PermissionRequestBody',{
 				object: data.ObjectName,

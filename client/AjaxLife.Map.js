@@ -91,15 +91,14 @@ AjaxLife.Map = function() {
 		{
 			if(!teleport_wait || !teleport_wait.isVisible())
 			{
-				teleport_wait = Ext.Msg.wait("",_("Map.Teleporting"));
+				teleport_wait = AjaxLife.Widgets.Modal.wait("",_("Map.Teleporting"));
 			}
 		}
 		else
 		{
-			if(teleport_wait && teleport_wait.isVisible())
+			if(teleport_wait)
 			{
 				teleport_wait.hide();
-				//teleport_wait.getDialog().destroy();
 				teleport_wait = false;
 			}
 		}
@@ -363,7 +362,7 @@ AjaxLife.Map = function() {
 			}
 			else
 			{
-				Ext.Msg.alert("",_("Map.NoRegionGiven"));
+				AjaxLife.Widgets.Modal.alert("",_("Map.NoRegionGiven"));
 			}
 			position.x = gPosition.X;
 			position.y = gPosition.Y;
@@ -564,7 +563,7 @@ AjaxLife.Map = function() {
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.RequestTeleport)
 				{
 					Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
-					Ext.Msg.show({
+					AjaxLife.Widgets.Modal.show({
 						title: _("Map.TeleportRequestTitle"),
 						msg: _("Map.TeleportRequest", {name: data.FromAgentName, message: data.Message}),
 						buttons: {
@@ -628,7 +627,7 @@ AjaxLife.Map = function() {
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Failed)
 				{
 					teleport_dialog(false);
-					Ext.Msg.alert(_("Map.Teleportation"),_("Map.TeleportError"));
+					AjaxLife.Widgets.Modal.alert(_("Map.Teleportation"),_("Map.TeleportError"));
 				}
 				// The user somehow cancelled the teleport, despite not having a cancel button. Amazing.
 				else if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Cancelled)

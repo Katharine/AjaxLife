@@ -35,14 +35,14 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 	{
 		var img = new Image();
 		img.onload = function() {
-			elem.setStyle({
+			elem.setAttribute('src',src).setStyle({
 				paddingLeft: '0px',
 				paddingRight: '0px',
 				paddingTop: '0px',
 				paddingBottom: '0px',
 				width: width+'px',
 				height: height+'px'
-			}).setAttribute('src',src);
+			});
 			loaded = true;
 			img.onload = function(){};
 		}

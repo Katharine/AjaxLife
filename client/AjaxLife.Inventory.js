@@ -143,7 +143,7 @@
 	function emptytrash()
 	{
 		var node = this;
-		Ext.Msg.confirm("", _("Inventory.ConfirmEmptyTrash"), function(btn) {
+		AjaxLife.Widgets.Modal.confirm("", _("Inventory.ConfirmEmptyTrash"), function(btn) {
 			if(btn == 'yes')
 			{
 				AjaxLife.Debug("Inventory: Emptying trash...");
@@ -187,7 +187,7 @@
 		var node = (n && n.attributes) ? n : this;
 		if(node.isAncestor(trashnode))
 		{
-			Ext.Msg.confirm("", _("Inventory.ConfirmItemPurge", {item: node.attributes.Name}), function(btn) {
+			AjaxLife.Widgets.Modal.confirm("", _("Inventory.ConfirmItemPurge", {item: node.attributes.Name}), function(btn) {
 				if(btn == 'yes')
 				{
 					if(node.leaf)
@@ -233,7 +233,7 @@
 		else
 		{
 			++uuidcopycount;
-			Ext.Msg.alert("", "UUID: <span id='uuid-copy-"+uuidcopycount+"'>"+uuid+"</span>");
+			AjaxLife.Widgets.Modal.alert("", "UUID: <span id='uuid-copy-"+uuidcopycount+"'>"+uuid+"</span>");
 			// And, if possible, we select the UUID.
 			// Don't have to support IE because we already got it out the way.
 			if(document.createRange && window.getSelection)
@@ -249,8 +249,8 @@
 	function renameitem()
 	{
 		var node = this;
-		Ext.Msg.show({
-			buttons: Ext.Msg.OKCANCEL,
+		AjaxLife.Widgets.Modal.show({
+			buttons: AjaxLife.Widgets.Modal.OKCANCEL,
 			closable: false,
 			msg: _("Inventory.RenameItem"),
 			prompt: true,
@@ -271,7 +271,7 @@
 	function createfolder()
 	{
 		var node = this;
-		Ext.Msg.prompt("", _("Inventory.NewFolderName"), function(btn, text) {
+		AjaxLife.Widgets.Modal.prompt("", _("Inventory.NewFolderName"), function(btn, text) {
 			if(btn != 'ok' || text == '') return;
 			AjaxLife.Network.Send("CreateFolder", {
 				Parent: node.attributes.UUID,

@@ -35,7 +35,7 @@ AjaxLife.Network.logout = function(hidemessage) {
 	var hanging = false;
 	if(!hidemessage)
 	{
-		hanging = Ext.Msg.wait(_("Network.LoggingOut"));
+		hanging = AjaxLife.Widgets.Modal.wait(_("Network.LoggingOut"));
 	}
 	var link = new Ext.data.Connection();
 	link.request({
@@ -49,10 +49,10 @@ AjaxLife.Network.logout = function(hidemessage) {
 			if(success)
 			{
 				AjaxLife.Network.MessageQueue.shutdown();
+				hanging.hide();
 				if(!hidemessage)
 				{
-					hanging.hide();
-					Ext.Msg.show({
+					AjaxLife.Widgets.Modal.show({
 						closable: false,
 						title: "",
 						msg: _("Network.LogoutSuccess"),

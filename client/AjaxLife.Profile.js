@@ -163,7 +163,7 @@ AjaxLife.Profile = function(agentid) {
 	// When the "OK" button is pressed, the payment is completed, after some sanity checking.
 	var btn_pay = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
-			Ext.Msg.prompt(_("Profile.PayDialogTitle",{first: firstname, last: lastname}),_("Profile.PayDialogPrompt",{first: firstname, last: lastname}), function(btn, text) {
+			AjaxLife.Widgets.Modal.prompt(_("Profile.PayDialogTitle",{first: firstname, last: lastname}),_("Profile.PayDialogPrompt",{first: firstname, last: lastname}), function(btn, text) {
 				if(btn == 'ok')
 				{
 					amount = parseInt(text.gsub(/[^0-9]/,''));
@@ -173,7 +173,7 @@ AjaxLife.Profile = function(agentid) {
 					}
 					else
 					{
-						Ext.Msg.alert("",_("Profile.InvalidAmount"));
+						AjaxLife.Widgets.Modal.alert("",_("Profile.InvalidAmount"));
 					}
 				}
 			});
@@ -193,7 +193,7 @@ AjaxLife.Profile = function(agentid) {
 			handler: function() {
 				// When this button is clicked, and the confirmation accepted, an OfferFriendship message
 				// is sent, and a confirmation message shown.
-				Ext.Msg.confirm("",_("Profile.ConfirmFriendAdd",{first: firstname, last: lastname}), function(btn) {
+				AjaxLife.Widgets.Modal.confirm("",_("Profile.ConfirmFriendAdd",{first: firstname, last: lastname}), function(btn) {
 					if(btn == 'yes')
 					{
 						AjaxLife.Friends.OfferFriendship(agentid);
@@ -213,11 +213,11 @@ AjaxLife.Profile = function(agentid) {
 	// teleport lure to the target.
 	var btn_teleport = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
-			Ext.Msg.show({
+			AjaxLife.Widgets.Modal.show({
 				title: _("Profile.TeleportDialogTitle", {first: firstname, last: lastname}),
 				msg: _("Profile.TeleportDialogPrompt",{first: firstname, last: lastname}),
 				value: _("Profile.TeleportDefaultMessage", {sim: AjaxLife.Map.getpos().sim}),
-				buttons: Ext.Msg.OKCANCEL,
+				buttons: AjaxLife.Widgets.Modal.OKCANCEL,
 				modal: true,
 				prompt: true,
 				closable: true,
@@ -278,7 +278,7 @@ AjaxLife.Profile = function(agentid) {
 					confirmation = _("Inventory.ConfirmTransfer", {item: data.Name, first: firstname, last: lastname});
 					cancopy = true;
 				}
-				Ext.Msg.confirm(_("Inventory.ConfirmTransferTitle"), confirmation,function(btn) {
+				AjaxLife.Widgets.Modal.confirm(_("Inventory.ConfirmTransferTitle"), confirmation,function(btn) {
 					if(btn == 'yes')
 					{
 						AjaxLife.Network.Send("GiveInventory", {

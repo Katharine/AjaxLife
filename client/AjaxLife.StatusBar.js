@@ -72,7 +72,8 @@ AjaxLife.StatusBar = function() {
 			// Note that this is technically incorrect behaviour (maybe?), and may result in some libsl bots playing up.
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
 				if(data.IMSessionID != AjaxLife.Utils.UUID.Zero || data.Dialog != AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent) return;
-				AjaxLife.Widgets.Ext.msg(data.FromAgentName, data.Message, 'estate-message-'+data.FromAgentID);
+				AjaxLife.Widgets.Ext.msg(data.FromAgentName, data.Message, 'estate-message-'+data.FromAgentID, true);
+				AjaxLife.Widgets.Modal.alert(data.FromAgentName, data.Message);
 				AjaxLife.SpatialChat.systemmessage(data.FromAgentName+": "+data.Message);
 			});
 			

@@ -114,7 +114,7 @@ AjaxLife.Friends = function() {
 			
 			// Show a dialog to accept or decline friendship, and send back the response. Show confirmation too.
 			AjaxLife.Network.MessageQueue.RegisterCallback('FriendshipOffered', function(data) {
-				Ext.Msg.confirm("",_("Friends.FriendshipOffered",{name: data.AgentName}), function(btn) {
+				AjaxLife.Widgets.Modal.confirm("",_("Friends.FriendshipOffered",{name: data.AgentName}), function(btn) {
 					if(btn == 'yes')
 					{
 						AjaxLife.Network.Send('AcceptFriendship',{IMSessionID: data.IMSessionID});

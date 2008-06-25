@@ -106,7 +106,7 @@ AjaxLife.Startup = function() {
 	// These messages also apparently count as a "received asset"
 	AjaxLife.Debug("AjaxLife: Registering dummy AssetReceived handler...");
 	AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', Prototype.emptyFunction);
-	AjaxLife.PageWait = Ext.Msg.wait(_("AjaxLife.Precaching"));
+	AjaxLife.PageWait = AjaxLife.Widgets.Modal.wait(_("AjaxLife.Precaching"));
 	AjaxLife.Debug("AjaxLife: Precaching...");
 	setTimeout(function () {
 		AjaxLife.Debug("AjaxLife: Precaching complete.");
@@ -118,7 +118,7 @@ AjaxLife.Startup = function() {
 		AjaxLife.PageWait = false;
 		AjaxLife.Debug("AjaxLife: Network init...");
 		AjaxLife.Network.init();
-		Ext.Msg.alert(_("AjaxLife.MOTD"),gMOTD);
+		AjaxLife.Widgets.Modal.alert(_("AjaxLife.MOTD"),gMOTD);
 		AjaxLife.Debug("AjaxLife: Grabbing offline IMs");
 		AjaxLife.Network.Send("GetOfflineMessages",{});
 		AjaxLife.Debug("AjaxLife: Startup complete.");

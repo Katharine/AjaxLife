@@ -45,10 +45,11 @@ function revertscreen()
 	$('btn_login').enable();
 	$('location').enable();
 	$('grid').enable();
+	$('lang').enable();
 	$(document.body).setStyle({backgroundColor: 'black', color: 'white'});
 	try
 	{
-		window.parent.document.getElementById('frameset').rows = '*,60';
+		window.parent.document.getElementById('frameset').rows = '*,80';
 		var node = window.parent.document.getElementById('loginpage');
 		if(node && node.parentNode)
 		{
@@ -69,13 +70,13 @@ function dolanguage()
 	$('label_pass').innerHTML = _("Login.Password");
 	$('label_grid').innerHTML = _("Login.Grid");
 	$('label_lang').innerHTML = _("Login.Language");
+	$('btn_login').value  = _("Login.LogIn");
 	if($('location'))
 	{
 		$('label_loginlocation').innerHTML = _("Login.Location");
 		$('location').options[0].text = _('Login.Home'); // 'home' option.
 		$('location').options[1].text = _('Login.LastPlace'); // 'last' option.
 		$('location').options[2].text = _('Login.ArbitraryPlace'); // 'arbitrary' option.
-		$('btn_login').value  = _("Login.LogIn");
 	}
 	Ext.MessageBox.buttonText = {
 		yes: _("Widgets.Yes"),
@@ -104,12 +105,26 @@ if(!window.parent.document.getElementsByTagName('frameset').length && !(query.no
 	location.replace('index.html');
 }
 
+// Attempt to reduce memory usage where needed.
+function domemorycheck()
+{
+	var lowmem = false;
+	lowmem = lowmem || (window.opera && opera.wiiremote); // Wii
+	lowmem = lowmem || !!navigator.userAgent.match(/Apple.*Mobile.*Safari/); // iPhone / iPod touch
+	// Other low memory checks in similar style, if needed.
+	if(lowmem)
+	{
+		$('background').parentNode.removeChild($('background')); // Remove the background image.
+	}
+}
+
 function initui()
 {
 	AjaxLife.Debug("login: Switching visible screen.");
 	$('loginscreen').hide();
+	domemorycheck();
 	$('uiscreen').show();
-	var wait = Ext.Msg.wait(_("Login.LoadingSession"));
+	var wait = AjaxLife.Widgets.Modal.wait(_("Login.LoadingSession"));
 	var link = new Ext.data.Connection({timeout: 30000});
 	link.request({
 		url: "details.kat",
@@ -124,7 +139,7 @@ function initui()
 			wait = false;
 			if(!success)
 			{
-				Ext.Msg.alert(_("Login.SessionLoadFailed"));
+				AjaxLife.Widgets.Modal.alert(_("Login.SessionLoadFailed"));
 				return;
 			}
 			var data = Ext.util.JSON.decode(response);
@@ -163,6 +178,7 @@ function handlelogin()
 	$('btn_login').disable();
 	$('location').disable();
 	$('grid').disable();
+	$('lang').disable();
 	// If we have a parent, set this frame to be the whole screen.
 	if(window.parent && window.parent.document && window.parent.document.getElementById)
 	{
@@ -192,7 +208,7 @@ function handlelogin()
 			
 		}
 		// Put up a nice waiting dialog.
-		var hanging = Ext.Msg.wait(_("Login.Encrypting"));
+		var hanging = AjaxLife.Widgets.Modal.wait(_("Login.Encrypting"));
 		var logindetails = Encrypt();
 		AjaxLife.Debug("login: Encrypted login: "+logindetails);
 		hanging.updateText(_("Login.LoggingIn"));
@@ -227,17 +243,17 @@ function handlelogin()
 						else
 						{
 							AjaxLife.Debug("login: Login failure: "+response.message);
-							Ext.Msg.alert(_("Login.Error"),response.message.escapeHTML(),revertscreen);
+							AjaxLife.Widgets.Modal.alert(_("Login.Error"),response.message.escapeHTML(),revertscreen);
 						}
 					}
 					catch(e)
 					{
-						Ext.Msg.alert("Server Error","A C# Exception was caught:<pre>"+response.responseText.escapeHTML()+"</pre>",revertscreen);
+						AjaxLife.Widgets.Modal.alert("Server Error","A C# Exception was caught:<pre>"+response.responseText.escapeHTML()+"</pre>",revertscreen);
 					}
 				}
 				else
 				{
-					Ext.Msg.alert(_("Login.Error"),_("Login.SomethingWrong"),revertscreen);
+					AjaxLife.Widgets.Modal.alert(_("Login.Error"),_("Login.SomethingWrong"),revertscreen);
 				}
 			}
 		});
