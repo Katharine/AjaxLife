@@ -109,6 +109,7 @@ namespace AjaxLife.Html
                 login.Channel = "AjaxLife";
                 login.MAC = AjaxLife.MAC_ADDRESS;
                 login.id0 = AjaxLife.ID0;
+                login.Start = (POST["location"] != "arbitrary") ? POST["location"] : NetworkManager.StartLocation(POST["sim"], 128, 128, 20);
                 // Pick the correct loginuri.
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;

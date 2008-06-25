@@ -509,7 +509,6 @@ namespace AjaxLife
             hash.Add("ID", avatar.ID);
             hash.Add("LocalID", avatar.LocalID);
             hash.Add("Position", avatar.Position);
-            hash.Add("Rotation", avatar.Rotation);
             hash.Add("Scale", avatar.Scale);
             hash.Add("GroupName", avatar.GroupName);
             this.pending.Enqueue(hash);
@@ -531,7 +530,6 @@ namespace AjaxLife
             hash.Add("MessageType", "AvatarUpdated");
             hash.Add("ID", avatar.ID);
             hash.Add("Position", avatar.Position);
-            hash.Add("Rotation", avatar.Rotation);
             this.pending.Enqueue(hash);
         }
 

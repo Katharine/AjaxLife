@@ -42,7 +42,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\Affirma.ThreeSharp.dll</HintPath>
     </Reference>
-    <Reference Include="libsecondlife, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="libsecondlife, Version=0.4.1.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\libsecondlife.dll</HintPath>
     </Reference>

@@ -77,9 +77,12 @@ namespace AjaxLife.Html
 
         private FriendInfo FindFriend(SecondLife client, LLUUID friend)
         {
-            return client.Friends.FriendsList().Find(delegate(FriendInfo info) {
-                return info.UUID == friend;
-            });
+            FriendInfo found;
+            if (client.Friends.FriendList.TryGetValue(friend, out found))
+            {
+                return found;
+            }
+            return null;
         }
 
         private bool VerifySignature(User user, string querystring)
@@ -350,9 +353,9 @@ namespace AjaxLife.Html
                     break;
                 case "GetFriendList":
                     {
-                        List<FriendInfo> friends = client.Friends.FriendsList();
+                        InternalDictionary<LLUUID, FriendInfo> friends = client.Friends.FriendList;
                         List<Hashtable> friendlist = new List<Hashtable>();
-                        foreach (FriendInfo friend in friends)
+                        friends.ForEach(delegate(FriendInfo friend)
                         {
                             Hashtable friendhash = new Hashtable();
                             friendhash.Add("ID", friend.UUID.ToString());
@@ -361,7 +364,7 @@ namespace AjaxLife.Html
                             friendhash.Add("MyRights", friend.MyFriendRights);
                             friendhash.Add("TheirRights", friend.TheirFriendRights);
                             friendlist.Add(friendhash);
-                        }
+                        });
                         textwriter.Write(MakeJson.FromObject(friendlist));
                     }
                     break;
@@ -455,10 +458,10 @@ namespace AjaxLife.Html
                             Avatar avatar = pair.Value;
                             Hashtable hash = new Hashtable();
                             hash.Add("Name", avatar.Name);
-                            hash.Add("ID", avatar.ID.ToString());
+                            hash.Add("ID", avatar.ID);
                             hash.Add("LocalID", avatar.LocalID);
                             hash.Add("Position", avatar.Position);
-                            hash.Add("Rotation", avatar.Rotation);
+                            //hash.Add("Rotation", avatar.Rotation);
                             hash.Add("Scale", avatar.Scale);
                             hash.Add("GroupName", avatar.GroupName);
                             list.Add(hash);
@@ -578,6 +581,7 @@ namespace AjaxLife.Html
                         if (POST.ContainsKey("NextOwnerMask")) item.Permissions.NextOwnerMask = (PermissionMask)uint.Parse(POST["NextOwnerMask"]);
                         if (POST.ContainsKey("SalePrice")) item.SalePrice = int.Parse(POST["SalePrice"]);
                         if (POST.ContainsKey("SaleType")) item.SaleType = (SaleType)byte.Parse(POST["SaleType"]);
+                        if (POST.ContainsKey("AssetType")) item.AssetType = (AssetType)byte.Parse(POST["AssetType"]);
                         client.Inventory.RequestUpdateItem(item);
                     }
                     break;

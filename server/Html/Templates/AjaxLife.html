@@ -90,57 +90,61 @@
 	</head>
 	<body class="ltr">
 		<div id="loginscreen">
-			<form action="" id="form_login">
-				<!-- Right aligned. This goes before loginstuff because that makes
-			loginstuff overlap this if the window is too small, rather than vice-versa -->
-				<div id="advanced">
-					<table>
+			<div>
+				<form action="" id="form_login">
+					<!-- Right aligned. -->
+					<div id="advanced">
+						<span id="label_lang">(loading)</span>
+						<!-- This is filled when the script loads 
+							As an added bonus, if your local language is available
+							it will be used. -->
+						<select name="lang" id="lang">
+							<option value="en" selected="selected">(loading)</option>
+						</select>
+					</div>
+					<!-- Left-aligned -->
+					<table id="loginstuff">
 						<tr>
-							<td id="label_grid">(loading)</td>
-							<td id="label_lang">(loading)</td>
+							<td id="label_first">(loading)</td>
+							<td id="label_last">(loading)</td>
+							<td id="label_pass">(loading)</td>
+							<td>&nbsp;</td>
 						</tr>
 						<tr>
 							<td>
-								<select id="grid">
-									{GRID_OPTIONS}
-								</select>
+								<input type="text" id="first" />
 							</td>
 							<td>
-								<!-- This is filled when the script loads 
-							As an added bonus, if your local language is available
-							it will be used. -->
-								<select name="lang" id="lang">
-									<option value="en" selected="selected">(loading)</option>
-								</select>
+								<input type="text" id="last" />
+							</td>
+							<td>
+								<input type="password" id="password" />
+							</td>
+							<td>
+								<input type="button" value="(loading)" id="btn_login" />
 							</td>
 						</tr>
 					</table>
+					<input type="hidden" name="sid" value="{SESSION_ID}" />
+				</form>
+			</div>
+			<div id="login_secondrow">
+				<div id="loginlocation">
+					<span id="label_loginlocation">(loading)</span>:
+					<select size="1" id="location">
+						<option value="home">(loading)</option>
+						<option value="last" selected="selected">(loading)</option>
+						<option value="arbitrary">(loading)</option>
+					</select>
+					<input type="text" id="loginsim" style="display: none;" />
 				</div>
-				<!-- Left-aligned -->
-				<table id="loginstuff">
-					<tr>
-						<td id="label_first">(loading)</td>
-						<td id="label_last">(loading)</td>
-						<td id="label_pass">(loading)</td>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<td>
-							<input type="text" id="first" />
-						</td>
-						<td>
-							<input type="text" id="last" />
-						</td>
-						<td>
-							<input type="password" id="password" />
-						</td>
-						<td>
-							<input type="button" value="(loading)" id="btn_login" />
-						</td>
-					</tr>
-				</table>
-				<input type="hidden" name="sid" value="{SESSION_ID}" />
-			</form>
+				<div id="logingrid">
+					<span id="label_grid">(loading)</span>:
+					<select id="grid">
+						{GRID_OPTIONS}
+					</select>
+				</div>
+			</div>
 		</div>
 		<div id="uiscreen" style="display: none; height: 100%; width: 100%;">
 			<img src="{STATIC_ROOT}images/background.jpg" id="background" alt="Background - island in the sunset" />
