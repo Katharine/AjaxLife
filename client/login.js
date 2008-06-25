@@ -46,7 +46,7 @@ function revertscreen()
 	$('location').enable();
 	$('grid').enable();
 	$('lang').enable();
-	$(document.body).setStyle({backgroundColor: 'black', color: 'white'});
+	$(document.body).removeClassName('loggingin');
 	try
 	{
 		window.parent.document.getElementById('frameset').rows = '*,80';
@@ -115,6 +115,7 @@ function domemorycheck()
 	if(lowmem)
 	{
 		$('background').parentNode.removeChild($('background')); // Remove the background image.
+		$(document.body).addClassName('lowmem');
 	}
 }
 
@@ -190,7 +191,7 @@ function handlelogin()
 		}
 	}
 	// Change the background, in order to make the progress look right.
-	$(document.body).setStyle({backgroundColor: 'white', color: 'black'});
+	$(document.body).addClassName("loggingin");
 	// We do this to avoid an odd bug. Eh.
 	setTimeout(function() {
 		// Make a fuss if this isn't an LL grid
@@ -321,7 +322,6 @@ function Encrypt()
 // When we're ready, set up the login handler and disable the default login action.
 // Place the cursor in the First Name box.
 Ext.onReady(function() {
-	$(document.body).addClassName("loggingin");
 	// Login button handler
 	Ext.get('btn_login').on('click',handlelogin);
 	

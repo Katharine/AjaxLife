@@ -24,6 +24,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 
+/* Low memory tweaks */
+
+body.loggedin {
+	background-color: white;
+	color: black;
+}
+
+
+body.loggedin.lowmem {
+	background-color: gray;
+}
+
+#minimap-landscape {
+	visibility: hidden;
+}
+
 /* Window decoration */
 
 /* IE6 position:fixed hack from http://annevankesteren.nl/test/examples/ie/position-fixed.html */

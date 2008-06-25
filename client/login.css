@@ -9,8 +9,13 @@ body {
 	color: #fefefe;
 }
 
+body.loggingin {
+	background-color: white;
+	color: black;
+}
+
 #advanced {
-	top: 5px;
+	top: 18px;
 	position: absolute;
 }
 
