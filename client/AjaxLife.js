@@ -76,6 +76,8 @@ AjaxLife.Startup = function() {
 	// We're connected. Actually, we aren't, but this is close enough and things break if we leave it too long.
 	AjaxLife.Network.Connected = true;
 	// Start everything up.
+	AjaxLife.Debug("AjaxLife: Widgets.Ext init...");
+	AjaxLife.Widgets.Ext.init();
 	AjaxLife.Debug("AjaxLife: NameCache init...");
 	AjaxLife.NameCache.init();
 	AjaxLife.Debug("AjaxLife: Friends init...");

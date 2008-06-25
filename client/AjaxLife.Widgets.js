@@ -77,9 +77,12 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 AjaxLife.Widgets.Ext = function(){
     var msgCt;
     // Can we do growling using Fluid (http://fluidapp.com) or Callout?
-    var cangrowl = !!(window.fluid && fluid.showGrowlNotification) || !!window.callout;
-    AjaxLife.Debug("Widgets: CanGrowl: "+cangrowl);
+    var cangrowl = false;
     return {
+    	init: function() {
+    		cangrowl = !!(window.fluid && fluid.showGrowlNotification) || !!window.callout;
+    		AjaxLife.Debug("Widgets: CanGrowl: "+cangrowl);
+    	},
         msg: function(title, s, growlid, onlygrowl) {
         	// If we can, and the notification allows us to, do so.
         	if(growlid && cangrowl)
@@ -92,7 +95,7 @@ AjaxLife.Widgets.Ext = function(){
 					identifier: growlid
 				};
 				if(window.fluid) fluid.showGrowlNotification(options);
-				else if(window.callout) callout.notify(options.title, options.description);
+				else if(window.callout) callout.notify(options.title, options.description, {icon: AjaxLife.STATIC_ROOT+'images/logo.png'});
 			}
 			// If the notification doesn't want to be shown internally, don't.
         	if(!onlygrowl)
