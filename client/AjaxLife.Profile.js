@@ -217,7 +217,7 @@ AjaxLife.Profile = function(agentid) {
 				title: _("Profile.TeleportDialogTitle", {first: firstname, last: lastname}),
 				msg: _("Profile.TeleportDialogPrompt",{first: firstname, last: lastname}),
 				value: _("Profile.TeleportDefaultMessage", {sim: AjaxLife.Map.getpos().sim}),
-				buttons: AjaxLife.Widgets.Modal.OKCANCEL,
+				buttons: Ext.Msg.OKCANCEL,
 				modal: true,
 				prompt: true,
 				closable: true,
