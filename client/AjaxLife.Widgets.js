@@ -76,8 +76,8 @@ AjaxLife.Widgets.Slider = function(parent, id, opts) {
 // A div is created, inserted, then faded upwards and destoyed three seconds later.
 AjaxLife.Widgets.Ext = function(){
     var msgCt;
-    // Can we do growling using Fluid (http://fluidapp.com)?
-    var cangrowl = !!(window.fluid && fluid.showGrowlNotification);
+    // Can we do growling using Fluid (http://fluidapp.com) or Callout?
+    var cangrowl = !!(window.fluid && fluid.showGrowlNotification) || !!window.callout;
     AjaxLife.Debug("Widgets: CanGrowl: "+cangrowl);
     return {
         msg: function(title, s, growlid, onlygrowl) {
@@ -91,7 +91,8 @@ AjaxLife.Widgets.Ext = function(){
 					sticky: false,
 					identifier: growlid
 				};
-				fluid.showGrowlNotification(options);
+				if(window.fluid) fluid.showGrowlNotification(options);
+				else if(window.callout) callout.notify(options.title, options.description);
 			}
 			// If the notification doesn't want to be shown internally, don't.
         	if(!onlygrowl)
@@ -112,14 +113,12 @@ AjaxLife.Widgets.Ext = function(){
 }();
 
 // Shows a localised confirm dialog.
-// DEPRECATED in favour of Ext.Widgets.Modal.confirm (which takes the same arguments)
+// DEPRECATED in favour of AjaxLife.Widgets.Modal.confirm (which takes the same arguments)
 AjaxLife.Widgets.Confirm = function(title, message, callback) {
-	return AjaxLife.Widgets.Modal.confirm(title, message, callback); // Not implemented yet.
-	//return Ext.Msg.confirm(title, message, callback);
+	return AjaxLife.Widgets.Modal.confirm(title, message, callback);
 };
 
-// This is a wraper to the Ext.Msg stuff that ensures that messages don't overwrite eachother.
-// Not finished yet.
+// This is a wrapper to the Ext.Msg stuff that ensures that messages don't overwrite eachother.
 
 AjaxLife.Widgets.Modal = function() {
 	var queue = {};
