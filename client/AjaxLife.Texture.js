@@ -35,7 +35,8 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 	{
 		var img = new Image();
 		img.onload = function() {
-			elem.setAttribute('src',src).setStyle({
+			elem.setAttribute('src',src);
+			elem.setStyle({
 				paddingLeft: '0px',
 				paddingRight: '0px',
 				paddingTop: '0px',
