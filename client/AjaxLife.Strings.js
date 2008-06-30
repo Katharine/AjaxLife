@@ -192,9 +192,12 @@ AjaxLife.Strings = {
 			Delete: "Delete",
 			Properties: "Properties",
 			CreateFolder: "Create new folder",
+			CreateNote: "Create new notecard",
 			EmptyTrash: "Empty trash",
 			NewFolderName: "Please enter a name for the folder:",
+			NewNoteName: "Please enter a name for the notecard:",
 			FolderCreationFailed: "Could not create new folder.",
+			CreationFailed: "Could not create new inventory item.",
 			ConfirmItemPurge: "Are you sure you wish to permanently delete '#{item}'?",
 			ConfirmEmptyTrash: "Are you sure you want to empty the trash?",
 			Rename: "Rename",
@@ -202,14 +205,18 @@ AjaxLife.Strings = {
 			ScriptRestricted: "You need more permissions to open this script.",
 			CopyUUID: "Copy UUID",
 			Loading: "Loading contents...",
-			MyInventory: "My Inventory"
+			MyInventory: "My Inventory",
+			InventoryReceivedTitle: "Invenory received",
+			InventoryReceived: "#{from} has given you the #{type} '#{name}'"
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "Texture: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "Notecard: #{name}"
+				WindowTitle: "Notecard: #{name}",
+				Loading: "Loading notecard...",
+				Save: "Save"
 			},
 			Script: {
 				WindowTitle: "Script: #{name}"

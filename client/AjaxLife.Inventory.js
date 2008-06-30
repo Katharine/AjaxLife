@@ -28,6 +28,7 @@
  	// Private:
  	var Tree = Ext.tree;
  	var inventory = {};
+ 	var offers = {};
  	var tree = false;
  	var win = false;
  	var list = false;
@@ -250,7 +251,7 @@
 	{
 		var node = this;
 		AjaxLife.Widgets.Modal.show({
-			buttons: AjaxLife.Widgets.Modal.OKCANCEL,
+			buttons: Ext.Msg.OKCANCEL,
 			closable: false,
 			msg: _("Inventory.RenameItem"),
 			prompt: true,
@@ -272,7 +273,7 @@
 	{
 		var node = this;
 		AjaxLife.Widgets.Modal.prompt("", _("Inventory.NewFolderName"), function(btn, text) {
-			if(btn != 'ok' || text == '') return;
+			if(btn != 'ok' || text.blank()) return;
 			AjaxLife.Network.Send("CreateFolder", {
 				Parent: node.attributes.UUID,
 				Name: text,
@@ -305,6 +306,21 @@
 			});
 		});
 		AjaxLife.Debug("Inventory: Created folder beneath "+this.attributes.UUID);
+	}
+	
+	function createnote()
+	{
+		var node = this;
+		AjaxLife.Widgets.Modal.prompt("", _("Inventory.NewNoteName"), function(btn, text) {
+			if(btn != 'ok' || text.blank()) return;
+			AjaxLife.Network.Send("CreateInventory", {
+				Folder: node.attributes.UUID,
+				Name: text,
+				Description: "(no description)",
+				AssetType: AjaxLife.Constants.Inventory.AssetType.Notecard,
+				InventoryType: AjaxLife.Constants.Inventory.InventoryType.Notecard
+			});
+		});
 	}
 	
 	function perm2string(permissions)
@@ -359,6 +375,30 @@
 		perms = perms.join(', ');
 		return perms;
 	}
+	
+	function makeitem(item)
+	{
+		var newnode = new Tree.TreeNode({
+			text: item.Name,
+			leaf: true,
+			draggable: true,
+			icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getitemicon(item.InventoryType),
+			qtip: perm2string(item.Permissions.OwnerMask)
+		});
+		newnode.attributes.InventoryUUID = item.UUID; // Deprecated - use UUID instead of InventoryUUID.
+		newnode.attributes.UUID = item.UUID;
+		newnode.attributes.AssetType = item.AssetType;
+		newnode.attributes.AssetUUID = item.AssetUUID;
+		newnode.attributes.CreatorID = item.CreatorID;
+		newnode.attributes.OwnerID = item.OwnerID;
+		newnode.attributes.CreationDate = item.CreationDate;
+		newnode.attributes.Description = item.Description;
+		newnode.attributes.Flags = item.Flags;
+		newnode.attributes.InventoryType = item.InventoryType;
+		newnode.attributes.Name = item.Name;
+		newnode.attributes.Permissions = item.Permissions;
+		return newnode;
+	}
  	
  	return {
  		// Public:
@@ -392,6 +432,7 @@
 				leaf: true,
 				icon: AjaxLife.STATIC_ROOT+'images/s.gif'
 			}));
+			root.firstChild.attributes.UUID = AjaxLife.Utils.UUID.Zero; // So we can tell it's the "loading" thing.
 			inventory[gInventoryRoot] = root;
 			// Render the tree, now that we have a root node.
 			tree = new Tree.TreePanel(win.body, {
@@ -539,25 +580,7 @@
 						}
 						else if(item.Type == "InventoryItem")
 						{
-							var newnode = new Tree.TreeNode({
-								text: item.Name,
-								leaf: true,
-								draggable: true,
-								icon: AjaxLife.STATIC_ROOT+'images/inventory/'+getitemicon(item.InventoryType),
-								qtip: perm2string(item.Permissions.OwnerMask)
-							});
-							newnode.attributes.InventoryUUID = item.UUID; // Deprecated - use UUID instead of InventoryUUID.
-							newnode.attributes.UUID = item.UUID;
-							newnode.attributes.AssetType = item.AssetType;
-							newnode.attributes.AssetUUID = item.AssetUUID;
-							newnode.attributes.CreatorID = item.CreatorID;
-							newnode.attributes.OwnerID = item.OwnerID;
-							newnode.attributes.CreationDate = item.CreationDate;
-							newnode.attributes.Description = item.Description;
-							newnode.attributes.Flags = item.Flags;
-							newnode.attributes.InventoryType = item.InventoryType;
-							newnode.attributes.Name = item.Name;
-							newnode.attributes.Permissions = item.Permissions;
+							var newnode = makeitem(item);
 							inventory[item.UUID] = newnode;
 							items.push(newnode);
 						}
@@ -573,8 +596,27 @@
 				}
 				if(firstload)
 				{
-					node.removeChild(node.firstChild);
+					var tokill = node.firstChild;
+					while(tokill && tokill.attributes.UUID != AjaxLife.Utils.UUID.Zero) tokill = tokill.nextSibling; // Keep looping until we find the loading node.
+					if(tokill) node.removeChild(tokill);
 				}
+ 			});
+ 			
+ 			AjaxLife.Network.MessageQueue.RegisterCallback('InventoryCreated', function(item) {
+ 				if(!item.Success)
+ 				{
+ 					AjaxLife.Widgets.Modal.alert(_("Inventory.CreationFailed"));
+ 					return;
+ 				}
+ 				AjaxLife.Debug("Inventory: Got new inventory item "+item.UUID+" to go in folder "+item.FolderID);
+ 				if(!inventory[item.FolderID]) return;
+ 				var folder = inventory[item.FolderID];
+ 				if(!folder.firstChild || folder.leaf) return;
+ 				var newnode = makeitem(item);
+ 				inventory[item.UUID] = newnode;
+ 				folder.insertBefore(newnode, folder.firstChild);
+ 				newnode.ensureVisible();
+ 				newnode.select();
  			});
  			
  			tree.on('contextmenu', function(node, ev) {
@@ -582,8 +624,10 @@
  				if(node.attributes.UUID == AjaxLife.Utils.UUID.Zero) return;
  				tree.getSelectionModel().select(node);
  				var menu = new Ext.menu.Menu({});
+ 				// Can't delete special things.
  				if(node.getDepth() > 0 && (node.leaf || node.attributes.PreferredType <= 0))
  				{
+ 					// Delete button.
 					var delbtn = new Ext.menu.Item({text: _('Inventory.Delete')});
 					delbtn.on('click', inventorydelete, node);
 					menu.add(delbtn);
@@ -593,10 +637,12 @@
 					var P = AjaxLife.Constants.Permissions;
 					var perms = node.attributes.Permissions.OwnerMask;
 					
+					// Properties button
 					var props = new Ext.menu.Item({text: _('Inventory.Properties')});
 					props.on('click', inventoryproperties, node);
 					menu.add(props);
 					
+					// Rename button
 					var rename = new Ext.menu.Item({text: _('Inventory.Rename')});
 					rename.on('click', renameitem, node);
 					// Disable this if we don't have modify permissions. It won't work anyway.
@@ -606,7 +652,7 @@
 					}
 					menu.add(rename);
 					
-					
+					// Copy UUID button
 					var uuid = new Ext.menu.Item({text: _('Inventory.CopyUUID')});
 					uuid.on('click', copyuuid, node);
 					
@@ -621,11 +667,19 @@
 				}
 				else
 				{
+					// Create Folder button
 					var newfolder = new Ext.menu.Item({text: _('Inventory.CreateFolder')});
 					newfolder.on('click', createfolder, node);
 					menu.add(newfolder);
+					
+					// Create Notecard button
+					var newnote = new Ext.menu.Item({text: _('Inventory.CreateNote')});
+					newnote.on('click', createnote, node);
+					menu.add(newnote);
+					
 					if(node == trashnode)
 					{
+						// Empty Trash button (trash only)
 						var trash = new Ext.menu.Item({text: _('Inventory.EmptyTrash')});
 						trash.on('click', emptytrash, node);
 						menu.add(trash);
@@ -645,10 +699,44 @@
  			
  			// Handle incoming inventory.
  			AjaxLife.Network.MessageQueue.RegisterCallback('ObjectOffered', function(data) {
- 				// Great. Now what?
- 				// The LibSL callback doesn't provide enough information to make this really useful.
- 				// This callback is just here to supress the unhandled message errors.
- 				//FIXME: Write our own inventory handler.
+ 				if(data.ObjectID != AjaxLife.Utils.UUID.Zero)
+ 				{
+ 					offers[data.ObjectID] = data;
+ 					AjaxLife.Network.Send('FetchItem', {
+ 						Item: data.ObjectID,
+ 						Owner: gAgentID
+ 					});
+ 				}
+ 			});
+ 			
+ 			AjaxLife.Network.MessageQueue.RegisterCallback('TaskItemReceived', function(data) {
+ 				offers[data.ItemID] = {FromAgentName: 'An object'};
+ 				AjaxLife.Network.Send('FetchItem', {
+ 					Item: data.ItemID,
+ 					Owner: gAgentID
+ 				});
+ 			});
+ 			
+ 			AjaxLife.Network.MessageQueue.RegisterCallback('ItemReceived', function(item) {
+ 				if(offers[item.UUID])
+ 				{
+ 					AjaxLife.Widgets.Modal.alert(_("Inventory.InventoryReceivedTitle"), _("Inventory.InventoryReceived", {
+ 						from: offers[item.UUID].FromAgentName,
+ 						name: item.Name,
+ 						type: AjaxLife.Constants.Inventory.TypeNames[item.InventoryType]
+ 					}));
+ 					delete offers[item.UUID];
+ 				}
+ 				if(inventory[item.FolderID])
+ 				{
+ 					var folder = inventory[item.FolderID];
+ 					if(folder.leaf || !folder.firstChild) return;
+ 					var newnode = makeitem(item);
+ 					inventory[item.UUID] = newnode;
+ 					folder.insertBefore(newnode, folder.firstChild);
+ 					newnode.ensureVisible();
+ 					newnode.select();
+ 				}
  			});
  			
  			// Handle failed asset transfers. This seems like the best place for this to go.

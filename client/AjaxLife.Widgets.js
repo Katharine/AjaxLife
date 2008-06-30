@@ -158,25 +158,27 @@ AjaxLife.Widgets.Modal = function() {
 		if(!shownext()) enablekeyboard();
 	}
 	
-	function show(dialog)
+	function show(dialog_data)
 	{
 		disablekeyboard();
-		switch(dialog.type)
+		switch(dialog_data.type)
 		{
 		case 'confirm':
-			dialog = Ext.Msg.confirm(dialog.title, dialog.message, callback);
+			dialog = Ext.Msg.confirm(dialog_data.title, dialog_data.message, callback);
 			break;
 		case 'alert':
-			dialog = Ext.Msg.alert(dialog.title, dialog.message, callback);
+			dialog = Ext.Msg.alert(dialog_data.title, dialog_data.message, callback);
 			break;
 		case 'prompt':
-			dialog = Ext.Msg.prompt(dialog.title, dialog.message, callback);
+			dialog = Ext.Msg.prompt(dialog_data.title, dialog_data.message, callback);
 			break;
 		case 'show':
-			dialog = Ext.Msg.show(dialog.opts);
+			if(dialog_data.opts.fn) dialog_data.callback = dialog_data.opts.fn;
+			dialog_data.opts.fn = callback;
+			dialog = Ext.Msg.show(dialog_data.opts);
 			break;
 		default:
-			AjaxLife.Debug("Modal: unknown dialogue type '"+dialog.type+"'");
+			AjaxLife.Debug("Modal: unknown dialogue type '"+dialog_data.type+"'");
 			enablekeyboard();
 			shownext();
 			return;

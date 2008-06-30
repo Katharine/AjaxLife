@@ -3,14 +3,14 @@
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Katharine Berry nor the names of any contributors
- *       may be used to endorse or promote products derived from this software
- *       without specific prior written permission.
+ *	   * Redistributions of source code must retain the above copyright
+ *		 notice, this list of conditions and the following disclaimer.
+ *	   * Redistributions in binary form must reproduce the above copyright
+ *		 notice, this list of conditions and the following disclaimer in the
+ *		 documentation and/or other materials provided with the distribution.
+ *	   * Neither the name of Katharine Berry nor the names of any contributors
+ *		 may be used to endorse or promote products derived from this software
+ *		 without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY KATHARINE BERRY ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -93,6 +93,12 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 		{
 			if(onnoteload && typeof onnoteload == 'function')
 			{
+				if(!success && data.Error == "UnknownSource")
+				{
+					success = true;
+					rawtext = generatenote("");
+					parsedtext = "";
+				}
 				onnoteload(this, success ? parsedtext : data.Error);
 			}
 		}
@@ -109,7 +115,7 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 					'}\n';
 		code += 'Text length '+text.length+'\n';
 		code += text;
-		code += '\n}';
+		code += '}';
 		return code;
 	}
 	
@@ -118,12 +124,10 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 		if(attachments > 0) return false;
 		
 		AjaxLife.Debug("Notecard: Starting upload of notecard "+inventoryid);
-		
-		var xid = AjaxLife.Utils.UUID.Zero;
-		var cid = AjaxLife.Network.MessageQueue.RegisterCallback('AssetUploaded', function(data) {
-			if(data.TransferID != xid) return;
-			AjaxLife.Debug("Notecard: Upload "+xid+" completed. Success: "+data.Success);
-			AjaxLife.Network.MessageQueue.UnregisterCallback('AssetUploaded', cid);
+		var cid = AjaxLife.Network.MessageQueue.RegisterCallback('InventoryNoteUploaded', function(data) {
+			if(data.ItemID != inventoryid) return;
+			AjaxLife.Debug("Notecard: Upload of "+inventoryid+" completed. Success: "+data.Success);
+			AjaxLife.Network.MessageQueue.UnregisterCallback('InventoryNoteUploaded', cid);
 			if(data.Success)
 			{
 				AjaxLife.Debug("Notecard: Inventory item "+inventoryid+" changed AssetID from "+notecardid+" to "+data.AssetID);
@@ -133,7 +137,7 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 				var node = AjaxLife.Inventory.GetNode(inventoryid);
 				if(node && node.attributes)
 				{
-					node.attributes.AssetID = notecardid;
+					node.attributes.AssetUUID = notecardid;
 				}
 			}
 			if(uploadcallback && typeof uploadcallback == 'function')
@@ -142,14 +146,11 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 			}
 		});
 		
-		AjaxLife.Network.Send('SaveTextAsset', {
-			AssetType: AjaxLife.Constants.Inventory.InventoryType.Notecard,
-			AssetData: rawtext,
-			callback: function(data) {
-				xid = data.TranferID; // This should be TransferID, but there's a typo on the server side.
-				AjaxLife.Debug("Notecard: Upload of "+inventoryid+" in progress. XferID = "+xid);
-			}
+		AjaxLife.Network.Send('SaveNotecard', {
+			ItemID: inventoryid,
+			AssetData: rawtext
 		});
+		AjaxLife.Debug("Notecard: Upload of "+inventoryid+" in progress.");
 	}
 	
 	// Code to run on object instantiation
@@ -210,47 +211,77 @@ AjaxLife.Notecard = function(notecardid, inventoryid, ownerid, onnoteload, uploa
 
 AjaxLife.ActiveInventoryDialogs.Notecard = {};
 AjaxLife.InventoryDialogs.Notecard = function(notecardid, inventoryid, name) {
-	// If this window already exists, focus it and quit.
-	if(AjaxLife.ActiveInventoryDialogs.Notecard[notecardid])
-	{
-		AjaxLife.ActiveInventoryDialogs.Notecard[notecardid].focus();
-		return;
-	}
-	var note = false;
-	var win = false;
-	// Create the window.
-	win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
-		width: '500px',
-		height: '520px',
-		modal: false,
-		shadow: true,
-		autoCreate: true,
-		title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
-		resizable: true,
-		proxyDrag: !AjaxLife.Fancy
-	});
-	var style = {};
-	// For reasons I don't understand, this breaks IE.
-	// As such. we omit it if you're using IE. Sorry.
-	// I doubt you'll mind the lack of an artfully shaded box.
-	//TODO: Try and find a workaround.
-	if(!Prototype.Browser.IE)
-	{
-		style.backgroundColor = 'grey';
-	}
-	// Set up the window with initial data and note its existence.
-	$(win.body.dom).setStyle(style).addClassName('notecard').update('Loading notecard, please wait...');
-	AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
-	// When the window is closed, destroy it.
-	win.on('hide', function() {
-		delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
-		win.destroy(true);
-	});
-	
-	new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
-		win.body.dom.setStyle({backgroundColor: 'white'}).update(AjaxLife.Utils.FixText(text));
-	});
-	
-	// Display the thing.
-	win.show();
+		// If this window already exists, focus it and quit.
+		if(AjaxLife.ActiveInventoryDialogs.Notecard[notecardid])
+		{
+				AjaxLife.ActiveInventoryDialogs.Notecard[notecardid].focus();
+				return;
+		}
+		var note = false;
+		var win = false;
+		// Create the window.
+		win = new Ext.BasicDialog("dlg_notecard_"+notecardid, {
+				width: '500px',
+				height: '520px',
+				modal: false,
+				shadow: true,
+				autoCreate: true,
+				title: _("InventoryDialogs.Notecard.WindowTitle",{name: name}),
+				resizable: true,
+				proxyDrag: !AjaxLife.Fancy
+		});
+		var text_note = $(document.createElement('textarea'));
+		text_note.value =  _('InventoryDialogs.Notecard.Loading');		
+		text_note.disable();
+		text_note.setStyle({
+				width: '100%',
+				height: '455px'
+		});
+		win.on('resize', function(winn, x, y) {
+				text_note.setStyle({
+						height: (y - 65)+'px'
+				});
+		});
+		$(win.body.dom).setStyle({overflow: 'hidden'});
+		
+		win.body.dom.appendChild(text_note);
+		var btn_save = new Ext.Button(win.body, {
+				disabled: true,
+				text: _("InventoryDialogs.Notecard.Save"),
+				handler: function() {
+						btn_save.disable();
+						text_note.disable();
+						note.SetText(text_note.value);
+						note.Save();
+				}
+		});
+		
+		$(win.body.dom).addClassName('notecard');
+		AjaxLife.ActiveInventoryDialogs.Notecard[notecardid] = win;
+		// When the window is closed, destroy it.
+		win.on('hide', function() {
+				delete AjaxLife.ActiveInventoryDialogs.Notecard[notecardid];
+				win.destroy(true);
+		});
+		
+		note = new AjaxLife.Notecard(notecardid, inventoryid, gAgentID, function(data, text) {
+				text_note.value = text;
+				text_note.enable();
+				if(note.GetAttachmentCount() == 0)
+				{
+						AjaxLife.Debug("Notecard: 0 attachments, enabling btn_save.");
+						btn_save.enable();
+				}
+				else
+				{
+						AjaxLife.Debug("Notecard: "+note.GetAttachmentCount()+" attachments. No saving supported.");
+						btn_save.disable();
+				}
+		}, function(data) {
+				text_note.enable();
+				btn_save.enable();
+		});
+		
+		// Display the thing.
+		win.show();
 };
