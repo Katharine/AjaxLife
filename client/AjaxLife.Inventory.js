@@ -699,6 +699,7 @@
  			
  			// Handle incoming inventory.
  			AjaxLife.Network.MessageQueue.RegisterCallback('ObjectOffered', function(data) {
+ 				if(inventory[data.ObjectID]) return;
  				if(data.ObjectID != AjaxLife.Utils.UUID.Zero)
  				{
  					offers[data.ObjectID] = data;
@@ -710,6 +711,7 @@
  			});
  			
  			AjaxLife.Network.MessageQueue.RegisterCallback('TaskItemReceived', function(data) {
+ 				if(inventory[data.ItemID]) return;
  				offers[data.ItemID] = {FromAgentName: 'An object'};
  				AjaxLife.Network.Send('FetchItem', {
  					Item: data.ItemID,
@@ -718,6 +720,7 @@
  			});
  			
  			AjaxLife.Network.MessageQueue.RegisterCallback('ItemReceived', function(item) {
+ 				if(inventory[item.UUID]) return;
  				if(offers[item.UUID])
  				{
  					AjaxLife.Widgets.Modal.alert(_("Inventory.InventoryReceivedTitle"), _("Inventory.InventoryReceived", {
