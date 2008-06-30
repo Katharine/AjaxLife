@@ -129,6 +129,7 @@ namespace AjaxLife.Html
             StreamWriter textwriter = new StreamWriter(request.Response.ResponseContent);
             SecondLife client;
             AvatarTracker avatars;
+            Events events;
             StreamReader reader = new StreamReader(request.PostData);
             string qstring = reader.ReadToEnd();
             reader.Dispose();
@@ -153,6 +154,7 @@ namespace AjaxLife.Html
                 user = this.users[guid];
                 client = user.Client;
                 avatars = user.Avatars;
+                events = user.Events;
                 user.LastRequest = DateTime.Now;
             }
             // Get the message type.
@@ -504,11 +506,11 @@ namespace AjaxLife.Html
                         client.Network.SendPacket((Packet)packet);
                     }
                     break;
-                case "SaveTextAsset":
-                    {
-                        LLUUID xferID = client.Assets.RequestUpload((AssetType)int.Parse(POST["AssetType"]), Helpers.StringToField(POST["AssetData"]), false, false, true);
-                        textwriter.Write("{TransferID: \"" + xferID + "\"}");
-                    }
+                case "SaveNotecard":
+                    client.Inventory.RequestUploadNotecardAsset(Helpers.StringToField(POST["AssetData"]), new LLUUID(POST["ItemID"]), new InventoryManager.NotecardUploadedAssetCallback(events.Inventory_OnNoteUploaded));
+                    break;
+                case "CreateInventory":
+                    client.Inventory.RequestCreateItem(new LLUUID(POST["Folder"]), POST["Name"], POST["Description"], (AssetType)int.Parse(POST["AssetType"]), LLUUID.Random(), (InventoryType)int.Parse(POST["InventoryType"]), PermissionMask.All, new InventoryManager.ItemCreatedCallback(events.Inventory_OnItemCreated));
                     break;
                 case "CreateFolder":
                     {
@@ -581,7 +583,6 @@ namespace AjaxLife.Html
                         if (POST.ContainsKey("NextOwnerMask")) item.Permissions.NextOwnerMask = (PermissionMask)uint.Parse(POST["NextOwnerMask"]);
                         if (POST.ContainsKey("SalePrice")) item.SalePrice = int.Parse(POST["SalePrice"]);
                         if (POST.ContainsKey("SaleType")) item.SaleType = (SaleType)byte.Parse(POST["SaleType"]);
-                        if (POST.ContainsKey("AssetType")) item.AssetType = (AssetType)byte.Parse(POST["AssetType"]);
                         client.Inventory.RequestUpdateItem(item);
                     }
                     break;
@@ -598,6 +599,9 @@ namespace AjaxLife.Html
                         packet.FolderData[0].Name = Helpers.StringToField(POST["Name"]);
                         client.Network.SendPacket((Packet)packet);
                     }
+                    break;
+                case "FetchItem":
+                    client.Inventory.FetchItem(new LLUUID(POST["Item"]), new LLUUID(POST["Owner"]), 5000);
                     break;
                 case "ReRotate":
                     user.Rotation = -Math.PI;

@@ -180,6 +180,8 @@ namespace AjaxLife.Html
             // We shouldn't really be using this... it forces us to immediately accept inventory.
             client.Inventory.OnObjectOffered += new InventoryManager.ObjectOfferedCallback(events.Inventory_OnObjectOffered);
             client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
+            client.Inventory.OnItemReceived += new InventoryManager.ItemReceivedCallback(events.Inventory_OnItemReceived);
+            client.Inventory.OnTaskItemReceived += new InventoryManager.TaskItemReceivedCallback(events.Inventory_OnTaskItemReceived);
             client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
             client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
             client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);

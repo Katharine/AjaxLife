@@ -768,5 +768,67 @@ namespace AjaxLife
             message.Add("Success", success);
             this.pending.Enqueue(message);
         }
+
+        public void Inventory_OnNoteUploaded(bool success, string status, LLUUID itemID, LLUUID assetID)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "InventoryNoteUploaded");
+            message.Add("Success", success);
+            message.Add("Status", status);
+            message.Add("ItemID", itemID);
+            message.Add("AssetID", assetID);
+            this.pending.Enqueue(message);
+        }
+
+        public void Inventory_OnItemCreated(bool success, InventoryItem item)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "InventoryCreated");
+            message.Add("Success", success);
+            message.Add("Name", item.Name);
+            message.Add("FolderID", item.ParentUUID);
+            message.Add("UUID", item.UUID);
+            message.Add("AssetType", item.AssetType);
+            message.Add("AssetUUID", item.AssetUUID);
+            message.Add("CreatorID", item.CreatorID);
+            message.Add("OwnerID", item.OwnerID);
+            message.Add("CreationDate", item.CreationDate);
+            message.Add("Description", item.Description);
+            message.Add("Flags", item.Flags);
+            message.Add("InventoryType", item.InventoryType);
+            message.Add("Permissions", item.Permissions);
+            this.pending.Enqueue(message);
+        }
+
+        public void Inventory_OnItemReceived(InventoryItem item)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "ItemReceived");
+            message.Add("Name", item.Name);
+            message.Add("FolderID", item.ParentUUID);
+            message.Add("UUID", item.UUID);
+            message.Add("AssetType", item.AssetType);
+            message.Add("AssetUUID", item.AssetUUID);
+            message.Add("CreatorID", item.CreatorID);
+            message.Add("OwnerID", item.OwnerID);
+            message.Add("CreationDate", item.CreationDate);
+            message.Add("Description", item.Description);
+            message.Add("Flags", item.Flags);
+            message.Add("InventoryType", item.InventoryType);
+            message.Add("Permissions", item.Permissions);
+            this.pending.Enqueue(message);
+        }
+
+        public void Inventory_OnTaskItemReceived(LLUUID itemID, LLUUID folderID, LLUUID creatorID, LLUUID assetID, InventoryType type)
+        {
+            Hashtable message = new Hashtable();
+            message.Add("MessageType", "TaskItemReceived");
+            message.Add("ItemID", itemID);
+            message.Add("FolderID", folderID);
+            message.Add("CreatorID", creatorID);
+            message.Add("AssetID", assetID);
+            message.Add("Type", (byte)type);
+            this.pending.Enqueue(message);
+        }
     }
 }
