@@ -27,10 +27,33 @@
 AjaxLife.FriendList = function() {
 	var win = false;
 	var list = false;
+	var div_settings = false;
+	var check_visible = false;
+	var check_map = false;
+	var check_modify = false;
 	
 	return {
 		init: function() {
+			return false; // Abort.
+			win = new Ext.BasicDialog('dlg_friendlist',{
+ 				autoCreate: true,
+				resizable: true,
+				proxyDrag: !AjaxLife.Fancy,
+				width: 250,
+				height: 400,
+				modal: false,
+				shadow: true,
+				title: _("FriendList.WindowTitle")
+			});
 			
+			div_settings = $(document.createElement('div'));
+			
+			check_visible = $(document.createElement('input'));
+			
+			
+			win.getEl().appendChild(div_settings);
+			
+			list = new AjaxLife.Widgets.SelectList('friendlist_list', win.getEl(), Prototype.emptyFunction, Prototype.emptyFunction); // Not finished.
 		}
 	};
 }();

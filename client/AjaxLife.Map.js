@@ -329,6 +329,17 @@ AjaxLife.Map = function() {
 		zoom_slider.setvalue(1);
 	}
 	
+	function gohome()
+	{
+		AjaxLife.Widgets.Confirm(_("Map.Teleporting"),_("Map.HomeConfirm"), function(btn) {
+			if(btn == 'yes')
+			{
+				teleport_dialog(true);
+				AjaxLife.Network.Send("GoHome",{});
+			}
+		});
+	}
+	
 	// These methods are public.
 	return {
 		init: function() {
@@ -541,15 +552,7 @@ AjaxLife.Map = function() {
 			target_focus_btn.getEl().setStyle({position: 'absolute', right: '80px', bottom: '0px'});
 			// Teleport directly home when the teleport home button's pressed.
 			home_btn = new Ext.Button(buttonholder, {
-				handler: function () {
-					AjaxLife.Widgets.Confirm(_("Map.Teleporting"),_("Map.HomeConfirm"), function(btn) {
-						if(btn == 'yes')
-						{
-							teleport_dialog(true);
-							AjaxLife.Network.Send("GoHome",{});
-						}
-					});
-				},
+				handler: gohome,
 				text: _("Map.HomeButton")
 			});
 			home_btn.getEl().setStyle({position: 'absolute', right: '5px', bottom: '0px'});
@@ -784,13 +787,16 @@ AjaxLife.Map = function() {
 		},
 		// Called onclick by certain links.
 		HandleLink: function(sim, x, y, z, el) {
-			AjaxLife.Debug("HandleLink: "+sim+", "+x+", "+y+", "+z+", "+el);
+			AjaxLife.Debug("Map: HandleLink: "+sim+", "+x+", "+y+", "+z+", "+el);
 			// Because this is a URL, unescape the sim name.
 			sim = unescape(sim);
 			this.open();
 			if(z == '') z = position.z; // If z wasn't specified, use our own height.
 			settargetpos(sim, {x: x*1, y: y*1, z: z*1}, true); // Multiply by one to convert to int.
 			return false; // Abort the navigation.
+		},
+		GoHome: function() {
+			gohome();
 		}
 	}
 }();

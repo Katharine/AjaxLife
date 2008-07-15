@@ -317,7 +317,9 @@ AjaxLife.Strings = {
 			Send: "שלח",
 			WindowTitle: "הודעות מיידיות",
 			Profile: "פרופיל",
-			NewIMSession: "#{from} שלח לך הודעה מיידית חדשה."
+			NewIMSession: "#{from} שלח לך הודעה מיידית חדשה.",
+			Groups: "קבוצות",
+			SessionCreateFailed: "נכשל הנסיון ליצירת שיחת קבוצה חדשה."
 		},
 		AjaxLife: {
 			Precaching: "טוען מטמון...",
@@ -342,7 +344,9 @@ AjaxLife.Strings = {
 			TeleportCancelled: "ביטלת את השיגור.",
 			TeleportError: "השיגור נכשל. נסה שנית בבקשה.",
 			WindowTitle: "מפה",
-			NoRegionGiven: "השרת נכשל לשלוח את שם האזור שאתה בו כרגע."
+			NoRegionGiven: "השרת נכשל לשלוח את שם האזור שאתה בו כרגע.",
+			GodLikeTeleportRequest: "אתה משוגר בכוח לנציג חברת לינדן לאב.",
+			TeleportCompleteMessage: "השיגור הושלם מכתובת המקום #{url}"
 			
 		},
 		Network: {
@@ -468,17 +472,27 @@ AjaxLife.Strings = {
 			Rename: "שנה שם",
 			RenameItem: "הכנס שם חדש:",
 			ScriptRestricted: "אתה צריך רשות שינוי בכדי לראות את קובץ התכנות הזה.",
-			CopyUUID: "העתק מזהה (UUID)"
+			CopyUUID: "העתק מזהה (UUID)",
+			CreateNote: "צור פתק חדש",
+			NewNoteName: "אנא הכנס שם בשביל הפתק החדש:",
+			CreationFailed: "נכשל הנסיון ליצירת פריט מלאי חדש.",
+			Loading: "טוען תכנים...",
+			MyInventory: "המלאי שלי",
+			InventoryReceivedTitle: "מלאי התקבל",
+			InventoryReceived: "#{from} נתן לך את ה- #{type} '#{name}'" // where #{type} is "object", "notecard" etc. and is currently not translated.
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "טקסטורה: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "פתק: #{name}"
+				WindowTitle: "פתק: #{name}",
+				Loading: "טוען פתק...",
+				Save: "שמור"
 			},
 			Script: {
-				WindowTitle: "קובץ תכנות: #{name}"
+				WindowTitle: "קובץ תכנות: #{name}",
+				Loading: "טוען קובץ תכנות..."
 			},
 			Landmark: {
 				Title: "שגר את דמותך למיקום",
@@ -542,7 +556,11 @@ AjaxLife.Strings = {
 			Encrypting: "מצפין מידע...",
 			LoggingIn: "מתחבר...",
 			Error: "שגיאה",
-			SomethingWrong: "למרות כל נסיונותינו, משהו השתבש בעת החיבור.<br /><br />אנא נסה שנית מאוחר יותר."
+			SomethingWrong: "למרות כל נסיונותינו, משהו השתבש בעת החיבור.<br /><br />אנא נסה שנית מאוחר יותר.",
+			Location: "מיקום התחלתי",
+			Home: "מיקום הבית שלי",
+			LastPlace: "המיקום האחרון שלי",
+			ArbitraryPlace: "<כתוב שם אזור/שרת>"
 		},
 		AssetPermissions: {
 			Copy: "מותר להעתיק",
@@ -561,7 +579,9 @@ AjaxLife.Strings = {
 			Offline: "オフライン",
 			FriendshipOffered: "#{name}がフレンド登録を希望しています。承諾しますか?",
 			YouAccept: "#{name}のフレンド登録を承諾しました。",
-			YouDecline: "#{name}からのフレンド登録を辞退しました。"
+			YouDecline: "#{name}からのフレンド登録を辞退しました。",
+			Groups: "グループ",
+			SessionCreateFailed: "グループチャットのセッションを開始できませんでした。"
 		},
 		InstantMessage: {
 			Typing: "#{name}が入力中です...",
@@ -594,7 +614,9 @@ AjaxLife.Strings = {
 			TeleportCancelled: "テレポートは中断しました。",
 			TeleportError: "テレポートに失敗しました。また後で試してください。",
 			WindowTitle: "地図",
-			NoRegionGiven: "サーバからSIMの名前を獲得できませんでした。"
+			NoRegionGiven: "サーバからSIMの名前を獲得できませんでした。",
+			GodLikeTeleportRequest: "リンデンがあなたを強制テレポートしています。",
+			TeleportCompleteMessage: "#{url} からのテレポートが完了しました。"
 		},
 		Network: {
 			LoggingOut: "ログアウトしています...",
@@ -719,17 +741,27 @@ AjaxLife.Strings = {
 			Rename: "名前の変更",
 			RenameItem: "新しい名前:",
 			ScriptRestricted: "このスクリプトを開くための許可が不足しています。",
-			CopyUUID: "UUIDをコピー"
+			CopyUUID: "UUIDをコピー",
+			CreateNote: "ノートカードの新規作成",
+			NewNoteName: "ノートカードの名前を指定:",
+			CreationFailed: "アイテムを作成できませんでした。",
+			Loading: "コンテントの読込み中 ...",
+			MyInventory: "私の持ち物",
+			InventoryReceivedTitle: "アイテムの受取り",
+			InventoryReceived: "#{from}から'#{name}'という名前の#{type}を受け取りました。"
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "テクスチャ: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "ノート: #{name}"
+				WindowTitle: "ノート: #{name}",
+				Loading: "ノートカードの読込み中...",
+				Save: "保存"
 			},
 			Script: {
-				WindowTitle: "スクリプト: #{name}"
+				WindowTitle: "スクリプト: #{name}",
+				Loading: "スクリプトの読込み中..."
 			},
 			Landmark: {
 				Title: "ランドマークにテレポート",
@@ -793,7 +825,11 @@ AjaxLife.Strings = {
 			Encrypting: "ログインデータの暗号処理中...",
 			LoggingIn: "Second Lifeに接続しています...",
 			Error: "エラー",
-			SomethingWrong: "全力を尽くしたのですが、何か問題が起きました。<br /><br />また後で試してください。"
+			SomethingWrong: "全力を尽くしたのですが、何か問題が起きました。<br /><br />また後で試してください。",
+			Location: "開始する場所",
+			Home: "ホーム",
+			LastPlace: "最後にいた場所",
+			ArbitraryPlace: "<地域名を入力>"
 		},
 		AssetPermissions: {
 			Copy: "コピー可",
@@ -1283,7 +1319,9 @@ AjaxLife.Strings = {
 			Send: "Senden",
 			WindowTitle: "Instant Messages",
 			Profile: "Profil",
-			NewIMSession: "#{from} hat Dir eine neue Nachricht."
+			NewIMSession: "#{from} hat Dir eine neue Nachricht.",
+			Groups: "Gruppen",
+			SessionCreateFailed: "Es konnte keine neue Gruppen-Sitzung gestartet werden."
 		},
 		AjaxLife: {
 			Precaching: "Lädt...",
@@ -1308,7 +1346,9 @@ AjaxLife.Strings = {
 			TeleportCancelled: "Dein Teleport wurde leider abgebrochen.",
 			TeleportError: "Du konntest leider nicht teleporteirt werden. Bitte versuche es später nochmal.",
 			WindowTitle: "Karte",
-			NoRegionGiven: "Der Server konnte die Sim auf der Du Dich gerade befindest nicht ermitteln."
+			NoRegionGiven: "Der Server konnte die Sim auf der Du Dich gerade befindest nicht ermitteln.",
+			GodLikeTeleportRequest: "Sie wurden gezwungen sich zu einem Linden zu teleportieren.",
+			TeleportCompleteMessage: "Teleport von #{url} beendet."
 			
 		},
 		Network: {
@@ -1434,17 +1474,27 @@ AjaxLife.Strings = {
 			Rename: "Umbennen",
 			RenameItem: "Trage den neuen Namen ein:",
 			ScriptRestricted: "Du hast nicht genügend Rechte das Skript zu öffnen.",
-			CopyUUID: "Kopiere die UUID"
+			CopyUUID: "Kopiere die UUID",
+			CreateNote: "Neue Notiz erstellen",
+			NewNoteName: "Bitte tragen Sie einen Namen für die Notiz ein:",
+			CreationFailed: "Es konnte kein neuer Gegestand im Inventar erstellt werden.",
+			Loading: "Inhalt wird geladen...",
+			MyInventory: "Mein Inventar",
+			InventoryReceivedTitle: "Inventar empfängt",
+			InventoryReceived: "#{from} hat dir #{type} '#{name}' gegeben"
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "Textur: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "Notiz: #{name}"
+				WindowTitle: "Notiz: #{name}",
+				Loading: "Notiz wird geladen...",
+				Save: "Speichern"
 			},
 			Script: {
-				WindowTitle: "Skript: #{name}"
+				WindowTitle: "Skript: #{name}",
+				Loading: "Skript wird geladen..."
 			},
 			Landmark: {
 				Title: "Teleport zum Landmark",
@@ -1508,7 +1558,11 @@ AjaxLife.Strings = {
 			Encrypting: "Logindaten verschlüsseln...",
 			LoggingIn: "Logging in Second Life...",
 			Error: "Fehler",
-			SomethingWrong: "Wir haben unser Bestes versucht, aber etwas ging hier schief.<br /><br />Versuche es später noch einmal."
+			SomethingWrong: "Wir haben unser Bestes versucht, aber etwas ging hier schief.<br /><br />Versuche es später noch einmal.",
+			Location: "Startposition",
+			Home: "Mein Zuhause",
+			LastPlace: "Meine letzte Position",
+			ArbitraryPlace: "<Regionsname>"
 		}
 	},
 	fr: {

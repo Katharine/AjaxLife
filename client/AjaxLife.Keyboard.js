@@ -36,22 +36,38 @@ AjaxLife.Keyboard = function() {
 		e.preventDefault();
 		switch(key)
 		{
-		case 72:
-			AjaxLife.SpatialChat.toggle();
+		case 72: // h
+			if(e.shiftKey)
+			{
+				if(e.altKey)
+				{
+					AjaxLife.SpatialChat.systemmessage("hippos!");
+				}
+				else
+				{
+					AjaxLife.Map.GoHome();
+				}
+			}
+			else
+			{
+				AjaxLife.SpatialChat.toggle();
+			}
 			break;
-		case 73:
+		case 73: // i
 			AjaxLife.Inventory.toggle();
 			break;
-		case 84:
+		case 84: // t
 			AjaxLife.InstantMessage.toggle();
 			break;
-		case 70:
+		case 70: // f
 			AjaxLife.Search.toggle();
 			break;
-		case 77:
+		case 77: // m
 			AjaxLife.Map.toggle();
 			break;
-		case 81:
+		case 81: // q
+			// This is duplicated in AjaxLife.Toolbar.js. Should move these both somewhere nice - but where?
+			// If this is no longer duplicated in AjaxLife.Toolbar.js, it's either wrong, broken or both.
 			AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
 				if(btn == 'yes')
 				{
@@ -59,8 +75,8 @@ AjaxLife.Keyboard = function() {
 				}
 			});
 			break;
-		case 49:
-			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle();
+		case 49: // 1
+			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle(); // Should we stop checking for IE and check for something else?
 		}
 	}
 	
@@ -72,7 +88,8 @@ AjaxLife.Keyboard = function() {
 
 	return {
 		init: function() {
-			Ext.get(document.body).addKeyListener({
+			var body = Ext.get(document.body);
+			body.addKeyListener({
 					//   [h , i , t , f , m , q ]
 					key: [72, 73, 84, 70, 77, 81],
 					ctrl: true,
@@ -80,19 +97,19 @@ AjaxLife.Keyboard = function() {
 					alt: false
 				}, handlekeyboard
 			);
-			Ext.get(document.body).addKeyListener({
-					//   1
+			body.addKeyListener({
+					//   1 
 					key: 49,
 					ctrl: true,
 					shift: true,
 					alt: false
 				}, handlekeyboard
 			);
-			Ext.get(document.body).addKeyListener({
+			body.addKeyListener({
+					//   tab
 					key: 9
 				}, blocktab
 			);
-			
 			enabled = true;
 		},
 		disable: function() {
