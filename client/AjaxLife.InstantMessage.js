@@ -152,6 +152,12 @@ AjaxLife.InstantMessage = function() {
 	function createTab(id, name, sessionid, groupIM)
 	{
 		if(!groupIM) groupIM = false; // Avoid differences between false and undefined.
+		// If this sessionid is used, use that tab again.
+		if(chats[sessionid])
+		{
+			chats[sessionid].tab.activate();
+			return;
+		}
 		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
 		// Create the tab and add to the array.
 		chats[sessionid] = {
