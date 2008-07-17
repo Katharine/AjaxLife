@@ -47,7 +47,6 @@ namespace AjaxLife.Html
         private IDirectory parent;
         private Dictionary<Guid, User> users;
         private System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5CryptoServiceProvider.Create();
-        private Comparer insensitive = new Comparer(System.Globalization.CultureInfo.InvariantCulture);
 
         // Anything in this list must be signed to be accepted. 
         // Should match (or be a subset of) the list in client/AjaxLife.Network.js.
@@ -304,7 +303,6 @@ namespace AjaxLife.Html
                     client.Self.AnimationStop(new LLUUID(POST["Animation"]), true);
                     break;
                 case "SendAppearance":
-                    // This apparently crashes OpenSim, so disable it there.
                     client.Appearance.SetPreviousAppearance(false);
                     break;
                 case "GetMapItems":
@@ -582,7 +580,7 @@ namespace AjaxLife.Html
                         if (POST.ContainsKey("Description")) item.Description = POST["Description"];
                         if (POST.ContainsKey("NextOwnerMask")) item.Permissions.NextOwnerMask = (PermissionMask)uint.Parse(POST["NextOwnerMask"]);
                         if (POST.ContainsKey("SalePrice")) item.SalePrice = int.Parse(POST["SalePrice"]);
-                        if (POST.ContainsKey("SaleType")) item.SaleType = (SaleType)byte.Parse(POST["SaleType"]);
+                        if (POST.ContainsKey("SaleType")) item.SaleType = (SaleType)int.Parse(POST["SaleType"]); // This should be byte.Parse, but this upsets mono's compiler (CS1002)
                         client.Inventory.RequestUpdateItem(item);
                     }
                     break;
