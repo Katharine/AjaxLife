@@ -77,6 +77,10 @@ AjaxLife.Keyboard = function() {
 			break;
 		case 49: // 1
 			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle(); // Should we stop checking for IE and check for something else?
+			break;
+		case 83: // s
+			AjaxLife.Sound.Toggle();
+			break;
 		}
 	}
 	
@@ -98,8 +102,8 @@ AjaxLife.Keyboard = function() {
 				}, handlekeyboard
 			);
 			body.addKeyListener({
-					//   1 
-					key: 49,
+					//   [1 , s ]
+					key: [49, 83],
 					ctrl: true,
 					shift: true,
 					alt: false

@@ -565,7 +565,7 @@ AjaxLife.Map = function() {
 				// If it's accepted, pull up the teleport box and send the affirmative to the server.
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.RequestTeleport)
 				{
-					Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
+					AjaxLife.Sound.Play("im");
 					AjaxLife.Widgets.Modal.show({
 						title: _("Map.TeleportRequestTitle"),
 						msg: _("Map.TeleportRequest", {name: data.FromAgentName, message: data.Message}),
@@ -604,7 +604,7 @@ AjaxLife.Map = function() {
 				if(data.Status == AjaxLife.Constants.MainAvatar.TeleportStatus.Start)
 				{
 					position_before_teleport = AjaxLife.Utils.Clone(position);
-					Sound.play(AjaxLife.STATIC_ROOT+"sounds/teleport.wav");
+					AjaxLife.Sound.Play("teleport");
 					teleport_dialog(true);
 				}
 				// If we've arrived, get rid of the dialog and request our position.

@@ -71,6 +71,7 @@ function dolanguage()
 	$('label_grid').innerHTML = _("Login.Grid");
 	$('label_lang').innerHTML = _("Login.Language");
 	$('btn_login').value  = _("Login.LogIn");
+	if($('label_sound')) $('label_sound').innerHTML = _("Login.EnableSound");
 	if($('location'))
 	{
 		$('label_loginlocation').innerHTML = _("Login.Location");
@@ -410,6 +411,19 @@ Ext.onReady(function() {
 		Ext.get('loginsim').addListener('keyup', ret);
 		$('loginsim').onkeyup = function() {
 			$('location').options[2].text = $('loginsim').value.blank() ? _("Login.ArbitraryPlace") : $('loginsim').value;
+		}
+	}
+	if($('enablesound'))
+	{
+		$('enablesound').onchange = function() {
+			if($('enablesound').checked)
+			{
+				AjaxLife.Sound.Enable();
+			}
+			else
+			{
+				AjaxLife.Sound.Disable();
+			}
 		}
 	}
 	$('first').activate();

@@ -286,6 +286,7 @@ AjaxLife.Strings = {
 			LogIn: "Log in",
 			Grid: "Grid",
 			Language: "Language",
+			EnableSound: "Enable sound",
 			LoadingSession: "Loading session data...",
 			SessionLoadFailed: "Error loading session data.",
 			Encrypting: "Encrypting login data...",

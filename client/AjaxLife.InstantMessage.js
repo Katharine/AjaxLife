@@ -423,7 +423,7 @@ AjaxLife.InstantMessage = function() {
 						{
 							dialog.show();
 						}
-						Sound.play(AjaxLife.STATIC_ROOT+"sounds/im.wav");
+						AjaxLife.Sound.Play("im");
 					}
 					// Format the incoming message, taking care of /me.
 					var message = data.Message;
