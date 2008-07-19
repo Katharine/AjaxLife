@@ -841,7 +841,7 @@ AjaxLife.Strings = {
 			NoModify: "修正不可"
 		}
 	},
-	// by Aurelio A. Heckert (http://aurium.cjb.net)
+	// by Aurelio A. Heckert (http://aurium.cjb.net) and Babel Translations
 	pt_br: {
 		Friends: {
 			OnlineNotification: "#{name} está #{status}.",
@@ -857,7 +857,9 @@ AjaxLife.Strings = {
 			Send: "Enviar",
 			WindowTitle: "Mensagens Instantâneas",
 			Profile: "Profile",
-			NewIMSession: "#{from} lhe enviou uma nova mensagem instantânea."
+			NewIMSession: "#{from} lhe enviou uma nova mensagem instantânea.",
+			Groups: "Grupos",
+			SessionCreateFailed: "Não foi possível criar uma nova sessão de chat no grupo."
 		},
 		AjaxLife: {
 			Precaching: "Pré cache...",
@@ -882,7 +884,9 @@ AjaxLife.Strings = {
 			TeleportCancelled: "Seu teleporte foi cancelado.",
 			TeleportError: "Seu teleporte falhou. Por favor, tente novamente depois.",
 			WindowTitle: "Mapa",
-			NoRegionGiven: "O servidor falhou ao enviar o nome do sim onde você está."
+			NoRegionGiven: "O servidor falhou ao enviar o nome do sim onde você está.",
+			GodLikeTeleportRequest: "Você está sendo forçado a teleportar por um Linden.",
+			TeleportCompleteMessage: "Teleporte Completo de #{url}"
 			
 		},
 		Network: {
@@ -1008,17 +1012,27 @@ AjaxLife.Strings = {
 			Rename: "Renomear",
 			RenameItem: "Insira um novo nome:",
 			ScriptRestricted: "Você precisa de mais permissões para abrir esse script.",
-			CopyUUID: "Copiar UUID"
+			CopyUUID: "Copiar UUID",
+			CreateNote: "Criar um novo Notecard",
+			NewNoteName: "Por favor, digite um nome para o Notecard:",
+			CreationFailed: "Não foi possível criar o novo item para o inventório.",
+			Loading: "Carregando Conteúdos...",
+			MyInventory: "Meu Inventário",
+			InventoryReceivedTitle: "Inventário Recebido",
+			InventoryReceived: "#{from} has given you the #{type} '#{name}'"
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "Textura: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "Cartão: #{name}"
+				WindowTitle: "Cartão: #{name}",
+				Loading: "Carregando notecard",
+				Save: "Salvar"
 			},
 			Script: {
-				WindowTitle: "Script: #{name}"
+				WindowTitle: "Script: #{name}",
+				Loading: "Carregando script"
 			},
 			Landmark: {
 				Title: "Teleporte para local marcado",
@@ -1082,7 +1096,11 @@ AjaxLife.Strings = {
 			Encrypting: "Encriptando dados de login...",
 			LoggingIn: "Entrando no Second Life...",
 			Error: "Erro",
-			SomethingWrong: "Apesar dos nossos esforços, algo correu de errado.<br /><br />Por favor, tente novamente mais tarde."
+			SomethingWrong: "Apesar dos nossos esforços, algo correu de errado.<br /><br />Por favor, tente novamente mais tarde.",
+			Location: "Local Inicial",
+			Home: "Minha Casa",
+			LastPlace: "Minha Última Localização",
+			ArbitraryPlace: "<Digite o nome da região>"
 		},
 		AssetPermissions: {
 			Copy: "Copiar",
@@ -1778,7 +1796,7 @@ AjaxLife.Strings = {
 			SomethingWrong: "Malgré tous nos efforts, quelquechose ne fonctionne pas.<br /><br />Veuillez essayer plus tard."
 		}
 	},
-	// Translated by Roc Furse
+	// Translated by Roc Furse and Babel Translations
 	nl: {
 		Language: {
 			Direction: "ltr"
@@ -1797,7 +1815,9 @@ AjaxLife.Strings = {
 			Send: "Versturen",
 			WindowTitle: "Berichten",
 			Profile: "Profiel",
-			NewIMSession: "#{from} heeft je een bericht gestuurd."
+			NewIMSession: "#{from} heeft je een bericht gestuurd.",
+			Groups: "Groepen",
+			SessionCreateFailed: "Kan geen nieuwe groep chat-sessie creeëren.
 		},
 		AjaxLife: {
 			Precaching: "Buffer vullen...",
@@ -1822,7 +1842,9 @@ AjaxLife.Strings = {
 			TeleportCancelled: "Je teleport is afgebroken.",
 			TeleportError: "Je teleport is niet gelukt. Probeer het later nog eens.",
 			WindowTitle: "Kaart",
-			NoRegionGiven: "De naam van de huidige sim is niet ontvangen van de server."
+			NoRegionGiven: "De naam van de huidige sim is niet ontvangen van de server.",
+			GodLikeTeleportRequest: "Je wordt gedwongen om naar een Linden te teleporteren",
+			TeleportCompleteMessage: "Afgesloten teleport van  #{url}"
 			
 		},
 		Network: {
@@ -1948,17 +1970,27 @@ AjaxLife.Strings = {
 			Rename: "Naam wijzigen",
 			RenameItem: "Voer een nieuwe naam in:",
 			ScriptRestricted: "Je hebt meer bevoegdheden nodig om dit script te openen.",
-			CopyUUID: "Kopieer UUID"
+			CopyUUID: "Kopieer UUID",
+			CreateNote: "Maak een nieuwe notecard",
+			NewNoteName: "Geef een nieuwe naam voor de notecard:",
+			CreationFailed: "Kan geen nieuw inventaris object creeëren.",
+			Loading: "Inhoud laden...",
+			MyInventory: "Mijn inventaris",
+			InventoryReceivedTitle: "Inventaris is ontvangen",
+			InventoryReceived: "#{from} heeft u gegeven het #{type} '#{name}'" 
 		},
 		InventoryDialogs: {
 			Texture: {
 				WindowTitle: "Texture: #{name}"
 			},
 			Notecard: {
-				WindowTitle: "Notitie: #{name}"
+				WindowTitle: "Notitie: #{name}",
+				Loading: "Laden notecard...",
+				Save: "opslaan"
 			},
 			Script: {
-				WindowTitle: "Script: #{name}"
+				WindowTitle: "Script: #{name}",
+				Loading: "Laden script..."
 			},
 			Landmark: {
 				Title: "Teleport naar landmark",
@@ -2030,7 +2062,11 @@ AjaxLife.Strings = {
 			Encrypting: "Login data wordt versleuteld...",
 			LoggingIn: "Bezig met inloggen op Second Life...",
 			Error: "Fout",
-			SomethingWrong: "Er is helaas iets mis gegaan.<br /><br />Probeer het later alsjeblieft nog eens."
+			SomethingWrong: "Er is helaas iets mis gegaan.<br /><br />Probeer het later alsjeblieft nog eens.",
+			Location: "Start Locatie",
+			Home: "Mijn thuisplek",
+			LastPlace: "Mijn laatste Locatie",
+			ArbitraryPlace: "<Typ regio naam>
 		}
 	}
 	// More translations here.
