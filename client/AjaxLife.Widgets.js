@@ -481,6 +481,9 @@ AjaxLife.Widgets.ChatEntryBox = function(parent, id, onreturn, style) {
 		getValue: function() {
 			return input.getValue();
 		},
+		setValue: function(value) {
+			input.value = value;
+		},
 		resetLine: function() {
 			resetline();
 		},
@@ -488,13 +491,13 @@ AjaxLife.Widgets.ChatEntryBox = function(parent, id, onreturn, style) {
 			input.focus();
 		},
 		isEnabled: function() {
-			return input.enabled;
+			return !input.disabled;
 		},
 		enable: function() {
-			input.enabled = true;
+			input.disabled = false;
 		},
 		disable: function() {
-			input.enabled = false;
+			input.disabled = true;
 		}
 	}
 }

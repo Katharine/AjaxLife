@@ -106,16 +106,13 @@ AjaxLife.InstantMessage = function() {
 		{
 			return;
 		}
-		if(sessionid == null)
-		{
-			sessionid = AjaxLife.Utils.UUID.Random();
-		}
-		// Notify other person that typing has stopped (unless we're in a group chat)
-		if(!chats[sessionid].groupIM)
+		var chat = chats[sessionid];
+		// Notify other person that typing has stopped (unless we're in a group/conference chat)
+		if(!chat.groupIM && !chat.conferenceIM)
 		{
 			AjaxLife.Network.Send('GenericInstantMessage', {
 				Message: "none",
-				Target: chats[sessionid].target,
+				Target: chat.target,
 				IMSessionID: sessionid,
 				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online,
 				Dialog: AjaxLife.Constants.MainAvatar.InstantMessageDialog.StopTyping
@@ -136,11 +133,21 @@ AjaxLife.InstantMessage = function() {
 			}
 			appendline(sessionid, message, {name: gUserName, id: gAgentID});
 		}
-		else
+		else if(chat.groupIM)
 		{
 			AjaxLife.Network.Send("GroupInstantMessage", {
 				Message: message,
 				Group: sessionid
+			});
+		}
+		else if(chat.conferenceIM)
+		{
+			AjaxLife.Network.Send('GenericInstantMessage', {
+				Target: chat.target,
+				Message: message,
+				IMSessionID: sessionid,
+				Dialog: 17,
+				Online: AjaxLife.Constants.MainAvatar.InstantMessageOnline.Online
 			});
 		}
 		noted_typing = false;
@@ -149,16 +156,22 @@ AjaxLife.InstantMessage = function() {
 	// Creates a new IM session with agent "id" who is called "name".
 	// Session ID should be generated such that all IMs with the target will have the same ID,
 	// but IMs from different people to the same agent, or the same person to different agents, will not.
-	function createTab(id, name, sessionid, groupIM)
+	function createTab(id, name, sessionid, groupIM, conferenceIM)
 	{
 		if(!groupIM) groupIM = false; // Avoid differences between false and undefined.
+		if(!conferenceIM) conferenceIM = false;
 		// If this sessionid is used, use that tab again.
 		if(chats[sessionid])
 		{
 			chats[sessionid].tab.activate();
 			return;
 		}
-		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+")");
+		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+"; conferenceIM = "+conferenceIM+")");
+		// Add 'conference' to the name if applicable.
+		if(conferenceIM)
+		{
+			name += ' Conference';
+		}
 		// Create the tab and add to the array.
 		chats[sessionid] = {
 			tab: dialog.getTabs().addTab("im-"+sessionid, (groupIM ? "(hippos)" : name), "", true),
@@ -169,7 +182,8 @@ AjaxLife.InstantMessage = function() {
 			sendbtn: false,
 			div_typing: false,
 			session: sessionid,
-			groupIM: groupIM
+			groupIM: groupIM,
+			conferenceIM: conferenceIM
 		};
 		if(groupIM)
 		{
@@ -232,8 +246,8 @@ AjaxLife.InstantMessage = function() {
 		div_typing.addClass(['chatline','agenttyping']);
 		div_typing.dom.appendChild(document.createTextNode(_("InstantMessage.Typing",{name: name})));
 		chats[sessionid].div_typing = div_typing;
-		// None of the "... is typing" stuff works in group IMs.
-		if(!groupIM)
+		// None of the "... is typing" stuff works in group or conference IMs.
+		if(!groupIM && !conferenceIM)
 		{
 			// Called two seconds after the last key is pressed. Sends not typing notification.
 			var delayed_stop_typing = new Ext.util.DelayedTask(function() {
@@ -263,6 +277,14 @@ AjaxLife.InstantMessage = function() {
 				}
 				delayed_stop_typing.delay(2000);
 			});
+		}
+		
+		// ConferenceIM is not supported well
+		if(conferenceIM)
+		{
+			chats[sessionid].sendbtn.disable();
+			entrybox.setValue("Sending messages to conference IMs is currently unsupported.");
+			entrybox.disable();
 		}
 		
 		chats[sessionid].tab.on('activate',function() {
@@ -388,7 +410,7 @@ AjaxLife.InstantMessage = function() {
 			// Handle successfully started chats.
 			AjaxLife.Network.MessageQueue.RegisterCallback('ChatGroupJoin', function(data) {
 				var group = data.GroupChatSessionID;
-				if(chats[group] && !chats[group].entrybox.isEnabled())
+				if(chats[group] && !chats[group].entrybox.isEnabled() && chats[group].groupIM)
 				{
 					if(data.Success)
 					{
@@ -406,6 +428,13 @@ AjaxLife.InstantMessage = function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage',function(data) {
 				// Ensure it's something to display
 				if(data.IMSessionID == AjaxLife.Utils.UUID.Zero) return; // Estate messages have null sessions.
+				// If we get a group IM with an unknown session ID, it's a conference IM. I think.
+				var conference = false;
+				if(data.GroupIM && !groups[data.IMSessionID])
+				{
+					data.GroupIM = false;
+					conference = true;
+				}
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent || data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionSend)
 				{
 					// Create a tab for them if we haven't already. Also play new IM sound.
@@ -413,7 +442,7 @@ AjaxLife.InstantMessage = function() {
 					{
 						AjaxLife.Widgets.Ext.msg("",_("InstantMessage.NewIMSession", {from: data.FromAgentName}), "newimsession", true);
 						if(data.GroupIM) joingroupchat(data.IMSessionID);
-						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID, data.GroupIM);
+						var created = createTab(data.FromAgentID, data.FromAgentName, data.IMSessionID, data.GroupIM, conference);
 						if(!created)
 						{
 							AjaxLife.Widgets.Ext.msg("Lost Instant Message","From: {0}<br />Message: {1}",data.FromAgentName,data.Message);

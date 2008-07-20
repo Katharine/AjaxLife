@@ -1817,7 +1817,7 @@ AjaxLife.Strings = {
 			Profile: "Profiel",
 			NewIMSession: "#{from} heeft je een bericht gestuurd.",
 			Groups: "Groepen",
-			SessionCreateFailed: "Kan geen nieuwe groep chat-sessie creeëren.
+			SessionCreateFailed: "Kan geen nieuwe groep chat-sessie creeëren."
 		},
 		AjaxLife: {
 			Precaching: "Buffer vullen...",
@@ -2066,7 +2066,7 @@ AjaxLife.Strings = {
 			Location: "Start Locatie",
 			Home: "Mijn thuisplek",
 			LastPlace: "Mijn laatste Locatie",
-			ArbitraryPlace: "<Typ regio naam>
+			ArbitraryPlace: "<Typ regio naam>"
 		}
 	}
 	// More translations here.
