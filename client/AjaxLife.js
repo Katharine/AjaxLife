@@ -88,6 +88,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.SpatialChat.init();
 	AjaxLife.Debug("AjaxLife: Toolbar init....");
 	AjaxLife.Toolbar.init('toolbar');
+	AjaxLife.Debug("AjaxLife: Parcel init....");
+	AjaxLife.Parcel.init(); // This should come before the StatusBar init.
 	AjaxLife.Debug("AjaxLife: StatusBar init....");
 	AjaxLife.StatusBar.init();
 	AjaxLife.Debug("AjaxLife: Search init...");

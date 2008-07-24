@@ -56,7 +56,7 @@ AjaxLife.StatusBar = function() {
 			
 			// Register for the UsefulData in order to update the position shown in the top-left whenever possible.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
-				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+')');
+				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+') - '+AjaxLife.Parcel.GetParcelName());
 			});
 			
 			// Register for the BalanceUpdated message so we know when our balance is updated.
