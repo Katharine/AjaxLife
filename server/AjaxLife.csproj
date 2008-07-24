@@ -19,6 +19,11 @@
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>AjaxLife</AssemblyName>
+    <RootNamespace>AjaxLife</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +33,12 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>AjaxLife</AssemblyName>
+    <DebugSymbols>false</DebugSymbols>
+    <RootNamespace>AjaxLife</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -38,19 +49,19 @@
   </Target>
   -->
   <ItemGroup>
-    <Reference Include="Affirma.ThreeSharp, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Affirma.ThreeSharp, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\Affirma.ThreeSharp.dll</HintPath>
     </Reference>
-    <Reference Include="libsecondlife, Version=0.4.1.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="libsecondlife, Version=0.4.1.1, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\libsecondlife.dll</HintPath>
     </Reference>
-    <Reference Include="MiniHttpd, Version=1.2.0.35930, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MiniHttpd, Version=1.2.0.35930, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\MiniHttpd.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dependencies\Newtonsoft.Json.dll</HintPath>
     </Reference>

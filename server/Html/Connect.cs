@@ -189,6 +189,7 @@ namespace AjaxLife.Html
             client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
             client.Groups.OnGroupNames += new GroupManager.GroupNamesCallback(events.Groups_OnGroupNames);
             client.Groups.OnCurrentGroups += new GroupManager.CurrentGroupsCallback(events.Groups_OnCurrentGroups);
+            client.Parcels.OnParcelProperties += new libsecondlife.ParcelManager.ParcelPropertiesCallback(events.Parcels_OnParcelProperties);
 
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);

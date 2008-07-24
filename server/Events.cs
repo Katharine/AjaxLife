@@ -830,5 +830,76 @@ namespace AjaxLife
             message.Add("Type", (byte)type);
             this.pending.Enqueue(message);
         }
+        
+        public void Parcels_OnParcelProperties(Parcel parcel, ParcelManager.ParcelResult result, int sequenceID, bool snapSelection)
+        {
+            if(result == ParcelManager.ParcelResult.NoData)
+            {
+                Hashtable message = new Hashtable();
+                message.Add("MessageType", "ParcelPropertiesFailed");
+                message.Add("LocalID", parcel.LocalID);
+                message.Add("SequenceID", sequenceID);
+                this.pending.Enqueue(message);
+            }
+            else
+            {
+                Hashtable message = new Hashtable();
+                message.Add("MessageType", "ParcelProperties");
+                message.Add("SequenceID", sequenceID);
+                message.Add("LocalID", parcel.LocalID);
+                message.Add("AABBMax", parcel.AABBMax);
+                message.Add("AABBMin", parcel.AABBMin);
+                message.Add("AccessList", parcel.AccessList);
+                message.Add("Area", parcel.Area);
+                message.Add("AuctionID", parcel.AuctionID);
+                message.Add("AuthBuyerID", parcel.AuthBuyerID);
+                message.Add("Category", parcel.Category);
+                message.Add("ClaimDate", parcel.ClaimDate);
+                message.Add("ClaimPrice", parcel.ClaimPrice);
+                message.Add("Desc", parcel.Desc);
+                message.Add("Dwell", parcel.Dwell);
+                message.Add("Flags", (uint)parcel.Flags);
+                message.Add("GroupID", parcel.GroupID);
+                message.Add("GroupPrims", parcel.GroupPrims);
+                message.Add("IsGroupOwned", parcel.IsGroupOwned);
+                message.Add("LandingType", parcel.LandingType);
+                message.Add("MaxPrims", parcel.MaxPrims);
+                message.Add("MediaAutoScale", parcel.MediaAutoScale);
+                message.Add("MediaDesc", parcel.MediaDesc);
+                message.Add("MediaHeight", parcel.MediaHeight);
+                message.Add("MediaID", parcel.MediaID);
+                message.Add("MediaLoop", parcel.MediaLoop);
+                message.Add("MediaType", parcel.MediaType);
+                message.Add("MediaURL", parcel.MediaURL);
+                message.Add("MediaWidth", parcel.MediaWidth);
+                message.Add("MusicURL", parcel.MusicURL);
+                message.Add("Name", parcel.Name);
+                message.Add("ObscureMedia", parcel.ObscureMedia);
+                message.Add("ObscureMusic", parcel.ObscureMusic);
+                message.Add("OtherCleanTime", parcel.OtherCleanTime);
+                message.Add("OtherPrims", parcel.OtherPrims);
+                message.Add("OwnerPrims", parcel.OwnerPrims);
+                message.Add("OwnerID", parcel.OwnerID);
+                message.Add("PrimBonus", parcel.ParcelPrimBonus);
+                message.Add("PassHours", parcel.PassHours);
+                message.Add("PassPrice", parcel.PassPrice);
+                message.Add("PublicCount", parcel.PublicCount);
+                message.Add("RegionDenyAgeUnverified", parcel.RegionDenyAgeUnverified);
+                message.Add("RegionDenyAnonymous", parcel.RegionDenyAnonymous);
+                message.Add("RegionPushOverride", parcel.RegionPushOverride);
+                message.Add("RentPrice", parcel.RentPrice);
+                message.Add("SalePrice", parcel.SalePrice);
+                message.Add("SelectedPrims", parcel.SelectedPrims);
+                message.Add("SelfCount", parcel.SelfCount);
+                message.Add("SimWideMaxPrims", parcel.SimWideMaxPrims);
+                message.Add("SimWideTotalPrims", parcel.SimWideTotalPrims);
+                message.Add("SnapshotID", parcel.SnapshotID);
+                message.Add("Status", parcel.Status);
+                message.Add("TotalPrims", parcel.TotalPrims);
+                message.Add("UserLocation", parcel.UserLocation);
+                message.Add("UserLookAt", parcel.UserLookAt);
+                this.pending.Enqueue(message);
+            }
+        }
     }
 }
