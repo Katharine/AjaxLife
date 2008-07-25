@@ -119,7 +119,9 @@ AjaxLife.Strings = {
 			LogoutPrompt: "Are you sure you want to log out?",
 			NearbyButton: "Nearby Avatars",
 			InventoryButton: "Inventory",
-			StatsButton: "Stats"
+			StatsButton: "Stats",
+			AudioButton: "Music",
+			VideoButton: "Media"
 		},
 		Widgets: {
 			Yes: "Yes",
@@ -297,6 +299,10 @@ AjaxLife.Strings = {
 			Home: "My Home",
 			LastPlace: "My Last Location",
 			ArbitraryPlace: "<Type region name>" // HTML encoding not needed for the location list.
+		},
+		Media: {
+			AudioTitle: "Music controls",
+			VideoTitle: "Parcel media"
 		}
 	},	
 	// Translated by Smiley Barry (TG)

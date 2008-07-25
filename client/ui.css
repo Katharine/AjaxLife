@@ -40,6 +40,11 @@ body.loggedin.lowmem {
 	visibility: hidden;
 }
 
+/* Prevent media/modal dialogue conflicts */
+body.x-body-masked object, body.x-body-masked embed {
+	visibility: hidden;
+}
+
 /* Window decoration */
 
 /* IE6 position:fixed hack from http://annevankesteren.nl/test/examples/ie/position-fixed.html */

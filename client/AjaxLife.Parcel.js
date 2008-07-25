@@ -24,61 +24,81 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
  
- AjaxLife.Parcel = function() {
- 	var lastpos = false;
- 	var sequenceid = 0;
- 	var localid = -1;
- 	var properties = {};
- 	
- 	function updateid(pos)
- 	{
- 		AjaxLife.Network.Send('GetParcelID', {
- 			X: pos.X,
- 			Y: pos.Y,
- 			Z: pos.Z,
- 			callback: function(data) {
- 				if(localid != data.LocalID)
- 				{
- 					localid = data.LocalID;
- 					fetchdata(localid);
- 				}
- 			}
- 		});
- 	}
- 	
- 	function fetchdata(localid)
- 	{
- 		AjaxLife.Network.Send('RequestParcelProperties', {
- 			LocalID: localid,
- 			SequenceID: ++sequenceid
- 		});
- 	}
- 	
- 	return {
- 		init: function() {
- 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
- 				if(data.YourPosition != lastpos)
- 				{
- 					lastpos = data.YourPosition;
- 					updateid(data.YourPosition);
- 				}
- 			});
- 			AjaxLife.Network.MessageQueue.RegisterCallback('ParcelProperties', function(data) {
- 				if(data.SequenceID == sequenceid)
- 				{
- 					properties = data;
- 				}
- 				else
- 				{
- 					AjaxLife.Debug("Parcel: Received out-of-order data for parcel ID#"+data.LocalID+". Got "+data.SequenceID+", expecting "+sequenceid);
- 				}
- 			});
- 			AjaxLife.Network.MessageQueue.RegisterCallback('ParcelPropertiesFailed', function(data) {
- 				AjaxLife.Debug("Parcel: Update failed. SeqID#"+data.SequenceID+" LocalID#"+data.LocalID);
- 			});
- 		},
- 		GetParcelName: function() {
- 			return properties.Name ? properties.Name : '';
- 		}
- 	};
- }();
+AjaxLife.Parcel = function() {
+	var lastpos = false;
+	var sequenceid = 0;
+	var localid = -1;
+	var properties = {};
+	var callbacks = [];
+	
+	function updateid(pos)
+	{
+		AjaxLife.Network.Send('GetParcelID', {
+			X: pos.X,
+			Y: pos.Y,
+			Z: pos.Z,
+			callback: function(data) {
+				if(localid != data.LocalID)
+				{
+					localid = data.LocalID;
+					fetchdata(localid);
+				}
+			}
+		});
+	}
+	
+	function fetchdata(localid)
+	{
+		AjaxLife.Network.Send('RequestParcelProperties', {
+			LocalID: localid,
+			SequenceID: ++sequenceid
+		});
+	}
+	
+	function callcallbacks()
+	{
+		callbacks.each(function(fn) {
+			try
+			{
+				fn(properties);
+			}
+			catch(e)
+			{
+				//
+			}
+		});
+	}
+	
+	return {
+		init: function() {
+			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
+				if(data.YourPosition != lastpos)
+				{
+					lastpos = data.YourPosition;
+					updateid(data.YourPosition);
+				}
+			});
+			AjaxLife.Network.MessageQueue.RegisterCallback('ParcelProperties', function(data) {
+				if(data.SequenceID == sequenceid)
+				{
+					properties = data;
+					callcallbacks();
+				}
+				else
+				{
+					AjaxLife.Debug("Parcel: Received out-of-order data for parcel ID#"+data.LocalID+". Got "+data.SequenceID+", expecting "+sequenceid);
+				}
+			});
+			AjaxLife.Network.MessageQueue.RegisterCallback('ParcelPropertiesFailed', function(data) {
+				AjaxLife.Debug("Parcel: Update failed. SeqID#"+data.SequenceID+" LocalID#"+data.LocalID);
+			});
+		},
+		GetParcelName: function() {
+			return properties.Name ? properties.Name : '';
+		},
+		OnParcelChange: function(fn) {
+			callbacks.push(fn);
+			AjaxLife.Debug("Parcel: OnParcelChange callback registered.");
+		}
+	};
+}();

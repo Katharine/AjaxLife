@@ -35,6 +35,8 @@ AjaxLife.Toolbar = function() {
 	var nearby_btn = false;
 	var inventory_btn = false;
 	var stats_btn = false;
+	var audio_btn = false;
+	var video_btn = false;
 	
 	// Toggle the IM window when its button is clicked.
 	// AjaxLife.Fancy is checked to see whether we should animate this.
@@ -86,6 +88,16 @@ AjaxLife.Toolbar = function() {
 	{
 		AjaxLife.Stats.toggle(AjaxLife.Fancy?stats_btn.getEl():null);
 	}
+	// Toggle the Audio controls
+	function audio_btn_clicked()
+	{
+		AjaxLife.Media.AudioToggle(AjaxLife.Fancy?audio_btn.getEl():null);
+	}
+	
+	function video_btn_clicked()
+	{
+		AjaxLife.Media.VideoToggle(AjaxLife.Fancy?video_btn.getEl():null);
+	}
 	
 	// Public
 	return {
@@ -121,10 +133,26 @@ AjaxLife.Toolbar = function() {
 				text: _("Toolbar.StatsButton"),
 				disabled: Prototype.Browser.IE
 			});
+			audio_btn = new Ext.Button(div, {
+				handler: audio_btn_clicked,
+				text: _("Toolbar.AudioButton"),
+				hidden: true
+			});
+			video_btn = new Ext.Button(div, {
+				handler: video_btn_clicked,
+				text: _("Toolbar.VideoButton"),
+				hidden: true
+			});
 			log_btn = new Ext.Button(div, {
 				handler: log_btn_clicked,
 				text: _("Toolbar.LogoutButton")
 			});
+		},
+		HideVideo: function(hidden) {
+			video_btn.setVisible(!hidden);
+		},
+		HideAudio: function(hidden) {
+			audio_btn.setVisible(!hidden);
 		}
 	};
 }();

@@ -106,6 +106,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.ScriptDialogs.init();
 	AjaxLife.Debug("AjaxLife: Keyboard init...");
 	AjaxLife.Keyboard.init();
+	AjaxLife.Debug("AjaxLife: Media init...");
+	AjaxLife.Media.init();
 	// Dummy to suppress messages from de-ruthing.
 	// These messages also apparently count as a "received asset"
 	AjaxLife.Debug("AjaxLife: Registering dummy AssetReceived handler...");
@@ -154,4 +156,4 @@ if(window.parent)
 	}
 }
 
-AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");	
+AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");
