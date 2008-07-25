@@ -32,6 +32,7 @@ AjaxLife.Media = function() {
 	var enabled = false;
 	var currentaudio = "";
 	var currentvideo = "";
+	var currentmime = "";
 	
 	
 	// Returns TRUE if QuickTime is available, FALSE otherwise.
@@ -76,7 +77,7 @@ AjaxLife.Media = function() {
 	
 	function checkmedia(details)
 	{
-		AjaxLife.Debug("Parcel: checkmedia called. MusicURL: "+details.MusicURL+", MediaURL: "+details.MediaURL);
+		AjaxLife.Debug("Media: checkmedia called. MusicURL: "+details.MusicURL+", MediaURL: "+details.MediaURL);
 		if(details.MusicURL != currentaudio)
 		{
 			currentaudio = details.MusicURL;
@@ -102,10 +103,11 @@ AjaxLife.Media = function() {
 			AjaxLife.Debug("Media: Audio unchanged.");
 		}
 		
-		if(details.MediaURL != currentvideo)
+		if(details.MediaURL != currentvideo || details.MediaType != currentmime)
 		{
 			currentvideo = details.MediaURL;
-			if(details.MediaURL == '')
+			currentmime = details.MediaType
+			if(details.MediaURL == '' || details.MediaID == AjaxLife.Utils.UUID.Zero)
 			{
 				AjaxLife.Debug("Media: Clearing video.");
 				clearvideo();
@@ -147,6 +149,7 @@ AjaxLife.Media = function() {
 					qt.addParam("controller","true");
 					qt.addParam("autoplay","false");
 					qt.addParam("scale","aspect");
+					qt.addParam("loop", details.MediaLoop ? "true" : "false");
 					qt.write(videodiv);
 				}
 			}
@@ -171,7 +174,9 @@ AjaxLife.Media = function() {
 					shadow: true,
 					autoCreate: true,
 					title: _("Media.VideoTitle"),
-					proxyDrag: !AjaxLife.Fancy
+					proxyDrag: !AjaxLife.Fancy,
+					x:0,
+					y:20
 				});
 				videodiv = document.createElement('div');
 				$(videodiv).setStyle({'height': '100%', 'width': '100%', overflow: 'hidden'});
@@ -186,7 +191,9 @@ AjaxLife.Media = function() {
 					autoCreate: true,
 					resizable: false,
 					title: _("Media.AudioTitle"),
-					proxyDrag: !AjaxLife.Fancy
+					proxyDrag: !AjaxLife.Fancy,
+					x: 10185,
+					y: 185
 				});
 				audiodiv = document.createElement('div');
 				$(audiodiv).setStyle({'height': '100%', 'width': '100%', overflow: 'hidden'});

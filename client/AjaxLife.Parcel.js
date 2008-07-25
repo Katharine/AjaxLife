@@ -79,8 +79,9 @@ AjaxLife.Parcel = function() {
 				}
 			});
 			AjaxLife.Network.MessageQueue.RegisterCallback('ParcelProperties', function(data) {
-				if(data.SequenceID == sequenceid)
+				if(data.SequenceID >= sequenceid)
 				{
+					sequenceid = data.SequenceID;
 					properties = data;
 					callcallbacks();
 				}
