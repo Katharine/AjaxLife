@@ -262,6 +262,7 @@ namespace AjaxLife
             root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
             root.AddFile(new Html.Proxy("differentorigin.kat", root));
             root.AddFile(new Html.BasicStats("ping.kat", root, Users));
+            root.AddFile(new Html.MakeFile("makefile.kat", root));
             root.AddFile("robots.txt");
 			// textures/ is only used if we aren't using S3 for textures.
 			if(!UseS3)

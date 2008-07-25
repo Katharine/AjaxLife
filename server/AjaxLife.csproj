@@ -91,6 +91,7 @@
     <Compile Include="MakeJson.cs" />
     <Compile Include="TextureDirectory.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="Html\MakeFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Contributors.txt" />
