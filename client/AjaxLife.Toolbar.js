@@ -27,7 +27,7 @@
 // Toolbar handler
 AjaxLife.Toolbar = function() {
 	// Private
-	var im_btn = false;
+	var contacts_btn = false;
 	var log_btn = false;
 	var map_btn = false;
 	var chat_btn = false;
@@ -40,9 +40,9 @@ AjaxLife.Toolbar = function() {
 	
 	// Toggle the IM window when its button is clicked.
 	// AjaxLife.Fancy is checked to see whether we should animate this.
-	function im_btn_clicked()
+	function contacts_btn_clicked()
 	{
-		AjaxLife.InstantMessage.toggle(AjaxLife.Fancy?im_btn.getEl():null);
+		AjaxLife.Contacts.toggle(AjaxLife.Fancy?contacts_btn.getEl():null);
 	}
 	
 	// Logout after prompting for confirmation.
@@ -107,9 +107,9 @@ AjaxLife.Toolbar = function() {
 				handler: chat_btn_clicked,
 				text: _("Toolbar.ChatButton")
 			});
-			im_btn = new Ext.Button(div, {
-				handler: im_btn_clicked,
-				text: _("Toolbar.IMButton")
+			contacts_btn = new Ext.Button(div, {
+				handler: contacts_btn_clicked,
+				text: _("Toolbar.ContactsButton")
 			});
 			map_btn = new Ext.Button(div, {
 				handler: map_btn_clicked,

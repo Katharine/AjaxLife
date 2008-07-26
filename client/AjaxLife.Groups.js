@@ -23,37 +23,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
-AjaxLife.FriendList = function() {
-	var win = false;
-	var list = false;
-	var div_settings = false;
-	var check_visible = false;
-	var check_map = false;
-	var check_modify = false;
-	
-	return {
-		init: function() {
-			return false; // Abort.
-			win = new Ext.BasicDialog('dlg_friendlist',{
- 				autoCreate: true,
-				resizable: true,
-				proxyDrag: !AjaxLife.Fancy,
-				width: 250,
-				height: 400,
-				modal: false,
-				shadow: true,
-				title: _("FriendList.WindowTitle")
-			});
-			
-			div_settings = $(document.createElement('div'));
-			
-			check_visible = $(document.createElement('input'));
-			
-			
-			win.getEl().appendChild(div_settings);
-			
-			list = new AjaxLife.Widgets.SelectList('friendlist_list', win.getEl(), Prototype.emptyFunction, Prototype.emptyFunction); // Not finished.
+ 
+ AjaxLife.Groups = function() {
+ 	var groups = {};
+ 	var callbacks = [];
+ 	
+ 	function docallbacks()
+ 	{
+ 		callbacks.each(function(fn) {
+ 			try
+ 			{
+ 				fn(groups);
+ 			}
+ 			catch(e)
+ 			{
+ 				AjaxLife.Debug("Groups: Callback failed.");
+ 			}
+ 		});
+ 	}
+ 	
+ 	function fillgroups(data)
+ 	{
+ 		for(var key in data.Groups)
+		{
+			var group = data.Groups[key];
+			groups[key] = group;
+			AjaxLife.NameCache.AddGroup(key,group.Name);
 		}
-	};
-}();
+		docallbacks();
+ 	}
+ 	
+ 	return {
+ 		init: function() {
+ 			AjaxLife.Network.MessageQueue.RegisterCallback('CurrentGroups', fillgroups);
+ 			AjaxLife.Network.Send('RequestCurrentGroups');
+ 		},
+ 		RegisterCallback: function(fn) {
+ 			callbacks.push(fn);
+ 		},
+ 		InGroup: function(key) {
+ 			return !!groups[key];
+ 		},
+ 		GetGroupData: function(key) {
+ 			return groups[key];
+ 		}
+ 	};
+ }();

@@ -40,8 +40,6 @@ AjaxLife.Strings = {
 		},
 		InstantMessage: {
 			Typing: "#{name} is typing...",
-			OnlineFriends: "Online Friends",
-			Groups: "Groups",
 			Send: "Send",
 			WindowTitle: "Instant Messages",
 			Profile: "Profile",
@@ -302,7 +300,14 @@ AjaxLife.Strings = {
 		},
 		Media: {
 			AudioTitle: "Music controls",
-			VideoTitle: "Parcel media"
+			VideoTitle: "Parcel media",
+			InternetExplorerWarning: "It appears that you are using Internet Explorer. We recommend that you use another browser.\n\nAs you are using Internet Explorer, we must load the DirectX QuickTime control for media playback.\nPlease click any yellow bar asking for permission BEFORE logging in if you wish to listen to media. If you don't see one, that's fine."
+		},
+		Contacts: {
+			WindowTitle: "Contacts",
+			OnlineFriends: "Online",
+			OfflineFriends: "Offline",
+			Groups: "Groups"
 		}
 	},	
 	// Translated by Smiley Barry (TG)

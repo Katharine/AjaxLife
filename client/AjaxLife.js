@@ -82,6 +82,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.NameCache.init();
 	AjaxLife.Debug("AjaxLife: Friends init...");
 	AjaxLife.Friends.init()
+	AjaxLife.Debug("AjaxLife: Groups init...");
+	AjaxLife.Groups.init();
 	AjaxLife.Debug("AjaxLife: InstantMessage init...");
 	AjaxLife.InstantMessage.init();
 	AjaxLife.Debug("AjaxLife: SpatialChat init...");
@@ -96,8 +98,8 @@ AjaxLife.Startup = function() {
 	AjaxLife.Search.init();
 	AjaxLife.Debug("AjaxLife: AvatarsNear init...");
 	AjaxLife.AvatarsNear.init();
-	AjaxLife.Debug("AjaxLife: FriendList init...");
-	AjaxLife.FriendList.init();
+	AjaxLife.Debug("AjaxLife: Contacts init...");
+	AjaxLife.Contacts.init();
 	AjaxLife.Debug("AjaxLife: Inventory init...");
 	AjaxLife.Inventory.init();
 	AjaxLife.Debug("AjaxLife: Stats init...");
@@ -155,5 +157,9 @@ if(window.parent)
 		AjaxLife.Debug("AjaxLife: Unable to set onbeforeunload handler in parent.");
 	}
 }
+
+window.onload = function() {
+	AjaxLife.Media.RunFirst();
+};
 
 AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");

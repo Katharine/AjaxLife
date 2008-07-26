@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
- 
+
 AjaxLife.Media = function() {
 	var videodialog = false;
 	var audiodialog = false;
@@ -174,7 +174,7 @@ AjaxLife.Media = function() {
 					shadow: true,
 					autoCreate: true,
 					title: _("Media.VideoTitle"),
-					proxyDrag: !AjaxLife.Fancy,
+					proxyDrag: false,
 					x:0,
 					y:20
 				});
@@ -230,6 +230,21 @@ AjaxLife.Media = function() {
 				else
 				{
 					audiodialog.show(elem);
+				}
+			}
+		},
+		RunFirst: function() {
+			if(Prototype.Browser.IE)
+			{
+				if(qtinstalled())
+				{
+					var div = $(document.createElement('div'));
+					div.setStyle({position: 'absolute', top: '-1000px', left: '-1000px'});
+					document.body.appendChild(div);
+					var qt = new QTObject("http:","2","2");
+					qt.addParam("autoplay","false");
+					//alert(_("Media.InternetExplorerWarning")); // We should think about this first.
+					qt.write(div);
 				}
 			}
 		}

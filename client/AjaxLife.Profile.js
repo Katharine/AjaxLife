@@ -150,7 +150,6 @@ AjaxLife.Profile = function(agentid) {
 	var btn_im = new Ext.Button(tab_sl.bodyEl.dom, {
 		handler: function() {
 			AjaxLife.InstantMessage.start(agentid);
-			AjaxLife.InstantMessage.open(btn_im.getEl());
 		},
 		text: _("Profile.IMButton")
 	});

@@ -88,7 +88,7 @@ html {
 }
 
 /* Add tabs here to make sure they can be scrolled - by default, they can't be. */
-#im-default-tab, #im-group-tab, #search-people-tab { 
+#contacts-online-tab, #contacts-offline-tab, #contacts-group-tab, #search-people-tab { 
 	overflow: auto;
 }
 

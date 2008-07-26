@@ -36,21 +36,7 @@ AjaxLife.InstantMessage = function() {
 	var origtabcolour = false;
 	var highlightcolour = 'red';
 	var highlight = false;
-	var friendlist = false;
 	var noted_typing = false;
-	var grouplist = false;
-	var groups = {};
-	
-	function fillgroups(data)
-	{
-		for(var key in data.Groups)
-		{
-			var group = data.Groups[key];
-			groups[key] = group;
-			AjaxLife.NameCache.AddGroup(key,group.Name);
-			grouplist.add(key,group.Name);
-		}
-	}
 	
 	// Set a tab to flash
 	function highlighttab(sessionid)
@@ -206,6 +192,10 @@ AjaxLife.InstantMessage = function() {
 			if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == chats[sessionid].tab.id)
 			{
 				activesession = false;
+				if(dialog.getTabs().getCount() == 0)
+				{
+					dialog.hide();
+				}
 			}
 			delete chats[sessionid];
 		});
@@ -293,11 +283,10 @@ AjaxLife.InstantMessage = function() {
 			fixtab(sessionid);
 			entrybox.focus();
 		});
-		var currenttab = dialog.getTabs().getActiveTab().id;
-		// These are essentially contentless, so switch IM window if we're activated and on one of these.
-		if(currenttab == 'im-default-tab' || currenttab == 'im-group-tab')
+		if(!dialog.getTabs().getActiveTab())
 		{
 			chats[sessionid].tab.activate();
+			dialog.show();
 		}
 		return true;
 	};
@@ -347,7 +336,7 @@ AjaxLife.InstantMessage = function() {
 	return {
 		// Public
 		init: function () {
-			// Create the new window at 700x400, with a default tab for friendlist.
+			// Create the new window at 700x400.
 			dialog = new Ext.BasicDialog("dlg_im", {
 				height: 400,
 				width: 700,
@@ -356,36 +345,11 @@ AjaxLife.InstantMessage = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
+				closable: false,
 				title: _("InstantMessage.WindowTitle"),
 				proxyDrag: !AjaxLife.Fancy
 			});
 			
-			dialog.getTabs().addTab("im-default-tab",_("InstantMessage.OnlineFriends"),"",false).activate();
-			friendlist = new AjaxLife.Widgets.SelectList('im-friend-list',dialog.getTabs().getActiveTab().bodyEl.dom,{
-				width: '99%',
-				callback: function(key) {
-					AjaxLife.NameCache.Find(key, function(name) {
-						createTab(key, name, AjaxLife.Utils.UUID.Combine(gAgentID,key));
-					});
-				}
-			});
-			var sortdelay = new Ext.util.DelayedTask(function() {
-				friendlist.sort();
-			});
-			// Deal with adding and removing friends to/from the friend list.
-			var addname = function (friend) {
-				if(friend.Online)
-				{
-					friendlist.add(friend.ID,friend.Name);
-				}
-				else
-				{
-					friendlist.remove(friend.ID);
-				}
-				sortdelay.delay(200);
-			};
-			AjaxLife.Friends.AddStatusCallback(addname);
-			AjaxLife.Friends.AddNewFriendCallback(addname);
 			dialog.body.setStyle({overflow: 'hidden'});
 			width = 700;
 			height = 400;
@@ -393,18 +357,6 @@ AjaxLife.InstantMessage = function() {
 				width = w;
 				height = h;
 				fixtab(activesession);
-			});
-			
-			var grouptab = dialog.getTabs().addTab("im-group-tab",_("InstantMessage.Groups"), "", false);
-			
-			grouplist = new AjaxLife.Widgets.SelectList("im-group-list", grouptab.bodyEl.dom, {
-				width: '99%',
-				callback: function(key) {
-					joingroupchat(key);
-					createTab(key, key, key, true);
-					chats[key].entrybox.disable();
-					chats[key].sendbtn.getEl().dom.enabled = false;
-				}
 			});
 			
 			// Handle successfully started chats.
@@ -415,7 +367,7 @@ AjaxLife.InstantMessage = function() {
 					if(data.Success)
 					{
 						chats[group].entrybox.enable();
-						chats[group].sentbtn.dom.enabled = true;
+						chats[group].sentbtn.enable();
 					}
 					else
 					{
@@ -430,7 +382,7 @@ AjaxLife.InstantMessage = function() {
 				if(data.IMSessionID == AjaxLife.Utils.UUID.Zero) return; // Estate messages have null sessions.
 				// If we get a group IM with an unknown session ID, it's a conference IM. I think.
 				var conference = false;
-				if(data.GroupIM && !groups[data.IMSessionID])
+				if(data.GroupIM && !AjaxLife.Groups.InGroup(data.IMSessionID))
 				{
 					data.GroupIM = false;
 					conference = true;
@@ -472,7 +424,7 @@ AjaxLife.InstantMessage = function() {
 					// Actually add the line.
 					appendline(data.IMSessionID, message, {name: data.FromAgentName, id: data.FromAgentID});
 					// If the tab is not active, make it flash.
-					if(dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
+					if(dialog.getTabs().getCount() > 0 && dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
 					{
 						highlighttab(data.IMSessionID);
 					}
@@ -504,38 +456,30 @@ AjaxLife.InstantMessage = function() {
 					}
 				}
 			});
-			AjaxLife.Network.MessageQueue.RegisterCallback('CurrentGroups', fillgroups);
-			AjaxLife.Network.Send("RequestCurrentGroups",{});
 			// Highlighted tabs to flash every half second.
 			setInterval(processhighlight,500);
 		},
-		open: function(opener) {
-			if(opener)
+		start: function(id) {
+			this.Start(id, false);
+		},
+		Start: function(id, groupIM) {
+			if(groupIM)
 			{
-				dialog.show(opener);
+				joingroupchat(id);
+				createTab(id, id, id, true);
+				chats[key].entrybox.disable();
+				chats[key].sendbtn.disable();
 			}
 			else
+			{
+				AjaxLife.NameCache.Find(id, function(name) {
+					createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
+				});
+			}
+			if(!dialog.isVisible())
 			{
 				dialog.show();
 			}
-		},
-		close: function() {
-			dialog.hide();
-		},
-		toggle: function(opener) {
-			if(!dialog.isVisible())
-			{
-				this.open(opener);
-			}
-			else
-			{
-				this.close();
-			}
-		},
-		start: function(id) {
-			AjaxLife.NameCache.Find(id, function(name) {
-				createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
-			});
 		}
 	};
 }();
