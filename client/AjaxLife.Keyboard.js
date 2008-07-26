@@ -56,9 +56,6 @@ AjaxLife.Keyboard = function() {
 		case 73: // i
 			AjaxLife.Inventory.toggle();
 			break;
-		case 84: // t
-			AjaxLife.InstantMessage.toggle();
-			break;
 		case 70: // f
 			AjaxLife.Search.toggle();
 			break;
@@ -94,8 +91,8 @@ AjaxLife.Keyboard = function() {
 		init: function() {
 			var body = Ext.get(document.body);
 			body.addKeyListener({
-					//   [h , i , t , f , m , q ]
-					key: [72, 73, 84, 70, 77, 81],
+					//   [h , i , f , m , q ]
+					key: [72, 73, 70, 77, 81],
 					ctrl: true,
 					shift: false,
 					alt: false
