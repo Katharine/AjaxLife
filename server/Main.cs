@@ -71,15 +71,15 @@ namespace AjaxLife
         private static string PrivateAccessKey = "";
         private static string TextureCache = "texturecache/";
         private static string MacAddress = "00:00:00:00:00:00";
-        private static string BanList = "http://server.ajaxlife.net/banlist.txt";
+        private static string BanList = "";
         private static double BanUpdateTime = 300.0;
         public static string Id0 = "";
         private static bool HandleContentEncoding = false;
 		private static bool UseS3 = false;
         private static bool DebugMode = false;
         
-        public static int TextureCacheCount = 0; // Temporarily completely unused.
-        public static long TextureCacheSize = 0; // Temporarily completely unused.
+        public static int TextureCacheCount = 0;
+        public static long TextureCacheSize = 0;
         
         // These are used for the RSA encryption. RSAp holds the public and private keys, 
         // RSA is the object responsible for decrypting. No encryption is done on the server.
@@ -181,18 +181,25 @@ namespace AjaxLife
             {
                 BanList = args["banlist"];
             }
-            Console.WriteLine("Using banlist at "+BanList);
-            if (args["banupdate"] != null)
+            if(BanList != "")
             {
-                BanUpdateTime = double.Parse(args["banupdate"]);
-            }
-            if(BanUpdateTime > 0.0)
-            {
-                Console.WriteLine("Updating the banlist every "+BanUpdateTime+" seconds.");
+                Console.WriteLine("Using banlist at "+BanList);
+                if (args["banupdate"] != null)
+                {
+                    BanUpdateTime = double.Parse(args["banupdate"]);
+                }
+                if(BanUpdateTime > 0.0)
+                {
+                    Console.WriteLine("Updating the banlist every "+BanUpdateTime+" seconds.");
+                }
+                else
+                {
+                    Console.WriteLine("Banlist updating disabled.");
+                }
             }
             else
             {
-                Console.WriteLine("Banlist updating disabled.");
+                Console.WriteLine("Not using ban list.");
             }
             HandleContentEncoding = (args["doencoding"] != null);
             Console.WriteLine("Handling content encoding: " + (HANDLE_CONTENT_ENCODING ? "Yes" : "No"));
