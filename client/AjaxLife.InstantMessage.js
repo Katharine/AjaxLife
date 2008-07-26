@@ -283,12 +283,12 @@ AjaxLife.InstantMessage = function() {
 			fixtab(sessionid);
 			entrybox.focus();
 		});
-		if(!dialog.getTabs().getActiveTab())
+		if(dialog.getTabs().getCount() == 0)
 		{
 			chats[sessionid].tab.activate();
 			dialog.show();
 		}
-		return true;
+		return chats[sessionid].tab;
 	};
 	
 	// Append a line to the box with a timestamp.
@@ -462,18 +462,20 @@ AjaxLife.InstantMessage = function() {
 		start: function(id) {
 			this.Start(id, false);
 		},
-		Start: function(id, groupIM) {
+		Start: function(id, groupIM, focus) {
 			if(groupIM)
 			{
 				joingroupchat(id);
-				createTab(id, id, id, true);
+				var tab = createTab(id, id, id, true);
+				if(focus && tab) tab.activate();
 				chats[key].entrybox.disable();
 				chats[key].sendbtn.disable();
 			}
 			else
 			{
 				AjaxLife.NameCache.Find(id, function(name) {
-					createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
+					var tab = createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
+					if(focus && tab) tab.activate();
 				});
 			}
 			if(!dialog.isVisible())

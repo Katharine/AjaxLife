@@ -109,7 +109,7 @@ AjaxLife.Strings = {
 		},
 		Toolbar: {
 			ChatButton: "Chat",
-			IMButton: "Instant Messages",
+			ContactsButton: "Contacts",
 			MapButton: "Map",
 			SearchButton: "Search",
 			LogoutButton: "Log out",

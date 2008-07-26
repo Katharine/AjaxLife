@@ -52,7 +52,7 @@ AjaxLife.Contacts = function() {
 		list_online = new AjaxLife.Widgets.SelectList("contacts-online-list", tab_online.bodyEl.dom, {
 			width: '99%',
 			callback: function(key) {
-				AjaxLife.InstantMessage.Start(key, false);
+				AjaxLife.InstantMessage.Start(key, false, true);
 			}
 		});
 		
@@ -60,7 +60,7 @@ AjaxLife.Contacts = function() {
 		list_offline = new AjaxLife.Widgets.SelectList("contacts-offline-list", tab_offline.bodyEl.dom, {
 			width: '99%',
 			callback: function(key) {
-				AjaxLife.InstantMessage.Start(key, false);
+				AjaxLife.InstantMessage.Start(key, false, true);
 			}
 		});
 		
@@ -68,7 +68,7 @@ AjaxLife.Contacts = function() {
 		list_groups = new AjaxLife.Widgets.SelectList("contacts-groups-list", tab_groups.bodyEl.dom, {
 			width: '99%',
 			callback: function(key) {
-				AjaxLife.InstantMessage.Start(key, true);
+				AjaxLife.InstantMessage.Start(key, true, true);
 			}
 		});
 	}
