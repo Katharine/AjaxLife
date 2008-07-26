@@ -50,6 +50,8 @@ namespace AjaxLife
         public static string STATIC_ROOT { get { return StaticRoot; } }
         public static string MAC_ADDRESS { get { return MacAddress; } }
         public static string ID0 { get { return Id0; } }
+        public static string BAN_LIST { get { return BanList; } }
+        public static double BAN_UPDATE_TIME { get { return BanUpdateTime; } }
 		public static bool USE_S3 { get { return UseS3; } }
         public static bool HANDLE_CONTENT_ENCODING { get { return HandleContentEncoding; } }
         public static bool DEBUG_MODE { get { return DebugMode; } }
@@ -69,6 +71,8 @@ namespace AjaxLife
         private static string PrivateAccessKey = "";
         private static string TextureCache = "texturecache/";
         private static string MacAddress = "00:00:00:00:00:00";
+        private static string BanList = "http://server.ajaxlife.net/banlist.txt";
+        private static double BanUpdateTime = 300.0;
         public static string Id0 = "";
         private static bool HandleContentEncoding = false;
 		private static bool UseS3 = false;
@@ -94,6 +98,9 @@ namespace AjaxLife
 
         // Dictionary of users, indexed by session ID.
         public Dictionary<Guid, User> Users;
+        
+        // Provides ban list functionality
+        public static BanList BannedUsers;
 
         // Program start. Just launches the real program.
         static void Main(string[] args)
@@ -170,6 +177,23 @@ namespace AjaxLife
                 Id0 = args["id0"];
             }
             Console.WriteLine("Using id0: " + (ID0 == "" ? "[blank]" : ID0));
+            if (args["banlist"] != null)
+            {
+                BanList = args["banlist"];
+            }
+            Console.WriteLine("Using banlist at "+BanList);
+            if (args["banupdate"] != null)
+            {
+                BanUpdateTime = double.Parse(args["banupdate"]);
+            }
+            if(BanUpdateTime > 0.0)
+            {
+                Console.WriteLine("Updating the banlist every "+BanUpdateTime+" seconds.");
+            }
+            else
+            {
+                Console.WriteLine("Banlist updating disabled.");
+            }
             HandleContentEncoding = (args["doencoding"] != null);
             Console.WriteLine("Handling content encoding: " + (HANDLE_CONTENT_ENCODING ? "Yes" : "No"));
             DebugMode = (args["debug"] != null);
@@ -270,6 +294,9 @@ namespace AjaxLife
 				root.AddDirectory(new TextureDirectory("textures", root));
 			}
             #endregion
+            Console.WriteLine("Loading banlist...");
+            BannedUsers = new BanList(); // Create BanList.
+            
             Console.WriteLine("Starting server...");
             // Start the webserver.
             webserver.Start();

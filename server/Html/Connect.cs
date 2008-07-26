@@ -104,6 +104,13 @@ namespace AjaxLife.Html
                 last = StringHelper.ASCIIBytesToString(StringHelper.FromBase64(data[2]));
                 pass = data[3];
                 user.Signature = data[4];
+                // Check if they're banned first.
+                if (AjaxLife.BannedUsers.IsBanned(first, last))
+                {
+                    textWriter.WriteLine("{success: false, message: \"You have been banned from AjaxLife by the administrator.\"}");
+                    textWriter.Flush();
+                    return;
+                }
                 LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
                 login.Platform = "web";
                 login.Channel = "AjaxLife";
