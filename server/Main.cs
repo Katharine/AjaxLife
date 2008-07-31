@@ -203,7 +203,20 @@ namespace AjaxLife
             }
             HandleContentEncoding = (args["doencoding"] != null);
             Console.WriteLine("Handling content encoding: " + (HANDLE_CONTENT_ENCODING ? "Yes" : "No"));
-            DebugMode = (args["debug"] != null);
+            if(args["spamdebug"] != null)
+            {
+                DebugMode = true;
+                Settings.LOG_LEVEL = Helpers.LogLevel.Debug;
+            }
+            else if(args["debug"] != null)
+            {
+                DebugMode = true;
+                Settings.LOG_LEVEL = Helpers.LogLevel.Info;
+            }
+            else
+            {
+                Settings.LOG_LEVEL = Helpers.LogLevel.Error;
+            }
             Console.WriteLine("Debug mode: " + (DEBUG_MODE ? "On" : "Off"));
             // Create an empty dictionary for the users. This is defined as public further up.
             Users = new Dictionary<Guid, User>();

@@ -107,24 +107,12 @@ namespace AjaxLife
         //    as a bunch more hashtables.
         // 4) Enqueue the hashtable in the message queue. This is periodically emptied by the client.
         
-        public void Avatars_OnAvatarGroups(LLUUID avatarID, AvatarGroupsReplyPacket.GroupDataBlock[] groups)
+        public void Avatars_OnAvatarGroups(LLUUID avatarID, List<AvatarGroup> groups)
         {
-            List<Hashtable> list = new List<Hashtable>();
-            foreach (AvatarGroupsReplyPacket.GroupDataBlock block in groups)
-            {
-                Hashtable hashtable = new Hashtable();
-                hashtable.Add("GroupID", block.GroupID);
-                hashtable.Add("GroupInsigniaID", block.GroupInsigniaID);
-                hashtable.Add("GroupName", Helpers.FieldToUTF8String(block.GroupName));
-                hashtable.Add("GroupTitle", Helpers.FieldToUTF8String(block.GroupTitle));
-                hashtable.Add("GroupPowers", block.GroupPowers);
-                hashtable.Add("AcceptNotices", block.AcceptNotices);
-                list.Add(hashtable);
-            }
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarGroups");
             item.Add("AvatarID", avatarID);
-            item.Add("Groups", list);
+            item.Add("Groups", groups);
             this.pending.Enqueue(item);
         }
 
@@ -223,17 +211,16 @@ namespace AjaxLife
             this.pending.Enqueue(item);
         }
 
-        public bool Inventory_OnObjectOffered(LLUUID fromAgentID, string fromAgentName, uint parentEstateID, LLUUID regionID, LLVector3 position, DateTime timestamp, AssetType type, LLUUID objectID, bool fromTask)
+        public bool Inventory_OnObjectOffered(InstantMessage offerDetails, AssetType type, LLUUID objectID, bool fromTask)
         {
             if (!active) return false;
             Hashtable hashtable = new Hashtable();
             hashtable.Add("MessageType", "ObjectOffered");
-            hashtable.Add("FromAgentID", fromAgentID);
-            hashtable.Add("FromAgentName", fromAgentName);
-            hashtable.Add("ParentEstateID", parentEstateID);
-            hashtable.Add("RegionID", regionID);
-            hashtable.Add("Position", position);
-            hashtable.Add("Timestamp", timestamp);
+            hashtable.Add("FromAgentID", offerDetails.FromAgentID);
+            hashtable.Add("FromAgentName", offerDetails.FromAgentName);
+            hashtable.Add("RegionID", offerDetails.RegionID);
+            hashtable.Add("Position", offerDetails.Position);
+            hashtable.Add("Timestamp", offerDetails.Timestamp);
             hashtable.Add("Type", type);
             hashtable.Add("ObjectID", objectID);
             hashtable.Add("FromTask", fromTask);
@@ -423,30 +410,41 @@ namespace AjaxLife
             {
                 bool success = true;
                 string key = image.ID.ToString();
-                byte[] img = OpenJPEGNet.OpenJPEG.DecodeToTGA(image.AssetData);
-                File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
-                Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".tga " + AjaxLife.TEXTURE_CACHE + key + ".png");
-                process.WaitForExit();
-                process.Dispose();
-                File.Delete(AjaxLife.TEXTURE_CACHE + key + ".tga");
-                Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
-				if(AjaxLife.USE_S3)
-				{
-	                try
-	                {
-	                    IThreeSharp service = new ThreeSharpQuery(AjaxLife.S3Config);
-	                    Affirma.ThreeSharp.Model.ObjectAddRequest request = new Affirma.ThreeSharp.Model.ObjectAddRequest(AjaxLife.TEXTURE_BUCKET, key + ".png");
-	                    request.LoadStreamWithFile(AjaxLife.TEXTURE_CACHE + key + ".png");
-	                    request.Headers.Add("x-amz-acl", "public-read");
-	                    service.ObjectAdd(request).DataStream.Close();
-	                    AjaxLife.CachedTextures.Add(image.ID);
-	                }
-	                catch
-	                {
-	                    success = false;
-	                }
-					File.Delete(AjaxLife.TEXTURE_CACHE + key + ".png");
-				}
+                try
+                {
+                    libsecondlife.Imaging.ManagedImage decoded;
+                    libsecondlife.Imaging.OpenJPEG.DecodeToImage(image.AssetData, out decoded);
+                    byte[] img = decoded.ExportTGA();
+                    decoded.Clear();
+                    File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
+                    Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".tga " + AjaxLife.TEXTURE_CACHE + key + ".png");
+                    process.WaitForExit();
+                    process.Dispose();
+                    File.Delete(AjaxLife.TEXTURE_CACHE + key + ".tga");
+                    Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
+                    if(AjaxLife.USE_S3)
+                    {
+                        try
+                        {
+                            IThreeSharp service = new ThreeSharpQuery(AjaxLife.S3Config);
+                            Affirma.ThreeSharp.Model.ObjectAddRequest request = new Affirma.ThreeSharp.Model.ObjectAddRequest(AjaxLife.TEXTURE_BUCKET, key + ".png");
+                            request.LoadStreamWithFile(AjaxLife.TEXTURE_CACHE + key + ".png");
+                            request.Headers.Add("x-amz-acl", "public-read");
+                            service.ObjectAdd(request).DataStream.Close();
+                            AjaxLife.CachedTextures.Add(image.ID);
+                        }
+                        catch
+                        {
+                            success = false;
+                        }
+                        File.Delete(AjaxLife.TEXTURE_CACHE + key + ".png");
+                    }
+                }
+                catch(Exception e)
+                {
+                    success = false;
+                    AjaxLife.Debug("Events", "Texture download for "+key+" failed: "+e.Message);
+                }
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
                 hash.Add("Success", success);

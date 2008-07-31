@@ -71,7 +71,7 @@ namespace AjaxLife.Html
                 client.Settings.MULTIPLE_SIMS = false;
                 client.Settings.ENABLE_SIMSTATS = true;
                 client.Settings.LOGOUT_TIMEOUT = 20000;
-                client.Settings.DEBUG = AjaxLife.DEBUG_MODE;
+                client.Settings.USE_TEXTURE_CACHE = false;
                 client.Settings.LOG_RESENDS = false;
                 client.Throttle.Cloud = 0;
                 client.Throttle.Task = 0;

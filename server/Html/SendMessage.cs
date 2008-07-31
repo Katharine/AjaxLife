@@ -74,16 +74,6 @@ namespace AjaxLife.Html
 
         // Methods
 
-        private FriendInfo FindFriend(SecondLife client, LLUUID friend)
-        {
-            FriendInfo found;
-            if (client.Friends.FriendList.TryGetValue(friend, out found))
-            {
-                return found;
-            }
-            return null;
-        }
-
         private bool VerifySignature(User user, string querystring)
         {
             // Check that we have enough characters to avoid an ArgumentOutOfRangeException.
@@ -371,11 +361,7 @@ namespace AjaxLife.Html
                 case "ChangeRights":
                     {
                         LLUUID uuid = new LLUUID(POST["Friend"]);
-                        FriendInfo friend = this.FindFriend(client, uuid);
-                        friend.TheirFriendRights = (FriendRights)int.Parse(POST["Rights"]);
-                        // The two sentences of documentation on the subject imply that this will
-                        // send friend.TheirFriendRights to the server. I think.
-                        client.Friends.GrantRights(uuid);
+                        client.Friends.GrantRights(uuid, (FriendRights)int.Parse(POST["Rights"]));
                     }
                     break;
                 case "RequestLocation":
