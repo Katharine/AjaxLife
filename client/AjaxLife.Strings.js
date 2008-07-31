@@ -85,7 +85,8 @@ AjaxLife.Strings = {
 			InventoryReceive: "#{name} gave you #{item}",
 			Error: "Error",
 			Disconnected: "Disconnected",
-			Reconnecting: "Attempting to reconnect to server..."
+			Reconnecting: "Attempting to reconnect to server...",
+			DeadServer: "It appears that we have lost the connection to the server. Although we will attempt to reconnect, it is likely that the server is down. It is suggested that you try again later."
 		},
 		StatusBar: {
 			Money: "Money",
@@ -206,7 +207,7 @@ AjaxLife.Strings = {
 			CopyUUID: "Copy UUID",
 			Loading: "Loading contents...",
 			MyInventory: "My Inventory",
-			InventoryReceivedTitle: "Invenory received",
+			InventoryReceivedTitle: "Inventory received",
 			InventoryReceived: "#{from} has given you the #{type} '#{name}'"
 		},
 		InventoryDialogs: {

@@ -24,7 +24,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
  
-AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsearch) {
+AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsearch, onloadcallback) {
 	var callbackid = 0;
 	var elem;
 	var loaded = false;
@@ -46,6 +46,17 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 			});
 			loaded = true;
 			img.onload = function(){};
+			if(typeof(onloadcallback) == 'function')
+			{
+				try
+				{
+					onloadcallback();
+				}
+				catch(e)
+				{
+					//
+				}
+			}
 		}
 		img.src = src;
 	}
@@ -175,7 +186,11 @@ AjaxLife.InventoryDialogs.Texture = function(textureid, name) {
 	});
 	
 	// Create new texture object at 256x256.
-	texture = new AjaxLife.Texture(win.body.dom, 256, 256, textureid);
+	texture = new AjaxLife.Texture(win.body.dom, 256, 256, textureid, false, false, function() {
+		win.body.setStyle({
+			backgroundImage: 'url('+AjaxLife.STATIC_ROOT+'images/transparency.gif)'
+		});
+	});
 	// Resize the texture when the window is resized, ensuring it always fills the window.
 	win.on('resize', function(thewin, width, height) {
 		texture.resize(width - 16, height - 36);

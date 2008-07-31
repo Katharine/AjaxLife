@@ -63,7 +63,7 @@ AjaxLife.Network.logout = function(hidemessage) {
 			}
 			else
 			{
-				Ext.Msg.alert(_("Network.Error"),_("Network.LogoutError"));
+				AjaxLife.Widgets.Modal.alert(_("Network.Error"),_("Network.LogoutError"));
 			}
 		}
 	});
@@ -83,6 +83,7 @@ AjaxLife.Network.MessageQueue = function() {
 	var callbacks = {};
 	var interval = false;
 	var lastmessage = false;
+	var deadserverwarned = false;
 	
 	// This function handled the incoming message queue, which should be an array.
 	function processqueue(queue) {
@@ -130,7 +131,7 @@ AjaxLife.Network.MessageQueue = function() {
 					// We should probably fire off some event here so we can disable bits of UI.
 					// This used to be an unclosable message. Following feature requests, it can be closed,
 					// but no actions can be performed other than viewing logs.
-					Ext.Msg.alert(_("Network.Disconnected"),_("Network.LogoutForced", {reason: item.Message}));
+					AjaxLife.Widgets.Modal.alert(_("Network.Disconnected"),_("Network.LogoutForced", {reason: item.Message}));
 				}
 			}
 			// If an unhandled message is received, complain about it.
@@ -158,6 +159,7 @@ AjaxLife.Network.MessageQueue = function() {
 	function queuecallback(options, success, response)
 	{
 		lastmessage = new Date();
+		deadserverwarned = false;
 		// This can sometimes be called after disconnecting. This results in strange inconsistencies,
 		// so ignore it.
 		if(!AjaxLife.Network.Connected) return;
@@ -215,7 +217,16 @@ AjaxLife.Network.MessageQueue = function() {
 		// If the time difference (measured in milliseconds) is greater than 30 seconds...
 		if(now.getTime() - lastmessage.getTime() > 35000)
 		{
-			AjaxLife.Widgets.Ext.msg("",_("Network.Reconnecting"));
+			if(!deadserverwarned)
+			{
+				AjaxLife.Widgets.Modal.alert("",_("Network.DeadServer"));
+				AjaxLife.Widgets.Ext.msg("",_("Network.DeadServer"), "ajaxlife-deadserver",true);
+				deadserverwarned = true;
+			}
+			else
+			{
+				AjaxLife.Widgets.Ext.msg("",_("Network.Reconnecting"));
+			}
 			AjaxLife.Network.MessageQueue.shutdown();
 			AjaxLife.Network.MessageQueue.init();
 		}
