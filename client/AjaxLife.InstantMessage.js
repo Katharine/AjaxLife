@@ -52,7 +52,7 @@ AjaxLife.InstantMessage = function() {
 	function unhighlight(sessionid)
 	{
 		highlighted = highlighted.without(sessionid);
-		if(chats[sessionid]) chats[sessionid].tab.textEl.setStyle({color: origtabcolour});
+		if(chats[sessionid] && chats[sessionid].tab) chats[sessionid].tab.textEl.setStyle({color: origtabcolour});
 	};
 	
 	// Turn the text of a tab red or not red, alternating each time it's called.
@@ -150,6 +150,7 @@ AjaxLife.InstantMessage = function() {
 		if(chats[sessionid])
 		{
 			chats[sessionid].tab.activate();
+			chats[sessionid].entrybox.focus();
 			return;
 		}
 		AjaxLife.Debug("InstantMessage: Creating session "+sessionid+" with "+id+" ("+name+"; groupIM = "+groupIM+"; conferenceIM = "+conferenceIM+")");
@@ -283,10 +284,11 @@ AjaxLife.InstantMessage = function() {
 			fixtab(sessionid);
 			entrybox.focus();
 		});
-		if(dialog.getTabs().getCount() == 0)
+		if(dialog.getTabs().getCount() == 1)
 		{
 			chats[sessionid].tab.activate();
 			dialog.show();
+			entrybox.focus();
 		}
 		return chats[sessionid].tab;
 	};
@@ -345,7 +347,6 @@ AjaxLife.InstantMessage = function() {
 				modal: false,
 				shadow: true,
 				autoCreate: true,
-				closable: false,
 				title: _("InstantMessage.WindowTitle"),
 				proxyDrag: !AjaxLife.Fancy
 			});
@@ -358,16 +359,41 @@ AjaxLife.InstantMessage = function() {
 				height = h;
 				fixtab(activesession);
 			});
+			// Alter the behaviour of the IM window's close button - we only close
+			// the active tab.
+			dialog.on('beforehide', function(d) {
+				if(dialog.getTabs().getCount() > 0)
+				{
+					var index = dialog.getTabs().getActiveTab().id;
+					dialog.getTabs().removeTab(index);
+				}
+				// Also close the window if there aren't any tabs left. This is 
+				// actually redundant - the window is already closed when we remove
+				// the tab.
+				if(dialog.getTabs().getCount() == 0)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			});
 			
 			// Handle successfully started chats.
-			AjaxLife.Network.MessageQueue.RegisterCallback('ChatGroupJoin', function(data) {
+			AjaxLife.Network.MessageQueue.RegisterCallback('GroupChatJoin', function(data) {
 				var group = data.GroupChatSessionID;
 				if(chats[group] && !chats[group].entrybox.isEnabled() && chats[group].groupIM)
 				{
 					if(data.Success)
 					{
 						chats[group].entrybox.enable();
-						chats[group].sentbtn.enable();
+						chats[group].entrybox.setValue('');
+						if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id == 'im-'+group)
+						{
+							chats[group].entrybox.focus();
+						}
+						chats[group].sendbtn.enable();
 					}
 					else
 					{
@@ -400,10 +426,6 @@ AjaxLife.InstantMessage = function() {
 							AjaxLife.Widgets.Ext.msg("Lost Instant Message","From: {0}<br />Message: {1}",data.FromAgentName,data.Message);
 							return;
 						}
-						if(!dialog.isVisible())
-						{
-							dialog.show();
-						}
 						AjaxLife.Sound.Play("im");
 					}
 					// Format the incoming message, taking care of /me.
@@ -424,7 +446,7 @@ AjaxLife.InstantMessage = function() {
 					// Actually add the line.
 					appendline(data.IMSessionID, message, {name: data.FromAgentName, id: data.FromAgentID});
 					// If the tab is not active, make it flash.
-					if(dialog.getTabs().getCount() > 0 && dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
+					if(dialog.getTabs().getActiveTab() && dialog.getTabs().getActiveTab().id != 'im-'+data.IMSessionID)
 					{
 						highlighttab(data.IMSessionID);
 					}
@@ -463,13 +485,18 @@ AjaxLife.InstantMessage = function() {
 			this.Start(id, false);
 		},
 		Start: function(id, groupIM, focus) {
+			if(!dialog.isVisible())
+			{
+				dialog.show();
+			}
 			if(groupIM)
 			{
 				joingroupchat(id);
 				var tab = createTab(id, id, id, true);
 				if(focus && tab) tab.activate();
-				chats[key].entrybox.disable();
-				chats[key].sendbtn.disable();
+				chats[id].entrybox.disable();
+				chats[id].sendbtn.disable();
+				chats[id].entrybox.setValue(_("InstantMessage.CreatingGroupChat"));
 			}
 			else
 			{
@@ -477,10 +504,6 @@ AjaxLife.InstantMessage = function() {
 					var tab = createTab(id,name,AjaxLife.Utils.UUID.Combine(gAgentID,id));
 					if(focus && tab) tab.activate();
 				});
-			}
-			if(!dialog.isVisible())
-			{
-				dialog.show();
 			}
 		}
 	};
