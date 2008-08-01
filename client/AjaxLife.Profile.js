@@ -248,13 +248,19 @@ AjaxLife.Profile = function(agentid) {
 		width: '100px',
 		backgroundColor: '#ddd',
 		textAlign: 'center',
-		paddingTop: 'auto',
-		paddingBottom: 'auto',
 		borderWidth: '1px',
 		borderStyle: 'solid',
 		borderColor: '#000',
 		cursor: 'default'
 	});
+	// These two break IE.
+	if(!Prototype.Browser.IE)
+	{
+		dd_inventory.setStyle({			
+			paddingTop: 'auto',
+			paddingBottom: 'auto'
+		});
+	}
 	dd_inventory.appendChild(document.createTextNode(_("Profile.DropInventory")));
 	
 	var dd_inventory_dd = new Ext.dd.DropTarget(dd_inventory, {
@@ -316,6 +322,7 @@ AjaxLife.Profile = function(agentid) {
 	tab_sl.bodyEl.dom.appendChild(div_groups_label.dom);
 	tab_sl.bodyEl.dom.appendChild(div_groups.dom);
 	tab_sl.activate();
+	
 	// 1st Life
 	tab_fl = win.getTabs().addTab("profile_tab_"+agentid+"_1stlife",_("Profile.FirstLife"));
 	var div_img_fl = Ext.get($(document.createElement('div')));
@@ -344,6 +351,7 @@ AjaxLife.Profile = function(agentid) {
 		left: '5px'
 	});
 	div_about_fl_label.dom.update(_("Profile.About"));
+	
 	// Append...
 	tab_fl.bodyEl.addClass("profile 1stlife");
 	tab_fl.bodyEl.dom.appendChild(div_img_fl.dom);

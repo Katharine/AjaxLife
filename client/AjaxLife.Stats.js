@@ -86,6 +86,7 @@
 			});
 			// Create table
 			var table = $(document.createElement('table'));
+			win.body.dom.appendChild(table);
 			// "Region" section title.
 			var row = $(document.createElement('tr'));
 			row.addClassName('titlerow');
@@ -210,7 +211,6 @@
 			texturesizefield = $(document.createElement('td'));
 			texturesizefield.appendChild(document.createTextNode('Loading...'));
 			row.appendChild(texturesizefield);
-			win.body.dom.appendChild(table);
 			win.on('show', function() {
 				clearTimeout(timer);
 				fetchdata();

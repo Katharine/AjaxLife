@@ -134,6 +134,6 @@ AjaxLife.Contacts = function() {
 			{
 				this.close();
 			}
-		},
+		}
 	};
 }();
