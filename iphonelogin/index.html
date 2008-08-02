@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>AjaxLife</title>
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<link rel="apple-touch-icon" href="images/home-screen.png" />
+		<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<link rel="stylesheet" type="text/css" href="iui/iui.css" />
+		<link rel="stylesheet" type="text/css" href="css/spinner.css" />
+		<link rel="stylesheet" type="text/css" href="css/login.css" />
+		<script type="text/javascript" src="iui/iui.js"></script>
+		<script type="text/javascript" src="scripts/login.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>
+	</head>
+	<body>
+		<div class="toolbar">
+			<h1 id="pageTitle"></h1>
+			<a id="backButton" class="button" href="#"></a>
+			<a class="button" type="plainbutton" onclick="dologin();">Log in</a>
+		</div>
+		<div id="login" title="Log in" class="panel" selected="true">
+			<fieldset>
+				<div class="row">
+					<label>First name</label>
+					<input type="text" name="first" id="first" />
+				</div>
+				<div class="row">
+					<label>Last name</label>
+					<input type="text" name="last" id="last" />
+				</div>
+				<div class="row">
+					<label>Password</label>
+					<input type="password" name="pass" id="pass" />
+				</div>
+			</fieldset>
+			<h2>If you want to add this page to your home screen or bookmarks, you must do so before logging in.</h2>
+			<img src="images/spinner.png" class="spinner" id="spinner" />
+		</div>
+	</body>
+</html>
