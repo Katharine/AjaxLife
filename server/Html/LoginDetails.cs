@@ -52,7 +52,7 @@ namespace AjaxLife.Html
 
         public string ContentType
         {
-            get { return "text/html; charset=utf-8"; }
+            get { return "application/json"; }
         }
 
         public void OnFileRequested(HttpRequest request, IDirectory directory)

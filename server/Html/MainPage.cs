@@ -64,25 +64,9 @@ namespace AjaxLife.Html
             {
                 // Generate a new session ID.
                 Guid key = Guid.NewGuid();
-                // Create a SecondLife client and set some defaults.
-                SecondLife client = new SecondLife();
-                client.Settings.ALWAYS_DECODE_OBJECTS = false;
-                client.Settings.ALWAYS_REQUEST_OBJECTS = false;
-                client.Settings.MULTIPLE_SIMS = false;
-                client.Settings.ENABLE_SIMSTATS = true;
-                client.Settings.LOGOUT_TIMEOUT = 20000;
-                client.Settings.USE_TEXTURE_CACHE = false;
-                client.Settings.LOG_RESENDS = false;
-                client.Throttle.Cloud = 0;
-                client.Throttle.Task = 0;
-                client.Throttle.Wind = 0;
-                client.Throttle.Asset = 50000;
-                client.Throttle.Resend = 500000;
-                client.Throttle.Texture = 500000;
                 // Create a new User.
                 User user = new User();
                 // Set the user session properties.
-                user.Client = client;
                 user.LastRequest = DateTime.Now;
                 user.Rotation = -Math.PI;
                 // Generate a single-use challenge key.

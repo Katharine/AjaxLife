@@ -93,6 +93,7 @@
     <Compile Include="User.cs" />
     <Compile Include="Html\MakeFile.cs" />
     <Compile Include="BanList.cs" />
+    <Compile Include="Html\CreateSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Contributors.txt" />

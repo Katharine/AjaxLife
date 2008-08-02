@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,12 +48,11 @@ namespace AjaxLife.Html
 
         private string name;
         private IDirectory parent;
-        private string contenttype = "text/plain; charset=utf-8";
         private Dictionary<Guid, User> users;
 
         public string ContentType
         {
-            get { return contenttype; }
+            get { return "application/json"; }
         }
 
         // Someone wants logout.kat?
@@ -103,7 +102,7 @@ namespace AjaxLife.Html
             }   
             catch (Exception e)
             {
-                contenttype = "text/plain";
+                request.Response.ContentType = "text/plain";
                 writer.WriteLine(e.Message);
             }
             writer.Flush();

@@ -42,7 +42,6 @@ namespace AjaxLife.Html
     public class SendMessage : IFile
     {
         // Fields
-        private string contenttype = "text/plain; charset=utf-8";
         private string name;
         private IDirectory parent;
         private Dictionary<Guid, User> users;
@@ -630,7 +629,7 @@ namespace AjaxLife.Html
         {
             get
             {
-                return this.contenttype;
+                return "application/json";
             }
         }
 

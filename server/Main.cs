@@ -299,11 +299,6 @@ namespace AjaxLife
             // so changes are reflected in all the pages. The same goes for individual User objects.
             root.AddFile(new Html.Index("index.html", root));
             root.AddFile(new Html.MainPage("ajaxlife.kat", root, Users));
-            root.AddFile(new Html.Connect("connect.kat", root, Users));
-            root.AddFile(new Html.LoginDetails("details.kat", root, Users));
-            root.AddFile(new Html.Logout("logout.kat", root, Users));
-            root.AddFile(new Html.EventQueue("eventqueue.kat", root, Users));
-            root.AddFile(new Html.SendMessage("sendmessage.kat", root, Users));
             root.AddFile(new Html.Proxy("differentorigin.kat", root));
             root.AddFile(new Html.BasicStats("ping.kat", root, Users));
             root.AddFile(new Html.MakeFile("makefile.kat", root));
@@ -313,6 +308,15 @@ namespace AjaxLife
 			{
 				root.AddDirectory(new TextureDirectory("textures", root));
 			}
+			// API stuff.
+			VirtualDirectory api = new VirtualDirectory("api", root);
+			root.AddDirectory(api);
+			api.AddFile(new Html.CreateSession("newsession", api, Users));
+            api.AddFile(new Html.SendMessage("send", api, Users));
+            api.AddFile(new Html.EventQueue("events", api, Users));
+            api.AddFile(new Html.Logout("logout", api, Users));
+            api.AddFile(new Html.Connect("login", api, Users));
+            api.AddFile(new Html.LoginDetails("sessiondetails", api, Users));
             #endregion
             Console.WriteLine("Loading banlist...");
             BannedUsers = new BanList(); // Create BanList.
@@ -358,7 +362,7 @@ namespace AjaxLife
                         {
                             Guid todie = marked.Dequeue();
                             User user = Users[todie];
-                            if (user.Client.Network.Connected)
+                            if (user.Client != null && user.Client.Network.Connected)
                             {
                                 if (user.Events != null)
                                 {

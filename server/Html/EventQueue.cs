@@ -49,12 +49,11 @@ namespace AjaxLife.Html
 
 		private string name;
 		private IDirectory parent;
-		private string contenttype = "text/plain; charset=utf-8";
 		private Dictionary<Guid, User> users;
 
 		public string ContentType
 		{
-			get { return contenttype; }
+			get { return "application/json"; }
 		}
 
 		public void OnFileRequested(HttpRequest request, IDirectory directory)
@@ -127,7 +126,7 @@ namespace AjaxLife.Html
 			}	
 			catch (Exception e)
 			{
-				contenttype = "text/plain";
+				request.Response.ContentType = "text/plain";
 				writer.WriteLine(e.Message);
 			}
 			writer.Flush();

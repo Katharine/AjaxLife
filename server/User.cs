@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,5 +45,61 @@ namespace AjaxLife
 		public bool LindenGrid;
         public int SignedCallCount = 0;
         public string Signature = "";
+        public List<string> RequestedEvents;
+        
+        // Useful functions
+        // Creates the client if it doesn't already exist.
+        public SecondLife GetClient()
+        {
+            if(this.Client != null) return this.Client;
+            SecondLife client = new SecondLife();
+            client.Settings.ALWAYS_DECODE_OBJECTS = false;
+            client.Settings.ALWAYS_REQUEST_OBJECTS = false;
+            client.Settings.MULTIPLE_SIMS = false;
+            client.Settings.ENABLE_SIMSTATS = true;
+            client.Settings.LOGOUT_TIMEOUT = 20000;
+            client.Settings.USE_TEXTURE_CACHE = false;
+            client.Settings.LOG_RESENDS = false;
+            client.Throttle.Cloud = 0;
+            client.Throttle.Task = 0;
+            client.Throttle.Wind = 0;
+            client.Throttle.Asset = 50000;
+            client.Throttle.Resend = 500000;
+            client.Throttle.Texture = 500000;
+            this.Client = client;
+            return client;
+        }
+        
+        public void ParseRequestedEvents(string events)
+        {
+            RequestedEvents = new List<string>();
+            string[] list = events.Split(',');
+            foreach(string e in list)
+            {
+                RequestedEvents.Add(e);
+            }
+        }
+        
+        // Useful static functions.
+        public static User CreateUser()
+        {
+            User user = new User();
+            user.LastRequest = DateTime.Now;
+            user.Challenge = RSACrypto.CreateChallengeString(AjaxLife.RSAp);
+            user.Rotation = -Math.PI;
+            return user;
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+

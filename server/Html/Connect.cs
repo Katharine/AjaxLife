@@ -1,5 +1,5 @@
 #region License
-/* Copyright (c) 2007, Katharine Berry
+/* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@ namespace AjaxLife.Html
     public class Connect : IFile
     {
         // Fields
-        private string contenttype = "text/plain; charset=utf-8";
         private string name;
         private IDirectory parent;
         private Dictionary<Guid, User> users;
@@ -85,7 +84,7 @@ namespace AjaxLife.Html
                     user = users[key];
                 }
                 user.LastRequest = DateTime.Now;
-                client = user.Client;
+                client = user.GetClient();
 
                 string first = "";
                 string last = "";
@@ -141,6 +140,12 @@ namespace AjaxLife.Html
 					// This doesn't seem to work.
                     // client.Self.Movement.Camera.SetPositionOrientation(new LLVector3(128, 128, 0), 0, 0, 0);
                     
+                    // Everything's happy. Log the requested message list, if any.
+                    if(POST.ContainsKey("events"))
+                    {
+                        user.ParseRequestedEvents(POST["events"]);
+                    }
+                    
 					// If we got this far, it worked. Announce this.
                     textWriter.WriteLine("{success: true}");
                 }
@@ -152,7 +157,7 @@ namespace AjaxLife.Html
             }
             catch (Exception exception)
             {
-                this.contenttype = "text/plain";
+                request.Response.ContentType = "text/plain";
                 textWriter.WriteLine(exception.Message);
             }
             textWriter.Flush();
@@ -218,7 +223,7 @@ namespace AjaxLife.Html
         {
             get
             {
-                return this.contenttype;
+                return "application/json";
             }
         }
 
