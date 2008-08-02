@@ -94,6 +94,7 @@
     <Compile Include="Html\MakeFile.cs" />
     <Compile Include="BanList.cs" />
     <Compile Include="Html\CreateSession.cs" />
+    <Compile Include="Html\iPhone.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Contributors.txt" />
@@ -107,6 +108,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="robots.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Html\Templates\iPhone.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -147,7 +147,7 @@ namespace AjaxLife.Html
                     }
                     
 					// If we got this far, it worked. Announce this.
-                    textWriter.WriteLine("{success: true}");
+                    textWriter.WriteLine("{\"success\": 1}");
                 }
                 else
                 {

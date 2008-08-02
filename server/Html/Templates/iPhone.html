@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>AjaxLife</title>
+		<meta name="apple-touch-fullscreen" content="YES" />
+		<meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<link rel="apple-touch-icon" href="{STATIC_ROOT}/iphone/images/home-screen.png" />
+		<link rel="stylesheet" type="text/css" href="{STATIC_ROOT}/iphone/iui/iui.css" />
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/iui/iui.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/scripts/AjaxLife.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/scripts/AjaxLife.Constants.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/scripts/AjaxLife.UI.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/scripts/AjaxLife.Friends.js"></script>
+		<script type="text/javascript" src="{STATIC_ROOT}/iphone/scripts/AjaxLife.Network.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>
+		<script type="text/javascript">
+			AjaxLife.StaticRoot = "{STATIC_ROOT}";
+			AjaxLife.SessionID = "{SESSION_ID}";
+		</script>
+	</head>
+	<body onload="AjaxLife.init();">
+		<div class="toolbar" id="top_toolbar">
+			<h1 id="pageTitle"></h1>
+			<a id="backButton" class="button" href="#"></a>
+		</div>
+		<ul id="home" title="AjaxLife" selected="true">
+			<li>(loading)</li>
+		</ul>
+	</body>
+</html>

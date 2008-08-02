@@ -76,7 +76,7 @@ namespace AjaxLife
             string[] list = events.Split(',');
             foreach(string e in list)
             {
-                RequestedEvents.Add(e);
+                RequestedEvents.Add(e.Trim());
             }
         }
         
@@ -91,15 +91,3 @@ namespace AjaxLife
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
