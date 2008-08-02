@@ -129,7 +129,7 @@ function initui()
 	var wait = AjaxLife.Widgets.Modal.wait(_("Login.LoadingSession"));
 	var link = new Ext.data.Connection({timeout: 30000});
 	link.request({
-		url: "details.kat",
+		url: "api/sessiondetails",
 		method: "POST",
 		params: {
 			sid: gSessionID
@@ -218,7 +218,7 @@ function handlelogin()
 		// Pass on all data, and wait for the response.
 		var link = new Ext.data.Connection({timeout: 120000});
 		link.request({
-			url: "connect.kat",
+			url: "api/login",
 			method: "POST",
 			params: {
 				logindata: logindetails,

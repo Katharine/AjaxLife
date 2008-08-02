@@ -39,7 +39,7 @@ AjaxLife.Network.logout = function(hidemessage) {
 	}
 	var link = new Ext.data.Connection();
 	link.request({
-		url: "logout.kat",
+		url: "api/logout",
 		method: "POST",
 		params: {
 			sid: gSessionID
@@ -196,14 +196,14 @@ AjaxLife.Network.MessageQueue = function() {
 	}
 	
 	// (Re-)request the queue. This is called on initialisation and after
-	// the message queue is received. A request is made to eventqueue.kat
+	// the message queue is received. A request is made to api/eventqueue
 	// with a 60-second timeout.
 	function requestqueue() {
 		// If the queue is already running, abort.
 		if(requesting) return;
 		requesting = true;
 		link.request({
-			url: "eventqueue.kat",
+			url: "api/events",
 			method: "POST",
 			params: {
 				sid: gSessionID
@@ -297,7 +297,7 @@ AjaxLife.Network.SignedMessages = {
 	ScriptPermissionResponse: true
 };
 
-// Sends a standard message through sendmessage.kat, if we're connected.
+// Sends a standard message through send, if we're connected.
 // Optionally, a callback can be specified, in which case it will be called
 // once the server responds to the request.
 AjaxLife.Network.Send = function(message, opts) {
@@ -332,7 +332,7 @@ AjaxLife.Network.Send = function(message, opts) {
 		querystring += '&hash='+hash;
 	}
 	params = {
-		url: "sendmessage.kat",
+		url: "api/send",
 		method: "POST",
 		params: querystring
 	};
