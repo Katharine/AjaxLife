@@ -1,15 +1,14 @@
 AjaxLife.Network = function() {
 	function loggedout(reason)
 	{
-		var text = "You have logged out of AjaxLife.";
+		var text = "You have logged out of Second Life.";
 		if(reason)
 		{
-			text = "You have been logged out of AjaxLife:<br /><br />"+reason.escapeHTML();
+			text = "You have been logged out of Second Life:<br /><br />"+reason.escapeHTML();
 		}
-		var loggedout = AjaxLife.UI.CreateNewPanel('panel', 'loggedout', 'Logged out', true);
+		var loggedout = AjaxLife.UI.CreateNewPanel('panel', 'loggedout', 'Logged out', true, true);
 		var message = new Element('h2', {align: 'center'}).setStyle({paddingTop: '50px'}).update(text);
 		loggedout.appendChild(message);
-		$('top-toolbar-button').hide();
 		iui.showPageById('loggedout');
 	}
 
@@ -55,10 +54,6 @@ AjaxLife.Network = function() {
 					if(xhr.responseJSON && callback)
 					{
 						callback(xhr.responseJSON);
-					}
-					else
-					{
-						alert(xhr.responseText);
 					}
 				}
 			});

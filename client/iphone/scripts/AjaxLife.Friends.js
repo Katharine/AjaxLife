@@ -35,7 +35,7 @@ AjaxLife.Friends = function() {
 	
 	function makefrienditem(friend)
 	{
-		var a = new Element('a', {onclick: 'AjaxLife.InstantMessages.Start("'+friend.ID+'")'}).update(friend.Name);
+		var a = new Element('a', {onclick: 'AjaxLife.InstantMessages.Start("'+friend.ID+'","'+friend.Name+'")'}).update(friend.Name);
 		var li = new Element('li', {friendid: friend.ID});
 		li.appendChild(a);
 		return li;

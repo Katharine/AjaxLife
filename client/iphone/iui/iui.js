@@ -32,7 +32,6 @@ window.iui =
                 currentDialog.removeAttribute("selected");
                 currentDialog = null;
             }
-
             if (hasClass(page, "dialog"))
                 showDialog(page);
             else
@@ -183,14 +182,10 @@ addEventListener("click", function(event)
         }
         else if (link == $("backButton"))
         {
-        	if(pageHistory.length == 2)
+        	if(pageHistory[pageHistory.length - 2])
         	{
-        		iui.showPageById('home');
+        		iui.showPageById(pageHistory[0]);
         	}
-        	else
-        	{
-            	history.back();
-            }
         }
         else if (link.getAttribute("type") == "submit")
             submitForm(findParent(link, "form"));
@@ -326,11 +321,32 @@ function updatePage(page, fromPage)
         if (prevPage && !page.getAttribute("hideBackButton"))
         {
             backButton.style.display = "inline";
-            backButton.innerHTML = prevPage.title ? prevPage.title : "Back";
+            //backButton.innerHTML = prevPage.title ? prevPage.title : "Back";
+            backButton.innerHTML = 'Menu';
         }
         else
             backButton.style.display = "none";
+    }  
+    var otherbutton = $('top-toolbar-button');
+    if(otherbutton)
+    {
+    	if(page.getAttribute('hideToolbarButton'))
+    	{
+    		$('top-toolbar-button').style.visibility = 'hidden';
+    	}
+    	else
+    	{
+    		$('top-toolbar-button').style.visibility = 'visible';
+    	}
     }    
+	if(page.onshow)
+	{
+		page.onshow();
+	}
+	if(fromPage && fromPage.onhide)
+	{
+		fromPage.onhide();
+	}
 }
 
 function slidePages(fromPage, toPage, backwards)
@@ -438,7 +454,7 @@ function replaceElementWithSource(replace, source)
         page.appendChild(frag.firstChild);
 }
 
-function $(id) { return document.getElementById(id); }
+//function $(id) { return document.getElementById(id); }
 function ddd() { console.log.apply(console, arguments); }
 
 })();

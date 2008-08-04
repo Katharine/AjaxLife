@@ -1,4 +1,6 @@
 AjaxLife.UI = function() {
+	var notification = false;
+
 	function addLink(menu, target, text)
 	{
 		var opts = {};
@@ -28,9 +30,13 @@ AjaxLife.UI = function() {
 			// Add a button to the toolbar.
 			$('top_toolbar').appendChild(new Element('a', {href: '#imlist', 'class': 'button', id: 'top-toolbar-button'}).update('Open IMs'));
 			addLink('home','friends','Friend List');
-			addLink('home','groups','Groups');
+			addLink('home','chat','Local chat');
 			addLink('home','imlist','Current IMs');
 			addLink('home', '', 'Log out').onclick = dologout;
+			
+			// Notification element
+			notification = new Element('div', {'class': 'notification'});
+			document.body.appendChild(notification);
 		},
 		SetIMCount: function(count) {
 			if(count == 0)
@@ -44,7 +50,7 @@ AjaxLife.UI = function() {
 				$('top-toolbar-button').update('Open IMs ('+count+')');
 			}
 		},
-		CreateNewPanel: function(type, id, name, hideBackButton) {
+		CreateNewPanel: function(type, id, name, hideBackButton, hideToolbarButton, onShow) {
 			var element = 'ul';
 			var opts = {id: id, title: name};
 			if(type == 'panel')
@@ -56,10 +62,34 @@ AjaxLife.UI = function() {
 			{
 				opts.hideBackButton = 'hideBackButton';
 			}
+			if(hideToolbarButton)
+			{
+				opts.hideToolbarButton = 'hideToolbarButton';
+			}
 			var panel = new Element(element, opts);
+			if(onShow)
+			{
+				panel.onshow = onShow;
+			}
 			document.body.appendChild(panel);
 			return panel;
 		},
-		AddLink: addLink
+		AddLink: addLink,
+		ShowFatalError: function(title, message) {
+			var error = this.CreateNewPanel('panel', 'fatal-error', title, true, true);
+			var message = new Element('h2', {align: 'center'}).update(message.escapeHTML().gsub("\n","<br />"));
+			error.appendChild(message);
+			iui.showPage(error);
+		},
+		ShowNotification: function(notice) {
+			notification.update(notice.escapeHTML().gsub("\n", "<br />"));
+			if(notification.timeout) clearTimeout(notification.timeout);
+			 // One second fade in, two seconds visible. Will be followed by one second fade out.
+			 // Fading is controlled by CSS (woo!)
+			notification.addClassName('visible');
+			notification.timeout = setTimeout(function() {
+				notification.removeClassName('visible');
+			}, 3000);
+		}
 	};
 }();

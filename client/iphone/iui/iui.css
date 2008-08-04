@@ -9,7 +9,7 @@ body {
     -webkit-text-size-adjust: none;
 }
 
-body > *:not(.toolbar) {
+body > *:not(.toolbar):not(.notification) {
     display: none;
     position: absolute;
     margin: 0;
@@ -20,12 +20,12 @@ body > *:not(.toolbar) {
     min-height: 372px;
 }
 
-body[orient="landscape"] > *:not(.toolbar) {
+body[orient="landscape"] > *:not(.toolbar):not(.notification) {
     min-height: 268px;
 }
 
 body > *[selected="true"] {
-    display: block;
+    display: block !important;
 }
 
 a[selected], a:active {
@@ -235,9 +235,13 @@ input:not(input[type|=radio]):not(input[type|=checkbox]) {
     -webkit-box-sizing: border-box;
     width: 100%;
     margin: 8px 0 0 0;
-    padding: 6px 6px 6px 44px;
+    padding: 6px;
     font-size: 16px;
     font-weight: normal;
+}
+
+input:not(input[type|=radio]):not(input[type|=checkbox]):not(.no-indent) {
+    padding: 6px 6px 6px 44px;
 }
 
 /************************************************************************************************/
