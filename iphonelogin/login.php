@@ -26,7 +26,7 @@ $post = array(
 	'logindata' => $encrypted,
 	'location' => 'last',
 	'grid' => $details->DefaultGrid,
-	'events' => 'FriendOnOffline,Disconnected'
+	'events' => 'FriendOnOffline,Disconnected,InstantMessage,SpatialChat'
 );
 $post = http_build_query($post, '_', '&');
 curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
