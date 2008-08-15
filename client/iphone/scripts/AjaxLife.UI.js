@@ -81,14 +81,17 @@ AjaxLife.UI = function() {
 			error.appendChild(message);
 			iui.showPage(error);
 		},
-		ShowNotification: function(notice) {
+		ShowNotification: function(notice, onclick) {
 			notification.update(notice.escapeHTML().gsub("\n", "<br />"));
 			if(notification.timeout) clearTimeout(notification.timeout);
-			 // One second fade in, two seconds visible. Will be followed by one second fade out.
-			 // Fading is controlled by CSS (woo!)
+			// Add the callback, if any. If there isn't any, clear anything that might be there.
+			if(onclick) notification.onclick = onclick;
+			// One second fade in, two seconds visible. Will be followed by one second fade out.
+			// Fading is controlled by CSS (woo!)
 			notification.addClassName('visible');
 			notification.timeout = setTimeout(function() {
 				notification.removeClassName('visible');
+				notification.onclick = Prototype.emptyFunction;
 			}, 3000);
 		}
 	};

@@ -6,6 +6,7 @@ AjaxLife = function() {
 		AjaxLife.InstantMessages.init();
 		AjaxLife.Friends.init();
 		AjaxLife.Chat.init();
+		AjaxLife.World.init();
 		AjaxLife.Network.init();
 	}
 	

@@ -10,6 +10,7 @@ AjaxLife.Chat = function() {
 		// This scrolls to the bottom.
 		chat_log.scrollTop = chat_log.scrollHeight;
 		$('home-to-chat').update('Local chat');
+		unread = 0;
 	}
 	
 	function handlesubmit(e)

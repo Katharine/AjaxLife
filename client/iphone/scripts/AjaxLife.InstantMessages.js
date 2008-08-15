@@ -78,7 +78,10 @@ AjaxLife.InstantMessages = function() {
 		session.chatlog.scrollTop = session.chatlog.scrollHeight;
 		if(iui.getSelectedPage().id != 'im-panel-'+sessionid)
 		{
-			AjaxLife.UI.ShowNotification(display);
+			// Make the notification show if touched.
+			AjaxLife.UI.ShowNotification(display, function() {
+				iui.showPage(session.panel);
+			});
 			++session.unread;
 			++unread_count;
 			AjaxLife.UI.SetIMCount(unread_count);
