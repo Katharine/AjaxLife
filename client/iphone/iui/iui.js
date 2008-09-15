@@ -208,7 +208,7 @@ addEventListener("click", function(event)
 		else
 			return;
 		
-		event.preventDefault();		   
+		event.preventDefault();			  
 	}
 }, true);
 
@@ -218,7 +218,7 @@ addEventListener("click", function(event)
 	if (div && hasClass(div, "toggle"))
 	{
 		div.setAttribute("toggled", div.getAttribute("toggled") != "true");
-		event.preventDefault();		   
+		event.preventDefault();			  
 	}
 }, true);
 
@@ -251,9 +251,9 @@ function checkOrientAndLocation()
 	{
 	  if (window.innerWidth != currentWidth)
 	  {	  
-		  currentWidth = window.innerWidth;
-		  var orient = currentWidth == 320 ? "portrait" : "landscape";
-		  setOrientation(orient);
+			currentWidth = window.innerWidth;
+			var orient = currentWidth == 320 ? "portrait" : "landscape";
+			setOrientation(orient);
 	  }
 	}
 
@@ -302,11 +302,6 @@ function cancelDialog(form)
 	form.removeAttribute("selected");
 }
 
-function stopBubble(e)
-{
-	e.stopPropagation();
-}
-
 function updatePage(page, fromPage)
 {
 	if (!page.id)
@@ -329,16 +324,14 @@ function updatePage(page, fromPage)
 		if (prevPage && !page.getAttribute("hideBackButton"))
 		{
 			backButton.innerHTML = 'Menu';
-			backButton.style.opacity = 1.0;
-			backButton.onclick = Prototype.emptyFunction;
+			backButton.show();
 			//backButton.innerHTML = prevPage.title ? prevPage.title : "Back";
 		}
 		else
 		{
-			backButton.style.opacity = 0.0;
-			backButton.onclick = stopBubble;
+			backButton.hide();
 		}
-	}  
+	}	
 	var otherbutton = $('top-toolbar-button');
 	if(otherbutton)
 	{
@@ -363,26 +356,47 @@ function updatePage(page, fromPage)
 
 function slidePages(fromPage, toPage, backwards)
 {		 
-	if(backwards)
-	{
-		fromPage.removeClassName('historic');
-	}
+	var axis = (backwards ? fromPage : toPage).getAttribute("axis");
+	if (axis == "y")
+		(backwards ? fromPage : toPage).style.top = "100%";
 	else
+		toPage.style.left = "100%";
+
+	toPage.setAttribute("selected", "true");
+	scrollTo(0, 1);
+	clearInterval(checkTimer);
+	
+	var percent = 100;
+	slide();
+	var timer = setInterval(slide, slideInterval);
+
+	function slide()
 	{
-		fromPage.addClassName('historic');
+		percent -= slideSpeed;
+		if (percent <= 0)
+		{
+			percent = 0;
+			if (!hasClass(toPage, "dialog"))
+				fromPage.removeAttribute("selected");
+			clearInterval(timer);
+			checkTimer = setInterval(checkOrientAndLocation, 300);
+			setTimeout(updatePage, 0, toPage, fromPage);
+		}
+	
+		if (axis == "y")
+		{
+			backwards
+				? fromPage.style.top = (100-percent) + "%"
+				: toPage.style.top = percent + "%";
+		}
+		else
+		{
+			fromPage.style.left = (backwards ? (100-percent) : (percent-100)) + "%"; 
+			toPage.style.left = (backwards ? -percent : percent) + "%"; 
+		}
 	}
-	// Do this to briefly override the stylesheet, so the animation works.
-	toPage.setStyle({display: 'block'});
-	fromPage.setStyle({display: 'block'});
-	// Do the animation
-	fromPage.removeAttribute('selected');
-	toPage.setAttribute('selected', 'true');
-	// Remove our overriding.
-	setTimeout(function() {
-		fromPage.setStyle({display: 'none'});
-	}, 1000);
-	updatePage(toPage, fromPage);
 }
+
 
 function preloadImages()
 {

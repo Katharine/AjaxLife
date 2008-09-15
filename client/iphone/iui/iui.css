@@ -108,14 +108,12 @@ body[orient="landscape"] > .toolbar > h1 {
 }
 
 #backButton {
-	opacity: 0;
 	left: 6px;
 	right: auto;
 	padding: 0;
 	max-width: 55px;
 	border-width: 0 8px 0 14px;
 	-webkit-border-image: url(backButton.png) 0 8 0 14;
-	-webkit-transition: opacity 1s linear;
 }
 
 .whiteButton,
@@ -385,18 +383,4 @@ fieldset > .row:last-child {
 	display: none;
 	background-image: url(loading.gif), url(selection.png),
 		url(blueButton.png), url(listArrowSel.png), url(listGroup.png);
-}
-
-/************************************************************************************************/
-
-body > *:not(.toolbar):not(.notification) {
-	-webkit-transition: left 0.5s linear;
-}
-
-body > *:not(.toolbar):not(.notification):not([selected="true"]) {
-	left: 490px;
-}
-
-body > *.historic:not(.toolbar):not(.notification):not([selected="true"]) {
-	left: -490px;
 }
