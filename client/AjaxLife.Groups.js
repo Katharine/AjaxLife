@@ -46,6 +46,7 @@
  	{
  		for(var key in data.Groups)
 		{
+			if(key == AjaxLife.Utils.UUID.Zero) continue; // Remove the "None" that's sent if the list is empty.
 			var group = data.Groups[key];
 			groups[key] = group;
 			AjaxLife.NameCache.AddGroup(key,group.Name);

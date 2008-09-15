@@ -71,7 +71,7 @@ AjaxLife.InstantMessages = function() {
 		{
 			display += ': \n'+message;
 		}
-		var elem = new Element('span', {'class': 'message'}).update(display);
+		var elem = new Element('span', {'class': 'message'}).update(display.escapeHTML());
 		line.appendChild(timestamp);
 		line.appendChild(elem);
 		session.chatlog.appendChild(line);

@@ -63,7 +63,7 @@ AjaxLife.Chat = function() {
 		// Build chat line
 		var line = new Element('div');
 		var timestamp = new Element('span', {'class': 'timestamp'}).update("[" + AjaxLife.Utils.MakeTimestamp() + "]");
-		var chat = new Element('span', {'class': 'message'}).update(message);
+		var chat = new Element('span', {'class': 'message'}).update(message.escapeHTML());
 		switch(source)
 		{
 		case AjaxLife.Constants.MainAvatar.ChatSourceType.System:
