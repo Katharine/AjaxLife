@@ -1,6 +1,6 @@
-.modaloverlay {
+#waitpane {
     background: none;
-    background-color: rgba(60, 60, 60, 0.9);
+    background-color: rgba(30, 30, 30, 0.9);
     display: block;
     color: rgb(255, 255, 255);
     z-index: 999999;
@@ -8,8 +8,9 @@
     height: 100%;
     text-align: center;
     padding-top: 230px;
+    -webkit-transition: opacity 0.3s linear;
 }
 
-body.landscape .modaloverlay {
+body.landscape #waitpane {
     padding-top:180px;
 }
