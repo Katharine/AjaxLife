@@ -56,13 +56,27 @@ AjaxLife.Login = function() {
     }
     return {
         init: function() {
+            // Generate our signature.
+            AjaxLife.Signature = Math.random().toString().substr(2);
+            
+            // Set up the session.
+            $.getJSON('http://ajaxlife.net/client/redirect.php/api/newsession', function(data) {
+                AjaxLife.SessionID = data.SessionID;
+                AjaxLife.Challenge = data.Challenge;
+                AjaxLife.Exponent = data.Exponent;
+                AjaxLife.Modulus = data.Modulus;
+                AjaxLife.Grids = data.Grids;
+                AjaxLife.DefaultGrid = data.DefaultGrid;
+                $('.modaloverlay').hide();
+            })
+            
             $('#login').submit(function() {
                 var first = $('#login_first').val();
                 var last = $('#login_last').val();
                 var password = $('#login_password').val();
-                alert("Starting")
-                encrypt_login('123423', "11", "8C5738386129C7E025A06CB4F2AD7DC9B869CCFE2004306955D692B772472B8DF0744C768664698B4B630260C7E061C3C763D0DDF4BF245B397AAE33891825C0931D5EC41B18FA8805ECC1747829965CCAC2DC9FCFEDF0FA23D74D782D99262507A6AC4AF41D5B4E078A0B4A31B867B03E9E3A09C8BA48FD2D64F36FCD2B9C51", first, last, password, 42)
-                alert("Done.")
+                alert("Starting");
+                login = encrypt_login(AjaxLife.Challenge, AjaxLife.Exponent, AjaxLife.Modulus, first, last, password, AjaxLife.Signature);
+                alert("Done:\n" + login);
             })
         }
     }
