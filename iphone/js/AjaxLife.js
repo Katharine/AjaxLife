@@ -5,11 +5,15 @@ AjaxLife.SameOriginProxy = '/client/proxy.php/';
 AjaxLife.APIRoot = '/api/'
 
 // jQTouch init
-AjaxLife.jqt = $.jQTouch()
+AjaxLife.jqt = $.jQTouch({
+    icon: 'images/icon.png',
+    addGlossToIcon: false,
+    startupScreen: 'images/splash.png'
+})
 
 // This is called after a successful login.
 AjaxLife.init = function() {
-    alert("We logged in! Now what?")
+    AjaxLife.jqt.goTo('#mainmenu', 'flip');
 }
 
 AjaxLife.Debug = function(module, text) {

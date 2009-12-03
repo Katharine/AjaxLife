@@ -69,31 +69,33 @@ AjaxLife.Login = function() {
             $('#login').submit(function() {
                 AjaxLife.Debug("login", "Beginning login process.");
                 AjaxLife.UI.WaitPane.show("Encrypting login details…");
-                var first = $('#login_first').val();
-                var last = $('#login_last').val();
-                var password = $('#login_password').val();
-                var location = $('#login_location').val();
-                var sim_name = $('#login_arbitrary').val();
-                var grid = $('#login_grid').val();
-                login = encrypt_login(AjaxLife.Challenge, AjaxLife.Exponent, AjaxLife.Modulus, first, last, password, AjaxLife.Signature);
-                AjaxLife.Debug("login", "Encrypted login information: " + login);
-                AjaxLife.UI.WaitPane.show("Logging in…");
-                $.post(AjaxLife.APIRoot + 'login', {
-                    logindata: login,
-                    grid: grid,
-                    location: location,
-                    sim: sim_name,
-                    session: AjaxLife.SessionID
-                }, function(data) {
-                    AjaxLife.Debug("login", "Received login response:");
-                    AjaxLife.Debug(data);
-                    AjaxLife.UI.WaitPane.hide()
-                    if(data.success) {
-                        AjaxLife.init();
-                    } else {
-                        alert("Login failed:\n" + data.message);
-                    }
-                }, "json")
+                setTimeout(function() {
+                    var first = $('#login_first').val();
+                    var last = $('#login_last').val();
+                    var password = $('#login_password').val();
+                    var location = $('#login_location').val();
+                    var sim_name = $('#login_arbitrary').val();
+                    var grid = $('#login_grid').val();
+                    login = encrypt_login(AjaxLife.Challenge, AjaxLife.Exponent, AjaxLife.Modulus, first, last, password, AjaxLife.Signature);
+                    AjaxLife.Debug("login", "Encrypted login information: " + login);
+                    AjaxLife.UI.WaitPane.show("Logging in…");
+                    $.post(AjaxLife.APIRoot + 'login', {
+                        logindata: login,
+                        grid: grid,
+                        location: location,
+                        sim: sim_name,
+                        session: AjaxLife.SessionID
+                    }, function(data) {
+                        AjaxLife.Debug("login", "Received login response:");
+                        AjaxLife.Debug(data);
+                        AjaxLife.UI.WaitPane.hide()
+                        if(data.success) {
+                            AjaxLife.init();
+                        } else {
+                            setTimeout(function() {alert("Login failed:\n" + data.message)}, 10);
+                        }
+                    }, "json")
+                }, 200);
             })
         }
     }
