@@ -28,8 +28,9 @@ AjaxLife.Network.MessageQueue = function() {
                 try {
                     $.each(callbacks[item.MessageType], function() {
                         if(this && typeof this == 'function') {
+                            handled = true;
                             this(item);
-                        } else if(typeof callback != 'boolean') {
+                        } else if(typeof this != 'boolean') {
                             alert("Error: non-function callback for "+item.MessageType+". WTF!?");
                         }
                     });
@@ -57,7 +58,7 @@ AjaxLife.Network.MessageQueue = function() {
     function request_queue(queue) {
         if(requesting) return;
         requesting = true;
-        $.post(AjaxLife.APIRoot + 'events', {sid: AjaxLife.SessionID}, handle_incoming);
+        $.post(AjaxLife.APIRoot + 'events', {sid: AjaxLife.SessionID}, handle_incoming, "json");
     }
     
     return {
