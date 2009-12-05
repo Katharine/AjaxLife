@@ -15,7 +15,6 @@ AjaxLife.jqt = $.jQTouch({
 AjaxLife.init = function() {
     AjaxLife.jqt.goTo('#mainmenu', 'flip');
     AjaxLife.MainMenu.init();
-    AjaxLife.WorldMap.init();
     
     AjaxLife.Network.init();
 }
