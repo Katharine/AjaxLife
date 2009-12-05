@@ -55,7 +55,7 @@ AjaxLife.Login = function() {
                 AjaxLife.Debug("login", "Performing server lookup...")
                 $.getJSON(AjaxLife.ServerLookup, function(data) {
                     if(!data.success) {
-                        alert("AjaxLife seems to be down:\n\n" + data.error);
+                        AjaxLife.UI.WaitPane.show(data.error);
                     } else {
                         AjaxLife.APIRoot = AjaxLife.SameOriginProxy + data.server + AjaxLife.APIRoot;
                         AjaxLife.Debug("login", "Got our server IP. API root is now " + AjaxLife.APIRoot + ".");
@@ -84,15 +84,30 @@ AjaxLife.Login = function() {
                         grid: grid,
                         location: location,
                         sim: sim_name,
-                        session: AjaxLife.SessionID
+                        session: AjaxLife.SessionID,
+                        events: 'UsefulData,SpatialChat,InstantMessage,Disconnected,FriendOnOffline'
                     }, function(data) {
                         AjaxLife.Debug("login", "Received login response:");
                         AjaxLife.Debug(data);
-                        AjaxLife.UI.WaitPane.hide()
                         if(data.success) {
-                            AjaxLife.init();
+                            // Get login details.
+                            $.post(AjaxLife.APIRoot + 'sessiondetails', {sid: AjaxLife.SessionID}, function(data) {
+                                AjaxLife.MOTD = data.MOTD;
+                                AjaxLife.UI.WaitPane.show(data.MOTD, true);
+                                AjaxLife.InitialRegionName = data.Region;
+                                AjaxLife.InitialRegionCoords = data.RegionCoords;
+                                AjaxLife.InitialPosition = data.Position;
+                                AjaxLife.UserName = data.UserName;
+                                AjaxLife.AgentID = data.AgentID;
+                                AjaxLife.InventoryRoot = data.InventoryRoot;
+                                setTimeout(function() {
+                                    AjaxLife.UI.WaitPane.hide();
+                                    AjaxLife.init();
+                                }, 3000);
+                            }, "json");
                         } else {
-                            setTimeout(function() {alert("Login failed:\n" + data.message)}, 10);
+                            alert("Login failed:\n" + data.message);
+                            AjaxLife.UI.WaitPane.hide();
                         }
                     }, "json")
                 }, 200);

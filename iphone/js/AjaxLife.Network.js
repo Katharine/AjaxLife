@@ -9,6 +9,17 @@ AjaxLife.Network = function() {
         send: function(message, callback, arguments, sign) {
             arguments.sid = AjaxLife.SessionID;
             $.post(AjaxLife.APIRoot + 'send', arguments, callback, "json");
+        },
+        logout: function() {
+            $.post(AjaxLife.APIRoot + 'logout', {sid: AjaxLife.SessionID}, function(data) {
+                if(data.success) {
+                    AjaxLife.Network.Connected = false;
+                    AjaxLife.UI.WaitPane.show("You have logged out.");
+                } else {
+                    alert("You could not be logged out.");
+                    AjaxLife.UI.WaitPane.hide();
+                }
+            }, "json");
         }
     };
 }();
@@ -76,6 +87,7 @@ AjaxLife.Network.MessageQueue = function() {
             }
             var num = callbacks[message].length;
             callbacks[message][num] = callback;
+            AjaxLife.Debug('network', 'Registered callback for ' + message + '.');
             return num;
         },
         unregister_callback: function(message, callback) {

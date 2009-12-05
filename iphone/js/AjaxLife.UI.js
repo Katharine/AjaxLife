@@ -12,8 +12,12 @@ AjaxLife.UI.WaitPane = function() {
         init: function() {
             pane = $('#waitpane');
         },
-        show: function(text) {
-            pane.text(text);
+        show: function(text, html) {
+            if(html) {
+                pane.html(text);
+            } else {
+                pane.text(text);
+            }
             if(!displayed) {
                 displayed = true;
                 pane.show();

@@ -14,6 +14,9 @@ AjaxLife.jqt = $.jQTouch({
 // This is called after a successful login.
 AjaxLife.init = function() {
     AjaxLife.jqt.goTo('#mainmenu', 'flip');
+    AjaxLife.MainMenu.init();
+    AjaxLife.WorldMap.init();
+    
     AjaxLife.Network.init();
 }
 
