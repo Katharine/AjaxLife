@@ -6,7 +6,7 @@ AjaxLife.Network = function() {
             AjaxLife.Network.MessageQueue.init();
             AjaxLife.Network.Connected = true;
         },
-        send: function(message, callback, arguments, sign) {
+        send: function(message, arguments, callback, sign) {
             arguments.sid = AjaxLife.SessionID;
             $.post(AjaxLife.APIRoot + 'send', arguments, callback, "json");
         },

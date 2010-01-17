@@ -13,6 +13,8 @@
         <script src="js/AjaxLife.UI.js" type="text/javascript"></script>
         <script src="js/AjaxLife.Login.js" type="text/javascript"></script>
         <script src="js/AjaxLife.Network.js" type="text/javascript"></script>
+        <script src="js/AjaxLife.Nearby.js" type="text/javascript"></script>
+        <script src="js/AjaxLife.NameCache.js" type="text/javascript"></script>
         <script src="js/AjaxLife.MainMenu.js" type="text/javascript"></script>
         <!-- end scripts -->
         <title>AjaxLife</title>
@@ -68,6 +70,15 @@
             </ul>
             <ul class="rounded">
                 <li><a href="#" id="mainmenu_logout">Log out</a></li>
+            </ul>
+        </div>
+        <div id="nearby">
+            <div class="toolbar">
+                <h1>Nearby</h1>
+                <a href="#" class="back">Menu</a>
+            </div>
+            <ul id="nearby_list">
+                <li>Nobody</li>
             </ul>
         </div>
         <div id="waitpane">Loading...</div> <!-- This is reused in AjaxLife.UI.js -->

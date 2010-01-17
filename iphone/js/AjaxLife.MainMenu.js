@@ -11,7 +11,7 @@ AjaxLife.MainMenu = function() {
             $('#mainmenu_worldmap').text(region + ' (' + pos.X + ', ' + pos.Y + ', ' + pos.Z + ')');
         }
         
-        var nearby_count = useful_data.Positions.length;
+        var nearby_count = useful_data.Positions.length - 1;
         if(nearby_count != last_nearby_count) {
             last_nearby_count = nearby_count;
             if(nearby_count > 0) {

@@ -85,7 +85,7 @@ AjaxLife.Login = function() {
                         location: location,
                         sim: sim_name,
                         session: AjaxLife.SessionID,
-                        events: 'UsefulData,SpatialChat,InstantMessage,Disconnected,FriendOnOffline'
+                        events: 'UsefulData,SpatialChat,InstantMessage,Disconnected,FriendOnOffline,AvatarAdded,AvatarRemoved,Teleport'
                     }, function(data) {
                         AjaxLife.Debug("login", "Received login response:");
                         AjaxLife.Debug(data);
