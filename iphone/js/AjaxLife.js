@@ -8,7 +8,8 @@ AjaxLife.APIRoot = '/api/'
 AjaxLife.jqt = $.jQTouch({
     icon: 'images/icon.png',
     addGlossToIcon: false,
-    startupScreen: 'images/splash.png'
+    startupScreen: 'images/splash.png',
+    formSelector: 'form.jqt'
 })
 
 // This is called after a successful login.
@@ -17,6 +18,7 @@ AjaxLife.init = function() {
     AjaxLife.MainMenu.init();
     AjaxLife.NameCache.init();
     AjaxLife.Nearby.init();
+    AjaxLife.LocalChat.init();
     AjaxLife.Network.init();
 }
 

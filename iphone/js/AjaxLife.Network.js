@@ -7,7 +7,9 @@ AjaxLife.Network = function() {
             AjaxLife.Network.Connected = true;
         },
         send: function(message, arguments, callback, sign) {
+            if(!arguments) arguments = {};
             arguments.sid = AjaxLife.SessionID;
+            arguments.MessageType = message;
             $.post(AjaxLife.APIRoot + 'send', arguments, callback, "json");
         },
         logout: function() {

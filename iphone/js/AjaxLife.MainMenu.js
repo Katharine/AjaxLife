@@ -15,9 +15,9 @@ AjaxLife.MainMenu = function() {
         if(nearby_count != last_nearby_count) {
             last_nearby_count = nearby_count;
             if(nearby_count > 0) {
-                $('#mainmenu_nearby_counter').text(nearby_count).show();
+                $('#mainmenu_nearby_counter').text(nearby_count).css('display', '');
             } else {
-                $('#mainmenu_nearby_counter').hide();
+                $('#mainmenu_nearby_counter').css('display', 'none !important');
             }
         }
     }
