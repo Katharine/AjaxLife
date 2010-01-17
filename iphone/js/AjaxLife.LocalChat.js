@@ -59,6 +59,12 @@ AjaxLife.LocalChat = function() {
                     }
                 }
             });
+            
+            AjaxLife.Network.MessageQueue.register_callback('InstantMessage', function(data) {
+				if(data.Dialog == 19) { // MessageFromObject
+				    incoming_line(data.FromAgentName, data.Message, 2, 8); // Object, OwnerSay (a lie, but oh well.)
+				}
+			});
         }
     };
 }();
