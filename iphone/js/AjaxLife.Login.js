@@ -66,7 +66,8 @@ AjaxLife.Login = function() {
                 make_session();
             }
             
-            $('#login').submit(function() {
+            $('#login').submit(function(e) {
+                e.preventDefault();
                 AjaxLife.Debug("login", "Beginning login process.");
                 AjaxLife.UI.WaitPane.show("Encrypting login details…");
                 setTimeout(function() {
@@ -111,6 +112,7 @@ AjaxLife.Login = function() {
                         }
                     }, "json")
                 }, 200);
+                return false;
             })
         }
     }
