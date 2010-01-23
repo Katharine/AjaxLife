@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AjaxLife</RootNamespace>
     <AssemblyName>AjaxLife</AssemblyName>
+    <ReleaseVersion>0.6</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,7 +72,6 @@
   <ItemGroup>
     <Compile Include="AvatarTracker.cs" />
     <Compile Include="CommandLine.cs" />
-    <Compile Include="Converters\LLUUIDConverter.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Html\BasicStats.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="BanList.cs" />
     <Compile Include="Html\CreateSession.cs" />
     <Compile Include="Html\iPhone.cs" />
+    <Compile Include="Converters\UUIDConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Contributors.txt" />
