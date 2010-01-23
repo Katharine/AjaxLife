@@ -30,7 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using MiniHttpd;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife
 {
@@ -62,7 +62,7 @@ namespace AjaxLife
             try
             {
                 if (!filename.EndsWith(".png")) return null;
-                LLUUID key = new LLUUID(filename.Substring(0, filename.Length - 4));
+                UUID key = new UUID(filename.Substring(0, filename.Length - 4));
                 if (System.IO.File.Exists(AjaxLife.TEXTURE_CACHE + key + ".png"))
                 {
                     return new DriveFile(AjaxLife.TEXTURE_CACHE + key + ".png", this);

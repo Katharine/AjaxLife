@@ -31,8 +31,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MiniHttpd;
-using libsecondlife;
-using libsecondlife.Packets;
+using OpenMetaverse;
+using OpenMetaverse.Packets;
 using Newtonsoft.Json;
 using Affirma.ThreeSharp;
 using Affirma.ThreeSharp.Query;
@@ -115,7 +115,7 @@ namespace AjaxLife.Html
             //request.Response.SetHeader("Content-Type", "text/plain; charset=utf-8");
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter textwriter = new StreamWriter(request.Response.ResponseContent);
-            SecondLife client;
+            GridClient client;
             AvatarTracker avatars;
             Events events;
             StreamReader reader = new StreamReader(request.PostData);
@@ -174,19 +174,19 @@ namespace AjaxLife.Html
                 case "SimpleInstantMessage":
                     if (POST.ContainsKey("IMSessionID"))
                     {
-                        client.Self.InstantMessage(new LLUUID(POST["Target"]), POST["Message"], new LLUUID(POST["IMSessionID"]));
+                        client.Self.InstantMessage(new UUID(POST["Target"]), POST["Message"], new UUID(POST["IMSessionID"]));
                     }
                     else
                     {
-                        client.Self.InstantMessage(new LLUUID(POST["Target"]), POST["Message"]);
+                        client.Self.InstantMessage(new UUID(POST["Target"]), POST["Message"]);
                     }
                     break;
                 case "GenericInstantMessage":
                     client.Self.InstantMessage(
                         client.Self.FirstName + " " + client.Self.LastName,
-                        new LLUUID(POST["Target"]),
+                        new UUID(POST["Target"]),
                         POST["Message"],
-                        new LLUUID(POST["IMSessionID"]),
+                        new UUID(POST["IMSessionID"]),
                         (InstantMessageDialog)((byte)int.Parse(POST["Dialog"])),
                         (InstantMessageOnline)int.Parse(POST["Online"]),
                         client.Self.SimPosition,
@@ -194,7 +194,7 @@ namespace AjaxLife.Html
                         new byte[0]);
                     break;
                 case "NameLookup":
-                    client.Avatars.RequestAvatarName(new LLUUID(POST["ID"]));
+                    client.Avatars.RequestAvatarName(new UUID(POST["ID"]));
                     break;
                 case "Teleport":
                     {
@@ -202,11 +202,11 @@ namespace AjaxLife.Html
                         bool status;
                         if (POST.ContainsKey("Landmark"))
                         {
-                            status = client.Self.Teleport(new LLUUID(POST["Landmark"]));
+                            status = client.Self.Teleport(new UUID(POST["Landmark"]));
                         }
                         else
                         {
-                            status = client.Self.Teleport(POST["Sim"], new LLVector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])));
+                            status = client.Self.Teleport(POST["Sim"], new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])));
                         }
                         if (status)
                         {
@@ -253,18 +253,18 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "TeleportLureRespond":
-                    client.Self.TeleportLureRespond(new LLUUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
+                    client.Self.TeleportLureRespond(new UUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
                     break;
                 case "GodlikeTeleportLureRespond":
                     {
-                        LLUUID lurer = new LLUUID(POST["RequesterID"]);
-                        LLUUID session = new LLUUID(POST["SessionID"]);
-                        client.Self.InstantMessage(client.Self.Name, lurer, "", LLUUID.Random(), InstantMessageDialog.AcceptTeleport, InstantMessageOnline.Offline, client.Self.SimPosition, LLUUID.Zero, new byte[0]);
+                        UUID lurer = new UUID(POST["RequesterID"]);
+                        UUID session = new UUID(POST["SessionID"]);
+                        client.Self.InstantMessage(client.Self.Name, lurer, "", UUID.Random(), InstantMessageDialog.AcceptTeleport, InstantMessageOnline.Offline, client.Self.SimPosition, UUID.Zero, new byte[0]);
                         TeleportLureRequestPacket lure = new TeleportLureRequestPacket();
                         lure.Info.AgentID = client.Self.AgentID;
                         lure.Info.SessionID = client.Self.SessionID;
                         lure.Info.LureID = session;
-                        lure.Info.TeleportFlags = (uint)AgentManager.TeleportFlags.ViaGodlikeLure;
+                        lure.Info.TeleportFlags = (uint)TeleportFlags.ViaGodlikeLure;
                         client.Network.SendPacket(lure);
                     }
                     break;
@@ -283,13 +283,13 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "GetAgentData":
-                    client.Avatars.RequestAvatarProperties(new LLUUID(POST["AgentID"]));
+                    client.Avatars.RequestAvatarProperties(new UUID(POST["AgentID"]));
                     break;
                 case "StartAnimation":
-                    client.Self.AnimationStart(new LLUUID(POST["Animation"]), false);
+                    client.Self.AnimationStart(new UUID(POST["Animation"]), false);
                     break;
                 case "StopAnimation":
-                    client.Self.AnimationStop(new LLUUID(POST["Animation"]), true);
+                    client.Self.AnimationStop(new UUID(POST["Animation"]), true);
                     break;
                 case "SendAppearance":
                     client.Appearance.SetPreviousAppearance(false);
@@ -342,7 +342,7 @@ namespace AjaxLife.Html
                     break;
                 case "GetFriendList":
                     {
-                        InternalDictionary<LLUUID, FriendInfo> friends = client.Friends.FriendList;
+                        InternalDictionary<UUID, FriendInfo> friends = client.Friends.FriendList;
                         List<Hashtable> friendlist = new List<Hashtable>();
                         friends.ForEach(delegate(FriendInfo friend)
                         {
@@ -359,18 +359,18 @@ namespace AjaxLife.Html
                     break;
                 case "ChangeRights":
                     {
-                        LLUUID uuid = new LLUUID(POST["Friend"]);
+                        UUID uuid = new UUID(POST["Friend"]);
                         client.Friends.GrantRights(uuid, (FriendRights)int.Parse(POST["Rights"]));
                     }
                     break;
                 case "RequestLocation":
-                    client.Friends.MapFriend(new LLUUID(POST["Friend"]));
+                    client.Friends.MapFriend(new UUID(POST["Friend"]));
                     break;
                 case "RequestTexture":
                     {
                         // This one's confusing, so it gets some comments.
                         // First, we get the image's UUID.
-                        LLUUID image = new LLUUID(POST["ID"]);
+                        UUID image = new UUID(POST["ID"]);
                         // We prepare a query to ask if S3 has it. HEAD only to avoid wasting
                         // GET requests and bandwidth.
                         bool exists = false;
@@ -415,25 +415,25 @@ namespace AjaxLife.Html
                         else
                         {
 
-                            client.Assets.RequestImage(image, ImageType.Normal, 125000.0f, 0);
+                            //client.Assets.RequestImage(image, ImageType.Normal, 125000.0f, 0);
                             textwriter.Write("{Ready: false}");
                         }
                     }
                     break;
                 case "AcceptFriendship":
-                    client.Friends.AcceptFriendship(client.Self.AgentID, POST["IMSessionID"]);
+                    client.Friends.AcceptFriendship(client.Self.AgentID, new UUID(POST["IMSessionID"]));
                     break;
                 case "DeclineFriendship":
-                    client.Friends.DeclineFriendship(client.Self.AgentID, POST["IMSessionID"]);
+                    client.Friends.DeclineFriendship(client.Self.AgentID, new UUID(POST["IMSessionID"]));
                     break;
                 case "OfferFriendship":
-                    client.Friends.OfferFriendship(new LLUUID(POST["Target"]));
+                    client.Friends.OfferFriendship(new UUID(POST["Target"]));
                     break;
                 case "TerminateFriendship":
-                    client.Friends.TerminateFriendship(new LLUUID(POST["Target"]));
+                    client.Friends.TerminateFriendship(new UUID(POST["Target"]));
                     break;
                 case "SendAgentMoney":
-                    client.Self.GiveAvatarMoney(new LLUUID(POST["Target"]), int.Parse(POST["Amount"]));
+                    client.Self.GiveAvatarMoney(new UUID(POST["Target"]), int.Parse(POST["Amount"]));
                     break;
                 case "RequestAvatarList":
                     {
@@ -455,15 +455,20 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "LoadInventoryFolder":
-                    client.Inventory.RequestFolderContents(new LLUUID(POST["UUID"]), client.Self.AgentID, true, true, InventorySortOrder.ByDate | InventorySortOrder.SystemFoldersToTop);
+                    client.Inventory.RequestFolderContents(new UUID(POST["UUID"]), client.Self.AgentID, true, true, InventorySortOrder.ByDate | InventorySortOrder.SystemFoldersToTop);
                     break;
                 case "RequestAsset":
                     {
                         try
                         {
-                            LLUUID transferid = client.Assets.RequestInventoryAsset(new LLUUID(POST["AssetID"]), new LLUUID(POST["InventoryID"]),
-                                LLUUID.Zero, new LLUUID(POST["OwnerID"]), (AssetType)int.Parse(POST["AssetType"]), false);
-                            textwriter.Write("{TransferID: \"" + transferid + "\"}");
+                            UUID inventoryID = new UUID(POST["InventoryID"]);
+                            client.Assets.RequestInventoryAsset(new UUID(POST["AssetID"]), inventoryID,
+                                UUID.Zero, new UUID(POST["OwnerID"]), (AssetType)int.Parse(POST["AssetType"]), false, 
+                                delegate(AssetDownload transfer, OpenMetaverse.Assets.Asset asset) {
+                                    events.Assets_OnAssetReceived(transfer, asset, inventoryID);
+                                }
+                            );
+                            textwriter.Write("{TransferID: \"" + POST["AssetID"] + "\", Fake: true}"); // Fix the client to not use this.
                         }
                         catch // Try catching the error that sometimes gets thrown... but sometimes doesn't.
                         {
@@ -472,10 +477,10 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "SendTeleportLure":
-                    client.Self.SendTeleportLure(new LLUUID(POST["Target"]), POST["Message"]);
+                    client.Self.SendTeleportLure(new UUID(POST["Target"]), POST["Message"]);
                     break;
                 case "ScriptPermissionResponse":
-                    client.Self.ScriptQuestionReply(client.Network.CurrentSim, new LLUUID(POST["ItemID"]), new LLUUID(POST["TaskID"]), (ScriptPermission)int.Parse(POST["Permissions"]));
+                    client.Self.ScriptQuestionReply(client.Network.CurrentSim, new UUID(POST["ItemID"]), new UUID(POST["TaskID"]), (ScriptPermission)int.Parse(POST["Permissions"]));
                     break;
                 case "ScriptDialogReply":
                     {
@@ -483,21 +488,21 @@ namespace AjaxLife.Html
                         packet.AgentData.AgentID = client.Self.AgentID;
                         packet.AgentData.SessionID = client.Self.SessionID;
                         packet.Data.ButtonIndex = int.Parse(POST["ButtonIndex"]);
-                        packet.Data.ButtonLabel = Helpers.StringToField(POST["ButtonLabel"]);
+                        packet.Data.ButtonLabel = Utils.StringToBytes(POST["ButtonLabel"]);
                         packet.Data.ChatChannel = int.Parse(POST["ChatChannel"]);
-                        packet.Data.ObjectID = new LLUUID(POST["ObjectID"]);
+                        packet.Data.ObjectID = new UUID(POST["ObjectID"]);
                         client.Network.SendPacket((Packet)packet);
                     }
                     break;
                 case "SaveNotecard":
-                    client.Inventory.RequestUploadNotecardAsset(Helpers.StringToField(POST["AssetData"]), new LLUUID(POST["ItemID"]), new InventoryManager.NotecardUploadedAssetCallback(events.Inventory_OnNoteUploaded));
+                    client.Inventory.RequestUploadNotecardAsset(Utils.StringToBytes(POST["AssetData"]), new UUID(POST["ItemID"]), new InventoryManager.InventoryUploadedAssetCallback(events.Inventory_OnNoteUploaded));
                     break;
                 case "CreateInventory":
-                    client.Inventory.RequestCreateItem(new LLUUID(POST["Folder"]), POST["Name"], POST["Description"], (AssetType)int.Parse(POST["AssetType"]), LLUUID.Random(), (InventoryType)int.Parse(POST["InventoryType"]), PermissionMask.All, new InventoryManager.ItemCreatedCallback(events.Inventory_OnItemCreated));
+                    client.Inventory.RequestCreateItem(new UUID(POST["Folder"]), POST["Name"], POST["Description"], (AssetType)int.Parse(POST["AssetType"]), UUID.Random(), (InventoryType)int.Parse(POST["InventoryType"]), PermissionMask.All, new InventoryManager.ItemCreatedCallback(events.Inventory_OnItemCreated));
                     break;
                 case "CreateFolder":
                     {
-                        LLUUID folder = client.Inventory.CreateFolder(new LLUUID(POST["Parent"]), POST["Name"]);
+                        UUID folder = client.Inventory.CreateFolder(new UUID(POST["Parent"]), POST["Name"]);
                         textwriter.Write("{FolderID: \"" + folder + "\"}");
                     }
                     break;
@@ -505,20 +510,20 @@ namespace AjaxLife.Html
                     client.Inventory.EmptyTrash();
                     break;
                 case "MoveItem":
-                    client.Inventory.MoveItem(new LLUUID(POST["Item"]), new LLUUID(POST["TargetFolder"]), POST["NewName"]);
+                    client.Inventory.MoveItem(new UUID(POST["Item"]), new UUID(POST["TargetFolder"]), POST["NewName"]);
                     break;
                 case "MoveFolder":
-                    client.Inventory.MoveFolder(new LLUUID(POST["Folder"]), new LLUUID(POST["NewParent"]));
+                    client.Inventory.MoveFolder(new UUID(POST["Folder"]), new UUID(POST["NewParent"]));
                     break;
                 case "MoveItems":
                 case "MoveFolders":
                     {
-                        Dictionary<LLUUID, LLUUID> dict = new Dictionary<LLUUID, LLUUID>();
+                        Dictionary<UUID, UUID> dict = new Dictionary<UUID, UUID>();
                         string[] moves = POST["ToMove"].Split(',');
                         for (int i = 0; i < moves.Length; ++i)
                         {
                             string[] move = moves[i].Split(' ');
-                            dict.Add(new LLUUID(move[0]), new LLUUID(move[1]));
+                            dict.Add(new UUID(move[0]), new UUID(move[1]));
                         }
                         if (messagetype == "MoveItems")
                         {
@@ -531,36 +536,36 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "DeleteItem":
-                    client.Inventory.RemoveItem(new LLUUID(POST["Item"]));
+                    client.Inventory.RemoveItem(new UUID(POST["Item"]));
                     break;
                 case "DeleteFolder":
-                    client.Inventory.RemoveFolder(new LLUUID(POST["Folder"]));
+                    client.Inventory.RemoveFolder(new UUID(POST["Folder"]));
                     break;
                 case "DeleteMultiple":
                     {
                         string[] items = POST["Items"].Split(',');
-                        List<LLUUID> itemlist = new List<LLUUID>();
+                        List<UUID> itemlist = new List<UUID>();
                         for (int i = 0; i < items.Length; ++i)
                         {
-                            itemlist.Add(new LLUUID(items[i]));
+                            itemlist.Add(new UUID(items[i]));
                         }
                         string[] folders = POST["Folders"].Split(',');
-                        List<LLUUID> folderlist = new List<LLUUID>();
+                        List<UUID> folderlist = new List<UUID>();
                         for (int i = 0; i < items.Length; ++i)
                         {
-                            folderlist.Add(new LLUUID(folders[i]));
+                            folderlist.Add(new UUID(folders[i]));
                         }
                         client.Inventory.Remove(itemlist, folderlist);
                     }
                     break;
                 case "GiveInventory":
                     {
-                        client.Inventory.GiveItem(new LLUUID(POST["ItemID"]), POST["ItemName"], (AssetType)int.Parse(POST["AssetType"]), new LLUUID(POST["Recipient"]), true);
+                        client.Inventory.GiveItem(new UUID(POST["ItemID"]), POST["ItemName"], (AssetType)int.Parse(POST["AssetType"]), new UUID(POST["Recipient"]), true);
                     }
                     break;
                 case "UpdateItem":
                     {
-                        InventoryItem item = client.Inventory.FetchItem(new LLUUID(POST["ItemID"]), new LLUUID(POST["OwnerID"]), 1000);
+                        InventoryItem item = client.Inventory.FetchItem(new UUID(POST["ItemID"]), new UUID(POST["OwnerID"]), 1000);
                         if (POST.ContainsKey("Name")) item.Name = POST["Name"];
                         if (POST.ContainsKey("Description")) item.Description = POST["Description"];
                         if (POST.ContainsKey("NextOwnerMask")) item.Permissions.NextOwnerMask = (PermissionMask)uint.Parse(POST["NextOwnerMask"]);
@@ -576,46 +581,46 @@ namespace AjaxLife.Html
                         packet.AgentData.SessionID = client.Self.SessionID;
                         packet.FolderData = new UpdateInventoryFolderPacket.FolderDataBlock[1];
                         packet.FolderData[0] = new UpdateInventoryFolderPacket.FolderDataBlock();
-                        packet.FolderData[0].FolderID = new LLUUID(POST["FolderID"]);
-                        packet.FolderData[0].ParentID = new LLUUID(POST["ParentID"]);
+                        packet.FolderData[0].FolderID = new UUID(POST["FolderID"]);
+                        packet.FolderData[0].ParentID = new UUID(POST["ParentID"]);
                         packet.FolderData[0].Type = sbyte.Parse(POST["Type"]);
-                        packet.FolderData[0].Name = Helpers.StringToField(POST["Name"]);
+                        packet.FolderData[0].Name = Utils.StringToBytes(POST["Name"]);
                         client.Network.SendPacket((Packet)packet);
                     }
                     break;
                 case "FetchItem":
-                    client.Inventory.FetchItem(new LLUUID(POST["Item"]), new LLUUID(POST["Owner"]), 5000);
+                    client.Inventory.FetchItem(new UUID(POST["Item"]), new UUID(POST["Owner"]), 5000);
                     break;
                 case "ReRotate":
                     user.Rotation = -Math.PI;
                     break;
                 case "StartGroupIM":
                     AjaxLife.Debug("SendMessage", "RequestJoinGroupChat(" + POST["Group"] + ")");
-                    client.Self.RequestJoinGroupChat(new LLUUID(POST["Group"]));
+                    client.Self.RequestJoinGroupChat(new UUID(POST["Group"]));
                     break;
                 case "GroupInstantMessage":
-                    client.Self.InstantMessageGroup(new LLUUID(POST["Group"]), POST["Message"]);
+                    client.Self.InstantMessageGroup(new UUID(POST["Group"]), POST["Message"]);
                     break;
                 case "RequestGroupProfile":
-                    client.Groups.RequestGroupProfile(new LLUUID(POST["Group"]));
+                    client.Groups.RequestGroupProfile(new UUID(POST["Group"]));
                     break;
                 case "RequestGroupMembers":
-                    client.Groups.RequestGroupMembers(new LLUUID(POST["Group"]));
+                    client.Groups.RequestGroupMembers(new UUID(POST["Group"]));
                     break;
                 case "RequestGroupName":
-                    client.Groups.RequestGroupName(new LLUUID(POST["ID"]));
+                    client.Groups.RequestGroupName(new UUID(POST["ID"]));
                     break;
                 case "JoinGroup":
-                    client.Groups.RequestJoinGroup(new LLUUID(POST["Group"]));
+                    client.Groups.RequestJoinGroup(new UUID(POST["Group"]));
                     break;
                 case "LeaveGroup":
-                    client.Groups.LeaveGroup(new LLUUID(POST["Group"]));
+                    client.Groups.LeaveGroup(new UUID(POST["Group"]));
                     break;
                 case "RequestCurrentGroups":
                     client.Groups.RequestCurrentGroups();
                     break;
                 case "GetParcelID":
-                    textwriter.Write("{LocalID: "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new LLVector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
+                    textwriter.Write("{LocalID: "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
                     break;
                 case "RequestParcelProperties":
                     client.Parcels.PropertiesRequest(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));

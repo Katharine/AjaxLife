@@ -31,8 +31,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MiniHttpd;
-using libsecondlife;
-using libsecondlife.Packets;
+using OpenMetaverse;
+using OpenMetaverse.Packets;
 using Newtonsoft.Json;
 
 namespace AjaxLife.Html

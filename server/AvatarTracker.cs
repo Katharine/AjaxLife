@@ -28,13 +28,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife
 {
     public class AvatarTracker
     {
-	// These define the events that are called when avatar-related events occur.
+    // These define the events that are called when avatar-related events occur.
         public delegate void Added(Avatar avatar);
         public event Added OnAvatarAdded;
         public delegate void Removed(Avatar avatar);
@@ -42,11 +42,11 @@ namespace AjaxLife
         public delegate void Updated(Avatar avatar);
         public event Updated OnAvatarUpdated;
         public Dictionary<uint, Avatar> Avatars { get { return this.avatars; } }
-
-        private SecondLife Client;
+        
+        private GridClient Client;
         private Dictionary<uint, Avatar> avatars = new Dictionary<uint, Avatar>();
 
-        public AvatarTracker(SecondLife client)
+        public AvatarTracker(GridClient client)
         {
             this.Client = client;
             this.Client.Objects.OnNewAvatar += new ObjectManager.NewAvatarCallback(Objects_OnNewAvatar);
@@ -57,9 +57,9 @@ namespace AjaxLife
             // this.Client.Objects.OnObjectUpdated += new ObjectManager.ObjectUpdatedCallback(Objects_OnObjectUpdated);
         }
 
-        void Self_OnTeleport(string message, AgentManager.TeleportStatus status, AgentManager.TeleportFlags flags)
+        void Self_OnTeleport(string message, TeleportStatus status, TeleportFlags flags)
         {
-            if (status == AgentManager.TeleportStatus.Finished)
+            if (status == TeleportStatus.Finished)
             {
                 this.avatars.Clear();
             }
@@ -80,7 +80,7 @@ namespace AjaxLife
             }
         }
 
-		/*
+        /*
         void Objects_OnObjectUpdated(Simulator simulator, ObjectUpdate update, ulong regionHandle, ushort timeDilation)
         {
             // If we know of this avatar, update its position and rotation, and send an AvatarUpdated callback.
@@ -93,8 +93,8 @@ namespace AjaxLife
                 if(OnAvatarUpdated != null) OnAvatarUpdated(avatar);
             }
         }
-		*/
-		
+        */
+        
         void Objects_OnObjectKilled(Simulator simulator, uint objectID)
         {
             // If we know of this avatar, remove it and announce its loss.

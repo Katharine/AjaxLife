@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MiniHttpd;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife.Html
 {
@@ -61,7 +61,7 @@ namespace AjaxLife.Html
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
             try
             {
-                SecondLife client;
+                GridClient client;
                 User user;
                 // Get the session.
                 Dictionary<string, string> POST = AjaxLife.PostDecode((new StreamReader(request.PostData)).ReadToEnd());

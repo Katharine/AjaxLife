@@ -42,7 +42,7 @@ namespace AjaxLife
             StringWriter textWriter = new StringWriter();
             JsonWriter jsonWriter = new JsonWriter(textWriter);
             JsonSerializer serializer = new JsonSerializer();
-            LLUUIDConverter UUID = new LLUUIDConverter();
+            UUIDConverter UUID = new UUIDConverter();
             serializer.Converters.Add(UUID);
             serializer.Serialize(jsonWriter, obj);
             jsonWriter.Flush();
@@ -63,7 +63,7 @@ namespace AjaxLife
             JsonWriter jsonWriter = new JsonWriter(textWriter);
             jsonWriter.WriteStartArray();
             JsonSerializer serializer = new JsonSerializer();
-            LLUUIDConverter UUID = new LLUUIDConverter();
+            UUIDConverter UUID = new UUIDConverter();
             serializer.Converters.Add(UUID);
             while (queue.Count > 0)
             {

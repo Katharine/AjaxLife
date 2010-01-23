@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MiniHttpd;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife.Html
 {

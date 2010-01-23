@@ -31,8 +31,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MiniHttpd;
-using libsecondlife;
-using libsecondlife.Packets;
+using OpenMetaverse;
+using OpenMetaverse.Packets;
 using Newtonsoft.Json;
 
 namespace AjaxLife.Html
@@ -67,7 +67,7 @@ namespace AjaxLife.Html
                 // If we can't do that, complain.
                 // While we're at it, decode the post data.
                 User user;
-                SecondLife client;
+                GridClient client;
                 StreamReader reader = new StreamReader(request.PostData);
                 string qstring = reader.ReadToEnd();
                 reader.Dispose();
@@ -114,12 +114,12 @@ namespace AjaxLife.Html
                 login.Platform = "web";
                 login.Channel = "AjaxLife";
                 login.MAC = AjaxLife.MAC_ADDRESS;
-                login.id0 = AjaxLife.ID0;
+                login.ID0 = AjaxLife.ID0;
                 login.Start = (POST["location"] != "arbitrary") ? POST["location"] : NetworkManager.StartLocation(POST["sim"], 128, 128, 20);
                 // Pick the correct loginuri.
                 lock (AjaxLife.LOGIN_SERVERS) login.URI = AjaxLife.LOGIN_SERVERS[POST["grid"]];
                 client.Settings.LOGIN_SERVER = login.URI;
-				user.LindenGrid = POST["grid"].EndsWith("(Linden Lab)");
+                user.LindenGrid = POST["grid"].EndsWith("(Linden Lab)");
                 Console.WriteLine(login.FirstName + " " + login.LastName + " is attempting to log into " + POST["grid"] + " (" + login.URI + ")");
                 if (client.Network.Login(login))
                 {
@@ -136,9 +136,9 @@ namespace AjaxLife.Html
                     client.Appearance.SetPreviousAppearance(false);
                     // Pythagoras says that 181.0193m is the optimal view distance to see the whole sim.
                     client.Self.Movement.Camera.Far = 181.0193f;
-					
-					// This doesn't seem to work.
-                    // client.Self.Movement.Camera.SetPositionOrientation(new LLVector3(128, 128, 0), 0, 0, 0);
+                    
+                    // This doesn't seem to work.
+                    // client.Self.Movement.Camera.SetPositionOrientation(new Vector3(128, 128, 0), 0, 0, 0);
                     
                     // Everything's happy. Log the requested message list, if any.
                     if(POST.ContainsKey("events"))
@@ -146,7 +146,7 @@ namespace AjaxLife.Html
                         user.ParseRequestedEvents(POST["events"]);
                     }
                     
-					// If we got this far, it worked. Announce this.
+                    // If we got this far, it worked. Announce this.
                     textWriter.WriteLine("{\"success\": 1}");
                 }
                 else
@@ -165,10 +165,10 @@ namespace AjaxLife.Html
 
         private void RegisterCallbacks(User user)
         {
-            SecondLife client = user.Client;
+            GridClient client = user.Client;
             Events events = user.Events;
             AvatarTracker avatars = user.Avatars;
-            // SecondLife Event callbacks.
+            // GridClient Event callbacks.
             // These are assigned to the aforementioned Event object.
             client.Self.OnScriptQuestion += new AgentManager.ScriptQuestionCallback(events.Self_OnScriptQuestion);
             client.Self.OnScriptDialog += new AgentManager.ScriptDialogCallback(events.Self_OnScriptDialog);
@@ -177,7 +177,7 @@ namespace AjaxLife.Html
             client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
             client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
             client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
-            client.Self.OnGroupChatJoin += new AgentManager.GroupChatJoined(events.Self_OnGroupChatJoin);
+            client.Self.OnGroupChatJoin += new AgentManager.GroupChatJoinedCallback(events.Self_OnGroupChatJoin);
             client.Friends.OnFriendOnline += new FriendsManager.FriendOnlineEvent(events.Friends_OnOnOffline);
             client.Friends.OnFriendOffline += new FriendsManager.FriendOfflineEvent(events.Friends_OnOnOffline);
             client.Friends.OnFriendRights += new FriendsManager.FriendRightsEvent(events.Friends_OnFriendRights);
@@ -194,14 +194,12 @@ namespace AjaxLife.Html
             client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
             client.Inventory.OnItemReceived += new InventoryManager.ItemReceivedCallback(events.Inventory_OnItemReceived);
             client.Inventory.OnTaskItemReceived += new InventoryManager.TaskItemReceivedCallback(events.Inventory_OnTaskItemReceived);
-            client.Assets.OnImageReceived += new AssetManager.ImageReceivedCallback(events.Assets_OnImageReceived);
-            client.Assets.OnAssetReceived += new AssetManager.AssetReceivedCallback(events.Assets_OnAssetReceived);
             client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
             client.Groups.OnGroupProfile += new GroupManager.GroupProfileCallback(events.Groups_OnGroupProfile);
             client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
             client.Groups.OnGroupNames += new GroupManager.GroupNamesCallback(events.Groups_OnGroupNames);
             client.Groups.OnCurrentGroups += new GroupManager.CurrentGroupsCallback(events.Groups_OnCurrentGroups);
-            client.Parcels.OnParcelProperties += new libsecondlife.ParcelManager.ParcelPropertiesCallback(events.Parcels_OnParcelProperties);
+            client.Parcels.OnParcelProperties += new ParcelManager.ParcelPropertiesCallback(events.Parcels_OnParcelProperties);
 
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);

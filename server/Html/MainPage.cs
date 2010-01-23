@@ -32,7 +32,7 @@ using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using MiniHttpd;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife.Html
 {

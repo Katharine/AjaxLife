@@ -34,7 +34,6 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	}
 	var win = false;
 	var callback = false;
-	var transferid = AjaxLife.Utils.UUID.Zero;
 	
 	// Create the window.
 	win = new Ext.BasicDialog("dlg_script_"+inventoryid, {
@@ -66,7 +65,7 @@ AjaxLife.InventoryDialogs.Script = function(inventoryid, name) {
 	// Set up callback for receiving the script.
 	callback = AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', function(data) {
 		// Ignore it if it's not ours.
-		if(data.TransferID != transferid) return;
+		if(data.InventoryID != inventoryid) return;
 		
 		AjaxLife.Debug("InventoryDialogs: Received script asset "+data.AssetID);
 		// Unregister the callback, since we don't need it any more.

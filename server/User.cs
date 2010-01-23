@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using libsecondlife;
+using OpenMetaverse;
 
 namespace AjaxLife
 {
@@ -36,29 +36,28 @@ namespace AjaxLife
     // That means a class, as opposed to a struct.
     public class User
     {
-        public SecondLife Client;
+        public GridClient Client;
         public DateTime LastRequest;
         public Events Events;
         public AvatarTracker Avatars;
         public string Challenge;
         public double Rotation;
-		public bool LindenGrid;
+        public bool LindenGrid;
         public int SignedCallCount = 0;
         public string Signature = "";
         public List<string> RequestedEvents;
         
         // Useful functions
         // Creates the client if it doesn't already exist.
-        public SecondLife GetClient()
+        public GridClient GetClient()
         {
             if(this.Client != null) return this.Client;
-            SecondLife client = new SecondLife();
+            GridClient client = new GridClient();
             client.Settings.ALWAYS_DECODE_OBJECTS = false;
             client.Settings.ALWAYS_REQUEST_OBJECTS = false;
             client.Settings.MULTIPLE_SIMS = false;
             client.Settings.ENABLE_SIMSTATS = true;
             client.Settings.LOGOUT_TIMEOUT = 20000;
-            client.Settings.USE_TEXTURE_CACHE = false;
             client.Settings.LOG_RESENDS = false;
             client.Throttle.Cloud = 0;
             client.Throttle.Task = 0;

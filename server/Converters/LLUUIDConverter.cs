@@ -33,19 +33,19 @@ using Newtonsoft.Json;
 namespace AjaxLife.Converters
 {
     // Inherit from the generic JsonConverter.
-    class LLUUIDConverter : JsonConverter
+    class UUIDConverter : JsonConverter
     {
-        // Convert JSON using LLUUID::ToStringHyphenated, which outputs as follows:
+        // Convert JSON using UUID::ToStringHyphenated, which outputs as follows:
         // 00000000-0000-0000-0000-000000000000
         public override void WriteJson(JsonWriter writer, object value)
         {
-            base.WriteJson(writer, ((libsecondlife.LLUUID)value).ToString());
+            base.WriteJson(writer, ((OpenMetaverse.UUID)value).ToString());
         }
 
-        // Check if we can created an LLUUID from whatever we're being given.
+        // Check if we can created an UUID from whatever we're being given.
         public override bool CanConvert(Type objectType)
         {
-            return typeof(libsecondlife.LLUUID).IsAssignableFrom(objectType);
+            return typeof(OpenMetaverse.UUID).IsAssignableFrom(objectType);
         }
     }
 }

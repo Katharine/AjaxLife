@@ -30,8 +30,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using libsecondlife;
-using libsecondlife.Packets;
+using OpenMetaverse;
+using OpenMetaverse.Packets;
+using OpenMetaverse.Assets;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using AjaxLife.Converters;
@@ -46,8 +47,8 @@ namespace AjaxLife
         private Queue<Hashtable> pending = new Queue<Hashtable>();
         private bool active = true;
         private User user;
-        private SecondLife Client;
-        private List<LLUUID> LoadedInventory = new List<LLUUID>();
+        private GridClient Client;
+        private List<UUID> LoadedInventory = new List<UUID>();
 
         // Constructor. Lets us have access to various useful user things.
         public Events(User user)
@@ -63,7 +64,7 @@ namespace AjaxLife
         }
 
         // Returns the event queue in JSON format.
-        public string GetPendingJson(SecondLife client)
+        public string GetPendingJson(GridClient client)
         {
             enqueue(this.GetFooter(client));
             return MakeJson.FromHashtableQueue(this.pending);
@@ -86,7 +87,7 @@ namespace AjaxLife
         // Whatever this function returns is tacked onto every message queue response.
         // It contains useful data (thus the name "UsefulData") - that is, the user's position,
         // region, and the positions of others in the region.
-        public Hashtable GetFooter(SecondLife client)
+        public Hashtable GetFooter(GridClient client)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "UsefulData");
@@ -118,7 +119,7 @@ namespace AjaxLife
         //    as a bunch more hashtables.
         // 4) Enqueue the hashtable in the message queue. This is periodically emptied by the client.
         
-        public void Avatars_OnAvatarGroups(LLUUID avatarID, List<AvatarGroup> groups)
+        public void Avatars_OnAvatarGroups(UUID avatarID, List<AvatarGroup> groups)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarGroups");
@@ -127,7 +128,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Avatars_OnAvatarInterests(LLUUID avatarID, Avatar.Interests interests)
+        public void Avatars_OnAvatarInterests(UUID avatarID, Avatar.Interests interests)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarInterests");
@@ -140,7 +141,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Avatars_OnAvatarNames(Dictionary<LLUUID, string> names)
+        public void Avatars_OnAvatarNames(Dictionary<UUID, string> names)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarNames");
@@ -155,13 +156,13 @@ namespace AjaxLife
             item.Add("MessageType",     "AvatarProperties");
             item.Add("AvatarID",        reply.AgentData.AvatarID);
             item.Add("PartnerID",       reply.PropertiesData.PartnerID);
-            item.Add("AboutText",       Helpers.FieldToUTF8String(reply.PropertiesData.AboutText));
-            item.Add("FirstLifeText",   Helpers.FieldToUTF8String(reply.PropertiesData.FLAboutText));
+            item.Add("AboutText",       Utils.BytesToString(reply.PropertiesData.AboutText));
+            item.Add("FirstLifeText",   Utils.BytesToString(reply.PropertiesData.FLAboutText));
             item.Add("FirstLifeImage",  reply.PropertiesData.FLImageID);
             item.Add("ProfileImage",    reply.PropertiesData.ImageID);
-            item.Add("ProfileURL",      Helpers.FieldToUTF8String(reply.PropertiesData.ProfileURL));
-            item.Add("BornOn",          Helpers.FieldToUTF8String(reply.PropertiesData.BornOn));
-            item.Add("CharterMember",   Helpers.FieldToUTF8String(reply.PropertiesData.CharterMember));
+            item.Add("ProfileURL",      Utils.BytesToString(reply.PropertiesData.ProfileURL));
+            item.Add("BornOn",          Utils.BytesToString(reply.PropertiesData.BornOn));
+            item.Add("CharterMember",   Utils.BytesToString(reply.PropertiesData.CharterMember));
             item.Add("AllowPublish",    reply.PropertiesData.Flags & (0x1 << 0));
             item.Add("MaturePublish",   reply.PropertiesData.Flags & (0x1 << 1));
             item.Add("Identified",      reply.PropertiesData.Flags & (0x1 << 2));
@@ -170,7 +171,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Avatars_OnFriendNotification(LLUUID agentID, bool online)
+        public void Avatars_OnFriendNotification(UUID agentID, bool online)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "FriendNotification");
@@ -179,7 +180,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Friends_OnFriendFound(LLUUID agentID, ulong regionHandle, LLVector3 location)
+        public void Friends_OnFriendFound(UUID agentID, ulong regionHandle, Vector3 location)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "FriendFound");
@@ -188,7 +189,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Directory_OnDirPeopleReply(LLUUID queryID, List<DirectoryManager.AgentSearchData> matchedPeople)
+        public void Directory_OnDirPeopleReply(UUID queryID, List<DirectoryManager.AgentSearchData> matchedPeople)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirPeopleReply");
@@ -205,7 +206,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Directory_OnDirGroupsReply(LLUUID queryID, List<DirectoryManager.GroupSearchData> matchedGroups)
+        public void Directory_OnDirGroupsReply(UUID queryID, List<DirectoryManager.GroupSearchData> matchedGroups)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirGroupsReply");
@@ -222,7 +223,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public bool Inventory_OnObjectOffered(InstantMessage offerDetails, AssetType type, LLUUID objectID, bool fromTask)
+        public bool Inventory_OnObjectOffered(InstantMessage offerDetails, AssetType type, UUID objectID, bool fromTask)
         {
             if (!active) return false;
             Hashtable hashtable = new Hashtable();
@@ -255,7 +256,7 @@ namespace AjaxLife
             item.Add("Balance", balance);
             enqueue(item);
         }
-        public void Self_OnChat(string message, ChatAudibleLevel audible, ChatType type, ChatSourceType sourceType, string fromName, LLUUID id, LLUUID ownerid, LLVector3 position)
+        public void Self_OnChat(string message, ChatAudibleLevel audible, ChatType type, ChatSourceType sourceType, string fromName, UUID id, UUID ownerid, Vector3 position)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "SpatialChat");
@@ -271,14 +272,14 @@ namespace AjaxLife
         }
         public void Self_OnInstantMessage(InstantMessage im, Simulator simulator)
         {
-            LLUUID fromAgentID = im.FromAgentID;
+            UUID fromAgentID = im.FromAgentID;
             string fromAgentName = im.FromAgentName;
-            //LLUUID toAgentID = im.ToAgentID;
-            LLUUID regionID = im.RegionID;
-            LLVector3 position = im.Position;
+            //UUID toAgentID = im.ToAgentID;
+            UUID regionID = im.RegionID;
+            Vector3 position = im.Position;
             InstantMessageDialog dialog = im.Dialog;
             bool groupIM = im.GroupIM;
-            LLUUID imSessionID = im.IMSessionID;
+            UUID imSessionID = im.IMSessionID;
             DateTime timestamp = im.Timestamp;
             string message = im.Message;
             InstantMessageOnline offline = im.Offline;
@@ -301,7 +302,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Self_OnMoneyBalanceReplyReceived(LLUUID transactionID, bool transactionSuccess, int balance, int metersCredit, int metersCommitted, string description)
+        public void Self_OnMoneyBalanceReplyReceived(UUID transactionID, bool transactionSuccess, int balance, int metersCredit, int metersCommitted, string description)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "MoneyBalanceReplyReceived");
@@ -314,7 +315,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Self_OnScriptDialog(string message, string objectName, LLUUID imageID, LLUUID objectID, string firstName, string lastName, int chatChannel, List<string> buttons)
+        public void Self_OnScriptDialog(string message, string objectName, UUID imageID, UUID objectID, string firstName, string lastName, int chatChannel, List<string> buttons)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptDialog");
@@ -329,7 +330,7 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Self_OnScriptQuestion(Simulator simulator, LLUUID taskID, LLUUID itemID, string objectName, string objectOwner, ScriptPermission questions)
+        public void Self_OnScriptQuestion(Simulator simulator, UUID taskID, UUID itemID, string objectName, string objectOwner, ScriptPermission questions)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptPermissionRequest");
@@ -341,15 +342,15 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Self_OnTeleport(string message, AgentManager.TeleportStatus status, AgentManager.TeleportFlags flags)
+        public void Self_OnTeleport(string message, TeleportStatus status, TeleportFlags flags)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Teleport");
             item.Add("Status", status);
             item.Add("Flags", flags);
-            if (status == AgentManager.TeleportStatus.Finished)
+            if (status == TeleportStatus.Finished)
             {
-                Client.Self.Movement.Camera.SetPositionOrientation(new LLVector3(128, 128, 0), 0, 0, 0);
+                Client.Self.Movement.Camera.SetPositionOrientation(new Vector3(128, 128, 0), 0, 0, 0);
             }
             enqueue(item);
         }
@@ -363,13 +364,13 @@ namespace AjaxLife
             float temp1, temp2; // Neither of these do anything, really. Just to make Helpers.GlobalPosToRegionHandle happy.
             foreach (MapBlockReplyPacket.DataBlock data in reply.Data)
             {
-                string name = Helpers.FieldToUTF8String(data.Name);
+                string name = Utils.BytesToString(data.Name);
                 if (blocks.ContainsKey(name.ToLowerInvariant()))
                 {
                     continue;
                 }
                 Hashtable simhash = new Hashtable();
-                simhash.Add("Name", Helpers.FieldToUTF8String(data.Name));
+                simhash.Add("Name", Utils.BytesToString(data.Name));
                 simhash.Add("Access", data.Access);
                 simhash.Add("Agents", data.Agents);
                 simhash.Add("X", data.X);
@@ -377,7 +378,7 @@ namespace AjaxLife
                 simhash.Add("Flags", data.RegionFlags);
                 // Convert the regionhandle to a string - JavaScript is likely to get upset over long integers.
                 simhash.Add("RegionHandle", Helpers.GlobalPosToRegionHandle(data.X*256, data.Y*256, out temp1, out temp2).ToString());
-                blocks.Add(Helpers.FieldToUTF8String(data.Name).ToLowerInvariant(), simhash);
+                blocks.Add(Utils.BytesToString(data.Name).ToLowerInvariant(), simhash);
             }
             hash.Add("Blocks", blocks);
             enqueue(hash);
@@ -393,7 +394,7 @@ namespace AjaxLife
             foreach (MapItemReplyPacket.DataBlock data in reply.Data)
             {
                 Hashtable itemhash = new Hashtable();
-                itemhash.Add("Name", Helpers.FieldToUTF8String(data.Name));
+                itemhash.Add("Name", Utils.BytesToString(data.Name));
                 itemhash.Add("X", data.X);
                 itemhash.Add("Y", data.Y);
                 itemhash.Add("Extra", data.Extra);
@@ -404,7 +405,7 @@ namespace AjaxLife
             hash.Add("Items", items);
             enqueue(hash);
         }
-
+        /*
         public void Assets_OnImageReceived(ImageDownload image, AssetTexture asset)
         {
             if (image.NotFound)
@@ -423,8 +424,8 @@ namespace AjaxLife
                 string key = image.ID.ToString();
                 try
                 {
-                    libsecondlife.Imaging.ManagedImage decoded;
-                    libsecondlife.Imaging.OpenJPEG.DecodeToImage(image.AssetData, out decoded);
+                    OpenMetaverse.Imaging.ManagedImage decoded;
+                    OpenMetaverse.Imaging.OpenJPEG.DecodeToImage(image.AssetData, out decoded);
                     byte[] img = decoded.ExportTGA();
                     decoded.Clear();
                     File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
@@ -475,8 +476,8 @@ namespace AjaxLife
                 enqueue(hash);
             }
         }
-
-        public void Friends_OnFriendshipOffered(LLUUID agentID, string agentName, LLUUID imSessionID)
+         */
+        public void Friends_OnFriendshipOffered(UUID agentID, string agentName, UUID imSessionID)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendshipOffered");
@@ -542,16 +543,17 @@ namespace AjaxLife
             enqueue(hash);
         }
 
-        public void Assets_OnAssetReceived(AssetDownload transfer, Asset asset)
+        public void Assets_OnAssetReceived(AssetDownload transfer, Asset asset, UUID inventoryID)
         {
             if (asset == null && transfer != null)
             {
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "AssetReceived");
                 hash.Add("Success", false);
+                hash.Add("InventoryID", inventoryID);
                 if (transfer != null)
                 {
-                    hash.Add("TransferID", transfer.ID);
+                    hash.Add("TransferID", transfer.AssetID);
                     hash.Add("AssetID", transfer.AssetID);
                     hash.Add("Error", transfer.Status.ToString());
                     hash.Add("AssetType", transfer.AssetType);
@@ -563,6 +565,7 @@ namespace AjaxLife
             {
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "NullTransfer");
+                hash.Add("InventoryID", inventoryID);
                 enqueue(hash);
                 return;
             }
@@ -570,6 +573,7 @@ namespace AjaxLife
             {
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "AssetReceived");
+                hash.Add("InventoryID", inventoryID);
                 hash.Add("Success", transfer.Success);
                 if (!transfer.Success)
                 {
@@ -581,7 +585,7 @@ namespace AjaxLife
                     {
                         case AssetType.Notecard:
                         case AssetType.LSLText:
-                            hash.Add("AssetData", Helpers.FieldToUTF8String(asset.AssetData));
+                            hash.Add("AssetData", Utils.BytesToString(asset.AssetData));
                             break;
                         case AssetType.Bodypart:
                             {
@@ -604,7 +608,7 @@ namespace AjaxLife
             catch { }
         }
 
-        public void Inventory_OnFolderUpdated(LLUUID folderID)
+        public void Inventory_OnFolderUpdated(UUID folderID)
         {
             List<InventoryBase> contents = Client.Inventory.Store.GetContents(folderID);
             Hashtable roothash = new Hashtable();
@@ -705,8 +709,7 @@ namespace AjaxLife
             hash.Add("Success", upload.Success);
             enqueue(hash);
         }
-
-        public void Groups_OnGroupProfile(GroupProfile group)
+        public void Groups_OnGroupProfile(Group group)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "GroupProfile");
@@ -727,18 +730,18 @@ namespace AjaxLife
             enqueue(hash);
         }
 
-        // You know, some way of telling which group this is for would be nice.
-        public void Groups_OnGroupMembers(Dictionary<LLUUID, GroupMember> members)
+        // Woo, fixed in openmv 0.7.
+        public void Groups_OnGroupMembers(UUID requestID, UUID groupID, Dictionary<UUID, GroupMember> members)
         {
             List<Hashtable> list = new List<Hashtable>();
-            foreach (KeyValuePair<LLUUID,GroupMember> memberpair in members)
+            foreach (KeyValuePair<UUID,GroupMember> memberpair in members)
             {
                 GroupMember member = memberpair.Value;
                 Hashtable hash = new Hashtable();
-                hash.Add("LLUUID", memberpair.Key);
+                hash.Add("UUID", memberpair.Key);
                 hash.Add("Contribution", member.Contribution);
-                hash.Add("ID", member.ID); // Maybe this is the group ID?
                 hash.Add("IsOwner", member.IsOwner);
+                hash.Add("ID", member.ID);
                 hash.Add("OnlineStatus", member.OnlineStatus);
                 hash.Add("Powers", member.Powers);
                 hash.Add("Title", member.Title);
@@ -747,10 +750,11 @@ namespace AjaxLife
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupMembers");
             message.Add("MemberList", list);
+            message.Add("GroupID", groupID);
             enqueue(message);
         }
 
-        public void Groups_OnGroupNames(Dictionary<LLUUID, string> groupNames)
+        public void Groups_OnGroupNames(Dictionary<UUID, string> groupNames)
         {
             AjaxLife.Debug("OnGroupNames", "OnGroupNames arrived.");
             Hashtable message = new Hashtable();
@@ -759,7 +763,7 @@ namespace AjaxLife
             enqueue(message);
         }
 
-        public void Groups_OnCurrentGroups(Dictionary<LLUUID, Group> groups)
+        public void Groups_OnCurrentGroups(Dictionary<UUID, Group> groups)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "CurrentGroups");
@@ -767,18 +771,18 @@ namespace AjaxLife
             enqueue(message);
         }
 
-        public void Self_OnGroupChatJoin(LLUUID groupChatSessionID, LLUUID tmpSessionID, bool success)
+        public void Self_OnGroupChatJoin(UUID groupChatSessionID, string sessionName, UUID tmpSessionID, bool success)
         {
-            AjaxLife.Debug("Events","OnGroupChatJoin(" + groupChatSessionID + ", " + tmpSessionID + ", " + success.ToString() + ")");
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupChatJoin");
             message.Add("GroupChatSessionID", groupChatSessionID);
             message.Add("TmpSessionID", tmpSessionID);
+            message.Add("SessionName", sessionName);
             message.Add("Success", success);
             enqueue(message);
         }
 
-        public void Inventory_OnNoteUploaded(bool success, string status, LLUUID itemID, LLUUID assetID)
+        public void Inventory_OnNoteUploaded(bool success, string status, UUID itemID, UUID assetID)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "InventoryNoteUploaded");
@@ -828,7 +832,7 @@ namespace AjaxLife
             enqueue(message);
         }
 
-        public void Inventory_OnTaskItemReceived(LLUUID itemID, LLUUID folderID, LLUUID creatorID, LLUUID assetID, InventoryType type)
+        public void Inventory_OnTaskItemReceived(UUID itemID, UUID folderID, UUID creatorID, UUID assetID, InventoryType type)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "TaskItemReceived");
@@ -840,9 +844,9 @@ namespace AjaxLife
             enqueue(message);
         }
         
-        public void Parcels_OnParcelProperties(Parcel parcel, ParcelManager.ParcelResult result, int sequenceID, bool snapSelection)
+        public void Parcels_OnParcelProperties(Simulator simulator, Parcel parcel, ParcelResult result, int selectedPrims, int sequenceID, bool snapSelection)
         {
-            if(result == ParcelManager.ParcelResult.NoData)
+            if(result == ParcelResult.NoData)
             {
                 Hashtable message = new Hashtable();
                 message.Add("MessageType", "ParcelPropertiesFailed");
@@ -858,7 +862,8 @@ namespace AjaxLife
                 message.Add("LocalID", parcel.LocalID);
                 message.Add("AABBMax", parcel.AABBMax);
                 message.Add("AABBMin", parcel.AABBMin);
-                message.Add("AccessList", parcel.AccessList);
+                message.Add("AccessList", parcel.AccessWhiteList);
+                message.Add("BanList", parcel.AccessBlackList);
                 message.Add("Area", parcel.Area);
                 message.Add("AuctionID", parcel.AuctionID);
                 message.Add("AuthBuyerID", parcel.AuthBuyerID);
@@ -871,16 +876,16 @@ namespace AjaxLife
                 message.Add("GroupID", parcel.GroupID);
                 message.Add("GroupPrims", parcel.GroupPrims);
                 message.Add("IsGroupOwned", parcel.IsGroupOwned);
-                message.Add("LandingType", parcel.LandingType);
+                message.Add("LandingType", parcel.Landing);
                 message.Add("MaxPrims", parcel.MaxPrims);
-                message.Add("MediaAutoScale", parcel.MediaAutoScale);
-                message.Add("MediaDesc", parcel.MediaDesc);
-                message.Add("MediaHeight", parcel.MediaHeight);
-                message.Add("MediaID", parcel.MediaID);
-                message.Add("MediaLoop", parcel.MediaLoop);
-                message.Add("MediaType", parcel.MediaType);
-                message.Add("MediaURL", parcel.MediaURL);
-                message.Add("MediaWidth", parcel.MediaWidth);
+                message.Add("MediaAutoScale", parcel.Media.MediaAutoScale);
+                message.Add("MediaDesc", parcel.Media.MediaDesc);
+                message.Add("MediaHeight", parcel.Media.MediaHeight);
+                message.Add("MediaID", parcel.Media.MediaID);
+                message.Add("MediaLoop", parcel.Media.MediaLoop);
+                message.Add("MediaType", parcel.Media.MediaType);
+                message.Add("MediaURL", parcel.Media.MediaURL);
+                message.Add("MediaWidth", parcel.Media.MediaWidth);
                 message.Add("MusicURL", parcel.MusicURL);
                 message.Add("Name", parcel.Name);
                 message.Add("ObscureMedia", parcel.ObscureMedia);
@@ -898,7 +903,7 @@ namespace AjaxLife
                 message.Add("RegionPushOverride", parcel.RegionPushOverride);
                 message.Add("RentPrice", parcel.RentPrice);
                 message.Add("SalePrice", parcel.SalePrice);
-                message.Add("SelectedPrims", parcel.SelectedPrims);
+                message.Add("SelectedPrims", selectedPrims);
                 message.Add("SelfCount", parcel.SelfCount);
                 message.Add("SimWideMaxPrims", parcel.SimWideMaxPrims);
                 message.Add("SimWideTotalPrims", parcel.SimWideTotalPrims);

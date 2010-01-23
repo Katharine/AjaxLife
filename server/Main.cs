@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using libsecondlife;    
+using OpenMetaverse;    
 using MiniHttpd;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
@@ -52,7 +52,7 @@ namespace AjaxLife
         public static string ID0 { get { return Id0; } }
         public static string BAN_LIST { get { return BanList; } }
         public static double BAN_UPDATE_TIME { get { return BanUpdateTime; } }
-		public static bool USE_S3 { get { return UseS3; } }
+        public static bool USE_S3 { get { return UseS3; } }
         public static bool HANDLE_CONTENT_ENCODING { get { return HandleContentEncoding; } }
         public static bool DEBUG_MODE { get { return DebugMode; } }
 
@@ -75,7 +75,7 @@ namespace AjaxLife
         private static double BanUpdateTime = 300.0;
         public static string Id0 = "";
         private static bool HandleContentEncoding = false;
-		private static bool UseS3 = false;
+        private static bool UseS3 = false;
         private static bool DebugMode = false;
         
         public static int TextureCacheCount = 0;
@@ -94,7 +94,7 @@ namespace AjaxLife
         
         // List of textures we know we have cached. This enables us to avoid looking it up on S3.
         // This is useful because looking things up on S3 costs money and is slightly slower.
-        public static List<LLUUID> CachedTextures = new List<LLUUID>();
+        public static List<UUID> CachedTextures = new List<UUID>();
 
         // Dictionary of users, indexed by session ID.
         public Dictionary<Guid, User> Users;
@@ -159,14 +159,14 @@ namespace AjaxLife
             {
                 TextureCache += "/";
             }
-			if(args["texturebucket"] != null)
-			{
-				TextureBucket = args["texturebucket"];
-			}
-			if(args["textureroot"] != null)
-			{
-				TextureRoot = args["textureroot"];
-			}
+            if(args["texturebucket"] != null)
+            {
+                TextureBucket = args["texturebucket"];
+            }
+            if(args["textureroot"] != null)
+            {
+                TextureRoot = args["textureroot"];
+            }
             if (args["mac"] != null)
             {
                 MacAddress = args["mac"];
@@ -239,8 +239,8 @@ namespace AjaxLife
             }
             
             // Make sure we have a usable texture cache, create it if not.
-			// If we're using S3, this is just used for conversions. If we're using
-			// our own texture system, we store textures here for client use.
+            // If we're using S3, this is just used for conversions. If we're using
+            // our own texture system, we store textures here for client use.
             Console.WriteLine("Checking texture cache...");
             if (!Directory.Exists(TEXTURE_CACHE))
             {
@@ -268,13 +268,13 @@ namespace AjaxLife
             S3Config = new Affirma.ThreeSharp.ThreeSharpConfig();
             S3Config.AwsAccessKeyID = (args["s3key"] == null) ? AccessKey : args["s3key"];
             S3Config.AwsSecretAccessKey = (args["s3secret"] == null) ? PrivateAccessKey : args["s3secret"];
-			// Check that, if we're using S3, we have enough information to do so.
+            // Check that, if we're using S3, we have enough information to do so.
             if(TextureBucket != "" && (S3Config.AwsAccessKeyID == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
-			{
-				Console.WriteLine("Error: To use S3 you must set s3key, s3secret, texturebucket and textureroot");
-				return;
-			}
-			UseS3 = (TextureBucket != ""); // We're using S3 if TextureBucket is not blank.
+            {
+                Console.WriteLine("Error: To use S3 you must set s3key, s3secret, texturebucket and textureroot");
+                return;
+            }
+            UseS3 = (TextureBucket != ""); // We're using S3 if TextureBucket is not blank.
             if (UseS3)
             {
                 Console.WriteLine("Texture root: " + TEXTURE_ROOT);
@@ -289,7 +289,7 @@ namespace AjaxLife
                 Console.WriteLine("Using internal server for textures:");
                 Console.WriteLine("\tTexture root: " + TEXTURE_ROOT);
             }
-			Console.WriteLine("Setting up pages...");
+            Console.WriteLine("Setting up pages...");
             // Set up the root.
             VirtualDirectory root = new VirtualDirectory();
             webserver.Root = root;
@@ -304,15 +304,15 @@ namespace AjaxLife
             root.AddFile(new Html.MakeFile("makefile.kat", root));
             root.AddFile(new Html.iPhone("iphone.kat", root));
             root.AddFile("robots.txt");
-			// textures/ is only used if we aren't using S3 for textures.
-			if(!UseS3)
-			{
-				root.AddDirectory(new TextureDirectory("textures", root));
-			}
-			// API stuff.
-			VirtualDirectory api = new VirtualDirectory("api", root);
-			root.AddDirectory(api);
-			api.AddFile(new Html.CreateSession("newsession", api, Users));
+            // textures/ is only used if we aren't using S3 for textures.
+            if(!UseS3)
+            {
+                root.AddDirectory(new TextureDirectory("textures", root));
+            }
+            // API stuff.
+            VirtualDirectory api = new VirtualDirectory("api", root);
+            root.AddDirectory(api);
+            api.AddFile(new Html.CreateSession("newsession", api, Users));
             api.AddFile(new Html.SendMessage("send", api, Users));
             api.AddFile(new Html.EventQueue("events", api, Users));
             api.AddFile(new Html.Logout("logout", api, Users));
