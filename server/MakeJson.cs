@@ -67,8 +67,15 @@ namespace AjaxLife
             serializer.Converters.Add(UUID);
             while (queue.Count > 0)
             {
-                Hashtable hashtable = queue.Dequeue();
-                serializer.Serialize(jsonWriter, hashtable);
+                try
+                {
+                    Hashtable hashtable = queue.Dequeue();
+                    serializer.Serialize(jsonWriter, hashtable);
+                }
+                catch(Exception e)
+                {
+                    AjaxLife.Debug("MakeJson.FromHashTable", e.Message);
+                }
             }
             jsonWriter.WriteEndArray();
             jsonWriter.Flush();

@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Runtime.InteropServices;
 using OpenMetaverse;
 using OpenMetaverse.Packets;
 using OpenMetaverse.Assets;
@@ -38,6 +39,8 @@ using System.Diagnostics;
 using AjaxLife.Converters;
 using Affirma.ThreeSharp;
 using Affirma.ThreeSharp.Query;
+
+using Bitmap = System.Drawing.Bitmap;
 
 namespace AjaxLife
 {
@@ -100,6 +103,7 @@ namespace AjaxLife
         private void enqueue(Hashtable message)
         {
             if(!message.ContainsKey("MessageType")) return;
+            if(message == null) return;
             if(user.RequestedEvents == null || user.RequestedEvents.Contains((string)message["MessageType"]))
             {
                 this.pending.Enqueue(message);
@@ -405,35 +409,64 @@ namespace AjaxLife
             hash.Add("Items", items);
             enqueue(hash);
         }
-        /*
-        public void Assets_OnImageReceived(ImageDownload image, AssetTexture asset)
+        
+        public void Assets_TextureDownloadCallback(TextureRequestState state, AssetTexture texture)
         {
-            if (image.NotFound)
+            if(state == TextureRequestState.NotFound || state == TextureRequestState.Aborted || state == TextureRequestState.Timeout)
             {
-                Console.WriteLine("Failed to download " + image.ID + " - not found.");
+                Console.WriteLine("Failed to download " + texture.AssetID + " - " + state.ToString() + ".");
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
-                hash.Add("UUID", image.ID);
+                hash.Add("UUID", texture.AssetID);
                 hash.Add("Success", false);
-                hash.Add("Error", "Image not found in database.");
+                hash.Add("Error", "Image could not be downloaded: " + state.ToString());
                 enqueue(hash);
             }
-            else if (image.Success)
+            else if(state == TextureRequestState.Finished)
             {
                 bool success = true;
-                string key = image.ID.ToString();
+                string key = texture.AssetID.ToString();
                 try
                 {
-                    OpenMetaverse.Imaging.ManagedImage decoded;
-                    OpenMetaverse.Imaging.OpenJPEG.DecodeToImage(image.AssetData, out decoded);
-                    byte[] img = decoded.ExportTGA();
-                    decoded.Clear();
-                    File.WriteAllBytes(AjaxLife.TEXTURE_CACHE + key + ".tga", img);
-                    Process process = Process.Start("convert", AjaxLife.TEXTURE_CACHE + key + ".tga " + AjaxLife.TEXTURE_CACHE + key + ".png");
-                    process.WaitForExit();
-                    process.Dispose();
-                    File.Delete(AjaxLife.TEXTURE_CACHE + key + ".tga");
-                    Console.WriteLine("Downloaded image " + key + " - " + image.Size + " bytes.");
+                    texture.Decode();
+                    byte[] img = texture.Image.ExportRaw();
+                    int size = img.Length;
+                    int width = texture.Image.Width;
+                    int height = texture.Image.Height;
+                    texture.Image.Clear();
+                    
+                    // Helpfully, it's upside-down, and has red and blue flipped.
+                    
+                    // Assuming 32 bits (accurate) and a height as a multiple of two (accurate),
+                    // this will vertically invert the image.
+                    int length = width * 4;
+                    byte[] fliptemp = new byte[length];
+                    for(int i = 0; i < height / 2; ++i)
+                    {
+                        int index = i * width * 4;
+                        int endindex = size - ((i+1) * width * 4);
+                        Array.Copy(img, index, fliptemp, 0, length);
+                        Array.Copy(img, endindex, img, index, length);
+                        Array.Copy(fliptemp, 0, img, endindex, length);
+                    }
+                    
+                    // This changes RGBA to BGRA. Or possibly vice-versa. I don't actually know.
+                    // The documentation is vague/nonexistent.
+                    for(int i = 0; i < size; i += 4)
+                    {
+                        byte temp = img[i+2];
+                        img[i+2] = img[i];
+                        img[i] = temp;
+                    }
+                    
+                    // Use System.Drawing.Bitmap to create a PNG. This requires us to feed it a pointer to an array
+                    // for whatever reason, so we temporarily pin the image array.
+                    GCHandle handle = GCHandle.Alloc(img, GCHandleType.Pinned);
+                    Bitmap bitmap = new Bitmap(texture.Image.Width, texture.Image.Height, texture.Image.Width * 4, 
+                                        System.Drawing.Imaging.PixelFormat.Format32bppArgb, handle.AddrOfPinnedObject());
+                    bitmap.Save(AjaxLife.TEXTURE_CACHE + key + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                    bitmap.Dispose();
+                    handle.Free();
                     if(AjaxLife.USE_S3)
                     {
                         try
@@ -442,41 +475,32 @@ namespace AjaxLife
                             Affirma.ThreeSharp.Model.ObjectAddRequest request = new Affirma.ThreeSharp.Model.ObjectAddRequest(AjaxLife.TEXTURE_BUCKET, key + ".png");
                             request.LoadStreamWithFile(AjaxLife.TEXTURE_CACHE + key + ".png");
                             request.Headers.Add("x-amz-acl", "public-read");
+                            request.Headers.Add("Content-Type", "image/png");
                             service.ObjectAdd(request).DataStream.Close();
-                            AjaxLife.CachedTextures.Add(image.ID);
+                            AjaxLife.CachedTextures.Add(texture.AssetID);
+                            File.Delete(AjaxLife.TEXTURE_CACHE + key + ".png");
                         }
                         catch
                         {
                             success = false;
                         }
-                        File.Delete(AjaxLife.TEXTURE_CACHE + key + ".png");
                     }
                 }
                 catch(Exception e)
                 {
                     success = false;
-                    AjaxLife.Debug("Events", "Texture download for "+key+" failed: "+e.Message);
+                    AjaxLife.Debug("Events", "Texture download for "+key+" failed (" + e.GetType().Name + "): " + e.Message);
                 }
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
                 hash.Add("Success", success);
-                hash.Add("Size", image.Size);
                 hash.Add("UUID", key);
                 hash.Add("URL", AjaxLife.TEXTURE_ROOT + key + ".png");
                 enqueue(hash);
             }
-            else
-            {
-                Console.WriteLine("Failed to download " + image.ID + ".");
-                Hashtable hash = new Hashtable();
-                hash.Add("MessageType", "ImageDownloaded");
-                hash.Add("UUID", image.ID);
-                hash.Add("Success", false);
-                hash.Add("Error", "Unknown error.");
-                enqueue(hash);
-            }
+        
         }
-         */
+        
         public void Friends_OnFriendshipOffered(UUID agentID, string agentName, UUID imSessionID)
         {
             Hashtable hash = new Hashtable();

@@ -414,8 +414,7 @@ namespace AjaxLife.Html
                         // Notification will arrive later in the message queue.
                         else
                         {
-
-                            //client.Assets.RequestImage(image, ImageType.Normal, 125000.0f, 0);
+                            client.Assets.RequestImage(image, new TextureDownloadCallback(events.Assets_TextureDownloadCallback));
                             textwriter.Write("{Ready: false}");
                         }
                     }
@@ -468,7 +467,6 @@ namespace AjaxLife.Html
                                     events.Assets_OnAssetReceived(transfer, asset, inventoryID);
                                 }
                             );
-                            textwriter.Write("{TransferID: \"" + POST["AssetID"] + "\", Fake: true}"); // Fix the client to not use this.
                         }
                         catch // Try catching the error that sometimes gets thrown... but sometimes doesn't.
                         {

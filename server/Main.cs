@@ -307,7 +307,7 @@ namespace AjaxLife
             // textures/ is only used if we aren't using S3 for textures.
             if(!UseS3)
             {
-                root.AddDirectory(new TextureDirectory("textures", root));
+                root.AddDirectory(new DriveDirectory("textures", AjaxLife.TEXTURE_CACHE, root));
             }
             // API stuff.
             VirtualDirectory api = new VirtualDirectory("api", root);

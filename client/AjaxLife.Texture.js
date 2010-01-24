@@ -33,9 +33,7 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 	// size.
 	function replaceimage(src)
 	{
-		var img = new Image();
-		img.onload = function() {
-			elem.setAttribute('src',src);
+		elem.onload = function() {
 			elem.setStyle({
 				paddingLeft: '0px',
 				paddingRight: '0px',
@@ -45,7 +43,6 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 				height: height+'px'
 			});
 			loaded = true;
-			img.onload = function(){};
 			if(typeof(onloadcallback) == 'function')
 			{
 				try
@@ -58,7 +55,7 @@ AjaxLife.Texture = function(parent, width, height, texture, slsearch, forceslsea
 				}
 			}
 		}
-		img.src = src;
+		elem.setAttribute('src',src);
 	}
 	
 	// This creates a spinner to indicate that something's happening.
