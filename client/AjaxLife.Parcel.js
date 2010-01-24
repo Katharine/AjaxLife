@@ -72,7 +72,7 @@ AjaxLife.Parcel = function() {
 	return {
 		init: function() {
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
-				if(data.YourPosition != lastpos)
+				if(Math.round(data.YourPosition.X) != Math.round(lastpos.X) || Math.round(data.YourPosition.Y) != Math.round(lastpos.Y))
 				{
 					lastpos = data.YourPosition;
 					updateid(data.YourPosition);
