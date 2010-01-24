@@ -84,7 +84,7 @@ AjaxLife.SpatialChat = function() {
 	
 	// Add a line to the chatlog. Formatting is applied based on the sourcetype,
 	// and a timestamp is calculated in the user's timezone (assuming their computer clock is accurate)
-	function add(text, sourcetype, agent)
+	function add(text, type, sourcetype, agent)
 	{
 		text = AjaxLife.Utils.LinkifyText(text);
 		if(agent && agent.name && agent.id && agent.id != AjaxLife.Utils.UUID.Zero)
@@ -106,6 +106,10 @@ AjaxLife.SpatialChat = function() {
 		else if(sourcetype == AjaxLife.Constants.MainAvatar.ChatSourceType.Object)
 		{
 			line.addClass("objectmessage");
+		}
+		if(type == AjaxLife.Constants.MainAvatar.ChatType.OwnerSay)
+		{
+		    line.addClass("ownersay");
 		}
 		var timestamp = Ext.get(document.createElement('span'));
 		// Make a timestamp in the user's timezone
@@ -172,7 +176,7 @@ AjaxLife.SpatialChat = function() {
 			}
 		}
 		// Add it do the display.
-		add(message, sourcetype, {name: name, id: id});
+		add(message, type, sourcetype, {name: name, id: id});
 	}
 	
 	return {
@@ -278,7 +282,7 @@ AjaxLife.SpatialChat = function() {
 			// Friend notifications.
 			// This just adds an online/offline note to the chatlog when friends log on or off.
 			AjaxLife.Friends.AddStatusCallback(function(friend) {
-				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),AjaxLife.Constants.MainAvatar.ChatSourceType.System, {name: friend.Name, id: friend.ID});
+				add(_("Friends.OnlineNotification",{name: friend.Name, status: (friend.Online?_("Friends.Online"):_("Friends.Offline"))}),0,AjaxLife.Constants.MainAvatar.ChatSourceType.System, {name: friend.Name, id: friend.ID});
 			});
 			
 			// Incoming chat.
@@ -316,7 +320,7 @@ AjaxLife.SpatialChat = function() {
 		},
 		// Add a system message to the chatlog.
 		systemmessage: function(message) {
-			add(message,AjaxLife.Constants.MainAvatar.ChatSourceType.System);
+			add(message, 0, AjaxLife.Constants.MainAvatar.ChatSourceType.System);
 		},
 		open: function(opener) {
 			if(opener)
