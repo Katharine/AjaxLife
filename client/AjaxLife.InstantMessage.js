@@ -413,6 +413,10 @@ AjaxLife.InstantMessage = function() {
 					data.GroupIM = false;
 					conference = true;
 				}
+				if(AjaxLife.Groups.InGroup(data.IMSessionID))
+				{
+				    data.GroupIM = true;
+				}
 				if(data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent || data.Dialog == AjaxLife.Constants.MainAvatar.InstantMessageDialog.SessionSend)
 				{
 					// Create a tab for them if we haven't already. Also play new IM sound.
