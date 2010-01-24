@@ -187,7 +187,7 @@ AjaxLife.HighlightLSL = function(text) {
 		'ATTACH_NOSE', 'ATTACH_RUARM', 'ATTACH_RLARM', 'ATTACH_LUARM',
 		'ATTACH_LLARM', 'ATTACH_RHIP', 'ATTACH_RULEG', 'ATTACH_RLLEG',
 		'ATTACH_LHIP', 'ATTACH_LULEG', 'ATTACH_LLLEG', 'ATTACH_BELLY',
-		'ATTACH_RPEC', 'ATTACH_LPEC', 'LAND_LEVEL', 'LAND_RAISE',
+		'ATTACH_RIGHT_PEC', 'ATTACH_LEFT_PEC', 'LAND_LEVEL', 'LAND_RAISE',
 		'LAND_LOWER', 'LAND_SMOOTH', 'LAND_NOISE', 'LAND_REVERT',
 		'LAND_SMALL_BRUSH', 'LAND_MEDIUM_BRUSH', 'LAND_LARGE_BRUSH',
 		'DATA_ONLINE', 'DATA_NAME', 'DATA_BORN', 'DATA_RATING',
@@ -231,7 +231,7 @@ AjaxLife.HighlightLSL = function(text) {
 		'HTTP_METHOD', 'HTTP_MIMETYPE', 'HTTP_VERIFY_CERT',
 		'HTTP_BODY_MAXLENGTH', 'HTTP_BODY_TRUNCATED',
 		'TEXTURE_BLANK', 'TEXTURE_DEFAULT', 'TEXTURE_PLYWOOD',
-		'TEXTURE_TRANSPARENT', 'TEXTURE_MEDIA'
+		'TEXTURE_TRANSPARENT', 'TEXTURE_MEDIA', 'CHANGED_REGION_START'
 	];
 	
 	// String constants.
@@ -319,7 +319,10 @@ AjaxLife.HighlightLSL = function(text) {
 		'llToUpper', 'llTriggerSound', 'llTriggerSoundLimited', 'llUnescapeURL', 'llUnSit',
 		'llVecDist', 'llVecMag', 'llVecNorm', 'llVolumeDetect', 'llWater', 'llWhisper',
 		'llWind', 'llXorBase64StringsCorrect', 'llXorBase64Strings', 'llSetLinkTexture',
-		'llSetLinkPrimitiveParams', 'llGetObjectDetails'
+		'llSetLinkPrimitiveParams', 'llGetObjectDetails',
+		'llDetectedTouchUV', 'llDetectedTouchFace', 'llDetectedTouchPos', 'llDetectedTouchNormal',
+		'llDetectedTouchBinormal', 'llDetectedTouchST', 'llRequestURL', 'llRequestSecureURL',
+		'llReleaseURL', 'llHTTPResponse', 'llGetHTTPHeader', 'llGetFreeURLs'
 	];
 	var LSLevents = [
 		'at_rot_target', 'at_target', 'attach', 'changed', 'collision',
@@ -328,7 +331,7 @@ AjaxLife.HighlightLSL = function(text) {
 		'link_message', 'listen', 'money', 'moving_end', 'moving_start', 'no_sensor',
 		'not_at_rot_target', 'not_at_target', 'object_rez', 'on_rez', 'remote_data',
 		'run_time_permissions', 'sensor', 'state_entry', 'state_exit', 'timer',
-		'touch', 'touch_start', 'touch_end'
+		'touch', 'touch_start', 'touch_end', 'http_request'
 	];
     
     // This function is called by the regex match for each atom matched.
