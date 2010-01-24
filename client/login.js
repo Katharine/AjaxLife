@@ -245,7 +245,7 @@ function handlelogin()
 						else
 						{
 							AjaxLife.Debug("login: Login failure: "+response.message);
-							AjaxLife.Widgets.Modal.alert(_("Login.Error"),response.message.escapeHTML(),revertscreen);
+							AjaxLife.Widgets.Modal.alert(_("Login.Error"),response.message.escapeHTML().gsub('\n','<br />\n'),revertscreen);
 						}
 					}
 					catch(e)

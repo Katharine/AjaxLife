@@ -126,7 +126,7 @@ AjaxLife.Startup = function() {
 		AjaxLife.PageWait = false;
 		AjaxLife.Debug("AjaxLife: Network init...");
 		AjaxLife.Network.init();
-		AjaxLife.Widgets.Modal.alert(_("AjaxLife.MOTD"),gMOTD);
+		AjaxLife.Widgets.Modal.alert(_("AjaxLife.MOTD"),AjaxLife.Utils.LinkURLs(gMOTD.escapeHTML()));
 		AjaxLife.Debug("AjaxLife: Grabbing offline IMs");
 		AjaxLife.Network.Send("GetOfflineMessages",{});
 		AjaxLife.Debug("AjaxLife: Startup complete.");
