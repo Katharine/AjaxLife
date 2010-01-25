@@ -376,7 +376,6 @@ namespace AjaxLife
                 Hashtable simhash = new Hashtable();
                 simhash.Add("Name", Utils.BytesToString(data.Name));
                 simhash.Add("Access", data.Access);
-                simhash.Add("Agents", data.Agents);
                 simhash.Add("X", data.X);
                 simhash.Add("Y", data.Y);
                 simhash.Add("Flags", data.RegionFlags);

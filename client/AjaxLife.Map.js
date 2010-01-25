@@ -52,6 +52,7 @@ AjaxLife.Map = function() {
 	var zoom_slider = false;
 	var last_click = new Date();
 	var region_load_timeout = false;
+	var old_bounds = {MinX: 0, MinY: 0, MaxX: 0, MaxY: 0};
 	
 	var you_focus_btn = false;
 	var target_focus_btn = false;
@@ -117,7 +118,7 @@ AjaxLife.Map = function() {
 					X: x,
 					Y: y,
 					Z: z
-				});	
+				}); 
 			}
 		});
 	};
@@ -270,6 +271,25 @@ AjaxLife.Map = function() {
 		last_click = new Date();
 	};
 	
+	// Handles map movement and such.
+	function mapStateChanged()
+	{
+	    AjaxLife.Debug("Map: mapStateChanged");
+		var bounds = map.getViewportBounds();
+		AjaxLife.Debug(bounds);
+		if(bounds.xMin < old_bounds.MinX || bounds.yMin < old_bounds.MinY || bounds.xMax > old_bounds.MaxX || bounds.yMax > old_bounds.MaxY)
+		{
+			var new_bounds = {
+				MaxX: Math.ceil(bounds.xMax),
+				MaxY: Math.ceil(bounds.yMax),
+				MinX: Math.floor(bounds.xMin),
+				MinY: Math.floor(bounds.yMin)
+			};
+			AjaxLife.Network.Send("GetMapBlocks", new_bounds);
+			old_bounds = new_bounds;
+		}
+	}
+	
 	// Called when the position boxes change. We move the marker to the new position,
 	// again by removing and replacing it.
 	function textposchanged()
@@ -363,7 +383,7 @@ AjaxLife.Map = function() {
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay64.png" , 64, 64,true)),
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay32.png" , 32, 32,true)),
 				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay16.png" , 16, 16,true)),
-				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay8.png"  ,  8,  8,true))
+				new Icon(new Img(AjaxLife.STATIC_ROOT+"images/simdown/overlay8.png"	 ,	8,	8,true))
 			];
 			// If we know where we are, set our position to there.
 			// Otherwise use the default position, which was set to the centre of the TG welcome area.
@@ -401,7 +421,12 @@ AjaxLife.Map = function() {
 				Ext.get('div_map').dom.innerHTML = '';
 				map = false;
 				Ext.get('div_map').setStyle({width: (width-220)+'px', height: (height-30)+'px'});
-				map = new SLMap(Ext.get('div_map').dom, {hasZoomControls: false, hasPanningControls: false, singleClickHandler: singleClickHandler});
+				map = new SLMap(Ext.get('div_map').dom, {
+					hasZoomControls: false,
+					hasPanningControls: false,
+					singleClickHandler: singleClickHandler,
+					onStateChangedHandler: mapStateChanged}
+				);
 				map.centerAndZoomAtSLCoord(pos,zoom);
 				map.addMarker(marker_you);
 				if(marker_mark)
@@ -428,6 +453,8 @@ AjaxLife.Map = function() {
 						}
 					}
 				}
+				
+				mapStateChanged();
 			});
 			
 			// Add initial sim to avoid crash due to dead MapAPI.
@@ -436,7 +463,12 @@ AjaxLife.Map = function() {
 			rlh[gRegionCoords.x+"-"+gRegionCoords.y] = gRegion;
 			
 			// Create the map and mark us on it.
-			map = new SLMap(Ext.get('div_map').dom, {hasZoomControls: false, hasPanningControls: false, singleClickHandler: singleClickHandler});
+			map = new SLMap(Ext.get('div_map').dom, {
+				hasZoomControls: false,
+				hasPanningControls: false,
+				singleClickHandler: singleClickHandler,
+				onStateChangedHandler: mapStateChanged}
+			);
 			map.centerAndZoomAtSLCoord(new SLPoint(position.sim, position.x, position.y),2);
 			marker_you = new Marker(marker_you_icons,new SLPoint(position.sim, position.x, position.y));
 			map.addMarker(marker_you);
@@ -688,8 +720,6 @@ AjaxLife.Map = function() {
 					//AjaxLife.Network.Send('GetMapItems',{ItemType: AjaxLife.Constants.Map.Item.AgentLocations, Region: i});
 				}
 			});
-			// Request the map data
-			AjaxLife.Network.Send('GetMapBlocks', {}); 
 			
 			// Map items...
 			
@@ -719,7 +749,7 @@ AjaxLife.Map = function() {
 						});
 					}
 				}
-			});	
+			}); 
 			
 			// Update our position every time we get the periodic "UsefulData" message.
 			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {

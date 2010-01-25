@@ -312,10 +312,10 @@ namespace AjaxLife.Html
                         MapBlockRequestPacket req = new MapBlockRequestPacket();
                         req.AgentData.AgentID = client.Self.AgentID;
                         req.AgentData.SessionID = client.Self.SessionID;
-                        req.PositionData.MinX = 0;
-                        req.PositionData.MinY = 0;
-                        req.PositionData.MaxX = ushort.MaxValue;
-                        req.PositionData.MaxY = ushort.MaxValue;
+                        req.PositionData.MinX = ushort.Parse(POST["MinX"]);
+                        req.PositionData.MinY = ushort.Parse(POST["MinY"]);
+                        req.PositionData.MaxX = ushort.Parse(POST["MaxX"]);
+                        req.PositionData.MaxY = ushort.Parse(POST["MaxY"]);
                         client.Network.SendPacket((Packet)req);
                     }
                     break;
@@ -331,6 +331,16 @@ namespace AjaxLife.Html
                         req.PositionData.MaxX = x;
                         req.PositionData.MaxY = y;
                         client.Network.SendPacket((Packet)req);
+                    }
+                    break;
+                case "FindRegion":
+                    {
+                        OpenMetaverse.Packets.MapNameRequestPacket packet = new OpenMetaverse.Packets.MapNameRequestPacket();
+                        packet.NameData = new MapNameRequestPacket.NameDataBlock();
+                        packet.NameData.Name = Utils.StringToBytes(POST["Name"]);
+                        packet.AgentData.AgentID = client.Self.AgentID;
+                        packet.AgentData.SessionID = client.Self.SessionID;
+                        client.Network.SendPacket((Packet)packet);
                     }
                     break;
                 case "GetOfflineMessages":
