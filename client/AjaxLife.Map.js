@@ -47,7 +47,7 @@ AjaxLife.Map = function() {
 	var marker_classified_icons = false;
 	var marker_for_sale_icons = false;
 	var marked_position = false;
-	var position = {sim: "Nix", x: 0.0, y: 0.0, z: 0.0};
+	var position = {sim: "Ahern", x: 0.0, y: 0.0, z: 0.0};
 	var position_before_teleport;
 	var zoom_slider = false;
 	var last_click = new Date();
@@ -63,6 +63,8 @@ AjaxLife.Map = function() {
 	var box_y = false;
 	var box_z = false;
 	var box_sim = false;
+	var highlighted_sim = '';
+	var list_sim_search = false;
 	
 	var teleport_wait = false;
 	
@@ -182,6 +184,7 @@ AjaxLife.Map = function() {
 				pos.x = (pos.x%1)*256;
 				pos.y = (pos.y%1)*256;
 			}
+			highlighted_sim = sim;
 			marked_position = {sim: sim, x: pos.x, y: pos.y, z: pos.z};
 			box_x.dom.value = Math.round(pos.x);
 			box_y.dom.value = Math.round(pos.y);
@@ -192,12 +195,14 @@ AjaxLife.Map = function() {
 			{
 				map.panOrRecenterToSLCoord(new SLPoint(sim, pos.x, pos.y));
 			}
+			if(!list_sim_search.contains(sim)) list_sim_search.clear();
 			clear_btn.enable();
 			target_focus_btn.enable();
 			onmarkchanged(marked_position);
 		}
 		else
 		{
+			list_sim_search.clear();
 			clear_btn.disable();
 			target_focus_btn.disable();
 			box_x.dom.value = Math.round(position.x);
@@ -228,8 +233,10 @@ AjaxLife.Map = function() {
 			if(!retried)
 			{
 				AjaxLife.Network.Send("GetMapBlock",{
-					X: Math.floor(x),
-					Y: Math.floor(y)
+					MaxX: Math.floor(x),
+					MinX: Math.floor(x),
+					MaxY: Math.floor(y),
+					MinY: Math.floor(y)
 				});
 				region_load_timeout = setTimeout(function() {
 					// Recursion. Yay.
@@ -274,9 +281,7 @@ AjaxLife.Map = function() {
 	// Handles map movement and such.
 	function mapStateChanged()
 	{
-	    AjaxLife.Debug("Map: mapStateChanged");
 		var bounds = map.getViewportBounds();
-		AjaxLife.Debug(bounds);
 		if(bounds.xMin < old_bounds.MinX || bounds.yMin < old_bounds.MinY || bounds.xMax > old_bounds.MaxX || bounds.yMax > old_bounds.MaxY)
 		{
 			var new_bounds = {
@@ -294,7 +299,7 @@ AjaxLife.Map = function() {
 	// again by removing and replacing it.
 	function textposchanged()
 	{
-		var sim = box_sim.dom.value;
+		var sim = highlighted_sim;
 		// Try to get the sim coordinates.
 		var simpos = lh[sim.toLowerCase()];
 		// If we don't know the sim, just abort.
@@ -312,6 +317,15 @@ AjaxLife.Map = function() {
 		if(z < 0) z = 0;
 		settargetpos(sim, {x: x, y: y, z: z}, true);
 	};
+	
+	function simboxchanged()
+	{
+		var name = box_sim.dom.value;
+		AjaxLife.Network.Send('FindRegion', {
+			Name: name
+		});
+		list_sim_search.clear();
+	}
 	
 	// This recursively removes all items in a sim.
 	function clearitems(sim)
@@ -519,8 +533,13 @@ AjaxLife.Map = function() {
 			box_sim = Ext.get(document.createElement('input'));
 			box_sim.setStyle({width: '190px'});
 			box_sim.dom.setAttribute('value', marked_position.sim);
-			box_sim.on('keyup',boxposkeyup);
+			box_sim.on('keyup',function() {
+				if(e.keyCode == 13 || e.which == 13) simboxchanged();
+			});
 			locationholder.appendChild(box_sim.dom);
+			var simsearchholder = document.createElement('div');
+			simsearchholder.setStyle({marginLeft: '5px'});
+			locationholder.appendChild(simsearchholder);
 			var locationpara = document.createElement('p');
 			locationpara.appendChild(document.createTextNode(_("Map.PositionLabel")));
 			locationholder.appendChild(locationpara);
@@ -546,7 +565,18 @@ AjaxLife.Map = function() {
 			box_x.on('change',textposchanged);
 			box_y.on('change',textposchanged);
 			box_z.on('change',textposchanged);
-			box_sim.on('change',textposchanged);
+			box_sim.on('change',simboxchanged);
+			
+			list_sim_search = new AjaxLife.Widgets.SelectList('lst_sim_list', simsearchholder, {
+				sort: true,
+				width: '190px',
+				height: '200px',
+				callback: function(key) {
+					box_sim.dom.value = key;
+					highlighted_sim = key;
+					textposchanged();
+				}
+			})
 			
 			// Make some buttons, and make them do stuff.
 			// Teleport when the teleport button's clicked.
@@ -677,12 +707,21 @@ AjaxLife.Map = function() {
 			// Deal with incoming map data. This generally means lists of sim positions and names,
 			// along with their status.
 			AjaxLife.Network.MessageQueue.RegisterCallback('MapBlocks', function(blocks) {
-				for(var i in blocks.Blocks)
-				{
+				var search_result = false;
+				var sims_found = [];
+				blocks.Blocks.each(function(block) {
+					var i = block.Name.toLowerCase();
+					// If it's a search result, X/Y are set to zero.
+					if(block.X == 0 && block.Y == 0)
+					{
+						search_result = true;
+						return; // break
+					}
+					sims_found.push(block.Name);
 					// If the sim's new, create new entries for it.
 					if(!sims[i])
 					{
-						sims[i] = blocks.Blocks[i];
+						sims[i] = block;
 						sims[i].Items = {
 							Agents: [],
 							Events: [],
@@ -692,12 +731,12 @@ AjaxLife.Map = function() {
 							ForSale: [],
 							Classifieds: []
 						};
-						rlh[sims[i].X+"-"+sims[i].Y] = sims[i].Name;
-						lh[sims[i].Name.toLowerCase()] = {x: sims[i].X, y: sims[i].Y};
+						rlh[block.X+"-"+block.Y] = block.Name;
+						lh[block.Name.toLowerCase()] = {x: block.X, y: block.Y};
 						//sims[i].AgentMarker = false;
 					}
 					// If it's down, add a sim down marker to its centre to show this.
-					if(sims[i].Access == AjaxLife.Constants.Map.SimAccess.Down)
+					if(block.Access == AjaxLife.Constants.Map.SimAccess.Down)
 					{
 						if(!sim_down_markers[i])
 						{
@@ -718,6 +757,14 @@ AjaxLife.Map = function() {
 					// Actaully, don't bother with this until we're slightly more advanced - 
 					// it'll choke the MG.
 					//AjaxLife.Network.Send('GetMapItems',{ItemType: AjaxLife.Constants.Map.Item.AgentLocations, Region: i});
+				});
+				
+				if(search_result)
+				{
+					list_sim_search.clear();
+					sims_found.each(function(result) {
+						list_sim_search.add(result, result);
+					})
 				}
 			});
 			

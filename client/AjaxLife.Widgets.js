@@ -396,6 +396,9 @@ AjaxLife.Widgets.SelectList = function(id,parent,settings) {
 				keys[keys.length] = i;
 			}
 			return keys;
+		},
+		contains: function(key) {
+		    return !!elems[key];
 		}
 	};
 };

@@ -364,24 +364,21 @@ namespace AjaxLife
             MapBlockReplyPacket reply = (MapBlockReplyPacket)packet;
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "MapBlocks");
-            Hashtable blocks = new Hashtable();
+            Hashtable[] blocks = new Hashtable[reply.Data.Length];
             float temp1, temp2; // Neither of these do anything, really. Just to make Helpers.GlobalPosToRegionHandle happy.
+            int i = 0;
             foreach (MapBlockReplyPacket.DataBlock data in reply.Data)
             {
                 string name = Utils.BytesToString(data.Name);
-                if (blocks.ContainsKey(name.ToLowerInvariant()))
-                {
-                    continue;
-                }
                 Hashtable simhash = new Hashtable();
-                simhash.Add("Name", Utils.BytesToString(data.Name));
+                simhash.Add("Name", name);
                 simhash.Add("Access", data.Access);
                 simhash.Add("X", data.X);
                 simhash.Add("Y", data.Y);
                 simhash.Add("Flags", data.RegionFlags);
                 // Convert the regionhandle to a string - JavaScript is likely to get upset over long integers.
                 simhash.Add("RegionHandle", Helpers.GlobalPosToRegionHandle(data.X*256, data.Y*256, out temp1, out temp2).ToString());
-                blocks.Add(Utils.BytesToString(data.Name).ToLowerInvariant(), simhash);
+                blocks[i++] = simhash;
             }
             hash.Add("Blocks", blocks);
             enqueue(hash);
