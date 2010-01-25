@@ -232,7 +232,7 @@ AjaxLife.Map = function() {
 			// If it hasn't, and we've already tried loading it, give up.
 			if(!retried)
 			{
-				AjaxLife.Network.Send("GetMapBlock",{
+				AjaxLife.Network.Send("GetMapBlocks",{
 					MaxX: Math.floor(x),
 					MinX: Math.floor(x),
 					MaxY: Math.floor(y),
