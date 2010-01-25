@@ -1,12 +1,16 @@
 AjaxLife.LocalChat = function() {
     var history_panel = false;
     var chat_input = false;
+    var callbacks = [];
     
     function add_to_log(sender, text, type) {
         var time = new Date();
         var timestamp = "[" + time.getHours() + ":" + ((time.getMinutes() < 10) ? ("0" + time.getMinutes()) : time.getMinutes()) + "]";
         history_panel.append($("<p class='"+type+"'><span class='timestamp'>"+timestamp+"</span> "+text+"</p>"));
 		history_panel.scrollTop(history_panel.attr('scrollHeight')); // Scrolls to bottom.
+		$.each(callbacks, function(this) {
+		    this(sender, text, type);
+		});
     }
     
     function send_chat(text) {
@@ -65,6 +69,9 @@ AjaxLife.LocalChat = function() {
 				    incoming_line(data.FromAgentName, data.Message, 2, 8); // Object, OwnerSay (a lie, but oh well.)
 				}
 			});
+        },
+        add_callback: function(callback) {
+            callbacks.push(callback);
         }
     };
 }();
