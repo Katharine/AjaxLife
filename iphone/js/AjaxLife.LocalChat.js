@@ -3,7 +3,7 @@ AjaxLife.LocalChat = function() {
     var chat_input = false;
     var callbacks = [];
     
-    function add_to_log(sender, text, type) {
+    function add_to_log(text, type) {
         var time = new Date();
         var timestamp = "[" + time.getHours() + ":" + ((time.getMinutes() < 10) ? ("0" + time.getMinutes()) : time.getMinutes()) + "]";
         history_panel.append($("<p class='"+type+"'><span class='timestamp'>"+timestamp+"</span> "+text+"</p>"));
@@ -42,7 +42,7 @@ AjaxLife.LocalChat = function() {
         if(source == 0) message_type = 'system';
         if(source == 2) message_type = 'object';
         if(type == 8) message_type = 'ownersay';
-        add_to_log(name, message, message_type);
+        add_to_log(message, message_type);
     }
     
     return {
