@@ -533,9 +533,6 @@ AjaxLife.Map = function() {
 			box_sim = Ext.get(document.createElement('input'));
 			box_sim.setStyle({width: '190px'});
 			box_sim.dom.setAttribute('value', marked_position.sim);
-			box_sim.on('keyup',function() {
-				if(e.keyCode == 13 || e.which == 13) simboxchanged();
-			});
 			locationholder.appendChild(box_sim.dom);
 			var simsearchholder = document.createElement('div');
 			simsearchholder.setStyle({marginLeft: '5px'});
