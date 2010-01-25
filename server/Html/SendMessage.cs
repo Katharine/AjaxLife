@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Net;
 using MiniHttpd;
 using OpenMetaverse;
 using OpenMetaverse.Packets;
@@ -385,19 +386,32 @@ namespace AjaxLife.Html
                             if (AjaxLife.USE_S3)
                             {
                                 // Otherwise, make that HEAD request and find out.
+                                HttpWebRequest webrequest = (HttpWebRequest)HttpWebRequest.Create(AjaxLife.TEXTURE_ROOT + image + ".png");
+                                webrequest.Method = "HEAD";
+                                webrequest.KeepAlive = false;
+                                webrequest.ReadWriteTimeout = 1000;
+                                webrequest.Timeout = 2500;
+                                HttpWebResponse response = null;
                                 try
                                 {
-                                    IThreeSharp query = new ThreeSharpQuery(AjaxLife.S3Config);
-                                    Affirma.ThreeSharp.Model.ObjectGetRequest s3request = new Affirma.ThreeSharp.Model.ObjectGetRequest(AjaxLife.TEXTURE_BUCKET, image.ToString() + ".png");
-                                    s3request.Method = "HEAD";
-                                    Affirma.ThreeSharp.Model.ObjectGetResponse s3response = query.ObjectGet(s3request);
-                                    if (s3response.StatusCode == System.Net.HttpStatusCode.OK)
+                                    response = (HttpWebResponse)webrequest.GetResponse();
+                                    if(response.StatusCode == HttpStatusCode.OK)
                                     {
                                         exists = true;
                                     }
-                                    s3response.DataStream.Close();
                                 }
-                                catch { }
+                                catch(WebException e)
+                                {
+                                    AjaxLife.Debug("SendMessage", "WebException (" + e.Status.ToString() + "): " + e.Message);
+                                }
+                                finally
+                                {    
+                                    request.Dispose();
+                                    if(response != null)
+                                    {
+                                        response.Close();
+                                    }
+                                }
                             }
                             // If we aren't using S3, just check the texture cache.
                             else
