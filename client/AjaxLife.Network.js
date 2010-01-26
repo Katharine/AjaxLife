@@ -318,14 +318,14 @@ AjaxLife.Network.Send = function(message, opts) {
 	// We have to do any alterations to the query before querystring is defined.
 	var signed = opts.signed;
 	delete opts.signed; // This doesn't throw errors, even if the opts.signed never existed.
-	var querystring = Hash.toQueryString(opts); // This is deprecated in Prototype 1.6 - if we upgrade, change to Object.toQueryString().
+	var querystring = Object.toQueryString(opts);
 	// Used to ensure that you can't impersonate someone by grabbing the SID -
 	// at least for important messages.
 	// This signs messages where signed is true, or the message is in the list of messages to sign,
 	// unless signed is explicitly false.
 	if(signed || (AjaxLife.Network.SignedMessages[message] && signed !== false))
 	{
-		querystring = Hash.toQueryString(opts); // Do it again without the signed: true part.
+		querystring = Object.toQueryString(opts); // Do it again without the signed: true part.
 		var tohash = (++AjaxLife.SignedCallCount).toString() + querystring + AjaxLife.Signature;
 		var hash = md5(tohash);
 		AjaxLife.Debug("Network: Signing '"+message+"' message with '"+hash+"' (from '"+tohash+"')");
