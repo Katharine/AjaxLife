@@ -15,12 +15,14 @@ function slDocumentCreateElement(name) {
             }
         }
         ret.onload = function() {
-            if(ret.naturalWidth !== undefined) {
-                if(ret.naturalWidth == 0) {
+            if(!Prototype.Browser.IE) {
+                if(ret.naturalWidth !== undefined) {
+                    if(ret.naturalWidth == 0) {
+                        ret.onerror(true);
+                    }
+                } else if(!ret.complete) {
                     ret.onerror(true);
                 }
-            } else if(!ret.complete) {
-                ret.onerror(true);
             }
         }
     }

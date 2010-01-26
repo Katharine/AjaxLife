@@ -534,9 +534,9 @@ AjaxLife.Map = function() {
 			box_sim.setStyle({width: '190px'});
 			box_sim.dom.setAttribute('value', marked_position.sim);
 			locationholder.appendChild(box_sim.dom);
-			var simsearchholder = document.createElement('div');
+			var simsearchholder = Ext.get(document.createElement('div'));
 			simsearchholder.setStyle({marginLeft: '5px'});
-			locationholder.appendChild(simsearchholder);
+			locationholder.appendChild(simsearchholder.dom);
 			var locationpara = document.createElement('p');
 			locationpara.appendChild(document.createTextNode(_("Map.PositionLabel")));
 			locationholder.appendChild(locationpara);
