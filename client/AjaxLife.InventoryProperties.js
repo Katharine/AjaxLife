@@ -26,11 +26,6 @@
 
 AjaxLife.ActiveInventoryDialogs.Properties = {};
 AjaxLife.InventoryDialogs.Properties = function(data) {
-	if(Prototype.Browser.IE)
-	{
-		alert("You are using Internet Explorer. IE is crap. Try again with something better.");
-		return false;
-	}
 	var P = AjaxLife.Constants.Permissions;
 	function updatepermissions()
 	{
@@ -241,12 +236,9 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		left: '10px'
 	});
 	win.body.dom.appendChild(label_ownercan);
-	
 	var check_ownermod = $(document.createElement('input'));
-
-	win.body.dom.appendChild(check_ownermod);
-
 	check_ownermod.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_ownermod);
 
 	check_ownermod.disable();
 
@@ -272,8 +264,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 
 	
 	var check_ownercopy = $(document.createElement('input'));
-	win.body.dom.appendChild(check_ownercopy);
 	check_ownercopy.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_ownercopy);
 	check_ownercopy.disable();
 	if(data.Permissions.OwnerMask & P.Copy)
 	{
@@ -294,8 +286,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	});
 	
 	var check_ownertrans = $(document.createElement('input'));
-	win.body.dom.appendChild(check_ownertrans);
 	check_ownertrans.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_ownertrans);
 	check_ownertrans.disable();
 	if(data.Permissions.OwnerMask & P.Transfer)
 	{
@@ -326,8 +318,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	});
 	
 	var check_nextownermod = $(document.createElement('input'));
-	win.body.dom.appendChild(check_nextownermod);
 	check_nextownermod.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_nextownermod);
 	if(data.Permissions.NextOwnerMask & P.Modify)
 	{
 		check_nextownermod.setAttribute('checked','checked');
@@ -352,8 +344,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 		left: '25px'
 	});
 	var check_nextownercopy = $(document.createElement('input'));
-	win.body.dom.appendChild(check_nextownercopy);
 	check_nextownercopy.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_nextownercopy);
 	if(data.Permissions.NextOwnerMask & P.Copy)
 	{
 		check_nextownercopy.setAttribute('checked','checked');
@@ -393,8 +385,8 @@ AjaxLife.InventoryDialogs.Properties = function(data) {
 	});
 	
 	var check_nextownertrans = $(document.createElement('input'));
-	win.body.dom.appendChild(check_nextownertrans);
 	check_nextownertrans.setAttribute('type','checkbox');
+	win.body.dom.appendChild(check_nextownertrans);
 	if(data.Permissions.NextOwnerMask & P.Transfer)
 	{
 		check_nextownertrans.setAttribute('checked','checked');

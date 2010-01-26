@@ -637,14 +637,9 @@
 					var P = AjaxLife.Constants.Permissions;
 					var perms = node.attributes.Permissions.OwnerMask;
 					
-					// Properties button
-					// Doesn't work in IE.
-					if(!Prototype.Browser.IE)
-					{
-						var props = new Ext.menu.Item({text: _('Inventory.Properties')});
-						props.on('click', inventoryproperties, node);
-						menu.add(props);
-					}
+					var props = new Ext.menu.Item({text: _('Inventory.Properties')});
+					props.on('click', inventoryproperties, node);
+					menu.add(props);
 					
 					// Rename button
 					var rename = new Ext.menu.Item({text: _('Inventory.Rename')});
