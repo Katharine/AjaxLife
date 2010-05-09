@@ -109,6 +109,18 @@
     <None Include="assemblies\MiniHttpd.dll" />
     <None Include="assemblies\Newtonsoft.Json.dll" />
     <None Include="assemblies\log4net.dll" />
+    <Content Include="libopenjpeg-dotnet-2.1.3.0-dotnet-1-i686.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libopenjpeg-dotnet-2.1.3.0-dotnet-1-x86_64.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libopenjpeg-dotnet-2.1.3.0-dotnet-1.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OpenMetaverse.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="assemblies\OpenMetaverse.dll" />
     <Content Include="assemblies\OpenMetaverse.StructuredData.dll" />
     <Content Include="assemblies\OpenMetaverseTypes.dll" />
@@ -120,6 +132,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Html\Templates\AjaxLife.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="openjpeg-dotnet-x86_64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="openjpeg-dotnet.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="openmetaverse_data\avatar_lad.xml">
