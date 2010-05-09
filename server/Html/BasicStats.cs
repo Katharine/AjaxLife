@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Diagnostics;
 using MiniHttpd;
 using OpenMetaverse;
 using OpenMetaverse.Packets;
@@ -45,6 +46,7 @@ namespace AjaxLife.Html
         private IDirectory parent;
         private Dictionary<Guid, User> users;
         private DateTime started;
+        private PerformanceCounter cpu = new PerformanceCounter("Processor", "% Processor Time");
 
         // Methods
         public BasicStats(string name, IDirectory parent, Dictionary<Guid, User> users)
@@ -82,24 +84,7 @@ namespace AjaxLife.Html
                 // Work out and write the time running in seconds.
                 TimeSpan span = DateTime.UtcNow.Subtract(started);
                 textWriter.WriteLine(span.TotalSeconds);
-                try
-                {
-                    // This is .NET-speak for "print exec('free')".
-                    // It's really rather complicated.
-                    // (N.B. "free" spits out how much memory you're using)
-                    System.Diagnostics.Process process = new System.Diagnostics.Process();
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.FileName = "free";
-                    process.Start();
-                    textWriter.Write(process.StandardOutput.ReadToEnd());
-                    process.WaitForExit();
-                    process.Dispose();
-                }
-                catch
-                {
-                    textWriter.Write("Unable to get memory info.");
-                }
+                textWriter.WriteLine(cpu.NextValue());
             }
             catch (Exception exception)
             {
