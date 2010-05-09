@@ -123,40 +123,40 @@ namespace AjaxLife
         //    as a bunch more hashtables.
         // 4) Enqueue the hashtable in the message queue. This is periodically emptied by the client.
         
-        public void Avatars_OnAvatarGroups(UUID avatarID, List<AvatarGroup> groups)
+        public void Avatars_AvatarGroupsReply(object sender, AvatarGroupsReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarGroups");
-            item.Add("AvatarID", avatarID);
-            item.Add("Groups", groups);
+            item.Add("AvatarID", e.AvatarID);
+            item.Add("Groups", e.Groups);
             enqueue(item);
         }
 
-        public void Avatars_OnAvatarInterests(UUID avatarID, Avatar.Interests interests)
+        public void Avatars_AvatarInterestsReply(object sender, AvatarInterestsReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarInterests");
-            item.Add("AvatarID", avatarID);
-            item.Add("WantToMask", interests.WantToMask);
-            item.Add("WantToText", interests.WantToText);
-            item.Add("SkillsMask", interests.SkillsMask);
-            item.Add("SkillsText", interests.SkillsText);
-            item.Add("LanguagesText", interests.LanguagesText);
+            item.Add("AvatarID", e.AvatarID);
+            item.Add("WantToMask", e.Interests.WantToMask);
+            item.Add("WantToText", e.Interests.WantToText);
+            item.Add("SkillsMask", e.Interests.SkillsMask);
+            item.Add("SkillsText", e.Interests.SkillsText);
+            item.Add("LanguagesText", e.Interests.LanguagesText);
             enqueue(item);
         }
 
-        public void Avatars_OnAvatarNames(Dictionary<UUID, string> names)
+        public void Avatars_UUIDNameReply(object sender, UUIDNameReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "AvatarNames");
-            item.Add("Names", names);
+            item.Add("Names", e.Names);
             enqueue(item);
         }
 
-        public void Avatars_OnAvatarProperties(Packet packet, Simulator sim)
+        public void Avatars_AvatarProperties(object sender, PacketReceivedEventArgs e)
         {
             Hashtable item = new Hashtable();
-            AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)packet;
+            AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)e.Packet;
             item.Add("MessageType",     "AvatarProperties");
             item.Add("AvatarID",        reply.AgentData.AvatarID);
             item.Add("PartnerID",       reply.PropertiesData.PartnerID);
@@ -184,21 +184,21 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Friends_OnFriendFound(UUID agentID, ulong regionHandle, Vector3 location)
+        public void Friends_FriendFoundReply(object sender, FriendFoundReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "FriendFound");
-            item.Add("Location", location);
-            item.Add("RegionHandle", regionHandle.ToString()); // String to avoid upsetting JavaScript.
+            item.Add("Location", e.Location);
+            item.Add("RegionHandle", e.RegionHandle.ToString()); // String to avoid upsetting JavaScript.
             enqueue(item);
         }
 
-        public void Directory_OnDirPeopleReply(UUID queryID, List<DirectoryManager.AgentSearchData> matchedPeople)
+        public void Directory_DirPeopleReply(object sender, DirPeopleReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirPeopleReply");
             List<Hashtable> results = new List<Hashtable>();
-            foreach (DirectoryManager.AgentSearchData person in matchedPeople)
+            foreach (DirectoryManager.AgentSearchData person in e.MatchedPeople)
             {
                 Hashtable result = new Hashtable();
                 result.Add("AgentID", person.AgentID);
@@ -210,12 +210,12 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Directory_OnDirGroupsReply(UUID queryID, List<DirectoryManager.GroupSearchData> matchedGroups)
+        public void Directory_DirGroupsReply(object sender, DirGroupsReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "DirGroupsReply");
             List<Hashtable> results = new List<Hashtable>();
-            foreach (DirectoryManager.GroupSearchData group in matchedGroups)
+            foreach (DirectoryManager.GroupSearchData group in e.MatchedGroups)
             {
                 Hashtable result = new Hashtable();
                 result.Add("GroupID", group.GroupID);
@@ -227,55 +227,63 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public bool Inventory_OnObjectOffered(InstantMessage offerDetails, AssetType type, UUID objectID, bool fromTask)
+        public void Inventory_InventoryObjectOffered(object sender, InventoryObjectOfferedEventArgs e)
         {
-            if (!active) return false;
+            if (!active)
+            {
+                e.Accept = false;
+                return;
+            }
+
             Hashtable hashtable = new Hashtable();
             hashtable.Add("MessageType", "ObjectOffered");
-            hashtable.Add("FromAgentID", offerDetails.FromAgentID);
-            hashtable.Add("FromAgentName", offerDetails.FromAgentName);
-            hashtable.Add("RegionID", offerDetails.RegionID);
-            hashtable.Add("Position", offerDetails.Position);
-            hashtable.Add("Timestamp", offerDetails.Timestamp);
-            hashtable.Add("Type", type);
-            hashtable.Add("ObjectID", objectID);
-            hashtable.Add("FromTask", fromTask);
+            hashtable.Add("FromAgentID", e.Offer.FromAgentID);
+            hashtable.Add("FromAgentName", e.Offer.FromAgentName);
+            hashtable.Add("RegionID", e.Offer.RegionID);
+            hashtable.Add("Position", e.Offer.Position);
+            hashtable.Add("Timestamp", e.Offer.Timestamp);
+            hashtable.Add("Type", e.AssetType);
+            hashtable.Add("ObjectID", e.ObjectID);
+            hashtable.Add("FromTask", e.FromTask);
             enqueue(hashtable);
-            return true; // Sigh...
+            e.Accept = true; // Sigh...
         }
 
-        public void Network_OnDisconnected(NetworkManager.DisconnectType reason, string message)
+        public void Network_Disconnected(object sender, DisconnectedEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Disconnected");
-            item.Add("Reason", reason);
-            item.Add("Message", message);
+            item.Add("Reason", e.Reason);
+            item.Add("Message", e.Message);
             enqueue(item);
         }
 
-        public void Self_OnBalanceUpdated(int balance)
+        public void Self_MoneyBalance(object sender, BalanceEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "BalanceUpdated");
-            item.Add("Balance", balance);
+            item.Add("Balance", e.Balance);
             enqueue(item);
         }
-        public void Self_OnChat(string message, ChatAudibleLevel audible, ChatType type, ChatSourceType sourceType, string fromName, UUID id, UUID ownerid, Vector3 position)
+
+        public void Self_ChatFromSimulator(object sender, ChatEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "SpatialChat");
-            item.Add("Message", message);
-            item.Add("Audible", audible);
-            item.Add("Type", type);
-            item.Add("SourceType", sourceType);
-            item.Add("FromName", fromName);
-            item.Add("ID", id);
-            item.Add("OwnerID", ownerid);
-            item.Add("Position", position);
+            item.Add("Message", e.Message);
+            item.Add("Audible", e.AudibleLevel);
+            item.Add("Type", e.Type);
+            item.Add("SourceType", e.SourceType);
+            item.Add("FromName", e.FromName);
+            item.Add("ID", e.SourceID);
+            item.Add("OwnerID", e.OwnerID);
+            item.Add("Position", e.Position);
             enqueue(item);
         }
-        public void Self_OnInstantMessage(InstantMessage im, Simulator simulator)
+
+        public void Self_IM(object sender, InstantMessageEventArgs e)
         {
+            InstantMessage im = e.IM;
             UUID fromAgentID = im.FromAgentID;
             string fromAgentName = im.FromAgentName;
             //UUID toAgentID = im.ToAgentID;
@@ -306,62 +314,62 @@ namespace AjaxLife
             enqueue(item);
         }
 
-        public void Self_OnMoneyBalanceReplyReceived(UUID transactionID, bool transactionSuccess, int balance, int metersCredit, int metersCommitted, string description)
+        public void Self_MoneyBalanceReply(object sender, MoneyBalanceReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "MoneyBalanceReplyReceived");
-            item.Add("TransactionID", transactionID);
-            item.Add("TransactionSuccess", transactionSuccess);
-            item.Add("Balance", balance);
-            item.Add("MetersCredit", metersCredit);
-            item.Add("MetersCommitted", metersCommitted);
-            item.Add("Description", description);
+            item.Add("TransactionID", e.TransactionID);
+            item.Add("TransactionSuccess", e.Success);
+            item.Add("Balance", e.Balance);
+            item.Add("MetersCredit", e.MetersCredit);
+            item.Add("MetersCommitted", e.MetersCommitted);
+            item.Add("Description", e.Description);
             enqueue(item);
         }
 
-        public void Self_OnScriptDialog(string message, string objectName, UUID imageID, UUID objectID, string firstName, string lastName, int chatChannel, List<string> buttons)
+        public void Self_ScriptDialog(object sender, ScriptDialogEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptDialog");
-            item.Add("Message", message);
-            item.Add("ObjectName", objectName);
-            item.Add("ImageID", imageID);
-            item.Add("ObjectID", objectID);
-            item.Add("FirstName", firstName);
-            item.Add("LastName", lastName);
-            item.Add("ChatChannel", chatChannel);
-            item.Add("Buttons", buttons);
+            item.Add("Message", e.Message);
+            item.Add("ObjectName", e.ObjectName);
+            item.Add("ImageID", e.ImageID);
+            item.Add("ObjectID", e.ObjectID);
+            item.Add("FirstName", e.FirstName);
+            item.Add("LastName", e.LastName);
+            item.Add("ChatChannel", e.Channel);
+            item.Add("Buttons", e.ButtonLabels);
             enqueue(item);
         }
 
-        public void Self_OnScriptQuestion(Simulator simulator, UUID taskID, UUID itemID, string objectName, string objectOwner, ScriptPermission questions)
+        public void Self_ScriptQuestion(object sender, ScriptQuestionEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "ScriptPermissionRequest");
-            item.Add("TaskID", taskID);
-            item.Add("ItemID", itemID);
-            item.Add("ObjectName", objectName);
-            item.Add("ObjectOwner", objectOwner);
-            item.Add("Permissions", (int)questions);
+            item.Add("TaskID", e.TaskID);
+            item.Add("ItemID", e.ItemID);
+            item.Add("ObjectName", e.ObjectName);
+            item.Add("ObjectOwner", e.ObjectOwnerName);
+            item.Add("Permissions", (int)e.Questions);
             enqueue(item);
         }
 
-        public void Self_OnTeleport(string message, TeleportStatus status, TeleportFlags flags)
+        public void Self_TeleportProgress(object sender, TeleportEventArgs e)
         {
             Hashtable item = new Hashtable();
             item.Add("MessageType", "Teleport");
-            item.Add("Status", status);
-            item.Add("Flags", flags);
-            if (status == TeleportStatus.Finished)
+            item.Add("Status", e.Status);
+            item.Add("Flags", e.Flags);
+            if (e.Status == TeleportStatus.Finished)
             {
                 Client.Self.Movement.Camera.SetPositionOrientation(new Vector3(128, 128, 0), 0, 0, 0);
             }
             enqueue(item);
         }
 
-        public void Packet_MapBlockReply(Packet packet, Simulator sim)
+        public void Packet_MapBlockReply(object sender, PacketReceivedEventArgs e)
         {
-            MapBlockReplyPacket reply = (MapBlockReplyPacket)packet;
+            MapBlockReplyPacket reply = (MapBlockReplyPacket)e.Packet;
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "MapBlocks");
             Hashtable[] blocks = new Hashtable[reply.Data.Length];
@@ -384,9 +392,9 @@ namespace AjaxLife
             enqueue(hash);
         }
 
-        public void Packet_MapItemReply(Packet packet, Simulator sim)
+        public void Packet_MapItemReply(object sender, PacketReceivedEventArgs e)
         {
-            MapItemReplyPacket reply = (MapItemReplyPacket)packet;
+            MapItemReplyPacket reply = (MapItemReplyPacket)e.Packet;
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "MapItems");
             List<Hashtable> items = new List<Hashtable>();
@@ -497,37 +505,37 @@ namespace AjaxLife
         
         }
         
-        public void Friends_OnFriendshipOffered(UUID agentID, string agentName, UUID imSessionID)
+        public void Friends_FriendshipOffered(object sender, FriendshipOfferedEventArgs e)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendshipOffered");
-            hash.Add("AgentID", agentID);
-            hash.Add("AgentName", agentName);
-            hash.Add("IMSessionID", imSessionID);
+            hash.Add("AgentID", e.AgentID);
+            hash.Add("AgentName", e.AgentName);
+            hash.Add("IMSessionID", e.SessionID);
             enqueue(hash);
         }
 
-        public void Friends_OnFriendRights(FriendInfo friend)
+        public void Friends_FriendRightsUpdate(object sender, FriendInfoEventArgs e)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendRightsChanged");
-            hash.Add("Name", friend.Name);
-            hash.Add("ID", friend.UUID);
-            hash.Add("TheirRights", friend.TheirFriendRights);
-            hash.Add("MyRights", friend.MyFriendRights);
-            hash.Add("Online", friend.IsOnline);
+            hash.Add("Name", e.Friend.Name);
+            hash.Add("ID", e.Friend.UUID);
+            hash.Add("TheirRights", e.Friend.TheirFriendRights);
+            hash.Add("MyRights", e.Friend.MyFriendRights);
+            hash.Add("Online", e.Friend.IsOnline);
             enqueue(hash);
         }
 
-        public void Friends_OnOnOffline(FriendInfo friend)
+        public void Friends_FriendOnOffline(object sender, FriendInfoEventArgs e)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "FriendOnOffline");
-            hash.Add("Name", friend.Name);
-            hash.Add("ID", friend.UUID);
-            hash.Add("TheirRights", friend.TheirFriendRights);
-            hash.Add("MyRights", friend.MyFriendRights);
-            hash.Add("Online", friend.IsOnline);
+            hash.Add("Name", e.Friend.Name);
+            hash.Add("ID", e.Friend.UUID);
+            hash.Add("TheirRights", e.Friend.TheirFriendRights);
+            hash.Add("MyRights", e.Friend.MyFriendRights);
+            hash.Add("Online", e.Friend.IsOnline);
             enqueue(hash);
         }
 
@@ -628,12 +636,12 @@ namespace AjaxLife
             catch { }
         }
 
-        public void Inventory_OnFolderUpdated(UUID folderID)
+        public void Inventory_FolderUpdated(object sender, FolderUpdatedEventArgs e)
         {
-            List<InventoryBase> contents = Client.Inventory.Store.GetContents(folderID);
+            List<InventoryBase> contents = Client.Inventory.Store.GetContents(e.FolderID);
             Hashtable roothash = new Hashtable();
             roothash.Add("MessageType", "FolderUpdated");
-            roothash.Add("FolderID", folderID);
+            roothash.Add("FolderID", e.FolderID);
             List<Hashtable> response = new List<Hashtable>();
             lock (LoadedInventory)
             {
@@ -675,32 +683,32 @@ namespace AjaxLife
             enqueue(roothash);
         }
 
-        public void Terrain_OnLandPatch(Simulator simulator, int x, int y, int width, float[] data)
+        public void Terrain_LandPatchReceived(object sender, LandPatchReceivedEventArgs e)
         {
-            if (x >= 16 || y >= 16)
+            if (e.X >= 16 || e.Y >= 16)
             {
-                Console.WriteLine("Bad patch coordinates, (" + x + ", " + y+")");
+                Console.WriteLine("Bad patch coordinates, (" + e.X + ", " + e.Y + ")");
                 return;
             }
 
-            if (width != 16)
+            if (e.PatchSize != 16)
             {
-                Console.WriteLine("Unhandled patch size " + width + "x" + width);
+                Console.WriteLine("Unhandled patch size " + e.PatchSize + "x" + e.PatchSize);
                 return;
             }
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "LandPatch");
-            hash.Add("OffsetX", x * 16);
-            hash.Add("OffsetY", y * 16);
-            hash.Add("Region", simulator.Name);
-            hash.Add("WaterLevel", simulator.WaterHeight); // Is there anywhere better to put this?
+            hash.Add("OffsetX", e.X * 16);
+            hash.Add("OffsetY", e.Y * 16);
+            hash.Add("Region", e.Simulator.Name);
+            hash.Add("WaterLevel", e.Simulator.WaterHeight); // Is there anywhere better to put this?
             
             float[,] landscape = new float[16, 16];
             for (int i = 0; i < 16; ++i)
             {
                 for (int j = 0; j < 16; ++j)
                 {
-                    landscape[i, j] = data[i * 16 + j];
+                    landscape[i, j] = e.HeightMap[i * 16 + j];
                 }
             }
             // Ugly hack to fix the JSON encoding.
@@ -717,8 +725,6 @@ namespace AjaxLife
             enqueue(hash);
         }
 
-
-
         public void Assets_OnAssetUploaded(AssetUpload upload)
         {
             Hashtable hash = new Hashtable();
@@ -729,32 +735,33 @@ namespace AjaxLife
             hash.Add("Success", upload.Success);
             enqueue(hash);
         }
-        public void Groups_OnGroupProfile(Group group)
+
+        public void Groups_GroupProfile(object sender, GroupProfileEventArgs e)
         {
             Hashtable hash = new Hashtable();
             hash.Add("MessageType", "GroupProfile");
-            hash.Add("ID", group.ID);
-            hash.Add("Name", group.Name);
-            hash.Add("Charter", group.Charter);
-            hash.Add("Founder", group.FounderID);
-            hash.Add("Insignia", group.InsigniaID);
-            hash.Add("MemberCount", group.GroupMembershipCount);
-            hash.Add("OwnerRole", group.OwnerRole);
-            hash.Add("MemberTitle", group.MemberTitle);
-            hash.Add("Money", group.Money);
-            hash.Add("MembershipFee", group.MembershipFee);
-            hash.Add("OpenEnrollment", group.OpenEnrollment);
-            hash.Add("ShowInList", group.ShowInList);
-            hash.Add("AcceptNotices", group.AcceptNotices);
-            hash.Add("Contribution", group.Contribution);
+            hash.Add("ID", e.Group.ID);
+            hash.Add("Name", e.Group.Name);
+            hash.Add("Charter", e.Group.Charter);
+            hash.Add("Founder", e.Group.FounderID);
+            hash.Add("Insignia", e.Group.InsigniaID);
+            hash.Add("MemberCount", e.Group.GroupMembershipCount);
+            hash.Add("OwnerRole", e.Group.OwnerRole);
+            hash.Add("MemberTitle", e.Group.MemberTitle);
+            hash.Add("Money", e.Group.Money);
+            hash.Add("MembershipFee", e.Group.MembershipFee);
+            hash.Add("OpenEnrollment", e.Group.OpenEnrollment);
+            hash.Add("ShowInList", e.Group.ShowInList);
+            hash.Add("AcceptNotices", e.Group.AcceptNotices);
+            hash.Add("Contribution", e.Group.Contribution);
             enqueue(hash);
         }
 
-        // Woo, fixed in openmv 0.7.
-        public void Groups_OnGroupMembers(UUID requestID, UUID groupID, Dictionary<UUID, GroupMember> members)
+
+        public void Groups_GroupMembersReply(object sender, GroupMembersReplyEventArgs e)
         {
             List<Hashtable> list = new List<Hashtable>();
-            foreach (KeyValuePair<UUID,GroupMember> memberpair in members)
+            foreach (KeyValuePair<UUID,GroupMember> memberpair in e.Members)
             {
                 GroupMember member = memberpair.Value;
                 Hashtable hash = new Hashtable();
@@ -770,35 +777,35 @@ namespace AjaxLife
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupMembers");
             message.Add("MemberList", list);
-            message.Add("GroupID", groupID);
+            message.Add("GroupID", e.GroupID);
             enqueue(message);
         }
 
-        public void Groups_OnGroupNames(Dictionary<UUID, string> groupNames)
+        public void Groups_GroupNamesReply(object sender, GroupNamesEventArgs e)
         {
             AjaxLife.Debug("OnGroupNames", "OnGroupNames arrived.");
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupNames");
-            message.Add("Names", groupNames);
+            message.Add("Names", e.GroupNames);
             enqueue(message);
         }
 
-        public void Groups_OnCurrentGroups(Dictionary<UUID, Group> groups)
+        public void Groups_CurrentGroups(object sender, CurrentGroupsEventArgs e)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "CurrentGroups");
-            message.Add("Groups", groups);
+            message.Add("Groups", e.Groups);
             enqueue(message);
         }
 
-        public void Self_OnGroupChatJoin(UUID groupChatSessionID, string sessionName, UUID tmpSessionID, bool success)
+        public void Self_GroupChatJoined(object sender, GroupChatJoinedEventArgs e)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "GroupChatJoin");
-            message.Add("GroupChatSessionID", groupChatSessionID);
-            message.Add("TmpSessionID", tmpSessionID);
-            message.Add("SessionName", sessionName);
-            message.Add("Success", success);
+            message.Add("GroupChatSessionID", e.SessionID);
+            message.Add("TmpSessionID", e.TmpSessionID);
+            message.Add("SessionName", e.SessionName);
+            message.Add("Success", e.Success);
             enqueue(message);
         }
 
@@ -833,105 +840,105 @@ namespace AjaxLife
             enqueue(message);
         }
 
-        public void Inventory_OnItemReceived(InventoryItem item)
+        public void Inventory_ItemReceived(object sender, ItemReceivedEventArgs e)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "ItemReceived");
-            message.Add("Name", item.Name);
-            message.Add("FolderID", item.ParentUUID);
-            message.Add("UUID", item.UUID);
-            message.Add("AssetType", item.AssetType);
-            message.Add("AssetUUID", item.AssetUUID);
-            message.Add("CreatorID", item.CreatorID);
-            message.Add("OwnerID", item.OwnerID);
-            message.Add("CreationDate", item.CreationDate);
-            message.Add("Description", item.Description);
-            message.Add("Flags", item.Flags);
-            message.Add("InventoryType", item.InventoryType);
-            message.Add("Permissions", item.Permissions);
+            message.Add("Name", e.Item.Name);
+            message.Add("FolderID", e.Item.ParentUUID);
+            message.Add("UUID", e.Item.UUID);
+            message.Add("AssetType", e.Item.AssetType);
+            message.Add("AssetUUID", e.Item.AssetUUID);
+            message.Add("CreatorID", e.Item.CreatorID);
+            message.Add("OwnerID", e.Item.OwnerID);
+            message.Add("CreationDate", e.Item.CreationDate);
+            message.Add("Description", e.Item.Description);
+            message.Add("Flags", e.Item.Flags);
+            message.Add("InventoryType", e.Item.InventoryType);
+            message.Add("Permissions", e.Item.Permissions);
             enqueue(message);
         }
 
-        public void Inventory_OnTaskItemReceived(UUID itemID, UUID folderID, UUID creatorID, UUID assetID, InventoryType type)
+        public void Inventory_TaskItemReceived(object sender, TaskItemReceivedEventArgs e)
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "TaskItemReceived");
-            message.Add("ItemID", itemID);
-            message.Add("FolderID", folderID);
-            message.Add("CreatorID", creatorID);
-            message.Add("AssetID", assetID);
-            message.Add("Type", (byte)type);
+            message.Add("ItemID", e.ItemID);
+            message.Add("FolderID", e.FolderID);
+            message.Add("CreatorID", e.CreatorID);
+            message.Add("AssetID", e.AssetID);
+            message.Add("Type", (byte)e.Type);
             enqueue(message);
         }
         
-        public void Parcels_OnParcelProperties(Simulator simulator, Parcel parcel, ParcelResult result, int selectedPrims, int sequenceID, bool snapSelection)
+        public void Parcels_ParcelProperties(object sender, ParcelPropertiesEventArgs e)
         {
-            if(result == ParcelResult.NoData)
+            if(e.Result == ParcelResult.NoData)
             {
                 Hashtable message = new Hashtable();
                 message.Add("MessageType", "ParcelPropertiesFailed");
-                message.Add("LocalID", parcel.LocalID);
-                message.Add("SequenceID", sequenceID);
+                message.Add("LocalID", e.Parcel.LocalID);
+                message.Add("SequenceID", e.SequenceID);
                 enqueue(message);
             }
             else
             {
                 Hashtable message = new Hashtable();
                 message.Add("MessageType", "ParcelProperties");
-                message.Add("SequenceID", sequenceID);
-                message.Add("LocalID", parcel.LocalID);
-                message.Add("AABBMax", parcel.AABBMax);
-                message.Add("AABBMin", parcel.AABBMin);
-                message.Add("AccessList", parcel.AccessWhiteList);
-                message.Add("BanList", parcel.AccessBlackList);
-                message.Add("Area", parcel.Area);
-                message.Add("AuctionID", parcel.AuctionID);
-                message.Add("AuthBuyerID", parcel.AuthBuyerID);
-                message.Add("Category", parcel.Category);
-                message.Add("ClaimDate", parcel.ClaimDate);
-                message.Add("ClaimPrice", parcel.ClaimPrice);
-                message.Add("Desc", parcel.Desc);
-                message.Add("Dwell", parcel.Dwell);
-                message.Add("Flags", (uint)parcel.Flags);
-                message.Add("GroupID", parcel.GroupID);
-                message.Add("GroupPrims", parcel.GroupPrims);
-                message.Add("IsGroupOwned", parcel.IsGroupOwned);
-                message.Add("LandingType", parcel.Landing);
-                message.Add("MaxPrims", parcel.MaxPrims);
-                message.Add("MediaAutoScale", parcel.Media.MediaAutoScale);
-                message.Add("MediaDesc", parcel.Media.MediaDesc);
-                message.Add("MediaHeight", parcel.Media.MediaHeight);
-                message.Add("MediaID", parcel.Media.MediaID);
-                message.Add("MediaLoop", parcel.Media.MediaLoop);
-                message.Add("MediaType", parcel.Media.MediaType);
-                message.Add("MediaURL", parcel.Media.MediaURL);
-                message.Add("MediaWidth", parcel.Media.MediaWidth);
-                message.Add("MusicURL", parcel.MusicURL);
-                message.Add("Name", parcel.Name);
-                message.Add("ObscureMedia", parcel.ObscureMedia);
-                message.Add("ObscureMusic", parcel.ObscureMusic);
-                message.Add("OtherCleanTime", parcel.OtherCleanTime);
-                message.Add("OtherPrims", parcel.OtherPrims);
-                message.Add("OwnerPrims", parcel.OwnerPrims);
-                message.Add("OwnerID", parcel.OwnerID);
-                message.Add("PrimBonus", parcel.ParcelPrimBonus);
-                message.Add("PassHours", parcel.PassHours);
-                message.Add("PassPrice", parcel.PassPrice);
-                message.Add("PublicCount", parcel.PublicCount);
-                message.Add("RegionDenyAgeUnverified", parcel.RegionDenyAgeUnverified);
-                message.Add("RegionDenyAnonymous", parcel.RegionDenyAnonymous);
-                message.Add("RegionPushOverride", parcel.RegionPushOverride);
-                message.Add("RentPrice", parcel.RentPrice);
-                message.Add("SalePrice", parcel.SalePrice);
-                message.Add("SelectedPrims", selectedPrims);
-                message.Add("SelfCount", parcel.SelfCount);
-                message.Add("SimWideMaxPrims", parcel.SimWideMaxPrims);
-                message.Add("SimWideTotalPrims", parcel.SimWideTotalPrims);
-                message.Add("SnapshotID", parcel.SnapshotID);
-                message.Add("Status", parcel.Status);
-                message.Add("TotalPrims", parcel.TotalPrims);
-                message.Add("UserLocation", parcel.UserLocation);
-                message.Add("UserLookAt", parcel.UserLookAt);
+                message.Add("SequenceID", e.SequenceID);
+                message.Add("LocalID", e.Parcel.LocalID);
+                message.Add("AABBMax", e.Parcel.AABBMax);
+                message.Add("AABBMin", e.Parcel.AABBMin);
+                message.Add("AccessList", e.Parcel.AccessWhiteList);
+                message.Add("BanList", e.Parcel.AccessBlackList);
+                message.Add("Area", e.Parcel.Area);
+                message.Add("AuctionID", e.Parcel.AuctionID);
+                message.Add("AuthBuyerID", e.Parcel.AuthBuyerID);
+                message.Add("Category", e.Parcel.Category);
+                message.Add("ClaimDate", e.Parcel.ClaimDate);
+                message.Add("ClaimPrice", e.Parcel.ClaimPrice);
+                message.Add("Desc", e.Parcel.Desc);
+                message.Add("Dwell", e.Parcel.Dwell);
+                message.Add("Flags", (uint)e.Parcel.Flags);
+                message.Add("GroupID", e.Parcel.GroupID);
+                message.Add("GroupPrims", e.Parcel.GroupPrims);
+                message.Add("IsGroupOwned", e.Parcel.IsGroupOwned);
+                message.Add("LandingType", e.Parcel.Landing);
+                message.Add("MaxPrims", e.Parcel.MaxPrims);
+                message.Add("MediaAutoScale", e.Parcel.Media.MediaAutoScale);
+                message.Add("MediaDesc", e.Parcel.Media.MediaDesc);
+                message.Add("MediaHeight", e.Parcel.Media.MediaHeight);
+                message.Add("MediaID", e.Parcel.Media.MediaID);
+                message.Add("MediaLoop", e.Parcel.Media.MediaLoop);
+                message.Add("MediaType", e.Parcel.Media.MediaType);
+                message.Add("MediaURL", e.Parcel.Media.MediaURL);
+                message.Add("MediaWidth", e.Parcel.Media.MediaWidth);
+                message.Add("MusicURL", e.Parcel.MusicURL);
+                message.Add("Name", e.Parcel.Name);
+                message.Add("ObscureMedia", e.Parcel.ObscureMedia);
+                message.Add("ObscureMusic", e.Parcel.ObscureMusic);
+                message.Add("OtherCleanTime", e.Parcel.OtherCleanTime);
+                message.Add("OtherPrims", e.Parcel.OtherPrims);
+                message.Add("OwnerPrims", e.Parcel.OwnerPrims);
+                message.Add("OwnerID", e.Parcel.OwnerID);
+                message.Add("PrimBonus", e.Parcel.ParcelPrimBonus);
+                message.Add("PassHours", e.Parcel.PassHours);
+                message.Add("PassPrice", e.Parcel.PassPrice);
+                message.Add("PublicCount", e.Parcel.PublicCount);
+                message.Add("RegionDenyAgeUnverified", e.Parcel.RegionDenyAgeUnverified);
+                message.Add("RegionDenyAnonymous", e.Parcel.RegionDenyAnonymous);
+                message.Add("RegionPushOverride", e.Parcel.RegionPushOverride);
+                message.Add("RentPrice", e.Parcel.RentPrice);
+                message.Add("SalePrice", e.Parcel.SalePrice);
+                message.Add("SelectedPrims", e.SelectedPrims);
+                message.Add("SelfCount", e.Parcel.SelfCount);
+                message.Add("SimWideMaxPrims", e.Parcel.SimWideMaxPrims);
+                message.Add("SimWideTotalPrims", e.Parcel.SimWideTotalPrims);
+                message.Add("SnapshotID", e.Parcel.SnapshotID);
+                message.Add("Status", e.Parcel.Status);
+                message.Add("TotalPrims", e.Parcel.TotalPrims);
+                message.Add("UserLocation", e.Parcel.UserLocation);
+                message.Add("UserLookAt", e.Parcel.UserLookAt);
                 enqueue(message);
             }
         }
