@@ -23,6 +23,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>AjaxLife</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Commandlineparameters>--root http://lab.kathar.in/ajaxlife/client/</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
