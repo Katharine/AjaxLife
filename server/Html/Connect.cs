@@ -112,7 +112,7 @@ namespace AjaxLife.Html
                 }
                 LoginParams login = client.Network.DefaultLoginParams(first, last, pass, "AjaxLife", "Katharine Berry <katharine@katharineberry.co.uk>");
                 login.Platform = "web";
-                login.Channel = "AjaxLife";
+                login.Channel = "AjaxLife Release";
                 login.MAC = AjaxLife.MAC_ADDRESS;
                 login.ID0 = AjaxLife.ID0;
                 login.Start = (POST["location"] != "arbitrary") ? POST["location"] : NetworkManager.StartLocation(POST["sim"], 128, 128, 20);

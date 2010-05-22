@@ -95,6 +95,10 @@ namespace AjaxLife.Html
                             // We use -4 because -4 < -π, so will never occur during normal operation.
                             user.Rotation = -4;
                             heading = Math.PI;
+                            // Reset the draw distance to attempt to reduce traffic. Also limits the
+                            // nearby list to people within chat range.
+                            user.Client.Self.Movement.Camera.Far = 20.0f;
+                            user.Client.Self.Movement.SendUpdate();
                         }
                         else
                         {

@@ -362,7 +362,9 @@ namespace AjaxLife
             item.Add("Flags", e.Flags);
             if (e.Status == TeleportStatus.Finished)
             {
+                Client.Self.Movement.Camera.Far = 182f;
                 Client.Self.Movement.Camera.SetPositionOrientation(new Vector3(128, 128, 0), 0, 0, 0);
+                Client.Self.Movement.SendUpdate();
             }
             enqueue(item);
         }

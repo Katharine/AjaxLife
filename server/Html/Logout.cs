@@ -80,6 +80,7 @@ namespace AjaxLife.Html
                 if (client.Network.Connected)
                 {
                     client.Network.Logout();
+                    client.Network.Shutdown(NetworkManager.DisconnectType.ClientInitiated);
                     System.Threading.Thread.Sleep(2000);
                 }
                 // Deactivate the event queue.
