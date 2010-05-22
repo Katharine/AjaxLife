@@ -57,55 +57,6 @@ AjaxLife.MiniMap = function() {
 	// Sets up the redraw delay - used to ensure we don't waste time redrawing excessively.
 	var redrawdelay = new Ext.util.DelayedTask(redraw);
 	
-	// This turns our 64x64 grid of heights into a 256x256 grid of heights,
-	// smoothly interpolating this missing values.
-	function interpolate(heights)
-	{
-		var newheight = [];
-		for(var i = 0; i < 64; ++i)
-		{
-			newheight[i*4] = [];
-			for(var j = 0; j < 64; ++j)
-			{
-				var height = heights[i][j];
-				newheight[i*4][j*4] = height;
-				var next = heights[i][j+1];
-				if(next === null || next === undefined)
-				{
-					next = height;
-				}
-				var step = (next-height)/4;
-				newheight[i*4][j*4+1] = height+step;
-				newheight[i*4][j*4+2] = height+step*2;
-				newheight[i*4][j*4+3] = height+step*3;
-			}
-		}
-		for(var i = 0; i < 64; ++i)
-		{
-			newheight[i*4+1] = [];
-			newheight[i*4+2] = [];
-			newheight[i*4+3] = [];
-			for(var j = 0; j < 256; ++j)
-			{
-				var height = newheight[i*4][j];
-				var next = 0;
-				if(!newheight[(i+1)*4])
-				{
-					next = height;
-				}
-				else
-				{
-					next = newheight[(i+1)*4][j];
-				}
-				var step = (next-height)/4;
-				newheight[i*4+1][j] = height+step;
-				newheight[i*4+2][j] = height+step*2;
-				newheight[i*4+3][j] = height+step*3;
-			}
-		}
-		return newheight;
-	}
-	
 	// This draws the landscape on the visible canvas.
 	function drawLandscape()
 	{
@@ -264,7 +215,14 @@ AjaxLife.MiniMap = function() {
 		drawObjects();
 		for(var i in marks)
 		{
-			drawMark(marks[i]);
+		    if(AjaxLife.Friends.IsFriend(i))
+		    {
+                drawMark(marks[i], 239, 221, 27);
+		    }
+		    else
+		    {
+                drawMark(marks[i], 0, 255, 0);
+		    }
 		}
 		drawTarget();
 		drawSelf();
@@ -306,7 +264,14 @@ AjaxLife.MiniMap = function() {
 			}
 			else
 			{
-				drawMark(pos);
+			    if(AjaxLife.Friends.IsFriend(id))
+			    {
+                    drawMark(pos, 239, 221, 27);
+			    }
+			    else
+			    {
+                    drawMark(pos, 0, 255, 0);
+			    }
 				return true;
 			}
 		},

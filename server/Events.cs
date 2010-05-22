@@ -94,7 +94,11 @@ namespace AjaxLife
         {
             Hashtable message = new Hashtable();
             message.Add("MessageType", "UsefulData");
-            message.Add("Positions", client.Network.CurrentSim.AvatarPositions);
+            Dictionary<UUID, Vector3> positions = new Dictionary<UUID, Vector3>();
+            client.Network.CurrentSim.AvatarPositions.ForEach(delegate(KeyValuePair<UUID, Vector3> pair) {
+                positions.Add(pair.Key, pair.Value);
+            });
+            message.Add("Positions", positions);
             message.Add("YourPosition", client.Self.SimPosition);
             message.Add("YourRegion", client.Network.CurrentSim.Name);
             return message;
