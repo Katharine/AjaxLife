@@ -250,13 +250,16 @@ AjaxLife.Strings = {
 			Region: "Region",
 			FPS: "FPS",
 			TD: "Time Dilation",
-			ScriptIPS: "Script IPS",
 			Objects: "Objects",
 			Scripts: "Active Scripts",
 			Agents: "Agents",
 			ChildAgents: "Child Agents",
 			ALServer: "AjaxLife Server",
-			Sessions: "Sessions"
+			Sessions: "Sessions",
+			PingSim: "Ping sim",
+			BandwidthIn: "Incoming bandwidth",
+			BandwidthOut: "Outgoing bandwidth",
+			DroppedPackets: "Dropped packets"
 		},
 		ScriptDialogs: {
 			PermissionRequestTitle: "Script permission request",

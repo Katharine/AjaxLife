@@ -29,16 +29,14 @@
  	var win = false;
  	var fpsfield = false;
  	var tdfield = false;
- 	var ipsfield = false;
  	var objectfield = false;
  	var scriptfield = false;
  	var agentfield = false;
  	var childagentfield = false;
- 	var physmemusefield = false;
- 	var pagememusefield = false;
  	var alsessionsfield = false;
- 	var texturecountfield = false;
- 	var texturesizefield = false;
+ 	var pingsim = false;
+ 	var bandwidth_in = false;
+ 	var bandwidth_out = false;
  	var timer = false;
  	
  	// Polls the stats data.
@@ -54,16 +52,15 @@
  	{
 		fpsfield.update(Math.round(data.FPS));
 		tdfield.update(Math.round(data.TimeDilation*100)/100);
-		ipsfield.update(data.LSLIPS);
 		objectfield.update(data.Objects);
 		scriptfield.update(data.ActiveScripts);
 		agentfield.update(data.Agents);
 		childagentfield.update(data.ChildAgents);
-		physmemusefield.update((Math.round(data.PhysicalMemoryUsage/1024/1024*10)/10)+"MB");
-		pagememusefield.update((Math.round(data.PagedMemoryUsage/1024/1024*10)/10)+"MB");
 		alsessionsfield.update(data.AjaxLifeSessions);
-		texturecountfield.update(data.TextureCacheCount);
-		texturesizefield.update((Math.round(data.TextureCacheSize/1024/1024*10)/10)+"MB");
+		droppedpackets.update(data.DroppedPackets);
+		pingsim.update(data.PingSim + " ms");
+		bandwidth_in.update(Math.round(data.IncomingBPS / 128) + " kbps");
+		bandwidth_out.update(Math.round(data.OutgoingBPS / 128) + " kbps");
 		if(win.isVisible())
 		{
 			timer = setTimeout(function() {
@@ -95,6 +92,15 @@
 			el.setAttribute('colspan',2);
 			el.appendChild(document.createTextNode(_("Stats.Region")));
 			row.appendChild(el);
+			// Ping sim
+			row = $(document.createElement('tr'));
+			table.appendChild(row);
+			el = document.createElement('th');
+			el.appendChild(document.createTextNode(_("Stats.PingSim")));
+			row.appendChild(el);
+			pingsim = $(document.createElement('td'));
+			pingsim.appendChild(document.createTextNode('Loading...'));
+			row.appendChild(pingsim);
 			// FPS
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
@@ -113,15 +119,6 @@
 			tdfield = $(document.createElement('td'));
 			tdfield.appendChild(document.createTextNode('Loading...'));
 			row.appendChild(tdfield);
-			// Script IPS
-			row = $(document.createElement('tr'));
-			table.appendChild(row);
-			el = document.createElement('th');
-			el.appendChild(document.createTextNode(_("Stats.ScriptIPS")));
-			row.appendChild(el);
-			ipsfield = $(document.createElement('td'));
-			ipsfield.appendChild(document.createTextNode('Loading...'));
-			row.appendChild(ipsfield);
 			// Objects
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
@@ -158,6 +155,33 @@
 			childagentfield = $(document.createElement('td'));
 			childagentfield.appendChild(document.createTextNode('Loading...'));
 			row.appendChild(childagentfield);
+			// Bandwidth in
+			row = $(document.createElement('tr'));
+			table.appendChild(row);
+			el = document.createElement('th');
+			el.appendChild(document.createTextNode(_("Stats.BandwidthIn")));
+			row.appendChild(el);
+			bandwidth_in = $(document.createElement('td'));
+			bandwidth_in.appendChild(document.createTextNode('Loading...'));
+			row.appendChild(bandwidth_in);
+			// Bandwidth out
+			row = $(document.createElement('tr'));
+			table.appendChild(row);
+			el = document.createElement('th');
+			el.appendChild(document.createTextNode(_("Stats.BandwidthOut")));
+			row.appendChild(el);
+			bandwidth_out = $(document.createElement('td'));
+			bandwidth_out.appendChild(document.createTextNode('Loading...'));
+			row.appendChild(bandwidth_out);
+			// Dropped packets
+			row = $(document.createElement('tr'));
+			table.appendChild(row);
+			el = document.createElement('th');
+			el.appendChild(document.createTextNode(_("Stats.DroppedPackets")));
+			row.appendChild(el);
+			droppedpackets = $(document.createElement('td'));
+			droppedpackets.appendChild(document.createTextNode('Loading...'));
+			row.appendChild(droppedpackets);
 			// "AjaxLife Server" section title
 			row = $(document.createElement('tr'));
 			row.addClassName('titlerow');
@@ -166,24 +190,6 @@
 			el.setAttribute('colspan',2);
 			el.appendChild(document.createTextNode(_("Stats.ALServer")));
 			row.appendChild(el);
-			// Memory Usage
-			row = $(document.createElement('tr'));
-			//table.appendChild(row);
-			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Memory Usage'));
-			row.appendChild(el);
-			physmemusefield = $(document.createElement('td'));
-			physmemusefield.appendChild(document.createTextNode('Loading...'));
-			row.appendChild(physmemusefield); // Broken.
-			// Pagefile Usage
-			row = $(document.createElement('tr'));
-			//table.appendChild(row);
-			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Pagefile Usage'));
-			row.appendChild(el);
-			pagememusefield = $(document.createElement('td'));
-			pagememusefield.appendChild(document.createTextNode('Loading...'));
-			row.appendChild(pagememusefield); // Broken.
 			// Sessions
 			row = $(document.createElement('tr'));
 			table.appendChild(row);
@@ -193,24 +199,6 @@
 			alsessionsfield = $(document.createElement('td'));
 			alsessionsfield.appendChild(document.createTextNode('Loading...'));
 			row.appendChild(alsessionsfield);
-			// Cached Textures
-			row = $(document.createElement('tr'));
-			//table.appendChild(row);
-			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Cached Textures'));
-			row.appendChild(el);
-			texturecountfield = $(document.createElement('td'));
-			texturecountfield.appendChild(document.createTextNode('Loading...'));
-			row.appendChild(texturecountfield);
-			// Texture Cache Size
-			row = $(document.createElement('tr'));
-			//table.appendChild(row);
-			el = document.createElement('th');
-			el.appendChild(document.createTextNode('Texture Cache Size'));
-			row.appendChild(el);
-			texturesizefield = $(document.createElement('td'));
-			texturesizefield.appendChild(document.createTextNode('Loading...'));
-			row.appendChild(texturesizefield);
 			win.on('show', function() {
 				clearTimeout(timer);
 				fetchdata();

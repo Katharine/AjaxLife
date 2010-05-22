@@ -242,14 +242,15 @@ namespace AjaxLife.Html
                         Hashtable hash = new Hashtable();
                         hash.Add("FPS", client.Network.CurrentSim.Stats.FPS);
                         hash.Add("TimeDilation", client.Network.CurrentSim.Stats.Dilation);
-                        hash.Add("LSLIPS", client.Network.CurrentSim.Stats.LSLIPS);
                         hash.Add("Objects", client.Network.CurrentSim.Stats.Objects);
                         hash.Add("ActiveScripts", client.Network.CurrentSim.Stats.ActiveScripts);
                         hash.Add("Agents", client.Network.CurrentSim.Stats.Agents);
                         hash.Add("ChildAgents", client.Network.CurrentSim.Stats.ChildAgents);
                         hash.Add("AjaxLifeSessions", users.Count);
-                        hash.Add("TextureCacheCount", AjaxLife.TextureCacheCount);
-                        hash.Add("TextureCacheSize", AjaxLife.TextureCacheSize);
+                        hash.Add("PingSim", client.Network.CurrentSim.Stats.LastLag);
+                        hash.Add("IncomingBPS", client.Network.CurrentSim.Stats.IncomingBPS);
+                        hash.Add("OutgoingBPS", client.Network.CurrentSim.Stats.OutgoingBPS);
+                        hash.Add("DroppedPackets", client.Network.CurrentSim.Stats.ReceivedResends + client.Network.CurrentSim.Stats.ResentPackets);
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
