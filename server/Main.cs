@@ -367,7 +367,7 @@ namespace AjaxLife
                             {
                                 if (user.Events != null)
                                 {
-                                    user.Events.Network_OnDisconnected(NetworkManager.DisconnectType.ServerInitiated, "Your AjaxLife session has timed out.");
+                                    user.Events.Network_Disconnected(this, new DisconnectedEventArgs(NetworkManager.DisconnectType.ServerInitiated, "Your AjaxLife session has timed out."));
                                     Console.WriteLine("Transmitted logout alert to "+user.Client.Self.FirstName+" "+user.Client.Self.LastName+". Waiting...");
                                     System.Threading.Thread.Sleep(1000);
                                     user.Events.deactivate();

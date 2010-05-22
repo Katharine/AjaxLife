@@ -1,0 +1,5 @@
+*.bak
+*.suo
+AjaxLife.csproj.user
+obj
+bin

@@ -272,14 +272,14 @@ namespace AjaxLife.Html
                 case "FindPeople":
                     {
                         Hashtable hash = new Hashtable();
-                        hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.People, POST["Search"], int.Parse(POST["Start"])));
+                        hash.Add("QueryID", client.Directory.StartPeopleSearch(POST["Search"], int.Parse(POST["Start"])));
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
                 case "FindGroups":
                     {
                         Hashtable hash = new Hashtable();
-                        hash.Add("QueryID", client.Directory.StartGroupSearch(DirectoryManager.DirFindFlags.Groups, POST["Search"], int.Parse(POST["Start"])));
+                        hash.Add("QueryID", client.Directory.StartGroupSearch(POST["Search"], int.Parse(POST["Start"])));
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
@@ -293,7 +293,7 @@ namespace AjaxLife.Html
                     client.Self.AnimationStop(new UUID(POST["Animation"]), true);
                     break;
                 case "SendAppearance":
-                    client.Appearance.SetPreviousAppearance(false);
+                    client.Appearance.RequestSetAppearance();
                     break;
                 case "GetMapItems":
                     {
@@ -631,7 +631,7 @@ namespace AjaxLife.Html
                     textwriter.Write("{LocalID: "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
                     break;
                 case "RequestParcelProperties":
-                    client.Parcels.PropertiesRequest(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));
+                    client.Parcels.RequestParcelProperties(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));
                     break;
             }
             textwriter.Flush();

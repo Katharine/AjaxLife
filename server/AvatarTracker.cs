@@ -49,61 +49,56 @@ namespace AjaxLife
         public AvatarTracker(GridClient client)
         {
             this.Client = client;
-            this.Client.Objects.OnNewAvatar += new ObjectManager.NewAvatarCallback(Objects_OnNewAvatar);
-            this.Client.Objects.OnObjectKilled += new ObjectManager.KillObjectCallback(Objects_OnObjectKilled);
-            this.Client.Self.OnTeleport += new AgentManager.TeleportCallback(Self_OnTeleport);
-            // The below is disabled because it generates excessive traffic, and a handler was never written for it
-            // anyway.
-            // this.Client.Objects.OnObjectUpdated += new ObjectManager.ObjectUpdatedCallback(Objects_OnObjectUpdated);
+            this.Client.Objects.AvatarUpdate += new EventHandler<AvatarUpdateEventArgs>(Objects_AvatarUpdate);
+            this.Client.Objects.KillObject += new EventHandler<KillObjectEventArgs>(Objects_KillObject);
+            this.Client.Self.TeleportProgress += new EventHandler<TeleportEventArgs>(Self_TeleportProgress);
+            this.Client.Objects.ObjectUpdate += new EventHandler<PrimEventArgs>(Objects_ObjectUpdate);
         }
 
-        void Self_OnTeleport(string message, TeleportStatus status, TeleportFlags flags)
+        void Self_TeleportProgress(object sender, TeleportEventArgs e)
         {
-            if (status == TeleportStatus.Finished)
+            if (e.Status == TeleportStatus.Finished)
             {
                 this.avatars.Clear();
             }
         }
 
-        void Objects_OnNewAvatar(Simulator simulator, Avatar avatar, ulong regionHandle, ushort timeDilation)
+        void Objects_AvatarUpdate(object sender, AvatarUpdateEventArgs e)
         {
             // Check if we already know about this avatar. If not, add it and announce the callback.
             // Otherwise just update the cache with the new information (e.g. changed position)
-            if (!this.avatars.ContainsKey(avatar.LocalID))
+            if (!this.avatars.ContainsKey(e.Avatar.LocalID))
             {
-                lock(this.avatars) this.avatars.Add(avatar.LocalID, avatar);
-                if(OnAvatarAdded != null) OnAvatarAdded(avatar);
+                lock(this.avatars) this.avatars.Add(e.Avatar.LocalID, e.Avatar);
+                if(OnAvatarAdded != null) OnAvatarAdded(e.Avatar);
             }
             else
             {
-                lock(this.avatars) this.avatars[avatar.LocalID] = avatar;
+                lock(this.avatars) this.avatars[e.Avatar.LocalID] = e.Avatar;
             }
         }
 
-        /*
-        void Objects_OnObjectUpdated(Simulator simulator, ObjectUpdate update, ulong regionHandle, ushort timeDilation)
+        void Objects_ObjectUpdate(object sender, PrimEventArgs e)
         {
             // If we know of this avatar, update its position and rotation, and send an AvatarUpdated callback.
-            if (this.avatars.ContainsKey(update.LocalID))
+            if (this.avatars.ContainsKey(e.Prim.LocalID))
             {
                 Avatar avatar;
-                lock (this.avatars) avatar = this.avatars[update.LocalID];
-                avatar.Position = update.Position;
-                avatar.Rotation = update.Rotation;
-                if(OnAvatarUpdated != null) OnAvatarUpdated(avatar);
+                lock (this.avatars) avatar = this.avatars[e.Prim.LocalID];
+                avatar.Position = e.Prim.Position;
+                avatar.Rotation = e.Prim.Rotation;
             }
         }
-        */
         
-        void Objects_OnObjectKilled(Simulator simulator, uint objectID)
+        void Objects_KillObject(object sender, KillObjectEventArgs e)
         {
             // If we know of this avatar, remove it and announce its loss.
             lock (this.avatars)
             {
-                if (avatars.ContainsKey(objectID))
+                if (avatars.ContainsKey(e.ObjectLocalID))
                 {
-                    Avatar avatar = this.avatars[objectID];
-                    this.avatars.Remove(objectID);
+                    Avatar avatar = this.avatars[e.ObjectLocalID];
+                    this.avatars.Remove(e.ObjectLocalID);
                     if(OnAvatarRemoved != null) OnAvatarRemoved(avatar);
                 }
             }

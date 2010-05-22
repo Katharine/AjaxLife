@@ -132,8 +132,6 @@ namespace AjaxLife.Html
                     user.Avatars = avatars;
                     // Register event handlers
                     this.RegisterCallbacks(user);
-                    // De-ruth.
-                    client.Appearance.SetPreviousAppearance(false);
                     // Pythagoras says that 181.0193m is the optimal view distance to see the whole sim.
                     client.Self.Movement.Camera.Far = 181.0193f;
                     
@@ -170,50 +168,50 @@ namespace AjaxLife.Html
             AvatarTracker avatars = user.Avatars;
             // GridClient Event callbacks.
             // These are assigned to the aforementioned Event object.
-            client.Self.OnScriptQuestion += new AgentManager.ScriptQuestionCallback(events.Self_OnScriptQuestion);
-            client.Self.OnScriptDialog += new AgentManager.ScriptDialogCallback(events.Self_OnScriptDialog);
-            client.Self.OnInstantMessage += new AgentManager.InstantMessageCallback(events.Self_OnInstantMessage);
-            client.Self.OnChat += new AgentManager.ChatCallback(events.Self_OnChat);
-            client.Self.OnTeleport += new AgentManager.TeleportCallback(events.Self_OnTeleport);
-            client.Self.OnBalanceUpdated += new AgentManager.BalanceCallback(events.Self_OnBalanceUpdated);
-            client.Self.OnMoneyBalanceReplyReceived += new AgentManager.MoneyBalanceReplyCallback(events.Self_OnMoneyBalanceReplyReceived);
-            client.Self.OnGroupChatJoin += new AgentManager.GroupChatJoinedCallback(events.Self_OnGroupChatJoin);
-            client.Friends.OnFriendOnline += new FriendsManager.FriendOnlineEvent(events.Friends_OnOnOffline);
-            client.Friends.OnFriendOffline += new FriendsManager.FriendOfflineEvent(events.Friends_OnOnOffline);
-            client.Friends.OnFriendRights += new FriendsManager.FriendRightsEvent(events.Friends_OnFriendRights);
-            client.Friends.OnFriendshipOffered += new FriendsManager.FriendshipOfferedEvent(events.Friends_OnFriendshipOffered);
-            client.Friends.OnFriendFound += new FriendsManager.FriendFoundEvent(events.Friends_OnFriendFound);
-            client.Avatars.OnAvatarNames += new AvatarManager.AvatarNamesCallback(events.Avatars_OnAvatarNames);
-            client.Avatars.OnAvatarGroups += new AvatarManager.AvatarGroupsCallback(events.Avatars_OnAvatarGroups);
-            client.Avatars.OnAvatarInterests += new AvatarManager.AvatarInterestsCallback(events.Avatars_OnAvatarInterests);
-            client.Directory.OnDirPeopleReply += new DirectoryManager.DirPeopleReplyCallback(events.Directory_OnDirPeopleReply);
-            client.Directory.OnDirGroupsReply += new DirectoryManager.DirGroupsReplyCallback(events.Directory_OnDirGroupsReply);
-            client.Network.OnDisconnected += new NetworkManager.DisconnectedCallback(events.Network_OnDisconnected);
+            client.Self.ScriptQuestion += new EventHandler<ScriptQuestionEventArgs>(events.Self_ScriptQuestion);
+            client.Self.ScriptDialog += new EventHandler<ScriptDialogEventArgs>(events.Self_ScriptDialog);
+            client.Self.IM += new EventHandler<InstantMessageEventArgs>(events.Self_IM);
+            client.Self.ChatFromSimulator += new EventHandler<ChatEventArgs>(events.Self_ChatFromSimulator);
+            client.Self.TeleportProgress += new EventHandler<TeleportEventArgs>(events.Self_TeleportProgress);
+            client.Self.MoneyBalance += new EventHandler<BalanceEventArgs>(events.Self_MoneyBalance);
+            client.Self.MoneyBalanceReply += new EventHandler<MoneyBalanceReplyEventArgs>(events.Self_MoneyBalanceReply);
+            client.Self.GroupChatJoined += new EventHandler<GroupChatJoinedEventArgs>(events.Self_GroupChatJoined);
+            client.Friends.FriendOnline += new EventHandler<FriendInfoEventArgs>(events.Friends_FriendOnOffline);
+            client.Friends.FriendOffline += new EventHandler<FriendInfoEventArgs>(events.Friends_FriendOnOffline);
+            client.Friends.FriendRightsUpdate += new EventHandler<FriendInfoEventArgs>(events.Friends_FriendRightsUpdate);
+            client.Friends.FriendshipOffered += new EventHandler<FriendshipOfferedEventArgs>(events.Friends_FriendshipOffered);
+            client.Friends.FriendFoundReply += new EventHandler<FriendFoundReplyEventArgs>(events.Friends_FriendFoundReply);
+            client.Avatars.UUIDNameReply += new EventHandler<UUIDNameReplyEventArgs>(events.Avatars_UUIDNameReply);
+            client.Avatars.AvatarGroupsReply += new EventHandler<AvatarGroupsReplyEventArgs>(events.Avatars_AvatarGroupsReply);
+            client.Avatars.AvatarInterestsReply += new EventHandler<AvatarInterestsReplyEventArgs>(events.Avatars_AvatarInterestsReply);
+            client.Directory.DirPeopleReply += new EventHandler<DirPeopleReplyEventArgs>(events.Directory_DirPeopleReply);
+            client.Directory.DirGroupsReply += new EventHandler<DirGroupsReplyEventArgs>(events.Directory_DirGroupsReply);
+            client.Network.Disconnected += new EventHandler<DisconnectedEventArgs>(events.Network_Disconnected);
+            
             // We shouldn't really be using this... it forces us to immediately accept inventory.
-            client.Inventory.OnObjectOffered += new InventoryManager.ObjectOfferedCallback(events.Inventory_OnObjectOffered);
-            client.Inventory.OnFolderUpdated += new InventoryManager.FolderUpdatedCallback(events.Inventory_OnFolderUpdated);
-            client.Inventory.OnItemReceived += new InventoryManager.ItemReceivedCallback(events.Inventory_OnItemReceived);
-            client.Inventory.OnTaskItemReceived += new InventoryManager.TaskItemReceivedCallback(events.Inventory_OnTaskItemReceived);
-            client.Terrain.OnLandPatch += new TerrainManager.LandPatchCallback(events.Terrain_OnLandPatch);
-            client.Groups.OnGroupProfile += new GroupManager.GroupProfileCallback(events.Groups_OnGroupProfile);
-            client.Groups.OnGroupMembers += new GroupManager.GroupMembersCallback(events.Groups_OnGroupMembers);
-            client.Groups.OnGroupNames += new GroupManager.GroupNamesCallback(events.Groups_OnGroupNames);
-            client.Groups.OnCurrentGroups += new GroupManager.CurrentGroupsCallback(events.Groups_OnCurrentGroups);
-            client.Parcels.OnParcelProperties += new ParcelManager.ParcelPropertiesCallback(events.Parcels_OnParcelProperties);
-
+            client.Inventory.InventoryObjectOffered += new EventHandler<InventoryObjectOfferedEventArgs>(events.Inventory_InventoryObjectOffered);
+            client.Inventory.FolderUpdated += new EventHandler<FolderUpdatedEventArgs>(events.Inventory_FolderUpdated);
+            client.Inventory.ItemReceived += new EventHandler<ItemReceivedEventArgs>(events.Inventory_ItemReceived);
+            client.Inventory.TaskItemReceived += new EventHandler<TaskItemReceivedEventArgs>(events.Inventory_TaskItemReceived);
+            client.Terrain.LandPatchReceived += new EventHandler<LandPatchReceivedEventArgs>(events.Terrain_LandPatchReceived);
+            client.Groups.GroupProfile += new EventHandler<GroupProfileEventArgs>(events.Groups_GroupProfile);
+            client.Groups.GroupMembersReply += new EventHandler<GroupMembersReplyEventArgs>(events.Groups_GroupMembersReply);
+            client.Groups.GroupNamesReply += new EventHandler<GroupNamesEventArgs>(events.Groups_GroupNamesReply);
+            client.Groups.CurrentGroups += new EventHandler<CurrentGroupsEventArgs>(events.Groups_CurrentGroups);
+            client.Parcels.ParcelProperties += new EventHandler<ParcelPropertiesEventArgs>(events.Parcels_ParcelProperties);
+            
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
             avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);
             avatars.OnAvatarUpdated += new AvatarTracker.Updated(events.AvatarTracker_OnAvatarUpdated);
 
-            client.Assets.OnAssetUploaded += new AssetManager.AssetUploadedCallback(events.Assets_OnAssetUploaded);
-
             // Packet callbacks
             // We register these because there's no LibSL function for doing it easily.
-            client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new NetworkManager.PacketCallback(events.Avatars_OnAvatarProperties));
+            client.Network.RegisterCallback(PacketType.AvatarPropertiesReply, new EventHandler<PacketReceivedEventArgs>(events.Avatars_AvatarProperties));
+
             // Manual map handler.
-            client.Network.RegisterCallback(PacketType.MapBlockReply, new NetworkManager.PacketCallback(events.Packet_MapBlockReply));
-            client.Network.RegisterCallback(PacketType.MapItemReply, new NetworkManager.PacketCallback(events.Packet_MapItemReply));
+            client.Network.RegisterCallback(PacketType.MapBlockReply, new EventHandler<PacketReceivedEventArgs>(events.Packet_MapBlockReply));
+            client.Network.RegisterCallback(PacketType.MapItemReply, new EventHandler<PacketReceivedEventArgs>(events.Packet_MapItemReply));
         }
 
         // Properties
