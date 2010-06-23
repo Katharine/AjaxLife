@@ -158,8 +158,13 @@ if(window.parent)
 	}
 }
 
-window.onload = function() {
+jQuery(document).ready(function(){
 	AjaxLife.Media.RunFirst();
-};
+	var iframeResize = function(){
+		jQuery('#index iframe').height(jQuery(window).height() - 80);
+	};
+	iframeResize();
+	jQuery(window).resize(iframeResize);
+});
 
 AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");
