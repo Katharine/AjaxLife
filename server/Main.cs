@@ -297,8 +297,7 @@ namespace AjaxLife
             // Create the virtual files, passing most of them (except index.html and differentorigin.kat,
             // as they don't need to deal with SL) the Users dictionary. Users is a reference object,
             // so changes are reflected in all the pages. The same goes for individual User objects.
-            root.AddFile(new Html.Index("index.html", root));
-            root.AddFile(new Html.MainPage("ajaxlife.kat", root, Users));
+            root.AddFile(new Html.MainPage("index.html", root, Users));
             root.AddFile(new Html.Proxy("differentorigin.kat", root));
             root.AddFile(new Html.BasicStats("ping.kat", root, Users));
             root.AddFile(new Html.MakeFile("makefile.kat", root));

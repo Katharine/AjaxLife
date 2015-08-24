@@ -114,7 +114,6 @@
     <Compile Include="Html\BasicStats.cs" />
     <Compile Include="Html\Connect.cs" />
     <Compile Include="Html\EventQueue.cs" />
-    <Compile Include="Html\Index.cs" />
     <Compile Include="Html\MainPage.cs" />
     <Compile Include="Html\Logout.cs" />
     <Compile Include="Html\Proxy.cs" />
@@ -154,10 +153,7 @@
     <Content Include="Grids.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Html\Templates\AjaxLife.html">
+    <Content Include="Html\Templates\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="openjpeg-dotnet-x86_64.dll">

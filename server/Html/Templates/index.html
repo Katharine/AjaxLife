@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>AjaxLife</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<link href="{STATIC_ROOT}license.txt" type="text/plain" rel="license" />
+	<link href="{STATIC_ROOT}resources/css/ext-all.css" type="text/css" rel="stylesheet" />
+	<link href="{STATIC_ROOT}resources/css/ytheme-aero.css" type="text/css" rel="stylesheet" />
+	<script src="{STATIC_ROOT}AjaxLife.Libs.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script>
+	jQuery.noConflict();
+	</script>
+	<script src="{STATIC_ROOT}Crypto.js"></script>
+	<link href="{STATIC_ROOT}ajaxlife.css" type="text/css" rel="stylesheet" />
+	<script src="{STATIC_ROOT}login.js"></script>
+	<!-- The really big file -->
+	<!-- <script src="{STATIC_ROOT}AjaxLife.All.js-{ENCODING)"></script> -->	
+	<!-- The below is used for development. -->
+	<script src="{STATIC_ROOT}AjaxLife.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Strings.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Widgets.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Constants.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.InstantMessage.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Map.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.NameCache.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Network.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.SpatialChat.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Toolbar.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Friends.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Groups.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Contacts.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Search.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.StatusBar.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Profile.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Utils.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Texture.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.AvatarsNear.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Inventory.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Stats.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.MiniMap.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.ScriptDialogs.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Keyboard.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Notecard.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.LSL.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.InventoryProperties.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Sound.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Parcel.js"></script>
+	<script src="{STATIC_ROOT}AjaxLife.Media.js"></script>
+
+	<script>
+		var gSessionID = "{SESSION_ID}";
+		AjaxLife.STATIC_ROOT = "{STATIC_ROOT}";
+		// RSA encryption details.
+		var CHALLENGE = "{CHALLENGE}";
+		var RSA_EXPONENT = "{RSA_EXPONENT}";
+		var RSA_MODULUS = "{RSA_MODULUS}";
+	</script>
+</head>
+<body class="ltr" id="index">
+	<iframe src="http://ajaxlife.net/login/"></iframe>
+	<div id="loginscreen">
+		<div>
+			<form action="" id="form_login">
+				<!-- Right aligned. -->
+				<div id="advanced">
+					<span id="label_lang">(loading)</span>
+					<!-- This is filled when the script loads 
+						As an added bonus, if your local language is available
+						it will be used. -->
+					<select name="lang" id="lang">
+						<option value="en" selected="selected">(loading)</option>
+					</select>
+				</div>
+				<!-- Left-aligned -->
+				<table id="loginstuff">
+					<tr>
+						<td id="label_first">(loading)</td>
+						<td id="label_last">(loading)</td>
+						<td id="label_pass">(loading)</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="text" id="first" />
+						</td>
+						<td>
+							<input type="text" id="last" />
+						</td>
+						<td>
+							<input type="password" id="password" />
+						</td>
+						<td>
+							<input type="button" value="(loading)" id="btn_login" />
+						</td>
+					</tr>
+				</table>
+				<input type="hidden" name="sid" value="{SESSION_ID}" />
+			</form>
+		</div>
+		<div id="login_secondrow">
+			<div id="loginlocation">
+				<span id="label_loginlocation">(loading)</span>:
+				<select size="1" id="location">
+					<option value="home">(loading)</option>
+					<option value="last" selected="selected">(loading)</option>
+					<option value="arbitrary">(loading)</option>
+				</select>
+				<input type="text" id="loginsim" style="display: none;" />
+				<span id="label_sound">(loading)</span>:
+				<input type="checkbox" checked="checked" id="enablesound" />
+			</div>
+			<div id="logingrid">
+				<span id="label_grid">(loading)</span>:
+				<select id="grid">
+					{GRID_OPTIONS}
+				</select>
+			</div>
+		</div>
+	</div>
+	<div id="uiscreen" style="display: none; height: 100%; width: 100%;">
+		<img src="{STATIC_ROOT}images/background.jpg" id="background" alt="Background - island in the sunset" />
+		<div id="statusbar"></div>
+		<div id="toolbar"></div>
+		<!-- Canvases seem to have issues with dynamic generation and scaling, at least in WebKit -->
+		<canvas id="minimap" width="256" height="256"></canvas>
+		<!-- This one is used to avoid having to redraw the backround each time. -->
+		<canvas id="minimap-landscape" width="256" height="256"></canvas>
+		<!-- This is hidden behind the background image. -->
+	</div>
+</body>
+</html>

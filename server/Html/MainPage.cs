@@ -109,7 +109,7 @@ namespace AjaxLife.Html
                 }
                 // Parse the template.
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/AjaxLife.html")));
+                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/index.html")));
             }
             catch (Exception exception)
             {
