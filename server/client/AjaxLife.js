@@ -28,16 +28,16 @@
 // Well, mostly. There is also the _ function, and some globals set by the server.
 if(!window.AjaxLife)
 {
-	window.AjaxLife = {};
+  window.AjaxLife = {};
 }
 
 // This is in here to ensure we can use it immediately.
 AjaxLife.Debug = function(message)
 {
-	if(window.console && window.console.log)
-	{
-		console.log(message);
-	}
+  if(window.console && window.console.log)
+  {
+    console.log(message);
+  }
 }
 
 // A couple of namespaces.
@@ -53,118 +53,118 @@ AjaxLife.Signature = Math.random().toString().substr(2);
 AjaxLife.Debug("AjaxLife: Generated signature: "+AjaxLife.Signature);
 
 AjaxLife.Startup = function() {
-	AjaxLife.Debug("AjaxLife: Init running...");
-	
-	// Sigh. IE is too slow for a lot of this stuff.
-	// Opera is fast, but Wii is slow. Opera on Wii is therefore slow,
-	// so we disable it there too by checking for the wiiremote API.
-	// Should consider making this more thorough.
-	AjaxLife.Fancy = !Prototype.Browser.IE && !(window.opera && window.opera.wiiremote);
-	
-	// Required to make hovertext render.
-	Ext.QuickTips.init();
-	
-	// Fix the blank images.
-	Ext.BLANK_IMAGE_URL = AjaxLife.STATIC_ROOT+"images/s.gif";
-	// Set the button labels - this is important for the localisation.
-	Ext.MessageBox.buttonText = {
-		yes: _("Widgets.Yes"),
-		no: _("Widgets.No"),
-		ok: _("Widgets.OK"),
-		cancel: _("Widgets.Cancel")
-	};
-	// We're connected. Actually, we aren't, but this is close enough and things break if we leave it too long.
-	AjaxLife.Network.Connected = true;
-	// Start everything up.
-	AjaxLife.Debug("AjaxLife: Widgets.Ext init...");
-	AjaxLife.Widgets.Ext.init();
-	AjaxLife.Debug("AjaxLife: NameCache init...");
-	AjaxLife.NameCache.init();
-	AjaxLife.Debug("AjaxLife: Friends init...");
-	AjaxLife.Friends.init()
-	AjaxLife.Debug("AjaxLife: Groups init...");
-	AjaxLife.Groups.init();
-	AjaxLife.Debug("AjaxLife: InstantMessage init...");
-	AjaxLife.InstantMessage.init();
-	AjaxLife.Debug("AjaxLife: SpatialChat init...");
-	AjaxLife.SpatialChat.init();
-	AjaxLife.Debug("AjaxLife: Toolbar init....");
-	AjaxLife.Toolbar.init('toolbar');
-	AjaxLife.Debug("AjaxLife: Parcel init....");
-	AjaxLife.Parcel.init(); // This should come before the StatusBar init.
-	AjaxLife.Debug("AjaxLife: StatusBar init....");
-	AjaxLife.StatusBar.init();
-	AjaxLife.Debug("AjaxLife: Search init...");
-	AjaxLife.Search.init();
-	AjaxLife.Debug("AjaxLife: AvatarsNear init...");
-	AjaxLife.AvatarsNear.init();
-	AjaxLife.Debug("AjaxLife: Contacts init...");
-	AjaxLife.Contacts.init();
-	AjaxLife.Debug("AjaxLife: Inventory init...");
-	AjaxLife.Inventory.init();
-	AjaxLife.Debug("AjaxLife: Stats init...");
-	AjaxLife.Stats.init();
-	AjaxLife.Debug("AjaxLife: ScriptDialogs init...");
-	AjaxLife.ScriptDialogs.init();
-	AjaxLife.Debug("AjaxLife: Keyboard init...");
-	AjaxLife.Keyboard.init();
-	AjaxLife.Debug("AjaxLife: Media init...");
-	AjaxLife.Media.init();
-	// Dummy to suppress messages from de-ruthing.
-	// These messages also apparently count as a "received asset"
-	AjaxLife.Debug("AjaxLife: Registering dummy AssetReceived handler...");
-	AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', Prototype.emptyFunction);
-	AjaxLife.PageWait = AjaxLife.Widgets.Modal.wait(_("AjaxLife.Precaching"));
-	AjaxLife.Debug("AjaxLife: Precaching...");
-	setTimeout(function () {
-		AjaxLife.Debug("AjaxLife: Precaching complete.");
-		AjaxLife.Debug("AjaxLife: Map init...");
-		AjaxLife.Map.init();
-		AjaxLife.Debug("AjaxLife: Minimap init...");
-		AjaxLife.MiniMap.init('minimap','minimap-landscape');;
-		AjaxLife.PageWait.hide();
-		AjaxLife.PageWait = false;
-		AjaxLife.Debug("AjaxLife: Network init...");
-		AjaxLife.Network.init();
-		AjaxLife.Widgets.Modal.alert(_("AjaxLife.MOTD"),AjaxLife.Utils.LinkURLs(gMOTD.escapeHTML()));
-		AjaxLife.Debug("AjaxLife: Grabbing offline IMs");
-		AjaxLife.Network.Send("GetOfflineMessages",{});
-		AjaxLife.Debug("AjaxLife: Startup complete.");
-		AjaxLife.Initialised = true;
-	}, 3000);
-	// If someone leaves the page, and we're still connected, give them the chance to cancel and log out properly.
-	AjaxLife.Debug("AjaxLife: Waiting for precaching to complete.");
+  AjaxLife.Debug("AjaxLife: Init running...");
+
+  // Sigh. IE is too slow for a lot of this stuff.
+  // Opera is fast, but Wii is slow. Opera on Wii is therefore slow,
+  // so we disable it there too by checking for the wiiremote API.
+  // Should consider making this more thorough.
+  AjaxLife.Fancy = !Prototype.Browser.IE && !(window.opera && window.opera.wiiremote);
+
+  // Required to make hovertext render.
+  Ext.QuickTips.init();
+
+  // Fix the blank images.
+  Ext.BLANK_IMAGE_URL = AjaxLife.STATIC_ROOT+"images/s.gif";
+  // Set the button labels - this is important for the localisation.
+  Ext.MessageBox.buttonText = {
+    yes: _("Widgets.Yes"),
+    no: _("Widgets.No"),
+    ok: _("Widgets.OK"),
+    cancel: _("Widgets.Cancel")
+  };
+  // We're connected. Actually, we aren't, but this is close enough and things break if we leave it too long.
+  AjaxLife.Network.Connected = true;
+  // Start everything up.
+  AjaxLife.Debug("AjaxLife: Widgets.Ext init...");
+  AjaxLife.Widgets.Ext.init();
+  AjaxLife.Debug("AjaxLife: NameCache init...");
+  AjaxLife.NameCache.init();
+  AjaxLife.Debug("AjaxLife: Friends init...");
+  AjaxLife.Friends.init()
+  AjaxLife.Debug("AjaxLife: Groups init...");
+  AjaxLife.Groups.init();
+  AjaxLife.Debug("AjaxLife: InstantMessage init...");
+  AjaxLife.InstantMessage.init();
+  AjaxLife.Debug("AjaxLife: SpatialChat init...");
+  AjaxLife.SpatialChat.init();
+  AjaxLife.Debug("AjaxLife: Toolbar init....");
+  AjaxLife.Toolbar.init('toolbar');
+  AjaxLife.Debug("AjaxLife: Parcel init....");
+  AjaxLife.Parcel.init(); // This should come before the StatusBar init.
+  AjaxLife.Debug("AjaxLife: StatusBar init....");
+  AjaxLife.StatusBar.init();
+  AjaxLife.Debug("AjaxLife: Search init...");
+  AjaxLife.Search.init();
+  AjaxLife.Debug("AjaxLife: AvatarsNear init...");
+  AjaxLife.AvatarsNear.init();
+  AjaxLife.Debug("AjaxLife: Contacts init...");
+  AjaxLife.Contacts.init();
+  AjaxLife.Debug("AjaxLife: Inventory init...");
+  AjaxLife.Inventory.init();
+  AjaxLife.Debug("AjaxLife: Stats init...");
+  AjaxLife.Stats.init();
+  AjaxLife.Debug("AjaxLife: ScriptDialogs init...");
+  AjaxLife.ScriptDialogs.init();
+  AjaxLife.Debug("AjaxLife: Keyboard init...");
+  AjaxLife.Keyboard.init();
+  AjaxLife.Debug("AjaxLife: Media init...");
+  AjaxLife.Media.init();
+  // Dummy to suppress messages from de-ruthing.
+  // These messages also apparently count as a "received asset"
+  AjaxLife.Debug("AjaxLife: Registering dummy AssetReceived handler...");
+  AjaxLife.Network.MessageQueue.RegisterCallback('AssetReceived', Prototype.emptyFunction);
+  AjaxLife.PageWait = AjaxLife.Widgets.Modal.wait(_("AjaxLife.Precaching"));
+  AjaxLife.Debug("AjaxLife: Precaching...");
+  setTimeout(function () {
+    AjaxLife.Debug("AjaxLife: Precaching complete.");
+    AjaxLife.Debug("AjaxLife: Map init...");
+    AjaxLife.Map.init();
+    AjaxLife.Debug("AjaxLife: Minimap init...");
+    AjaxLife.MiniMap.init('minimap','minimap-landscape');;
+    AjaxLife.PageWait.hide();
+    AjaxLife.PageWait = false;
+    AjaxLife.Debug("AjaxLife: Network init...");
+    AjaxLife.Network.init();
+    AjaxLife.Widgets.Modal.alert(_("AjaxLife.MOTD"),AjaxLife.Utils.LinkURLs(gMOTD.escapeHTML()));
+    AjaxLife.Debug("AjaxLife: Grabbing offline IMs");
+    AjaxLife.Network.Send("GetOfflineMessages",{});
+    AjaxLife.Debug("AjaxLife: Startup complete.");
+    AjaxLife.Initialised = true;
+  }, 3000);
+  // If someone leaves the page, and we're still connected, give them the chance to cancel and log out properly.
+  AjaxLife.Debug("AjaxLife: Waiting for precaching to complete.");
 }
 
 window.onbeforeunload = function() {
-	AjaxLife.Debug("AjaxLife: onbeforeunload fired.");
-	if(AjaxLife.Network.Connected)
-	{
-		AjaxLife.Debug("AjaxLife: pageleave prevented.");
-		return "Leaving this page now is not recommended.\nIf you're sure you want to leave, you should first use the Logout button below.";
-	}
+  AjaxLife.Debug("AjaxLife: onbeforeunload fired.");
+  if(AjaxLife.Network.Connected)
+  {
+    AjaxLife.Debug("AjaxLife: pageleave prevented.");
+    return "Leaving this page now is not recommended.\nIf you're sure you want to leave, you should first use the Logout button below.";
+  }
 };
 
 if(window.parent)
 {
-	try
-	{
-		window.parent.onbeforeunload = window.onbeforeunload;
-		window.parent.AjaxLife = AjaxLife;
-	}
-	catch(e)
-	{
-		AjaxLife.Debug("AjaxLife: Unable to set onbeforeunload handler in parent.");
-	}
+  try
+  {
+    window.parent.onbeforeunload = window.onbeforeunload;
+    window.parent.AjaxLife = AjaxLife;
+  }
+  catch(e)
+  {
+    AjaxLife.Debug("AjaxLife: Unable to set onbeforeunload handler in parent.");
+  }
 }
 
 jQuery(document).ready(function(){
-	AjaxLife.Media.RunFirst();
-	var iframeResize = function(){
-		jQuery('#index iframe').height(jQuery(window).height() - 80);
-	};
-	iframeResize();
-	jQuery(window).resize(iframeResize);
+  AjaxLife.Media.RunFirst();
+  var iframeResize = function(){
+    jQuery('#index iframe').height(jQuery(window).height() - 80);
+  };
+  iframeResize();
+  jQuery(window).resize(iframeResize);
 });
 
 AjaxLife.Debug("AjaxLife: Set up onbeforeunload handler.");
