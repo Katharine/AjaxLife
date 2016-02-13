@@ -6,6 +6,7 @@ AjaxLife.World = function() {
 				{
 					var accept = !!confirm(data.FromAgentName + " has offered you a teleport to their location:\n\n"+data.Message);
 					AjaxLife.Network.Send("TeleportLureRespond",{
+							SessionID: data.IMSessionID,
 							RequesterID: data.FromAgentID,
 							Accept: accept
 					});

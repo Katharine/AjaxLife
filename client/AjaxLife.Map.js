@@ -640,6 +640,7 @@ AjaxLife.Map = function() {
 								teleport_dialog(true);
 							}
 							AjaxLife.Network.Send("TeleportLureRespond",{
+								SessionID: data.IMSessionID,
 								RequesterID: data.FromAgentID,
 								Accept: (btn=="yes")
 							});

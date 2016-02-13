@@ -43,6 +43,7 @@
         </Options>
       </Configuration>
       <ReferencePath>assemblies/</ReferencePath>
+      <ReferencePath>assemblies/libopenmetaverse/bin/</ReferencePath>
       <Reference name="System" />
       <Reference name="System.Core"/>
       <Reference name="System.Data" />
@@ -58,7 +59,11 @@
       <Reference name="OpenMetaverseTypes"/>
       <Reference name="XMLRPC"/>
       <Files>
-        <Match pattern="*.cs" recurse="true"/>
+        <Exclude pattern="bin"/>
+        <Match pattern="*.cs" recurse="false"/>
+        <Match pattern="Html/*.cs" recurse="true"/>
+        <Match pattern="Html/Templates/*.cs" recurse="true"/>
+        <Match pattern="Converters/*.cs" recurse="true"/>
         <Match pattern="libopenjpeg-dotnet-*.so" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="libopenjpeg-dotnet-*.dylib" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="OpenMetaverse.dll.config" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
@@ -66,6 +71,10 @@
         <Match pattern="*.txt" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="openmetaverse_data/*.tga" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/openmetaverse_data"/>
         <Match pattern="Html/Templates/*.html" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/Html/Templates"/>
+        <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverse.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverseTypes.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverse.StructuredData.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="assemblies/libopenmetaverse/bin/XMLRPC.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
       </Files>
     </Project>
   </Solution>

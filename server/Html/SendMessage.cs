@@ -255,7 +255,7 @@ namespace AjaxLife.Html
                     }
                     break;
                 case "TeleportLureRespond":
-                    client.Self.TeleportLureRespond(new UUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
+                    client.Self.TeleportLureRespond(new UUID(POST["RequesterID"]), new UUID(POST["SessionID"]), bool.Parse(POST["Accept"]));
                     break;
                 case "GodlikeTeleportLureRespond":
                     {
