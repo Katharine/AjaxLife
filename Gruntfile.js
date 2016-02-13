@@ -16,6 +16,7 @@ module.exports = function gruntConfig(grunt) {
       ],
       client: [
         'client/AjaxLife.js',
+        'client/AjaxLife.Constants.js',
       ],
     },
     watch: {
@@ -30,6 +31,7 @@ module.exports = function gruntConfig(grunt) {
       client: {
         files: [
           'client/AjaxLife.js',
+          'client/AjaxLife.Constants.js',
         ],
         tasks: [
           'eslint:client',
