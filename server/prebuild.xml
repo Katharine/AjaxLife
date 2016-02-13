@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<Prebuild version="1.10" xmlns="http://dnpb.sourceforge.net/schemas/prebuild-1.10.xsd">
+  <Solution activeConfig="Debug" name="AjaxLife" path="./">
+    <Configuration name="Debug">
+      <Options>
+        <CompilerDefines>TRACE;DEBUG</CompilerDefines>
+        <OptimizeCode>false</OptimizeCode>
+        <CheckUnderflowOverflow>false</CheckUnderflowOverflow>
+        <AllowUnsafe>true</AllowUnsafe>
+        <WarningLevel>4</WarningLevel>
+        <WarningsAsErrors>false</WarningsAsErrors>
+        <SuppressWarnings/>
+        <OutputPath>bin</OutputPath>
+        <DebugInformation>true</DebugInformation>
+        <IncrementalBuild>true</IncrementalBuild>
+        <NoStdLib>false</NoStdLib>
+      </Options>
+    </Configuration>
+    <Configuration name="Release">
+      <Options>
+        <CompilerDefines>TRACE</CompilerDefines>
+        <OptimizeCode>true</OptimizeCode>
+        <CheckUnderflowOverflow>false</CheckUnderflowOverflow>
+        <AllowUnsafe>true</AllowUnsafe>
+        <WarningLevel>4</WarningLevel>
+        <WarningsAsErrors>false</WarningsAsErrors>
+        <SuppressWarnings/>
+        <OutputPath>bin</OutputPath>
+        <DebugInformation>false</DebugInformation>
+        <IncrementalBuild>true</IncrementalBuild>
+        <NoStdLib>false</NoStdLib>
+      </Options>
+    </Configuration>
+    <Project frameworkVersion="v3_5" name="AjaxLife" path="./">
+      <Configuration name="Debug">
+        <Options>
+          <OutputPath>bin/</OutputPath>
+        </Options>
+      </Configuration>
+      <Configuration name="Release">
+        <Options>
+          <OutputPath>bin/</OutputPath>
+        </Options>
+      </Configuration>
+      <ReferencePath>assemblies/</ReferencePath>
+      <Reference name="System" />
+      <Reference name="System.Core"/>
+      <Reference name="System.Data" />
+      <Reference name="System.Drawing" />
+      <Reference name="System.Web" />
+      <Reference name="System.Xml" />
+      <Reference name="Affirma.ThreeSharp"/>
+      <Reference name="log4net"/>
+      <Reference name="MiniHttpd"/>
+      <Reference name="Newtonsoft.Json"/>
+      <Reference name="OpenMetaverse"/>
+      <Reference name="OpenMetaverse.StructuredData"/>
+      <Reference name="OpenMetaverseTypes"/>
+      <Reference name="XMLRPC"/>
+      <Files>
+        <Match pattern="*.cs" recurse="true"/>
+        <Match pattern="libopenjpeg-dotnet-*.so" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="libopenjpeg-dotnet-*.dylib" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="OpenMetaverse.dll.config" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="assemblies/*.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="*.txt" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+        <Match pattern="openmetaverse_data/*.tga" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/openmetaverse_data"/>
+        <Match pattern="Html/Templates/*.html" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/Html/Templates"/>
+      </Files>
+    </Project>
+  </Solution>
+</Prebuild>

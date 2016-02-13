@@ -3,3 +3,7 @@
 AjaxLife.csproj.user
 obj
 bin
+compile.bat
+*.build
+AjaxLife.csproj
+AjaxLife.sln
