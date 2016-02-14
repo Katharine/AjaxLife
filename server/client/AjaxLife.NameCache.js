@@ -26,95 +26,95 @@
 
 // Key2name
 AjaxLife.NameCache = function () {
-	var namekeys = {};
-	var groupkeys = {};
-	var pending_names = [];
-	var pending_groups = [];
-	
-	// Adds a key to the cache. Calls any callbacks that were waiting for it.
-	function addname(id, name)
-	{
-		if(!namekeys[id])
-		{
-			namekeys[id] = name;
-			if(pending_names[id])
-			{
-				pending_names[id].each(function(item) {
-					item(name);
-				});
-			}
-			pending_names[id] = false;
-		}
-	};
-	
-	
-	function addgroup(id, name)
-	{
-		if(!groupkeys[id])
-		{
-			groupkeys[id] = name;
-			if(pending_groups[id])
-			{
-				pending_groups[id].each(function(item) {
-					item(name);
-				});
-			}
-		}
-	}
-	
-	function dolookup(needle, haystack, pending, callback, message)
-	{
-		if(haystack[needle])
-		{
-			callback(haystack[needle]);
-		}
-		else
-		{
-			AjaxLife.Debug("NameCache: Performing "+message+" lookup for "+needle);
-			if(!pending[needle])
-			{
-				pending[needle] = [];
-			}
-			pending[needle][pending[needle].length] = callback;
-			AjaxLife.Network.Send(message, {
-				ID: needle
-			});
-		}
-	}
-	
-	return {
-		// Look up a key. Calls callbackf immediately if we already know it,
-		// otherwise stores it away until we find it, then sends a NameLookup request.
-		Find: function(id, callbackf) {
-			dolookup(id, namekeys, pending_names, callbackf, "NameLookup");
-		},
-		FindGroup: function(id, callbackf) {
-			dolookup(id, groupkeys, pending_groups, callbackf, "RequestGroupName");
-		},
-		// Manually add a new keypair.
-		Add: function(id, name) {
-			addname(id, name);
-		},
-		AddGroup: function(id, name) {
-			addgroup(id, name);
-		},
-		// Intialisation - sets up listener for keypair lookup responses.
-		init: function() {
-			AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {
-				for(var key in data.Names)
-				{
-					AjaxLife.Debug("NameCache: Received key/name pair "+key+" => "+data.Names[key]);
-					// Add it to the dictionary and run any required callbacks.
-					addname(key,data.Names[key]);
-				}
-			});
-			AjaxLife.Network.MessageQueue.RegisterCallback('GroupNames', function(data) {
-				for(var key in data.Names)
-				{
-					AjaxLife.Debug("NameCache: Received key/group name pair "+key+" => "+data.Names[key]);
-					addgroup(key,data.Names[key]);
-				}
-			});
-		}
-	};
+  var namekeys = {};
+  var groupkeys = {};
+  var pending_names = [];
+  var pending_groups = [];
+
+  // Adds a key to the cache. Calls any callbacks that were waiting for it.
+  function addname(id, name)
+  {
+    if(!namekeys[id])
+    {
+      namekeys[id] = name;
+      if(pending_names[id])
+      {
+        pending_names[id].each(function(item) {
+          item(name);
+        });
+      }
+      pending_names[id] = false;
+    }
+  };
+
+
+  function addgroup(id, name)
+  {
+    if(!groupkeys[id])
+    {
+      groupkeys[id] = name;
+      if(pending_groups[id])
+      {
+        pending_groups[id].each(function(item) {
+          item(name);
+        });
+      }
+    }
+  }
+
+  function dolookup(needle, haystack, pending, callback, message)
+  {
+    if(haystack[needle])
+    {
+      callback(haystack[needle]);
+    }
+    else
+    {
+      AjaxLife.Debug("NameCache: Performing "+message+" lookup for "+needle);
+      if(!pending[needle])
+      {
+        pending[needle] = [];
+      }
+      pending[needle][pending[needle].length] = callback;
+      AjaxLife.Network.Send(message, {
+        ID: needle
+      });
+    }
+  }
+
+  return {
+    // Look up a key. Calls callbackf immediately if we already know it,
+    // otherwise stores it away until we find it, then sends a NameLookup request.
+    Find: function(id, callbackf) {
+      dolookup(id, namekeys, pending_names, callbackf, "NameLookup");
+    },
+    FindGroup: function(id, callbackf) {
+      dolookup(id, groupkeys, pending_groups, callbackf, "RequestGroupName");
+    },
+    // Manually add a new keypair.
+    Add: function(id, name) {
+      addname(id, name);
+    },
+    AddGroup: function(id, name) {
+      addgroup(id, name);
+    },
+    // Intialisation - sets up listener for keypair lookup responses.
+    init: function() {
+      AjaxLife.Network.MessageQueue.RegisterCallback('AvatarNames', function(data) {
+        for(var key in data.Names)
+        {
+          AjaxLife.Debug("NameCache: Received key/name pair "+key+" => "+data.Names[key]);
+          // Add it to the dictionary and run any required callbacks.
+          addname(key,data.Names[key]);
+        }
+      });
+      AjaxLife.Network.MessageQueue.RegisterCallback('GroupNames', function(data) {
+        for(var key in data.Names)
+        {
+          AjaxLife.Debug("NameCache: Received key/group name pair "+key+" => "+data.Names[key]);
+          addgroup(key,data.Names[key]);
+        }
+      });
+    }
+  };
 }();
