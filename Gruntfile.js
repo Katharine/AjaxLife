@@ -21,6 +21,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Groups.js',
         'client/AjaxLife.InstantMessage.js',
         'client/AjaxLife.Inventory.js',
+        'client/AjaxLife.InventoryProperties.js',
       ],
     },
     watch: {
@@ -40,6 +41,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Groups.js',
           'client/AjaxLife.InstantMessage.js',
           'client/AjaxLife.Inventory.js',
+          'client/AjaxLife.InventoryProperties.js',
         ],
         tasks: [
           'eslint:client',
