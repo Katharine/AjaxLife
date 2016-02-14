@@ -23,6 +23,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Inventory.js',
         'client/AjaxLife.InventoryProperties.js',
         'client/AjaxLife.Keyboard.js',
+        'client/AjaxLife.LSL.js',
       ],
     },
     watch: {
@@ -44,6 +45,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Inventory.js',
           'client/AjaxLife.InventoryProperties.js',
           'client/AjaxLife.Keyboard.js',
+          'client/AjaxLife.LSL.js',
         ],
         tasks: [
           'eslint:client',
