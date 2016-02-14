@@ -30,6 +30,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.NameCache.js',
         'client/AjaxLife.Network.js',
         'client/AjaxLife.NewSearch.js',
+        'client/AjaxLife.Notecard.js',
       ],
     },
     watch: {
@@ -58,6 +59,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.NameCache.js',
           'client/AjaxLife.Network.js',
           'client/AjaxLife.NewSearch.js',
+          'client/AjaxLife.Notecard.js',
         ],
         tasks: [
           'eslint:client',
