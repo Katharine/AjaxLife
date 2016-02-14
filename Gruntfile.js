@@ -26,6 +26,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.LSL.js',
         'client/AjaxLife.Map.js',
         'client/AjaxLife.Media.js',
+        'client/AjaxLife.MiniMap.js',
       ],
     },
     watch: {
@@ -50,6 +51,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.LSL.js',
           'client/AjaxLife.Map.js',
           'client/AjaxLife.Media.js',
+          'client/AjaxLife.MiniMap.js',
         ],
         tasks: [
           'eslint:client',
