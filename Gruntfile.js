@@ -25,6 +25,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Keyboard.js',
         'client/AjaxLife.LSL.js',
         'client/AjaxLife.Map.js',
+        'client/AjaxLife.Media.js',
       ],
     },
     watch: {
@@ -48,6 +49,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Keyboard.js',
           'client/AjaxLife.LSL.js',
           'client/AjaxLife.Map.js',
+          'client/AjaxLife.Media.js',
         ],
         tasks: [
           'eslint:client',
