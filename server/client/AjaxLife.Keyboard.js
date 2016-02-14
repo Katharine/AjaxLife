@@ -27,97 +27,103 @@
 // Handle keyboard shortcuts.
 AjaxLife.Keyboard = function() {
 
-	var enabled = false;
+  var enabled = false;
 
-	function handlekeyboard(key, e)
-	{
-		if(!AjaxLife.Initialised || !AjaxLife.Network.Connected || !enabled) return;
-		AjaxLife.Debug("Keyboard: Got keycode "+key);
-		e.preventDefault();
-		switch(key)
-		{
-		case 72: // h
-			if(e.shiftKey)
-			{
-				if(e.altKey)
-				{
-					AjaxLife.SpatialChat.systemmessage("hippos!");
-				}
-				else
-				{
-					AjaxLife.Map.GoHome();
-				}
-			}
-			else
-			{
-				AjaxLife.SpatialChat.toggle();
-			}
-			break;
-		case 73: // i
-			AjaxLife.Inventory.toggle();
-			break;
-		case 70: // f
-			AjaxLife.Search.toggle();
-			break;
-		case 77: // m
-			AjaxLife.Map.toggle();
-			break;
-		case 81: // q
-			// This is duplicated in AjaxLife.Toolbar.js. Should move these both somewhere nice - but where?
-			// If this is no longer duplicated in AjaxLife.Toolbar.js, it's either wrong, broken or both.
-			AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
-				if(btn == 'yes')
-				{
-					AjaxLife.Network.logout();
-				}
-			});
-			break;
-		case 49: // 1
-			if(!Prototype.Browser.IE) AjaxLife.Stats.toggle(); // Should we stop checking for IE and check for something else?
-			break;
-		case 83: // s
-			AjaxLife.Sound.Toggle();
-			break;
-		}
-	}
-	
-	function blocktab(key, e)
-	{
-		if(enabled) return; // This is not a typo. Keyboard enabled = block disabled.
-		e.preventDefault();
-	}
+  function handlekeyboard(key, e)
+  {
+    if(!AjaxLife.Initialised || !AjaxLife.Network.Connected || !enabled) return;
+    AjaxLife.Debug("Keyboard: Got keycode "+key);
+    e.preventDefault();
+    switch(key)
+    {
+      case 72: // h
+        if(e.shiftKey)
+        {
+          if(e.altKey)
+          {
+            AjaxLife.SpatialChat.systemmessage("hippos!");
+          }
+          else
+          {
+            AjaxLife.Map.GoHome();
+          }
+        }
+        else
+        {
+          AjaxLife.SpatialChat.toggle();
+        }
+        break;
+      case 73: // i
+        AjaxLife.Inventory.toggle();
+        break;
+      case 70: // f
+        AjaxLife.Search.toggle();
+        break;
+      case 77: // m
+        AjaxLife.Map.toggle();
+        break;
+      case 81: // q
+        // This is duplicated in AjaxLife.Toolbar.js. Should move these both somewhere nice - but where?
+        // If this is no longer duplicated in AjaxLife.Toolbar.js, it's either wrong, broken or both.
+        AjaxLife.Widgets.Confirm(_("Toolbar.LogoutTitle"),_("Toolbar.LogoutPrompt"), function(btn) {
+          if(btn == 'yes')
+          {
+            AjaxLife.Network.logout();
+          }
+        });
+        break;
+      case 49: // 1
+        if(!Prototype.Browser.IE) AjaxLife.Stats.toggle(); // Should we stop checking for IE and check for something else?
+        break;
+      case 83: // s
+        AjaxLife.Sound.Toggle();
+        break;
+    }
+  }
 
-	return {
-		init: function() {
-			var body = Ext.get(document.body);
-			body.addKeyListener({
-					//   [h , i , f , m , q ]
-					key: [72, 73, 70, 77, 81],
-					ctrl: true,
-					shift: false,
-					alt: false
-				}, handlekeyboard
-			);
-			body.addKeyListener({
-					//   [1 , s ]
-					key: [49, 83],
-					ctrl: true,
-					shift: true,
-					alt: false
-				}, handlekeyboard
-			);
-			body.addKeyListener({
-					//   tab
-					key: 9
-				}, blocktab
-			);
-			enabled = true;
-		},
-		disable: function() {
-			enabled = false;
-		},
-		enable: function() {
-			enabled = true;
-		}
-	}	
+  function blocktab(key, e)
+  {
+    if(enabled) return; // This is not a typo. Keyboard enabled = block disabled.
+    e.preventDefault();
+  }
+
+  return {
+    init: function() {
+      var body = Ext.get(document.body);
+      body.addKeyListener(
+        {
+          //   [h , i , f , m , q ]
+          key: [72, 73, 70, 77, 81],
+          ctrl: true,
+          shift: false,
+          alt: false
+        },
+        handlekeyboard
+      );
+      body.addKeyListener(
+        {
+          //   [1 , s ]
+          key: [49, 83],
+          ctrl: true,
+          shift: true,
+          alt: false
+        },
+        handlekeyboard
+      );
+      body.addKeyListener(
+        {
+          //   tab
+          key: 9
+        },
+        blocktab
+      );
+      enabled = true;
+    },
+    disable: function() {
+      enabled = false;
+    },
+    enable: function() {
+      enabled = true;
+    }
+  }
 }();
