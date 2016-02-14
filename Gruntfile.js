@@ -28,6 +28,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Media.js',
         'client/AjaxLife.MiniMap.js',
         'client/AjaxLife.NameCache.js',
+        'client/AjaxLife.Network.js',
       ],
     },
     watch: {
@@ -54,6 +55,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Media.js',
           'client/AjaxLife.MiniMap.js',
           'client/AjaxLife.NameCache.js',
+          'client/AjaxLife.Network.js',
         ],
         tasks: [
           'eslint:client',
