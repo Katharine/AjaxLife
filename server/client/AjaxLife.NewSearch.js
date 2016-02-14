@@ -23,11 +23,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
- 
+
 AjaxLife.NewSearch = function() {
-	var win = false;
-	var search_box = false;
-	var category_sel = false;
-	var mature_check = false;
-	//var 
+  var win = false;
+  var search_box = false;
+  var category_sel = false;
+  var mature_check = false;
+  //var
 }();
