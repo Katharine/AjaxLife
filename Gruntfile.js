@@ -35,6 +35,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Profile.js',
         'client/AjaxLife.ScriptDialog.js',
         'client/AjaxLife.Search.js',
+        'client/AjaxLife.Sound.js',
       ],
     },
     watch: {
@@ -68,6 +69,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Profile.js',
           'client/AjaxLife.ScriptDialog.js',
           'client/AjaxLife.Search.js',
+          'client/AjaxLife.Sound.js',
         ],
         tasks: [
           'eslint:client',

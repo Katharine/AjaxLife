@@ -23,41 +23,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
- 
- AjaxLife.Sound = function() {
- 	var enabled = true;
- 	
- 	function playsound(sound)
- 	{
- 		if(enabled)
- 		{
- 			Sound.play(AjaxLife.STATIC_ROOT+"sounds/"+escape(sound)+".wav");
- 		}
- 	}
- 	
- 	return {
- 		Disable: function() {
- 			enabled = false;
- 		},
- 		Enable: function() {
- 			if(!enabled)
- 			{
- 				enabled = true;
- 				playsound("im");
- 			}
- 		},
- 		Toggle: function() {
- 			if(enabled)
- 			{
- 				this.Disable();
- 			}
- 			else
- 			{
- 				this.Enable();
- 			}
- 		},
- 		Play: function(sound) {
- 			playsound(sound);
- 		}
- 	};
- }();
+
+AjaxLife.Sound = function() {
+  var enabled = true;
+
+  function playsound(sound)
+  {
+    if(enabled)
+    {
+      Sound.play(AjaxLife.STATIC_ROOT+"sounds/"+escape(sound)+".wav");
+    }
+  }
+
+  return {
+    Disable: function() {
+      enabled = false;
+    },
+    Enable: function() {
+      if(!enabled)
+      {
+        enabled = true;
+        playsound("im");
+      }
+    },
+    Toggle: function() {
+      if(enabled)
+      {
+        this.Disable();
+      }
+      else
+      {
+        this.Enable();
+      }
+    },
+    Play: function(sound) {
+      playsound(sound);
+    }
+  };
+}();
