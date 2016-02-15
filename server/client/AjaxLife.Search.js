@@ -25,98 +25,98 @@
  ******************************************************************************/
 
 AjaxLife.Search = function() {
-	// Private.
-	var search_win = false;
-	var search_box = false;
-	var results_list = false;
-	
-	// Called after the user stops typing in the search box.
-	// We just send a FindPeople message with the search string.
-	function performlookup()
-	{
-		AjaxLife.Debug("Search: Searching for '"+search+"' in people.");
-		results_list.clear();
-		var search = search_box.dom.value;
-		AjaxLife.Network.Send("FindPeople", {
-			Search: search,
-			Start: 0
-		});
-	}
-	
-	return {
-		// Public
-		init: function() {
-			// Creates the search window.
-			search_win = new Ext.BasicDialog("dlg_search", {
-				width: '300px',
-				height: '400px',
-				modal: false,
-				shadow: true,
-				autoCreate: true,
-				title: _("Search.WindowTitle"),
-				proxyDrag: !AjaxLife.Fancy
-			});
-			// Build the UI
-			people_tab = search_win.getTabs().addTab("search-people-tab",_("Search.People"));
-			people_tab.activate();
-			var div_people_search = Ext.get(document.createElement('div'));
-			div_people_search.dom.setAttribute('id','search_div_people_search');
-			search_box = Ext.get(document.createElement('input'));
-			search_box.setStyle({width: '98%'});
-			search_box.dom.setAttribute('id','search_box_seach');
-			search_box.dom.setAttribute('type','text');
-			div_people_search.dom.appendChild(search_box.dom);
-			people_tab.bodyEl.dom.appendChild(div_people_search.dom);
-			// This will cause the performlookup function to be executed whenever the
-			// delay.delay() function is called, and the number of milliseconds
-			// it specifies have passed.
-			var delay = new Ext.util.DelayedTask(performlookup);
-			// Set the performlookup task to happen 0.75 seconds after the key is pressed.
-			// This is reset every time a key is pressed, thus waiting until the user
-			// stops typing to begin.
-			search_box.on('keydown', function() {
-				delay.delay(750);
-			});
-			// Create the search box, and set a click callback to just open the profile.
-			results_list = new AjaxLife.Widgets.SelectList('search_list_results', people_tab.bodyEl.dom, {
-				width: '99%',
-				callback: function(key) {
-					new AjaxLife.Profile(key);
-				}
-			});
-			// Register for the DirPeopleReply message that carries the information we want.
-			// Add their name and key to the list.
-			AjaxLife.Network.MessageQueue.RegisterCallback('DirPeopleReply', function(data) {
-				AjaxLife.Debug("Search: Received search results.");
-				data.Results.each(function(item) {
-					AjaxLife.NameCache.Add(item.AgentID,item.FirstName+" "+item.LastName);
-					results_list.add(item.AgentID,item.FirstName+" "+item.LastName);
-				});
-				results_list.sort();
-			});
-		},
-		open: function(opener) {
-			if(opener)
-			{
-				search_win.show(opener);
-			}
-			else
-			{
-				search_win.show();
-			}
-		},
-		close: function() {
-			search_win.hide();
-		},
-		toggle: function(opener) {
-			if(!search_win.isVisible())
-			{
-				this.open(opener);
-			}
-			else
-			{
-				this.close();
-			}
-		}
-	};
+  // Private.
+  var search_win = false;
+  var search_box = false;
+  var results_list = false;
+
+  // Called after the user stops typing in the search box.
+  // We just send a FindPeople message with the search string.
+  function performlookup()
+  {
+    AjaxLife.Debug("Search: Searching for '"+search+"' in people.");
+    results_list.clear();
+    var search = search_box.dom.value;
+    AjaxLife.Network.Send("FindPeople", {
+      Search: search,
+      Start: 0
+    });
+  }
+
+  return {
+    // Public
+    init: function() {
+      // Creates the search window.
+      search_win = new Ext.BasicDialog("dlg_search", {
+        width: '300px',
+        height: '400px',
+        modal: false,
+        shadow: true,
+        autoCreate: true,
+        title: _("Search.WindowTitle"),
+        proxyDrag: !AjaxLife.Fancy
+      });
+      // Build the UI
+      people_tab = search_win.getTabs().addTab("search-people-tab",_("Search.People"));
+      people_tab.activate();
+      var div_people_search = Ext.get(document.createElement('div'));
+      div_people_search.dom.setAttribute('id','search_div_people_search');
+      search_box = Ext.get(document.createElement('input'));
+      search_box.setStyle({width: '98%'});
+      search_box.dom.setAttribute('id','search_box_seach');
+      search_box.dom.setAttribute('type','text');
+      div_people_search.dom.appendChild(search_box.dom);
+      people_tab.bodyEl.dom.appendChild(div_people_search.dom);
+      // This will cause the performlookup function to be executed whenever the
+      // delay.delay() function is called, and the number of milliseconds
+      // it specifies have passed.
+      var delay = new Ext.util.DelayedTask(performlookup);
+      // Set the performlookup task to happen 0.75 seconds after the key is pressed.
+      // This is reset every time a key is pressed, thus waiting until the user
+      // stops typing to begin.
+      search_box.on('keydown', function() {
+        delay.delay(750);
+      });
+      // Create the search box, and set a click callback to just open the profile.
+      results_list = new AjaxLife.Widgets.SelectList('search_list_results', people_tab.bodyEl.dom, {
+        width: '99%',
+        callback: function(key) {
+          new AjaxLife.Profile(key);
+        }
+      });
+      // Register for the DirPeopleReply message that carries the information we want.
+      // Add their name and key to the list.
+      AjaxLife.Network.MessageQueue.RegisterCallback('DirPeopleReply', function(data) {
+        AjaxLife.Debug("Search: Received search results.");
+        data.Results.each(function(item) {
+          AjaxLife.NameCache.Add(item.AgentID,item.FirstName+" "+item.LastName);
+          results_list.add(item.AgentID,item.FirstName+" "+item.LastName);
+        });
+        results_list.sort();
+      });
+    },
+    open: function(opener) {
+      if(opener)
+      {
+        search_win.show(opener);
+      }
+      else
+      {
+        search_win.show();
+      }
+    },
+    close: function() {
+      search_win.hide();
+    },
+    toggle: function(opener) {
+      if(!search_win.isVisible())
+      {
+        this.open(opener);
+      }
+      else
+      {
+        this.close();
+      }
+    }
+  };
 }();
