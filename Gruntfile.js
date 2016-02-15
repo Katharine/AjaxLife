@@ -43,6 +43,7 @@ module.exports = function gruntConfig(grunt) {
         'client/AjaxLife.Texture.js',
         'client/AjaxLife.Toolbar.js',
         'client/AjaxLife.Utils.js',
+        'client/AjaxLife.Widgets.js',
       ],
     },
     watch: {
@@ -84,6 +85,7 @@ module.exports = function gruntConfig(grunt) {
           'client/AjaxLife.Texture.js',
           'client/AjaxLife.Toolbar.js',
           'client/AjaxLife.Utils.js',
+          'client/AjaxLife.Widgets.js',
         ],
         tasks: [
           'eslint:client',
