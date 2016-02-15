@@ -25,61 +25,61 @@
  ******************************************************************************/
 
 AjaxLife.StatusBar = function() {
-	var div_ld = false;
-	var div_position = false;
-	var balance = false;
-	
-	return {
-		init: function() {
-			var rtl = (_("Language.Direction") == "rtl");
-			// Builds and styles the statusbar.
-			div_ld = $(document.createElement('div'));
-			div_ld.setStyle({'float': (rtl?'left':'right'), color: '#00e752'});
-			div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
-			$('statusbar').appendChild(div_ld);
-			div_position = $(document.createElement('div'));
-			div_position.setStyle({'float': (rtl?'right':'left'), color: 'white'});
-			div_position.appendChild(document.createTextNode('Unknown (0, 0, 0)'));
-			$('statusbar').appendChild(div_position);
-			
-			// Register a callback for the MoneyBalanceReplyReceived message to update the balance
-			// when we get a response to our request.
-			AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
-				AjaxLife.Debug("StatusBar: Received new L$ balance");
-				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
-				balance = data.Balance;
-				if(data.Description != '')
-				{
-					AjaxLife.Widgets.Ext.msg("",data.Description);
-				}
-			});
-			
-			// Register for the UsefulData in order to update the position shown in the top-left whenever possible.
-			AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
-				div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+') - '+AjaxLife.Parcel.GetParcelName());
-			});
-			
-			// Register for the BalanceUpdated message so we know when our balance is updated.
-			// For reasons I don't understand, this seems to be called rarely, whilst
-			// MoneyBalanceReplyReceived is called frequently, even when no BalanceRequest message
-			// was sent.
-			AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {
-				div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
-				balance = data.Balance;
-			});
-			
-			// Handle global and estate messages - that is, any received IM with a null session.
-			// Note that this is technically incorrect behaviour (maybe?), and may result in some libsl bots playing up.
-			AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
-				if(data.IMSessionID != AjaxLife.Utils.UUID.Zero || data.Dialog != AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent) return;
-				AjaxLife.Widgets.Ext.msg(data.FromAgentName, data.Message, 'estate-message-'+data.FromAgentID, true);
-				AjaxLife.Widgets.Modal.alert(data.FromAgentName, data.Message);
-				AjaxLife.SpatialChat.systemmessage(data.FromAgentName+": "+data.Message);
-			});
-			
-			// Request the initial balance on loading.
-			AjaxLife.Debug("StatusBar: Requesting L$ balance");
-			AjaxLife.Network.Send('RequestBalance', {});
-		}
-	};
+  var div_ld = false;
+  var div_position = false;
+  var balance = false;
+
+  return {
+    init: function() {
+      var rtl = (_("Language.Direction") == "rtl");
+      // Builds and styles the statusbar.
+      div_ld = $(document.createElement('div'));
+      div_ld.setStyle({'float': (rtl?'left':'right'), color: '#00e752'});
+      div_ld.appendChild(document.createTextNode(_('StatusBar.LindenDollarSymbol')+_('StatusBar.Loading')));
+      $('statusbar').appendChild(div_ld);
+      div_position = $(document.createElement('div'));
+      div_position.setStyle({'float': (rtl?'right':'left'), color: 'white'});
+      div_position.appendChild(document.createTextNode('Unknown (0, 0, 0)'));
+      $('statusbar').appendChild(div_position);
+
+      // Register a callback for the MoneyBalanceReplyReceived message to update the balance
+      // when we get a response to our request.
+      AjaxLife.Network.MessageQueue.RegisterCallback('MoneyBalanceReplyReceived', function(data) {
+        AjaxLife.Debug("StatusBar: Received new L$ balance");
+        div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+        balance = data.Balance;
+        if(data.Description != '')
+        {
+          AjaxLife.Widgets.Ext.msg("",data.Description);
+        }
+      });
+
+      // Register for the UsefulData in order to update the position shown in the top-left whenever possible.
+      AjaxLife.Network.MessageQueue.RegisterCallback('UsefulData', function(data) {
+        div_position.update(data.YourRegion+' ('+Math.round(data.YourPosition.X)+', '+Math.round(data.YourPosition.Y)+', '+Math.round(data.YourPosition.Z)+') - '+AjaxLife.Parcel.GetParcelName());
+      });
+
+      // Register for the BalanceUpdated message so we know when our balance is updated.
+      // For reasons I don't understand, this seems to be called rarely, whilst
+      // MoneyBalanceReplyReceived is called frequently, even when no BalanceRequest message
+      // was sent.
+      AjaxLife.Network.MessageQueue.RegisterCallback('BalanceUpdated', function(data) {
+        div_ld.update(_('StatusBar.LindenDollarSymbol')+AjaxLife.Utils.FormatNumber(data.Balance));
+        balance = data.Balance;
+      });
+
+      // Handle global and estate messages - that is, any received IM with a null session.
+      // Note that this is technically incorrect behaviour (maybe?), and may result in some libsl bots playing up.
+      AjaxLife.Network.MessageQueue.RegisterCallback('InstantMessage', function(data) {
+        if(data.IMSessionID != AjaxLife.Utils.UUID.Zero || data.Dialog != AjaxLife.Constants.MainAvatar.InstantMessageDialog.MessageFromAgent) return;
+        AjaxLife.Widgets.Ext.msg(data.FromAgentName, data.Message, 'estate-message-'+data.FromAgentID, true);
+        AjaxLife.Widgets.Modal.alert(data.FromAgentName, data.Message);
+        AjaxLife.SpatialChat.systemmessage(data.FromAgentName+": "+data.Message);
+      });
+
+      // Request the initial balance on loading.
+      AjaxLife.Debug("StatusBar: Requesting L$ balance");
+      AjaxLife.Network.Send('RequestBalance', {});
+    }
+  };
 }();
