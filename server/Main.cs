@@ -308,6 +308,7 @@ namespace AjaxLife
             {
                 root.AddDirectory(new DriveDirectory("textures", AjaxLife.TEXTURE_CACHE, root));
             }
+            root.AddDirectory(new DriveDirectory("client", "client", root));
             // API stuff.
             VirtualDirectory api = new VirtualDirectory("api", root);
             root.AddDirectory(api);

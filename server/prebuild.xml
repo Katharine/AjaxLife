@@ -75,6 +75,44 @@
         <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverseTypes.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverse.StructuredData.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="assemblies/libopenmetaverse/bin/XMLRPC.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
+
+        <Match pattern="client/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client"/>
+
+        <Match pattern="client/images/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/images"/>
+        <Match pattern="client/images/inventory/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/images/inventory"/>
+        <Match pattern="client/images/simdown/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/images/simdown"/>
+
+        <Match pattern="client/resources/license.txt" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/license.txt"/>
+
+        <Match pattern="client/resources/css/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/css"/>
+
+        <Match pattern="client/resources/images/aero/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero"/>
+        <Match pattern="client/resources/images/aero/basic-dialog/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/basic-dialog"/>
+        <Match pattern="client/resources/images/aero/grid/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/grid"/>
+        <Match pattern="client/resources/images/aero/layout/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/layout"/>
+        <Match pattern="client/resources/images/aero/qtip/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/qtip"/>
+        <Match pattern="client/resources/images/aero/sizer/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/sizer"/>
+        <Match pattern="client/resources/images/aero/tabs/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/tabs"/>
+        <Match pattern="client/resources/images/aero/toolbar/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/aero/toolbar"/>
+
+        <Match pattern="client/resources/images/default/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default"/>
+        <Match pattern="client/resources/images/default/basic-dialog/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/basic-dialog"/>
+        <Match pattern="client/resources/images/default/box/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/box"/>
+        <Match pattern="client/resources/images/default/dd/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/dd"/>
+        <Match pattern="client/resources/images/default/form/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/form"/>
+        <Match pattern="client/resources/images/default/grid/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/grid"/>
+        <Match pattern="client/resources/images/default/layout/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/layout"/>
+        <Match pattern="client/resources/images/default/menu/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/menu"/>
+        <Match pattern="client/resources/images/default/qtip/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/qtip"/>
+        <Match pattern="client/resources/images/default/shared/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/shared"/>
+        <Match pattern="client/resources/images/default/sizer/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/sizer"/>
+        <Match pattern="client/resources/images/default/tabs/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/tabs"/>
+        <Match pattern="client/resources/images/default/toolbar/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/toolbar"/>
+        <Match pattern="client/resources/images/default/tree/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/images/default/tree"/>
+
+        <Match pattern="client/resources/script.aculo.us/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/resources/script.aculo.us"/>
+
+        <Match pattern="client/sounds/*" recurse="true" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/client/sounds"/>
       </Files>
     </Project>
   </Solution>

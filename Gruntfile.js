@@ -15,9 +15,9 @@ module.exports = function gruntConfig(grunt) {
         'Gruntfile.js',
       ],
       client: [
-        'client/AjaxLife.js',
-        'client/AjaxLife.*.js',
-        '!client/AjaxLife.Libs.js',
+        'server/client/AjaxLife.js',
+        'server/client/AjaxLife.*.js',
+        '!server/client/AjaxLife.Libs.js',
       ],
     },
     watch: {
