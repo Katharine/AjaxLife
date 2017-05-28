@@ -1,3 +1,6 @@
 [submodule "server/assemblies/libopenmetaverse"]
 	path = server/assemblies/libopenmetaverse
 	url = https://github.com/openmetaversefoundation/libopenmetaverse.git
+[submodule "server/client"]
+	path = server/client
+	url = git@github.com:SignpostMarv/AjaxLife-client.git
