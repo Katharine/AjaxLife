@@ -311,7 +311,7 @@ namespace AjaxLife
             item.Add("Dialog", dialog);
             item.Add("GroupIM", groupIM);
             item.Add("IMSessionID", imSessionID);
-            item.Add("Timestamp", timestamp);
+            item.Add("Timestamp", timestamp.ToString("o"));
             item.Add("Message", message);
             item.Add("Offline", offline);
             item.Add("BinaryBucket", binaryBucket);
@@ -901,7 +901,7 @@ namespace AjaxLife
                 message.Add("AuctionID", e.Parcel.AuctionID);
                 message.Add("AuthBuyerID", e.Parcel.AuthBuyerID);
                 message.Add("Category", e.Parcel.Category);
-                message.Add("ClaimDate", e.Parcel.ClaimDate);
+                message.Add("ClaimDate", e.Parcel.ClaimDate.ToString("o"));
                 message.Add("ClaimPrice", e.Parcel.ClaimPrice);
                 message.Add("Desc", e.Parcel.Desc);
                 message.Add("Dwell", e.Parcel.Dwell);
