@@ -629,7 +629,7 @@ namespace AjaxLife.Html
                     client.Groups.RequestCurrentGroups();
                     break;
                 case "GetParcelID":
-                    textwriter.Write("{LocalID: "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
+                    textwriter.Write("{\"LocalID\": "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
                     break;
                 case "RequestParcelProperties":
                     client.Parcels.RequestParcelProperties(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));
