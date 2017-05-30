@@ -3,4 +3,4 @@
 	url = https://github.com/openmetaversefoundation/libopenmetaverse.git
 [submodule "server/bin/client"]
 	path = server/bin/client
-	url = git@github.com:SignpostMarv/AjaxLife-client.git
+	url = https://github.com/SignpostMarv/AjaxLife-client.git
