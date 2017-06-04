@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /* Copyright (c) 2007, Katharine Berry
  * All rights reserved.
  *
