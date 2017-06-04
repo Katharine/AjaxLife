@@ -76,6 +76,7 @@ namespace AjaxLife.Html
                 Hashtable hash = new Hashtable();
                 // Set up the template with useful details and the challenge and public key.
                 hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                hash.Add("API_ROOT", AjaxLife.API_ROOT);
                 hash.Add("SESSION_ID", key.ToString("D"));
                 hash.Add("CHALLENGE", user.Challenge);
                 hash.Add("RSA_EXPONENT", StringHelper.BytesToHexString(AjaxLife.RSAp.Exponent));

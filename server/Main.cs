@@ -48,6 +48,7 @@ namespace AjaxLife
         public static string TEXTURE_ROOT { get { return TextureRoot; } }
         public static string TEXTURE_CACHE { get { return TextureCache; } }
         public static string STATIC_ROOT { get { return StaticRoot; } }
+        public static string API_ROOT { get { return ApiRoot; } }
         public static string MAC_ADDRESS { get { return MacAddress; } }
         public static string ID0 { get { return Id0; } }
         public static string BAN_LIST { get { return BanList; } }
@@ -65,6 +66,7 @@ namespace AjaxLife
         private static string DefaultLoginServer = "";
         private static Dictionary<string, string> LoginServers;
         private static string StaticRoot = "http://static.ajaxlife.net/";
+        private static string ApiRoot = "http://localhost:8080/api/";
         private static string TextureBucket = "";
         private static string TextureRoot = "";
         private static string AccessKey = "";
@@ -149,7 +151,6 @@ namespace AjaxLife
             {
                 StaticRoot += "/";
             }
-            Console.WriteLine("Static root: " + STATIC_ROOT);
             if (args["texturecache"] != null)
             {
                 TextureCache = args["texturecache"];
@@ -237,6 +238,9 @@ namespace AjaxLife
             {
                 // If we can't make it private, oh well.
             }
+
+            StaticRoot = "http://" + webserver.LocalAddress + (webserver.Port != 80 ? (":" + webserver.Port) : "") + "/client/";
+            Console.WriteLine("Static root: " + STATIC_ROOT);
             
             // Make sure we have a usable texture cache, create it if not.
             // If we're using S3, this is just used for conversions. If we're using

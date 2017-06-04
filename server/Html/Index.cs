@@ -63,6 +63,7 @@ namespace AjaxLife.Html
                 Hashtable hash = new Hashtable();
                 // Set up the template with useful details and the challenge and public key.
                 hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                hash.Add("API_ROOT", AjaxLife.API_ROOT);
                 if (AjaxLife.HANDLE_CONTENT_ENCODING)
                 {
                     hash.Add("ENCODING", "identity");
