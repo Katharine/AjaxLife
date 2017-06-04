@@ -224,11 +224,14 @@ namespace AjaxLife
             
             // Make a web server!
             HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
+
+            bool startPrivate = true;
+
             try
             {
                 // If the "private" CLI argument was specified, make it private by making us only
                 // listen to the loopback address (127.0.0.0)
-                if (args["private"] != null)
+                if (startPrivate)
                 {
                     webserver.LocalAddress = System.Net.IPAddress.Loopback;
                     Console.WriteLine("Using private mode.");
