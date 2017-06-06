@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
-using OpenMetaverse;    
+using OpenMetaverse;
 using MiniHttpd;
 using Newtonsoft.Json;
 using System.Security.Cryptography;
@@ -42,7 +42,7 @@ namespace AjaxLife
     {
         // All of these are publically available, but read-only. The class itself can set them
         // by setting the references variables.
-        public static Dictionary<string, string> LOGIN_SERVERS { get{ return LoginServers; } }
+        public static Dictionary<string, string> LOGIN_SERVERS { get { return LoginServers; } }
         public static string DEFAULT_LOGIN_SERVER { get { return DefaultLoginServer; } }
         public static string TEXTURE_BUCKET { get { return TextureBucket; } }
         public static string TEXTURE_ROOT { get { return TextureRoot; } }
@@ -61,7 +61,7 @@ namespace AjaxLife
         // This handles people losing their internet connection or closing the window without
         // logging off.
         public const double SESSION_TIMEOUT = 600; // Timeout in seconds.
-        
+
         // These are the private editable versions of the read-only properties above.
         private static string DefaultLoginServer = "";
         private static Dictionary<string, string> LoginServers;
@@ -79,28 +79,28 @@ namespace AjaxLife
         private static bool HandleContentEncoding = false;
         private static bool UseS3 = false;
         private static bool DebugMode = false;
-        
+
         public static int TextureCacheCount = 0;
         public static long TextureCacheSize = 0;
-        
-        // These are used for the RSA encryption. RSAp holds the public and private keys, 
+
+        // These are used for the RSA encryption. RSAp holds the public and private keys,
         // RSA is the object responsible for decrypting. No encryption is done on the server.
         public static RSAParameters RSAp;
         public static RSACrypto RSA;
-        
+
         // Marks whether we're meant to be running.
         public static bool Running = true;
-        
+
         // Stores the S3 login information.
         public static Affirma.ThreeSharp.ThreeSharpConfig S3Config;
-        
+
         // List of textures we know we have cached. This enables us to avoid looking it up on S3.
         // This is useful because looking things up on S3 costs money and is slightly slower.
         public static List<UUID> CachedTextures = new List<UUID>();
 
         // Dictionary of users, indexed by session ID.
         public Dictionary<Guid, User> Users;
-        
+
         // Provides ban list functionality
         public static BanList BannedUsers;
 
@@ -122,7 +122,7 @@ namespace AjaxLife
             }
             // Read in the grids. Loop through the space-separated file, adding them to the dictionary.
             // Since there's no way of maintaining order, we also store the default separately.
-            
+
             Console.WriteLine("Reading grids from " + gridfile);
             string[] grids = File.ReadAllLines(gridfile);
             LoginServers = new Dictionary<string, string>();
@@ -141,13 +141,13 @@ namespace AjaxLife
                 Console.WriteLine("Loaded grid " + griddata[1] + " (" + griddata[0] + ")");
             }
             Console.WriteLine("Default grid: " + DEFAULT_LOGIN_SERVER);
-            
+
             // More fun option setting.
             if (args["root"] != null)
             {
                 StaticRoot = args["root"];
             }
-            if(!StaticRoot.EndsWith("/"))
+            if (!StaticRoot.EndsWith("/"))
             {
                 StaticRoot += "/";
             }
@@ -160,11 +160,11 @@ namespace AjaxLife
             {
                 TextureCache += "/";
             }
-            if(args["texturebucket"] != null)
+            if (args["texturebucket"] != null)
             {
                 TextureBucket = args["texturebucket"];
             }
-            if(args["textureroot"] != null)
+            if (args["textureroot"] != null)
             {
                 TextureRoot = args["textureroot"];
             }
@@ -182,16 +182,16 @@ namespace AjaxLife
             {
                 BanList = args["banlist"];
             }
-            if(BanList != "")
+            if (BanList != "")
             {
-                Console.WriteLine("Using banlist at "+BanList);
+                Console.WriteLine("Using banlist at " + BanList);
                 if (args["banupdate"] != null)
                 {
                     BanUpdateTime = double.Parse(args["banupdate"]);
                 }
-                if(BanUpdateTime > 0.0)
+                if (BanUpdateTime > 0.0)
                 {
-                    Console.WriteLine("Updating the banlist every "+BanUpdateTime+" seconds.");
+                    Console.WriteLine("Updating the banlist every " + BanUpdateTime + " seconds.");
                 }
                 else
                 {
@@ -204,12 +204,12 @@ namespace AjaxLife
             }
             HandleContentEncoding = (args["doencoding"] != null);
             Console.WriteLine("Handling content encoding: " + (HANDLE_CONTENT_ENCODING ? "Yes" : "No"));
-            if(args["spamdebug"] != null)
+            if (args["spamdebug"] != null)
             {
                 DebugMode = true;
                 Settings.LOG_LEVEL = Helpers.LogLevel.Debug;
             }
-            else if(args["debug"] != null)
+            else if (args["debug"] != null)
             {
                 DebugMode = true;
                 Settings.LOG_LEVEL = Helpers.LogLevel.Info;
@@ -221,9 +221,9 @@ namespace AjaxLife
             Console.WriteLine("Debug mode: " + (DEBUG_MODE ? "On" : "Off"));
             // Create an empty dictionary for the users. This is defined as public further up.
             Users = new Dictionary<Guid, User>();
-            
+
             // Make a web server!
-            HttpWebServer webserver = new HttpWebServer((args["port"]!=null)?int.Parse(args["port"]):8080);
+            HttpWebServer webserver = new HttpWebServer((args["port"] != null) ? int.Parse(args["port"]) : 8080);
 
             bool startPrivate = true;
 
@@ -243,14 +243,14 @@ namespace AjaxLife
             }
             if (args["root"] == null)
             {
-            StaticRoot = "http://" + webserver.LocalAddress + (webserver.Port != 80 ? (":" + webserver.Port) : "") + "/client/";
+                StaticRoot = "http://" + webserver.LocalAddress + (webserver.Port != 80 ? (":" + webserver.Port) : "") + "/client/";
             }
             if (args["httpsapi"] != null)
             {
                 ApiRoot = "https://" + args["httpsapi"];
             }
             Console.WriteLine("Static root: " + STATIC_ROOT);
-            
+
             // Make sure we have a usable texture cache, create it if not.
             // If we're using S3, this is just used for conversions. If we're using
             // our own texture system, we store textures here for client use.
@@ -269,11 +269,11 @@ namespace AjaxLife
                     return;
                 }
             }
-            
+
             Console.WriteLine("Initialising RSA service...");
             RSA = new RSACrypto();
             // Create a new RSA keypair with the specified length. 1024 if unspecified.
-            RSA.InitCrypto((args["keylength"]==null)?1024:int.Parse(args["keylength"]));
+            RSA.InitCrypto((args["keylength"] == null) ? 1024 : int.Parse(args["keylength"]));
             RSAp = RSA.ExportParameters(true);
             Console.WriteLine("Generated " + ((args["keylength"] == null) ? 1024 : int.Parse(args["keylength"])) + "-bit key.");
             Console.WriteLine("RSA ready.");
@@ -282,7 +282,7 @@ namespace AjaxLife
             S3Config.AwsAccessKeyID = (args["s3key"] == null) ? AccessKey : args["s3key"];
             S3Config.AwsSecretAccessKey = (args["s3secret"] == null) ? PrivateAccessKey : args["s3secret"];
             // Check that, if we're using S3, we have enough information to do so.
-            if(TextureBucket != "" && (S3Config.AwsAccessKeyID == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
+            if (TextureBucket != "" && (S3Config.AwsAccessKeyID == "" || S3Config.AwsSecretAccessKey == "" || TextureRoot == ""))
             {
                 Console.WriteLine("Error: To use S3 you must set s3key, s3secret, texturebucket and textureroot");
                 return;
@@ -317,7 +317,7 @@ namespace AjaxLife
             root.AddFile(new Html.iPhone("iphone.kat", root));
             root.AddFile("robots.txt");
             // textures/ is only used if we aren't using S3 for textures.
-            if(!UseS3)
+            if (!UseS3)
             {
                 root.AddDirectory(new DriveDirectory("textures", AjaxLife.TEXTURE_CACHE, root));
             }
@@ -334,7 +334,7 @@ namespace AjaxLife
             #endregion
             Console.WriteLine("Loading banlist...");
             BannedUsers = new BanList(); // Create BanList.
-            
+
             Console.WriteLine("Starting server...");
             // Start the webserver.
             webserver.Start();
@@ -359,7 +359,7 @@ namespace AjaxLife
                 Queue<Guid> marked = new Queue<Guid>();
                 try
                 {
-                    foreach (KeyValuePair<Guid,User> entry in Users)
+                    foreach (KeyValuePair<Guid, User> entry in Users)
                     {
                         User user = entry.Value;
                         Guid session = (Guid)entry.Key;
@@ -381,7 +381,7 @@ namespace AjaxLife
                                 if (user.Events != null)
                                 {
                                     user.Events.Network_Disconnected(this, new DisconnectedEventArgs(NetworkManager.DisconnectType.ServerInitiated, "Your AjaxLife session has timed out."));
-                                    Console.WriteLine("Transmitted logout alert to "+user.Client.Self.FirstName+" "+user.Client.Self.LastName+". Waiting...");
+                                    Console.WriteLine("Transmitted logout alert to " + user.Client.Self.FirstName + " " + user.Client.Self.LastName + ". Waiting...");
                                     System.Threading.Thread.Sleep(1000);
                                     user.Events.deactivate();
                                 }
@@ -394,14 +394,14 @@ namespace AjaxLife
                         }
                     }
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     Console.WriteLine("Error processing timeouts: " + exception.Message);
                 }
             }
         }
 
-        public static Dictionary<string,string> PostDecode(string qstring)
+        public static Dictionary<string, string> PostDecode(string qstring)
         {
             // Make a nice dictionary of data from a standard postdata input.
             qstring = qstring + "&";
@@ -429,7 +429,7 @@ namespace AjaxLife
             str = str.Replace("\"", "\\\"");
             str = str.Replace("'", "\\'");
             str = str.Replace("\n", "\\n");
-            return "\""+str+"\"";
+            return "\"" + str + "\"";
         }
 
         public static void Debug(string module, string message)
