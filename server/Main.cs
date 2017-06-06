@@ -241,8 +241,14 @@ namespace AjaxLife
             {
                 // If we can't make it private, oh well.
             }
-
+            if (args["root"] == null)
+            {
             StaticRoot = "http://" + webserver.LocalAddress + (webserver.Port != 80 ? (":" + webserver.Port) : "") + "/client/";
+            }
+            if (args["httpsapi"] != null)
+            {
+                ApiRoot = "https://" + args["httpsapi"];
+            }
             Console.WriteLine("Static root: " + STATIC_ROOT);
             
             // Make sure we have a usable texture cache, create it if not.
