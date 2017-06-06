@@ -70,7 +70,6 @@
         <Match pattern="assemblies/*.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="*.txt" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="openmetaverse_data/*.tga" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/openmetaverse_data"/>
-        <Match pattern="Html/Templates/*.html" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)/Html/Templates"/>
         <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverse.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverseTypes.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>
         <Match pattern="assemblies/libopenmetaverse/bin/OpenMetaverse.StructuredData.dll" recurse="false" buildAction="Copy" copyToOutput="PreserveNewest" destination="$(OutputPath)"/>

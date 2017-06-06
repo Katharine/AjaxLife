@@ -83,7 +83,7 @@ namespace AjaxLife.Html
                     }
                 }
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
-                writer.Write(parser.Parse(File.ReadAllText("Html/Templates/index.html")));
+                writer.Write(parser.Parse(File.ReadAllText("client/Templates/index.html")));
             }catch(Exception exception){
                 this.contenttype = "text/plain";
                 writer.WriteLine("Error: " + exception.Message);

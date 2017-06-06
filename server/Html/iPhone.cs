@@ -64,7 +64,7 @@ namespace AjaxLife.Html
             hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
             
             Html.Template.Parser parser = new Html.Template.Parser(hash);
-            writer.Write(parser.Parse(File.ReadAllText("Html/Templates/iPhone.html")));;
+            writer.Write(parser.Parse(File.ReadAllText("client/Templates/iPhone.html")));;
             writer.Flush();
         }
         
