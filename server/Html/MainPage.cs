@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /* Copyright (c) 2008, Katharine Berry
  * All rights reserved.
  *
@@ -144,6 +144,6 @@ namespace AjaxLife.Html
                 return this.parent;
             }
         }
-        
+
     }
 }

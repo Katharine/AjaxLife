@@ -59,7 +59,7 @@ namespace AjaxLife
             this.Client = user.Client;
             this.user = user;
         }
-        
+
         // Returns the number of events pending.
         public int GetEventCount()
         {
@@ -72,8 +72,8 @@ namespace AjaxLife
             enqueue(this.GetFooter(client));
             return MakeJson.FromHashtableQueue(this.pending);
         }
-        
-        
+
+
         // Marks us as inactive - i.e. we should be logged off.
         public void deactivate()
         {
@@ -95,7 +95,8 @@ namespace AjaxLife
             Hashtable message = new Hashtable();
             message.Add("MessageType", "UsefulData");
             Dictionary<UUID, Vector3> positions = new Dictionary<UUID, Vector3>();
-            client.Network.CurrentSim.AvatarPositions.ForEach(delegate(KeyValuePair<UUID, Vector3> pair) {
+            client.Network.CurrentSim.AvatarPositions.ForEach(delegate (KeyValuePair<UUID, Vector3> pair)
+            {
                 positions.Add(pair.Key, pair.Value);
             });
             message.Add("Positions", positions);
@@ -103,30 +104,30 @@ namespace AjaxLife
             message.Add("YourRegion", client.Network.CurrentSim.Name);
             return message;
         }
-        
+
         private void enqueue(Hashtable message)
         {
-            if(!message.ContainsKey("MessageType")) return;
-            if(message == null) return;
-            if(user.RequestedEvents == null || user.RequestedEvents.Contains((string)message["MessageType"]))
+            if (!message.ContainsKey("MessageType")) return;
+            if (message == null) return;
+            if (user.RequestedEvents == null || user.RequestedEvents.Contains((string)message["MessageType"]))
             {
                 this.pending.Enqueue(message);
             }
         }
 
         // CALLBACKS
-        
+
         // These are all assigned to LibSL callbacks in Connect.cs. This determines their argument order.
         // The if(!active) check is to ensure they don't get called after we've logged off. This is a
         // LibSL bug.
-        
+
         // These almost all perform the same task:
         // 1) Create a hashtable
         // 2) Place various passed-in arguments in the hashtable
         // 3) Optionally, loop through one of the arguments if necessary, and add this to the hashtable
         //    as a bunch more hashtables.
         // 4) Enqueue the hashtable in the message queue. This is periodically emptied by the client.
-        
+
         public void Avatars_AvatarGroupsReply(object sender, AvatarGroupsReplyEventArgs e)
         {
             Hashtable item = new Hashtable();
@@ -161,21 +162,21 @@ namespace AjaxLife
         {
             Hashtable item = new Hashtable();
             AvatarPropertiesReplyPacket reply = (AvatarPropertiesReplyPacket)e.Packet;
-            item.Add("MessageType",     "AvatarProperties");
-            item.Add("AvatarID",        reply.AgentData.AvatarID);
-            item.Add("PartnerID",       reply.PropertiesData.PartnerID);
-            item.Add("AboutText",       Utils.BytesToString(reply.PropertiesData.AboutText));
-            item.Add("FirstLifeText",   Utils.BytesToString(reply.PropertiesData.FLAboutText));
-            item.Add("FirstLifeImage",  reply.PropertiesData.FLImageID);
-            item.Add("ProfileImage",    reply.PropertiesData.ImageID);
-            item.Add("ProfileURL",      Utils.BytesToString(reply.PropertiesData.ProfileURL));
-            item.Add("BornOn",          Utils.BytesToString(reply.PropertiesData.BornOn));
-            item.Add("CharterMember",   Utils.BytesToString(reply.PropertiesData.CharterMember));
-            item.Add("AllowPublish",    reply.PropertiesData.Flags & (0x1 << 0));
-            item.Add("MaturePublish",   reply.PropertiesData.Flags & (0x1 << 1));
-            item.Add("Identified",      reply.PropertiesData.Flags & (0x1 << 2));
-            item.Add("Transacted",      reply.PropertiesData.Flags & (0x1 << 3));
-            item.Add("Online",          reply.PropertiesData.Flags & (0x1 << 4));
+            item.Add("MessageType", "AvatarProperties");
+            item.Add("AvatarID", reply.AgentData.AvatarID);
+            item.Add("PartnerID", reply.PropertiesData.PartnerID);
+            item.Add("AboutText", Utils.BytesToString(reply.PropertiesData.AboutText));
+            item.Add("FirstLifeText", Utils.BytesToString(reply.PropertiesData.FLAboutText));
+            item.Add("FirstLifeImage", reply.PropertiesData.FLImageID);
+            item.Add("ProfileImage", reply.PropertiesData.ImageID);
+            item.Add("ProfileURL", Utils.BytesToString(reply.PropertiesData.ProfileURL));
+            item.Add("BornOn", Utils.BytesToString(reply.PropertiesData.BornOn));
+            item.Add("CharterMember", Utils.BytesToString(reply.PropertiesData.CharterMember));
+            item.Add("AllowPublish", reply.PropertiesData.Flags & (0x1 << 0));
+            item.Add("MaturePublish", reply.PropertiesData.Flags & (0x1 << 1));
+            item.Add("Identified", reply.PropertiesData.Flags & (0x1 << 2));
+            item.Add("Transacted", reply.PropertiesData.Flags & (0x1 << 3));
+            item.Add("Online", reply.PropertiesData.Flags & (0x1 << 4));
             enqueue(item);
         }
 
@@ -391,7 +392,7 @@ namespace AjaxLife
                 simhash.Add("Y", data.Y);
                 simhash.Add("Flags", data.RegionFlags);
                 // Convert the regionhandle to a string - JavaScript is likely to get upset over long integers.
-                simhash.Add("RegionHandle", Helpers.GlobalPosToRegionHandle(data.X*256, data.Y*256, out temp1, out temp2).ToString());
+                simhash.Add("RegionHandle", Helpers.GlobalPosToRegionHandle(data.X * 256, data.Y * 256, out temp1, out temp2).ToString());
                 blocks[i++] = simhash;
             }
             hash.Add("Blocks", blocks);
@@ -419,10 +420,10 @@ namespace AjaxLife
             hash.Add("Items", items);
             enqueue(hash);
         }
-        
+
         public void Assets_TextureDownloadCallback(TextureRequestState state, AssetTexture texture)
         {
-            if(state == TextureRequestState.NotFound || state == TextureRequestState.Aborted || state == TextureRequestState.Timeout)
+            if (state == TextureRequestState.NotFound || state == TextureRequestState.Aborted || state == TextureRequestState.Timeout)
             {
                 Console.WriteLine("Failed to download " + texture.AssetID + " - " + state.ToString() + ".");
                 Hashtable hash = new Hashtable();
@@ -432,7 +433,7 @@ namespace AjaxLife
                 hash.Add("Error", "Image could not be downloaded: " + state.ToString());
                 enqueue(hash);
             }
-            else if(state == TextureRequestState.Finished)
+            else if (state == TextureRequestState.Finished)
             {
                 bool success = true;
                 string key = texture.AssetID.ToString();
@@ -444,40 +445,40 @@ namespace AjaxLife
                     int width = texture.Image.Width;
                     int height = texture.Image.Height;
                     texture.Image.Clear();
-                    
+
                     // Helpfully, it's upside-down, and has red and blue flipped.
-                    
+
                     // Assuming 32 bits (accurate) and a height as a multiple of two (accurate),
                     // this will vertically invert the image.
                     int length = width * 4;
                     byte[] fliptemp = new byte[length];
-                    for(int i = 0; i < height / 2; ++i)
+                    for (int i = 0; i < height / 2; ++i)
                     {
                         int index = i * width * 4;
-                        int endindex = size - ((i+1) * width * 4);
+                        int endindex = size - ((i + 1) * width * 4);
                         Array.Copy(img, index, fliptemp, 0, length);
                         Array.Copy(img, endindex, img, index, length);
                         Array.Copy(fliptemp, 0, img, endindex, length);
                     }
-                    
+
                     // This changes RGBA to BGRA. Or possibly vice-versa. I don't actually know.
                     // The documentation is vague/nonexistent.
-                    for(int i = 0; i < size; i += 4)
+                    for (int i = 0; i < size; i += 4)
                     {
-                        byte temp = img[i+2];
-                        img[i+2] = img[i];
+                        byte temp = img[i + 2];
+                        img[i + 2] = img[i];
                         img[i] = temp;
                     }
-                    
+
                     // Use System.Drawing.Bitmap to create a PNG. This requires us to feed it a pointer to an array
                     // for whatever reason, so we temporarily pin the image array.
                     GCHandle handle = GCHandle.Alloc(img, GCHandleType.Pinned);
-                    Bitmap bitmap = new Bitmap(texture.Image.Width, texture.Image.Height, texture.Image.Width * 4, 
+                    Bitmap bitmap = new Bitmap(texture.Image.Width, texture.Image.Height, texture.Image.Width * 4,
                                         System.Drawing.Imaging.PixelFormat.Format32bppArgb, handle.AddrOfPinnedObject());
                     bitmap.Save(AjaxLife.TEXTURE_CACHE + key + ".png", System.Drawing.Imaging.ImageFormat.Png);
                     bitmap.Dispose();
                     handle.Free();
-                    if(AjaxLife.USE_S3)
+                    if (AjaxLife.USE_S3)
                     {
                         try
                         {
@@ -496,10 +497,10 @@ namespace AjaxLife
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     success = false;
-                    AjaxLife.Debug("Events", "Texture download for "+key+" failed (" + e.GetType().Name + "): " + e.Message);
+                    AjaxLife.Debug("Events", "Texture download for " + key + " failed (" + e.GetType().Name + "): " + e.Message);
                 }
                 Hashtable hash = new Hashtable();
                 hash.Add("MessageType", "ImageDownloaded");
@@ -508,9 +509,9 @@ namespace AjaxLife
                 hash.Add("URL", AjaxLife.TEXTURE_ROOT + key + ".png");
                 enqueue(hash);
             }
-        
+
         }
-        
+
         public void Friends_FriendshipOffered(object sender, FriendshipOfferedEventArgs e)
         {
             Hashtable hash = new Hashtable();
@@ -708,7 +709,7 @@ namespace AjaxLife
             hash.Add("OffsetY", e.Y * 16);
             hash.Add("Region", e.Simulator.Name);
             hash.Add("WaterLevel", e.Simulator.WaterHeight); // Is there anywhere better to put this?
-            
+
             float[,] landscape = new float[16, 16];
             for (int i = 0; i < 16; ++i)
             {
@@ -767,7 +768,7 @@ namespace AjaxLife
         public void Groups_GroupMembersReply(object sender, GroupMembersReplyEventArgs e)
         {
             List<Hashtable> list = new List<Hashtable>();
-            foreach (KeyValuePair<UUID,GroupMember> memberpair in e.Members)
+            foreach (KeyValuePair<UUID, GroupMember> memberpair in e.Members)
             {
                 GroupMember member = memberpair.Value;
                 Hashtable hash = new Hashtable();
@@ -876,10 +877,10 @@ namespace AjaxLife
             message.Add("Type", (byte)e.Type);
             enqueue(message);
         }
-        
+
         public void Parcels_ParcelProperties(object sender, ParcelPropertiesEventArgs e)
         {
-            if(e.Result == ParcelResult.NoData)
+            if (e.Result == ParcelResult.NoData)
             {
                 Hashtable message = new Hashtable();
                 message.Add("MessageType", "ParcelPropertiesFailed");

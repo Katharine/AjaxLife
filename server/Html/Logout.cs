@@ -66,7 +66,7 @@ namespace AjaxLife.Html
                 string post = reader.ReadToEnd();
                 reader.Dispose();
                 // Get the user session and GridClient object.
-                Dictionary<string,string> POST = AjaxLife.PostDecode(post);
+                Dictionary<string, string> POST = AjaxLife.PostDecode(post);
                 Guid session = new Guid(POST["sid"]);
                 GridClient client;
                 User user;
@@ -84,7 +84,7 @@ namespace AjaxLife.Html
                     System.Threading.Thread.Sleep(2000);
                 }
                 // Deactivate the event queue.
-                if(user.Events != null)
+                if (user.Events != null)
                 {
                     user.Events.deactivate();
                 }
@@ -100,7 +100,7 @@ namespace AjaxLife.Html
                 }
                 // Announce our success.
                 writer.WriteLine("{success: true}");
-            }   
+            }
             catch (Exception e)
             {
                 request.Response.ContentType = "text/plain";

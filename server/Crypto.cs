@@ -76,7 +76,7 @@ namespace AjaxLife
 
             // Create random string
             byte[] salt = new byte[64];
-            for (int i = 0; i < 64; )
+            for (int i = 0; i < 64;)
             {
                 // "Clever" way of avoiding ugly loops. Adds upper and lowercase random letters alternately.
                 salt[i++] = (byte)rng.Next(65, 90); // a-z
@@ -128,7 +128,7 @@ namespace AjaxLife
 
             return result;
         }
-        
+
         //  Loops through the array of bytes, using String.Format to make them into hex.
         public static string BytesToHexString(byte[] input)
         {
@@ -158,12 +158,12 @@ namespace AjaxLife
         {
             return (new ASCIIEncoding()).GetString(input);
         }
-        
+
         public static string UTF16BytesToString(byte[] input)
         {
             return (new UnicodeEncoding()).GetString(input);
         }
-        
+
         public static string UTF8BytesToString(byte[] input)
         {
             return (new UTF8Encoding()).GetString(input);

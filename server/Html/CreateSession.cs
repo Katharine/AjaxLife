@@ -38,25 +38,25 @@ namespace AjaxLife.Html
         private string name;
         private IDirectory parent;
         private Dictionary<Guid, User> users;
-        
+
         public CreateSession(string name, IDirectory parent, Dictionary<Guid, User> users)
         {
             this.name = name;
             this.parent = parent;
             this.users = users;
         }
-        
+
         public void Dispose()
         {
         }
-        
+
         public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
             Guid key = Guid.NewGuid();
             User user = User.CreateUser();
-            lock(users) users.Add(key, user);
+            lock (users) users.Add(key, user);
             Hashtable ret = new Hashtable();
             ret.Add("SessionID", key.ToString("D"));
             ret.Add("Challenge", user.Challenge);
@@ -67,7 +67,7 @@ namespace AjaxLife.Html
             writer.Write(MakeJson.FromHashtable(ret));
             writer.Flush();
         }
-        
+
         public string ContentType { get { return "application/json"; } }
         public string Name { get { return name; } }
         public IDirectory Parent { get { return parent; } }

@@ -66,7 +66,7 @@ namespace AjaxLife.Html
                 string post = reader.ReadToEnd();
                 reader.Dispose();
                 // Decode the POST data.
-                Dictionary<string,string> POST = AjaxLife.PostDecode(post);
+                Dictionary<string, string> POST = AjaxLife.PostDecode(post);
                 Guid session = new Guid(POST["sid"]);
                 Events eventqueue;
                 User user;
@@ -78,19 +78,19 @@ namespace AjaxLife.Html
                     eventqueue = user.Events;
                     client = user.Client;
                     user.LastRequest = DateTime.Now;
-                }    
+                }
                 bool sent = false;
                 double heading = user.Rotation;
                 // Check once per second, timing out after 15 seconds.
                 for (int i = 0; i < 15; ++i)
                 {
                     // Ugly hack - we're riding on the back of the event poll to rotate our camera.
-                    if(user.Rotation != -4)
+                    if (user.Rotation != -4)
                     {
                         // If we've reached π, having started at -π, we're done. Quit rotating, because it
                         // appears to annoy people and/or make them dizzy.
                         heading += 0.5d;
-                        if (heading > Math.PI) 
+                        if (heading > Math.PI)
                         {
                             // We use -4 because -4 < -π, so will never occur during normal operation.
                             user.Rotation = -4;
@@ -127,7 +127,7 @@ namespace AjaxLife.Html
                     w.WriteEndArray();
                     w.Flush();
                 }
-            }    
+            }
             catch (Exception e)
             {
                 request.Response.ContentType = "text/plain";

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /* Copyright (c) 2007, Katharine Berry
  * All rights reserved.
  *
@@ -59,7 +59,8 @@ namespace AjaxLife.Html
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
-            try{
+            try
+            {
                 Hashtable hash = new Hashtable();
                 // Set up the template with useful details and the challenge and public key.
                 hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
@@ -84,7 +85,9 @@ namespace AjaxLife.Html
                 }
                 Html.Template.Parser parser = new Html.Template.Parser(hash);
                 writer.Write(parser.Parse(File.ReadAllText("client/Templates/index.html")));
-            }catch(Exception exception){
+            }
+            catch (Exception exception)
+            {
                 this.contenttype = "text/plain";
                 writer.WriteLine("Error: " + exception.Message);
             }

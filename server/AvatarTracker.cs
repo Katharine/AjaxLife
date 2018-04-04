@@ -34,7 +34,7 @@ namespace AjaxLife
 {
     public class AvatarTracker
     {
-    // These define the events that are called when avatar-related events occur.
+        // These define the events that are called when avatar-related events occur.
         public delegate void Added(Avatar avatar);
         public event Added OnAvatarAdded;
         public delegate void Removed(Avatar avatar);
@@ -42,7 +42,7 @@ namespace AjaxLife
         public delegate void Updated(Avatar avatar);
         public event Updated OnAvatarUpdated;
         public Dictionary<uint, Avatar> Avatars { get { return this.avatars; } }
-        
+
         private GridClient Client;
         private Dictionary<uint, Avatar> avatars = new Dictionary<uint, Avatar>();
 
@@ -69,12 +69,12 @@ namespace AjaxLife
             // Otherwise just update the cache with the new information (e.g. changed position)
             if (!this.avatars.ContainsKey(e.Avatar.LocalID))
             {
-                lock(this.avatars) this.avatars.Add(e.Avatar.LocalID, e.Avatar);
-                if(OnAvatarAdded != null) OnAvatarAdded(e.Avatar);
+                lock (this.avatars) this.avatars.Add(e.Avatar.LocalID, e.Avatar);
+                if (OnAvatarAdded != null) OnAvatarAdded(e.Avatar);
             }
             else
             {
-                lock(this.avatars) this.avatars[e.Avatar.LocalID] = e.Avatar;
+                lock (this.avatars) this.avatars[e.Avatar.LocalID] = e.Avatar;
             }
         }
 
@@ -89,7 +89,7 @@ namespace AjaxLife
                 avatar.Rotation = e.Prim.Rotation;
             }
         }
-        
+
         void Objects_KillObject(object sender, KillObjectEventArgs e)
         {
             // If we know of this avatar, remove it and announce its loss.
@@ -99,7 +99,7 @@ namespace AjaxLife
                 {
                     Avatar avatar = this.avatars[e.ObjectLocalID];
                     this.avatars.Remove(e.ObjectLocalID);
-                    if(OnAvatarRemoved != null) OnAvatarRemoved(avatar);
+                    if (OnAvatarRemoved != null) OnAvatarRemoved(avatar);
                 }
             }
         }

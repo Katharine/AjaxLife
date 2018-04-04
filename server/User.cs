@@ -46,12 +46,12 @@ namespace AjaxLife
         public int SignedCallCount = 0;
         public string Signature = "";
         public List<string> RequestedEvents;
-        
+
         // Useful functions
         // Creates the client if it doesn't already exist.
         public GridClient GetClient()
         {
-            if(this.Client != null) return this.Client;
+            if (this.Client != null) return this.Client;
             GridClient client = new GridClient();
             client.Settings.ALWAYS_DECODE_OBJECTS = false;
             client.Settings.ALWAYS_REQUEST_OBJECTS = false;
@@ -69,17 +69,17 @@ namespace AjaxLife
             this.Client = client;
             return client;
         }
-        
+
         public void ParseRequestedEvents(string events)
         {
             RequestedEvents = new List<string>();
             string[] list = events.Split(',');
-            foreach(string e in list)
+            foreach (string e in list)
             {
                 RequestedEvents.Add(e.Trim());
             }
         }
-        
+
         // Useful static functions.
         public static User CreateUser()
         {

@@ -134,16 +134,16 @@ namespace AjaxLife.Html
                     this.RegisterCallbacks(user);
                     // Pythagoras says that 181.0193m is the optimal view distance to see the whole sim.
                     client.Self.Movement.Camera.Far = 181.0193f;
-                    
+
                     // This doesn't seem to work.
                     // client.Self.Movement.Camera.SetPositionOrientation(new Vector3(128, 128, 0), 0, 0, 0);
-                    
+
                     // Everything's happy. Log the requested message list, if any.
-                    if(POST.ContainsKey("events"))
+                    if (POST.ContainsKey("events"))
                     {
                         user.ParseRequestedEvents(POST["events"]);
                     }
-                    
+
                     // If we got this far, it worked. Announce this.
                     textWriter.WriteLine("{\"success\": 1}");
                 }
@@ -187,7 +187,7 @@ namespace AjaxLife.Html
             client.Directory.DirPeopleReply += new EventHandler<DirPeopleReplyEventArgs>(events.Directory_DirPeopleReply);
             client.Directory.DirGroupsReply += new EventHandler<DirGroupsReplyEventArgs>(events.Directory_DirGroupsReply);
             client.Network.Disconnected += new EventHandler<DisconnectedEventArgs>(events.Network_Disconnected);
-            
+
             // We shouldn't really be using this... it forces us to immediately accept inventory.
             client.Inventory.InventoryObjectOffered += new EventHandler<InventoryObjectOfferedEventArgs>(events.Inventory_InventoryObjectOffered);
             client.Inventory.FolderUpdated += new EventHandler<FolderUpdatedEventArgs>(events.Inventory_FolderUpdated);
@@ -199,7 +199,7 @@ namespace AjaxLife.Html
             client.Groups.GroupNamesReply += new EventHandler<GroupNamesEventArgs>(events.Groups_GroupNamesReply);
             client.Groups.CurrentGroups += new EventHandler<CurrentGroupsEventArgs>(events.Groups_CurrentGroups);
             client.Parcels.ParcelProperties += new EventHandler<ParcelPropertiesEventArgs>(events.Parcels_ParcelProperties);
-            
+
             // AvatarTracker event callbacks.
             avatars.OnAvatarAdded += new AvatarTracker.Added(events.AvatarTracker_OnAvatarAdded);
             avatars.OnAvatarRemoved += new AvatarTracker.Removed(events.AvatarTracker_OnAvatarRemoved);

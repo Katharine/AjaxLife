@@ -72,7 +72,7 @@ namespace AjaxLife
                     Hashtable hashtable = queue.Dequeue();
                     serializer.Serialize(jsonWriter, hashtable);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     AjaxLife.Debug("MakeJson.FromHashTable", e.Message);
                 }
