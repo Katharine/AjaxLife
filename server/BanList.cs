@@ -35,11 +35,11 @@ namespace AjaxLife
 {
     public class BanList
     {
-        private string[] Bans = {};
+        private string[] Bans = { };
         private Timer Time;
         private void UpdateList()
         {
-            AjaxLife.Debug("BanList", "Loading ban list from "+AjaxLife.BAN_LIST+"...");
+            AjaxLife.Debug("BanList", "Loading ban list from " + AjaxLife.BAN_LIST + "...");
             try
             {
                 string sbanlist = "";
@@ -56,32 +56,32 @@ namespace AjaxLife
                 {
                     sbanlist = File.ReadAllText(AjaxLife.BAN_LIST);
                 }
-                char[] newline = {'\n'};
+                char[] newline = { '\n' };
                 this.Bans = sbanlist.Split(newline);
-                for(int i = 0; i < this.Bans.Length; ++i)
+                for (int i = 0; i < this.Bans.Length; ++i)
                 {
                     this.Bans[i] = this.Bans[i].Trim();
                 }
-                AjaxLife.Debug("BanList", "Ban list up to date. "+Bans.Length+" banned names.");
+                AjaxLife.Debug("BanList", "Ban list up to date. " + Bans.Length + " banned names.");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                AjaxLife.Debug("BanList", "Ban list update failed: "+e.Message);
+                AjaxLife.Debug("BanList", "Ban list update failed: " + e.Message);
             }
         }
-        
+
         public BanList()
         {
-            if(AjaxLife.BAN_LIST != "")
+            if (AjaxLife.BAN_LIST != "")
             {
-                if(AjaxLife.BAN_UPDATE_TIME > 0)
+                if (AjaxLife.BAN_UPDATE_TIME > 0)
                 {
                     Time = new Timer();
                     Time.Interval = AjaxLife.BAN_UPDATE_TIME * 1000.0;
                     Time.AutoReset = true;
                     Time.Elapsed += new ElapsedEventHandler(TimerElapsed);
                     Time.Start();
-                    AjaxLife.Debug("BanList", "Set ban update timer for "+AjaxLife.BAN_UPDATE_TIME+" seconds.");
+                    AjaxLife.Debug("BanList", "Set ban update timer for " + AjaxLife.BAN_UPDATE_TIME + " seconds.");
                 }
                 else
                 {
@@ -90,24 +90,24 @@ namespace AjaxLife
                 UpdateList();
             }
         }
-        
+
         ~BanList()
         {
             Time.Stop();
             Time.Close();
         }
-        
+
         public void TimerElapsed(object obj, ElapsedEventArgs args)
         {
             AjaxLife.Debug("BanList", "Timer elapsed.");
             UpdateList();
         }
-        
+
         public bool IsBanned(string first, string last)
         {
-            return IsBanned(first+" "+last);
+            return IsBanned(first + " " + last);
         }
-        
+
         public bool IsBanned(string name)
         {
             return (Array.IndexOf(this.Bans, name) > -1);

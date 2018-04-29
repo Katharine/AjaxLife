@@ -54,7 +54,7 @@ namespace AjaxLife.Html
             "AcceptFriendship",
             "DeclineFriendship",
             "OfferFriendship",
-            "TerminateFriendship", 
+            "TerminateFriendship",
             "SendAgentMoney",
             "EmptyTrash",
             "MoveItem",
@@ -83,7 +83,7 @@ namespace AjaxLife.Html
             // All this does the same job as the following on the client side:
             // var tohash = (++AjaxLife.SignedCallCount).toString() + querystring + AjaxLife.Signature;
             // var hash = md5(tohash);
-            
+
             // First we have to remove the hash from the incoming string. We may assume the has is always at the end.
             // This makes the job easy - we just chop the end off. No parsing required.
             // MD5s are 128 bits, or 32 hex characters, so we chop off "&hash=00000000000000000000000000000000", which is
@@ -122,7 +122,7 @@ namespace AjaxLife.Html
             StreamReader reader = new StreamReader(request.PostData);
             string qstring = reader.ReadToEnd();
             reader.Dispose();
-            Dictionary<string,string> POST = AjaxLife.PostDecode(qstring);
+            Dictionary<string, string> POST = AjaxLife.PostDecode(qstring);
             // Pull out the session.
             if (!POST.ContainsKey("sid"))
             {
@@ -159,7 +159,7 @@ namespace AjaxLife.Html
                     return;
                 }
             }
-            
+
             // Right. This file is fun. It takes information in POST paramaters and sends them to 
             // the server in the appropriate format. Some will return data immediately, some will return
             // keys to data that will arrive in the message queue, some return nothing but you get
@@ -242,19 +242,20 @@ namespace AjaxLife.Html
                         Hashtable hash = new Hashtable();
                         hash.Add("FPS", client.Network.CurrentSim.Stats.FPS);
                         hash.Add("TimeDilation", client.Network.CurrentSim.Stats.Dilation);
-                        hash.Add("LSLIPS", client.Network.CurrentSim.Stats.LSLIPS);
                         hash.Add("Objects", client.Network.CurrentSim.Stats.Objects);
                         hash.Add("ActiveScripts", client.Network.CurrentSim.Stats.ActiveScripts);
                         hash.Add("Agents", client.Network.CurrentSim.Stats.Agents);
                         hash.Add("ChildAgents", client.Network.CurrentSim.Stats.ChildAgents);
                         hash.Add("AjaxLifeSessions", users.Count);
-                        hash.Add("TextureCacheCount", AjaxLife.TextureCacheCount);
-                        hash.Add("TextureCacheSize", AjaxLife.TextureCacheSize);
+                        hash.Add("PingSim", client.Network.CurrentSim.Stats.LastLag);
+                        hash.Add("IncomingBPS", client.Network.CurrentSim.Stats.IncomingBPS);
+                        hash.Add("OutgoingBPS", client.Network.CurrentSim.Stats.OutgoingBPS);
+                        hash.Add("DroppedPackets", client.Network.CurrentSim.Stats.ReceivedResends + client.Network.CurrentSim.Stats.ResentPackets);
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
                 case "TeleportLureRespond":
-                    client.Self.TeleportLureRespond(new UUID(POST["RequesterID"]), bool.Parse(POST["Accept"]));
+                    client.Self.TeleportLureRespond(new UUID(POST["RequesterID"]), new UUID(POST["SessionID"]), bool.Parse(POST["Accept"]));
                     break;
                 case "GodlikeTeleportLureRespond":
                     {
@@ -272,14 +273,14 @@ namespace AjaxLife.Html
                 case "FindPeople":
                     {
                         Hashtable hash = new Hashtable();
-                        hash.Add("QueryID", client.Directory.StartPeopleSearch(DirectoryManager.DirFindFlags.People, POST["Search"], int.Parse(POST["Start"])));
+                        hash.Add("QueryID", client.Directory.StartPeopleSearch(POST["Search"], int.Parse(POST["Start"])));
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
                 case "FindGroups":
                     {
                         Hashtable hash = new Hashtable();
-                        hash.Add("QueryID", client.Directory.StartGroupSearch(DirectoryManager.DirFindFlags.Groups, POST["Search"], int.Parse(POST["Start"])));
+                        hash.Add("QueryID", client.Directory.StartGroupSearch(POST["Search"], int.Parse(POST["Start"])));
                         textwriter.WriteLine(MakeJson.FromHashtable(hash));
                     }
                     break;
@@ -293,7 +294,7 @@ namespace AjaxLife.Html
                     client.Self.AnimationStop(new UUID(POST["Animation"]), true);
                     break;
                 case "SendAppearance":
-                    client.Appearance.SetPreviousAppearance(false);
+                    client.Appearance.RequestSetAppearance();
                     break;
                 case "GetMapItems":
                     {
@@ -341,7 +342,7 @@ namespace AjaxLife.Html
                     {
                         InternalDictionary<UUID, FriendInfo> friends = client.Friends.FriendList;
                         List<Hashtable> friendlist = new List<Hashtable>();
-                        friends.ForEach(delegate(FriendInfo friend)
+                        friends.ForEach(delegate (FriendInfo friend)
                         {
                             Hashtable friendhash = new Hashtable();
                             friendhash.Add("ID", friend.UUID.ToString());
@@ -391,19 +392,19 @@ namespace AjaxLife.Html
                                 try
                                 {
                                     response = (HttpWebResponse)webrequest.GetResponse();
-                                    if(response.StatusCode == HttpStatusCode.OK)
+                                    if (response.StatusCode == HttpStatusCode.OK)
                                     {
                                         exists = true;
                                     }
                                 }
-                                catch(WebException e)
+                                catch (WebException e)
                                 {
                                     AjaxLife.Debug("SendMessage", "WebException (" + e.Status.ToString() + "): " + e.Message);
                                 }
                                 finally
-                                {    
+                                {
                                     request.Dispose();
-                                    if(response != null)
+                                    if (response != null)
                                     {
                                         response.Close();
                                     }
@@ -472,8 +473,9 @@ namespace AjaxLife.Html
                         {
                             UUID inventoryID = new UUID(POST["InventoryID"]);
                             client.Assets.RequestInventoryAsset(new UUID(POST["AssetID"]), inventoryID,
-                                UUID.Zero, new UUID(POST["OwnerID"]), (AssetType)int.Parse(POST["AssetType"]), false, 
-                                delegate(AssetDownload transfer, OpenMetaverse.Assets.Asset asset) {
+                                UUID.Zero, new UUID(POST["OwnerID"]), (AssetType)int.Parse(POST["AssetType"]), false,
+                                delegate (AssetDownload transfer, OpenMetaverse.Assets.Asset asset)
+                                {
                                     events.Assets_OnAssetReceived(transfer, asset, inventoryID);
                                 }
                             );
@@ -628,10 +630,10 @@ namespace AjaxLife.Html
                     client.Groups.RequestCurrentGroups();
                     break;
                 case "GetParcelID":
-                    textwriter.Write("{LocalID: "+client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"])))+"}");
+                    textwriter.Write("{\"LocalID\": " + client.Parcels.GetParcelLocalID(client.Network.CurrentSim, new Vector3(float.Parse(POST["X"]), float.Parse(POST["Y"]), float.Parse(POST["Z"]))) + "}");
                     break;
                 case "RequestParcelProperties":
-                    client.Parcels.PropertiesRequest(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));
+                    client.Parcels.RequestParcelProperties(client.Network.CurrentSim, int.Parse(POST["LocalID"]), int.Parse(POST["SequenceID"]));
                     break;
             }
             textwriter.Flush();

@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb/legacy",
+  "rules": {
+    "new-cap": [1],
+  },
+  "globals": {
+    jQuery: true,
+    Prototype: true,
+    Ext: true,
+    _: true,
+    gMOTD: true
+  }
+}

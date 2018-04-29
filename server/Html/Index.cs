@@ -37,6 +37,8 @@ namespace AjaxLife.Html
 {
     public class Index : IFile
     {
+        // Fields
+        private string contenttype = "text/html; charset=utf-8";
         #region IFile Members
 
         public Index(string name, IDirectory parent)
@@ -57,7 +59,38 @@ namespace AjaxLife.Html
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
-            writer.Write(File.ReadAllText("index.html"));
+            try
+            {
+                Hashtable hash = new Hashtable();
+                // Set up the template with useful details and the challenge and public key.
+                hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
+                hash.Add("API_ROOT", AjaxLife.API_ROOT);
+                if (AjaxLife.HANDLE_CONTENT_ENCODING)
+                {
+                    hash.Add("ENCODING", "identity");
+                    // S3 doesn't support Accept-Encoding, so we do it ourselves.
+                    if (request.Headers["Accept-Encoding"] != null)
+                    {
+                        string[] accept = request.Headers["Accept-Encoding"].Split(',');
+                        foreach (string encoding in accept)
+                        {
+                            string parsedencoding = encoding.Split(';')[0].Trim();
+                            if (parsedencoding == "gzip" || parsedencoding == "*") // Should we really honour "*"? Specs aside, it's never going to be true.
+                            {
+                                hash["ENCODING"] = "gzip";
+                                break;
+                            }
+                        }
+                    }
+                }
+                Html.Template.Parser parser = new Html.Template.Parser(hash);
+                writer.Write(parser.Parse(File.ReadAllText("client/Templates/index.html")));
+            }
+            catch (Exception exception)
+            {
+                this.contenttype = "text/plain";
+                writer.WriteLine("Error: " + exception.Message);
+            }
             writer.Flush();
         }
 

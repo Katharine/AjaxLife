@@ -79,7 +79,7 @@ namespace AjaxLife.Html
             // Read the response's headers.
             StreamReader responsestream = new StreamReader(response.GetResponseStream());
             // Set the headers in our response, except for Transfer-Encoding (which would break things)
-            foreach(string header in response.Headers)
+            foreach (string header in response.Headers)
             {
                 if (header == "Transfer-Encoding") continue;
                 request.Response.SetHeader(header, response.Headers[header]);
@@ -114,7 +114,7 @@ namespace AjaxLife.Html
 
         #region IDisposable Members
 
-        public void Dispose() {}
+        public void Dispose() { }
 
         #endregion
     }

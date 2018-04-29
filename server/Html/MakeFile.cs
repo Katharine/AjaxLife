@@ -36,17 +36,17 @@ namespace AjaxLife.Html
         private string name;
         private string contenttype;
         private IDirectory parent;
-        
+
         public MakeFile(string name, IDirectory parent)
         {
             this.name = name;
             this.parent = parent;
         }
-        
+
         public void Dispose()
         {
         }
-        
+
         public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
             request.Response.ContentType = request.Query["type"];
@@ -56,7 +56,7 @@ namespace AjaxLife.Html
             textWriter.Write(request.Query["content"]);
             textWriter.Flush();
         }
-        
+
         public string ContentType { get { return contenttype; } }
         public string Name { get { return name; } }
         public IDirectory Parent { get { return parent; } }

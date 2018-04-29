@@ -38,36 +38,36 @@ namespace AjaxLife.Html
     {
         private string name;
         private IDirectory parent;
-        
+
         public iPhone(string name, IDirectory parent)
         {
             this.name = name;
             this.parent = parent;
         }
-        
+
         public void Dispose()
         {
         }
-        
+
         public void OnFileRequested(HttpRequest request, IDirectory directory)
         {
             request.Response.ResponseContent = new MemoryStream();
             StreamWriter writer = new StreamWriter(request.Response.ResponseContent);
-            
+
             StreamReader reader = new StreamReader(request.PostData);
             string post = reader.ReadToEnd();
             reader.Dispose();
             Dictionary<string, string> POST = AjaxLife.PostDecode(post);
-            
+
             Hashtable hash = new Hashtable();
             hash.Add("SESSION_ID", POST["sid"]);
             hash.Add("STATIC_ROOT", AjaxLife.STATIC_ROOT);
-            
+
             Html.Template.Parser parser = new Html.Template.Parser(hash);
-            writer.Write(parser.Parse(File.ReadAllText("Html/Templates/iPhone.html")));;
+            writer.Write(parser.Parse(File.ReadAllText("client/Templates/iPhone.html"))); ;
             writer.Flush();
         }
-        
+
         public string ContentType { get { return "text/html; charset=utf8"; } }
         public string Name { get { return name; } }
         public IDirectory Parent { get { return parent; } }

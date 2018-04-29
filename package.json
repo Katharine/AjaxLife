@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "http-proxy": "^1.16.2",
+    "http2": "^3.3.6",
+    "pem": "^1.9.7"
+  }
+}

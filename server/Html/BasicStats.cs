@@ -71,7 +71,7 @@ namespace AjaxLife.Html
                 // Loop through each user and check if they're connected. If so,
                 // increment the connected count.
                 int usercount = 0;
-                foreach (KeyValuePair<Guid,User> pair in users)
+                foreach (KeyValuePair<Guid, User> pair in users)
                 {
                     User user = pair.Value;
                     if (user.Client != null && user.Client.Network.Connected)
